@@ -1,0 +1,37 @@
+{
+  "id": "./",
+  "name": "S-Parameter Analyzer",
+  "short_name": "S-Analyzer",
+  "description": "Offline-Analyse von Touchstone-Dateien: S-Parameter, Mixed Mode, Smith-Chart, Impedanz, CISPR 17 und CMC-Ersatzmodell.",
+  "lang": "de",
+  "dir": "ltr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#edf2f5",
+  "theme_color": "#142837",
+  "categories": ["utilities", "productivity", "education"],
+  "icons": [
+    {"src": "icons/app-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icons/app-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ],
+  "share_target": {
+    "action": "./share-target",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "files": [{
+        "name": "file",
+        "accept": ["application/octet-stream", "text/plain", "application/x-touchstone", ".s1p", ".s2p", ".s3p", ".s4p", ".s5p", ".s6p", ".s8p", ".s12p", ".s16p", ".ts", ".snp"]
+      }]
+    }
+  },
+  "file_handlers": [{
+    "action": "./index.html",
+    "accept": {
+      "application/x-touchstone": [".s1p", ".s2p", ".s3p", ".s4p", ".s5p", ".s6p", ".s7p", ".s8p", ".s10p", ".s12p", ".s16p", ".s24p", ".s32p", ".ts"]
+    }
+  }]
+}
