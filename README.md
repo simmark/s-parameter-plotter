@@ -18,6 +18,18 @@ Alle Berechnungen laufen lokal auf dem Gerät. Messdateien werden nicht hochgela
 - **Export**: CSV, CSV für deutsches Excel (Semikolon, Dezimalkomma), PNG, reduziertes Netzwerk als Touchstone 2.1; am Handy über das Teilen-Menü
 - **Würth 7490220115** (WE-LAN): Pinbelegung wird erkannt, Paare und offene Mittelanzapfungen sind vorbelegt
 
+## Farblogik im Mixed Mode
+
+| Farbe | Bedeutung |
+|---|---|
+| Blau | Sdd · Differential → Differential |
+| Grün | Scc · Gleichtakt → Gleichtakt |
+| Orange | Sdc · Konversion Gleichtakt → Differential (Störfestigkeit) |
+| Rot | Scd · Konversion Differential → Gleichtakt (Abstrahlung) |
+| Violett | Beteiligung eines Einzelports |
+
+Durchgezogene Linien sind Transmissionen, gestrichelte Reflexionen (Diagonale der Matrix). Gewählte Kurven sind mit Haken und farbiger Kante markiert, ausgeblendete gestrichelt und durchgestrichen. Im Dialog **Wählen** ist die Matrix in die vier Mixed-Mode-Quadranten geteilt.
+
 ## Bedienung am Handy
 
 | Geste | Wirkung |

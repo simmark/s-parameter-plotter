@@ -24,6 +24,22 @@
   --accent-dark: #006554;
   --accent-soft: #e3f3ee;
   --accent-line: #a6d6c9;
+  --mode-d: #1f5fd1;
+  --mode-d-soft: #eaf1fd;
+  --mode-d-line: #b7cdf3;
+  --mode-c: #08875a;
+  --mode-c-soft: #e6f6ee;
+  --mode-c-line: #a9dcc3;
+  --mode-x: #d4571a;
+  --mode-x-soft: #fff0e6;
+  --mode-x-line: #f2c3a3;
+  --mode-dc: #e07b0f;
+  --mode-dc-soft: #fff4e2;
+  --mode-cd: #c62f4b;
+  --mode-cd-soft: #fdecef;
+  --mode-p: #7a4fc2;
+  --mode-p-soft: #f3eefb;
+  --select: #0b5c4e;
   --warn-ink: #81501b;
   --warn-bg: #fff8ed;
   --warn-line: #ebd2aa;
@@ -116,7 +132,7 @@ svg.icon { height: 17px; width: 17px; flex: 0 0 auto; stroke: currentColor; stro
 .recent-item .icon { width: 14px; height: 14px; color: #5c7889; }
 .recent-item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; font-weight: 620; }
 .recent-item small { color: var(--muted); font-size: 10px; white-space: nowrap; }
-.recent-item.is-current { border-color: var(--accent-line); }
+.recent-item.is-current { border-color: var(--accent); border-left: 4px solid var(--accent); background: var(--accent-soft); }
 .share-line { margin: 8px 2px 0; }
 .update-banner { position: fixed; left: 50%; transform: translateX(-50%); bottom: 16px; z-index: 13; display: flex; gap: 10px; align-items: center; background: #183747; color: #fff; border-radius: 6px; padding: 8px 8px 8px 13px; font-size: 12px; box-shadow: 0 5px 18px #13283738; max-width: calc(100% - 24px); }
 .update-banner .button { min-height: 30px; }
@@ -158,7 +174,10 @@ svg.icon { height: 17px; width: 17px; flex: 0 0 auto; stroke: currentColor; stro
 .net-wire.is-paired .net-chip { border-color: #aad1c5; color: #126a58; background: #e9f6f1; }
 .net-wire.is-load .net-chip { border-color: #e6cfab; color: #805019; background: #fff9ef; }
 .net-chip em { font: 500 9px var(--ui); color: inherit; }
-.net-pair { color: #176a5a; font: 600 10px var(--mono); padding: 0 3px 1px; }
+.net-pair { color: #3e5667; font: 650 10px var(--mono); padding: 0 3px 1px; }
+.net-pair b { font-weight: 750; }
+.net-pair .d { color: var(--mode-d); }
+.net-pair .c { color: var(--mode-c); }
 .net-side.right .net-pair { text-align: right; }
 .net-hidden { font-size: 11px; color: var(--muted); margin-top: 7px; }
 .badge { display: inline-flex; align-items: center; padding: 3px 6px; border-radius: 4px; background: #eaf0f4; color: #3e5667; font-size: 11px; font-weight: 650; white-space: nowrap; }
@@ -169,8 +188,10 @@ svg.icon { height: 17px; width: 17px; flex: 0 0 auto; stroke: currentColor; stro
 .tabs { min-height: 49px; display: flex; gap: 5px; align-items: stretch; padding: 0 20px; border-bottom: 1px solid var(--line); background: #fdfefe; overflow-x: auto; overflow-y: hidden; scrollbar-width: thin; }
 .tab { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 7px; flex: 0 0 auto; background: none; border: 0; border-bottom: 2px solid transparent; padding: 0 12px; color: #536977; font-size: 12.5px; font-weight: 600; white-space: nowrap; }
 .tab .icon { width: 15px; height: 15px; }
-.tab:hover { color: var(--ink); background: #f3f7f8; }
-.tab[aria-selected="true"] { color: var(--accent-dark); border-bottom-color: var(--accent); font-weight: 725; }
+.tab { color: #4f6573; border-bottom-width: 3px; }
+.tab:hover { color: var(--ink); background: #f1f6f7; }
+.tab[aria-selected="true"] { color: var(--select); background: linear-gradient(#fff0, #e4f3ee); border-bottom-color: var(--accent); font-weight: 750; }
+.tab[aria-selected="true"] .icon { color: var(--accent); }
 .main-body { width: 100%; max-width: 1820px; margin: 0 auto; padding: 20px 23px 24px; flex: 1; }
 .page-head { min-height: 54px; display: flex; justify-content: space-between; gap: 12px; align-items: center; margin: 0 0 14px; }
 .page-titles { min-width: 0; }
@@ -178,8 +199,12 @@ svg.icon { height: 17px; width: 17px; flex: 0 0 auto; stroke: currentColor; stro
 .page-head p { margin-top: 5px; font-size: 12px; color: var(--muted); }
 .segment { background: #eef3f5; border: 1px solid #dbe5ea; display: inline-flex; align-items: stretch; padding: 2px; gap: 2px; border-radius: 6px; flex-shrink: 0; }
 .segment button { background: transparent; border: 1px solid transparent; border-radius: 4px; color: #506675; min-height: 26px; padding: 3px 10px; font-size: 11.5px; font-weight: 650; white-space: nowrap; }
-.segment button:hover:not(:disabled) { color: #143b3a; }
-.segment button[aria-pressed="true"] { border-color: #d0dce2; color: #075d4e; background: #fff; box-shadow: 0 1px 2px #192d4210; }
+.segment button:hover:not(:disabled):not([aria-pressed="true"]) { color: #143b3a; background: #e1eaee; }
+.segment button[aria-pressed="true"] { border-color: var(--select); color: #fff; background: var(--select); box-shadow: 0 1px 3px #0b5c4e40; }
+.segment button[aria-pressed="true"]::before { content: "✓"; margin-right: 5px; font-weight: 800; }
+.basis-segment button { display: inline-flex; align-items: center; gap: 5px; }
+.mode-dots { display: inline-flex; gap: 2px; }
+.mode-dots i { width: 7px; height: 7px; border-radius: 50%; display: inline-block; box-shadow: 0 0 0 1px #fff8; }
 .basis-segment button { padding: 4px 11px; }
 .view-controls { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 8px 14px; margin-bottom: 11px; }
 .view-controls:empty { display: none; }
@@ -214,15 +239,29 @@ input[type="checkbox"] { accent-color: var(--accent); }
 .trace-panel { background: #f8fafb; border-left: 1px solid var(--line); padding: 12px 11px 10px; min-width: 0; }
 .trace-head { display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 7px; min-height: 28px; }
 .trace-head h3 { font-size: 12px; font-weight: 675; }
+.trace-count { font: 600 10.5px var(--mono); color: var(--muted); margin-left: 3px; }
 .trace-head .button { min-height: 26px; padding: 3px 7px; font-size: 10.5px; }
 .trace-head .icon { width: 13px; height: 13px; }
 .trace-list { display: grid; gap: 4px; }
-.trace-row { display: grid; grid-template-columns: 11px minmax(0, 1fr) auto; text-align: left; align-items: center; gap: 7px; width: 100%; background: #fff; border: 1px solid #e0e9ed; border-radius: 5px; padding: 6px 7px; min-height: 34px; }
-.trace-row:hover { border-color: var(--line-dark); }
-.trace-row[aria-pressed="false"] { background: #f2f5f7; color: #697c88; }
-.trace-row[aria-pressed="false"] .trace-dot { opacity: .38; }
+.trace-row { position: relative; display: grid; grid-template-columns: 15px 18px minmax(0, 1fr) auto; text-align: left; align-items: center; gap: 6px; width: 100%; background: #fff; border: 1px solid color-mix(in srgb, var(--trace) 38%, #dfe8ec); border-left: 4px solid var(--trace); border-radius: 5px; padding: 5px 7px 5px 6px; min-height: 34px; }
+.trace-row:hover { box-shadow: 0 0 0 1px color-mix(in srgb, var(--trace) 45%, transparent); }
+.trace-check { width: 15px; height: 15px; border-radius: 3px; display: grid; place-items: center; background: var(--trace); color: #fff; font: 800 10px/1 var(--ui); }
+.trace-check::before { content: "✓"; }
+.trace-row[aria-pressed="false"] { background: #f4f6f8; color: #7a8b96; border: 1px dashed #c3d0d7; border-left: 4px solid #d3dde2; }
+.trace-row[aria-pressed="false"] .trace-check { background: #fff; box-shadow: inset 0 0 0 1.5px #a8b9c3; }
+.trace-row[aria-pressed="false"] .trace-check::before { content: ""; }
+.trace-row[aria-pressed="false"] .trace-dot { --trace: #b4c3cb; }
+.trace-row[aria-pressed="false"] .trace-name { text-decoration: line-through; text-decoration-color: #a9b8c1; }
+.trace-row[aria-pressed="false"] .trace-value { color: #9aa9b2; }
 .trace-name { font: 650 11px var(--mono); overflow: hidden; text-overflow: ellipsis; }
-.trace-dot { width: 9px; height: 3px; border-radius: 4px; background: var(--trace); display: inline-block; flex: 0 0 9px; }
+.trace-dot { width: 18px; height: 3px; background: var(--trace); display: inline-block; flex: 0 0 18px; border-radius: 1px; }
+.trace-dot.is-dashed { background: repeating-linear-gradient(90deg, var(--trace) 0 5px, transparent 5px 8px); }
+.mode-legend { display: flex; flex-wrap: wrap; gap: 4px 9px; margin: 9px 1px 0; font-size: 10.5px; color: #4c6373; }
+.mode-legend span { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+.mode-legend i { width: 9px; height: 9px; border-radius: 2px; background: var(--c); display: inline-block; }
+.mode-legend .line-key { width: 16px; height: 0; border-top: 2.5px solid #5b7383; border-radius: 0; background: none; }
+.mode-legend .line-key.dashed { border-top-style: dashed; }
+.mode-tag { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; padding: 1px 4px; border-radius: 3px; font: 700 10px var(--mono); color: #fff; background: var(--c, #5b7383); }
 .trace-value { font: 500 10.5px var(--mono); white-space: nowrap; color: #425969; }
 .trace-empty { color: var(--muted); font-size: 12px; padding: 5px 1px; }
 .trace-note { margin: 10px 1px 0; color: var(--muted); font-size: 11px; }
@@ -233,7 +272,9 @@ input[type="checkbox"] { accent-color: var(--accent); }
 .marker-heading .icon { color: #5b7484; width: 16px; height: 16px; }
 .marker-controls { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .marker-unit { display: flex; align-items: center; border: 1px solid var(--line); border-radius: 5px; overflow: hidden; background: #fff; }
-.marker-unit.is-active { border-color: #89aeb3; box-shadow: 0 0 0 1px #b9d1d2; }
+.marker-unit.is-active { border-color: var(--select); box-shadow: 0 0 0 2px #0b5c4e2e; }
+.marker-unit.is-active button { background: var(--select); color: #fff; }
+.marker-unit.is-active .marker2 { background: #a5640f; color: #fff; }
 .marker-unit button { border: 0; border-right: 1px solid var(--line); background: #edf3f6; padding: 4px 7px; font: 650 11px var(--mono); min-height: 28px; color: #344e60; }
 .marker-unit .marker2 { background: #fff2d9; color: #77501a; }
 .marker-unit input { width: 95px; height: 28px; border: 0; padding: 2px 6px; font: 500 11px var(--mono); background: #fff; color: var(--ink); }
@@ -308,7 +349,7 @@ input[type="checkbox"] { accent-color: var(--accent); }
 .pair-editor-head h3 { font-size: 13px; }
 .pair-targets, .pair-editor-actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-block: 8px; }
 .pair-targets .button { min-height: 38px; flex: 1 0 105px; justify-content: flex-start; }
-.pair-target[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent-line); color: var(--accent-dark); }
+.pair-target[aria-pressed="true"] { background: var(--select); border-color: var(--select); color: #fff; }
 .assign-ports { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 6px; }
 .assign-port {
   display: grid; align-content: center; position: relative; min-width: 0; min-height: 48px; padding: 6px;
@@ -368,9 +409,20 @@ input[type="checkbox"] { accent-color: var(--accent); }
 .matrix-table tbody th, .matrix-table thead th:first-child { left: 0; }
 .matrix-table thead th:first-child { z-index: 2; }
 .matrix-table td { padding: 2px; border: solid #edf2f4; border-width: 0 1px 1px 0; min-width: 49px; }
-.matrix-cell { background: #f7fafb; border: 1px solid transparent; border-radius: 3px; width: 100%; min-height: 28px; color: #456174; font: inherit; }
-.matrix-cell:hover { border-color: #91b3b9; }
-.matrix-cell[aria-pressed="true"] { background: var(--accent-soft); border-color: #a3d5c7; color: #085949; font-weight: 750; }
+.matrix-cell { --c: #5b7383; --soft: #f5f8fa; background: var(--soft); border: 1px solid transparent; border-radius: 3px; width: 100%; min-height: 30px; color: #3f5a6b; font: inherit; }
+.matrix-cell.fam-dd { --c: var(--mode-d); --soft: var(--mode-d-soft); color: #234b8f; }
+.matrix-cell.fam-cc { --c: var(--mode-c); --soft: var(--mode-c-soft); color: #13603f; }
+.matrix-cell.fam-dc { --c: var(--mode-dc); --soft: var(--mode-dc-soft); color: #8a4a06; }
+.matrix-cell.fam-cd { --c: var(--mode-cd); --soft: var(--mode-cd-soft); color: #8e1f35; }
+.matrix-cell.fam-p { --c: var(--mode-p); --soft: var(--mode-p-soft); color: #563590; }
+.matrix-cell.is-reflection { font-style: italic; }
+.matrix-cell:hover { border-color: var(--c); }
+.matrix-cell[aria-pressed="true"] { background: var(--c); border-color: var(--c); color: #fff; font-weight: 750; font-style: normal; box-shadow: 0 1px 3px color-mix(in srgb, var(--c) 45%, transparent); }
+.matrix-cell[aria-pressed="true"]::before { content: "✓ "; }
+.matrix-table td.block-start, .matrix-table th.block-start { border-left: 2px solid #9fb3bf; }
+.matrix-table tr.block-start > * { border-top: 2px solid #9fb3bf; }
+.matrix-table th .mode-tag { min-width: 26px; }
+.matrix-legend { margin: 0 0 9px; }
 .matrix-meta { color: var(--muted); font-size: 11px; margin-top: 7px; }
 .methods { display: grid; gap: 13px; }
 .methods h3 { font-size: 14px; margin-bottom: 5px; }
@@ -462,7 +514,10 @@ input[type="checkbox"] { accent-color: var(--accent); }
   .trace-panel { border-left: 0; border-top: 1px solid var(--line); padding: 5px 7px 7px; }
   .trace-head { margin-bottom: 3px; }
   .trace-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .trace-row { min-height: 29px; gap: 5px; padding: 4px 5px; }
+  .trace-row { min-height: 31px; gap: 4px; padding: 4px 5px 4px 4px; grid-template-columns: 14px 12px minmax(0, 1fr) auto; }
+  .trace-row .trace-dot { width: 13px; flex-basis: 13px; }
+  .trace-row .trace-dot.is-dashed { background: repeating-linear-gradient(90deg, var(--trace) 0 4px, transparent 4px 6.5px); }
+  .trace-check { width: 14px; height: 14px; }
   .trace-note { margin: 5px 1px 0; }
   .marker-tools { padding: 6px 8px; }
   .marker-heading { font-size: 11px; }
@@ -1729,7 +1784,9 @@ const Plot = (() => {
       }
       flush();
     }
-    ctx.strokeStyle = trace.color; ctx.lineWidth = 1.7; ctx.lineJoin = 'round'; ctx.stroke();
+    ctx.setLineDash(trace.dash || []);
+    ctx.strokeStyle = trace.color; ctx.lineWidth = trace.dash ? 1.8 : 1.7; ctx.lineJoin = 'round'; ctx.stroke();
+    ctx.setLineDash([]);
     if (seen === 1) dot(...lastPoint, trace.color);
   }
 
@@ -2176,7 +2233,8 @@ const Plot = (() => {
     ec.drawImage(canvas, 0, header, canvas.clientWidth, canvas.clientHeight);
     visible.forEach((t, i) => {
       const x = 16 + (i % cols) * 143, y = header + canvas.clientHeight + Math.floor(i / cols) * lineHeight + 7;
-      ec.fillStyle = t.color; ec.fillRect(x, y - 6, 12, 2);
+      ec.setLineDash(t.dash ? [4, 2.5] : []); ec.strokeStyle = t.color; ec.lineWidth = 2;
+      ec.beginPath(); ec.moveTo(x, y - 4); ec.lineTo(x + 14, y - 4); ec.stroke(); ec.setLineDash([]);
       ec.fillStyle = ink; ec.font = '11px ' + monoFont; ec.fillText(t.label, x + 17, y, 116);
     });
     return new Promise(resolve => exportCanvas.toBlob(resolve, 'image/png'));
@@ -2200,6 +2258,29 @@ const Plot = (() => {
   const pressed = value => ' aria-pressed="' + Boolean(value) + '"';
   const options = (items, selected) => items.map(([key, label]) =>
     '<option value="' + esc(key) + '"' + (String(key) === String(selected) ? ' selected' : '') + '>' + esc(label) + '</option>').join('');
+  // Mixed-mode colour families: differential blue, common mode green, conversion C→D (Sdc, immunity) amber,
+  // conversion D→C (Scd, emission) crimson, single-ended ports violet. Reflections dashed, transmissions solid.
+  const MODE_PALETTE = {
+    dd: ['#1f5fd1', '#5b8ee6', '#163f8c', '#3d78dc', '#2a4fa8', '#86aaf0'],
+    cc: ['#08875a', '#3fb07f', '#055e3e', '#21a06c', '#2c7a52', '#78c9a2'],
+    dc: ['#e07b0f', '#b45f06', '#f2a23f', '#8a4705'],
+    cd: ['#c62f4b', '#962036', '#e0687f', '#701628'],
+    p: ['#7a4fc2', '#a07bdc', '#55348f', '#8d63cf', '#6a45a9', '#c1a5ea']
+  };
+  const MODE_COLOR = { D: 'var(--mode-d)', C: 'var(--mode-c)', P: 'var(--mode-p)' };
+  const REFLECTION_DASH = [6, 4];
+
+  function traceFamily(row, col) {
+    if (row.type === 'P' && col.type === 'P') return 'se';
+    if (row.type === 'P' || col.type === 'P') return 'p';
+    if (row.type !== col.type) return row.type === 'D' ? 'dc' : 'cd';
+    return row.type === 'D' ? 'dd' : 'cc';
+  }
+
+  function modeMarkup(text) {
+    return text.replace(/\b(D\d+)/g, '<b class="d">$1</b>').replace(/\b(C\d+)/g, '<b class="c">$1</b>');
+  }
+
   const COLORS = ['#3266ce', '#008879', '#a26016', '#8a55b6', '#ca5260', '#4f842f', '#157eab', '#a04d7b', '#967234', '#5059a8', '#47616d', '#bb6235', '#007385', '#6b4d33', '#a32c63', '#6b7428'];
   const MAX_TRACES = COLORS.length;
   const TABS = { s: 'S-Parameter', ports: 'Ports & Lasten', smith: 'Smith-Chart', z: 'Impedanz', cispr: 'CISPR 17', cmc: 'CMC-Modell' };
@@ -2696,7 +2777,7 @@ const Plot = (() => {
           '" title="' + esc(tooltip) + '"><span class="net-chip">' + portName(i) +
           (label ? '<em>' + esc(label) + '</em>' : '') + '</span></div>';
       }).join('');
-      return '<div class="net-group">' + (item.title ? '<span class="net-pair">' + esc(item.title) + '</span>' : '') + wires + '</div>';
+      return '<div class="net-group">' + (item.title ? '<span class="net-pair">' + modeMarkup(esc(item.title)) + '</span>' : '') + wires + '</div>';
     };
     const left = limited.filter((_, i) => i % 2 === 0).map(group).join('');
     const right = limited.filter((_, i) => i % 2 === 1).map(group).join('');
@@ -2957,8 +3038,9 @@ const Plot = (() => {
     $('basis-control').innerHTML = showBasis
       ? '<div class="segment basis-segment" aria-label="Portbasis">' +
         actionButton('Single Ended', 'basis', 'se', '', '', pressed(state.basis === 'se')) +
-        actionButton('Mixed Mode', 'basis', 'mm', '', '', pressed(state.basis === 'mm') + disabled(!state.layout.hasMixed) +
-          (!state.layout.hasMixed ? ' title="Lege zuerst ein Portpaar an"' : '')) + '</div>'
+        '<button type="button" data-action="basis" data-value="mm"' + pressed(state.basis === 'mm') + disabled(!state.layout.hasMixed) +
+          (!state.layout.hasMixed ? ' title="Lege zuerst ein Portpaar an"' : ' title="Differential (D), Gleichtakt (C) und Modenkonversion"') +
+          '>Mixed Mode<span class="mode-dots" aria-hidden="true"><i style="background:var(--mode-d)"></i><i style="background:var(--mode-c)"></i><i style="background:var(--mode-dc)"></i><i style="background:var(--mode-cd)"></i></span></button></div>'
       : '';
     const isConfig = state.tab === 'ports';
     $('config-panel').hidden = !isConfig;
@@ -3148,10 +3230,18 @@ const Plot = (() => {
   function sView() {
     const view = getView();
     const indexes = new Map(view.modes.map((mode, i) => [mode.key, i]));
+    const used = {};
     const traces = state.sKeys[state.basis].map((key, i) => {
       const [row, col] = key.split(':').map(k => indexes.get(k));
       const data = extractS(view, row, col);
-      return rawTrace('s:' + state.basis + ':' + key, traceLabel(view.modes[row], view.modes[col]), COLORS[i], data, state.sFormat);
+      const r = view.modes[row], c = view.modes[col];
+      const family = traceFamily(r, c);
+      const ramp = MODE_PALETTE[family];
+      const color = ramp ? ramp[(used[family] = (used[family] ?? -1) + 1) % ramp.length] : COLORS[i];
+      const trace = rawTrace('s:' + state.basis + ':' + key, traceLabel(r, c), color, data, state.sFormat);
+      trace.family = family;
+      trace.dash = row === col ? REFLECTION_DASH : null;
+      return trace;
     });
     return {
       ...withUnits(traces, state.sFormat), title: 'Frequenzgang', caption: 'Zeile = Antwort · Spalte = Anregung',
@@ -3164,7 +3254,7 @@ const Plot = (() => {
     const view = getView(), i = view.modes.findIndex(m => m.key === state.smith);
     const mode = view.modes[i];
     const data = extractS(view, i, i);
-    const trace = rawTrace('smith:' + mode.key, traceLabel(mode, mode), COLORS[0], data, 'mag');
+    const trace = rawTrace('smith:' + mode.key, traceLabel(mode, mode), mode.type === 'C' ? MODE_PALETTE.cc[0] : mode.type === 'D' ? MODE_PALETTE.dd[0] : COLORS[0], data, 'mag');
     return {
       traces: [trace], title: 'Smith-Diagramm', caption: 'Normierung · ' + modeLabel(mode),
       format: 'mag', unit: '', native: '', smith: true, smithRef: mode.ref
@@ -3521,12 +3611,28 @@ const Plot = (() => {
     const pick = state.tab === 's' ? actionButton('Wählen', 'matrix', '', 'button', 'grid', ' aria-label="Kurven wählen"') : '';
     const list = view.traces.map(trace =>
       '<button type="button" class="trace-row" data-action="toggle-trace" data-value="' + esc(trace.key) + '"' + pressed(trace.visible) +
-      ' title="' + esc(trace.label + (trace.visible ? ' ausblenden' : ' einblenden')) + '"><span class="trace-dot" style="--trace:' + trace.color +
-      '"></span><span class="trace-name">' + esc(trace.label) + '</span><span class="trace-value">' +
+      ' style="--trace:' + trace.color + '" title="' + esc(trace.label + (trace.visible ? ' ausblenden' : ' einblenden')) + '">' +
+      '<span class="trace-check" aria-hidden="true"></span><span class="trace-dot' + (trace.dash ? ' is-dashed' : '') + '"></span>' +
+      '<span class="trace-name">' + esc(trace.label) + '</span><span class="trace-value">' +
       esc(valueWith(traceValue(trace, marker), view.unit)) + '</span></button>').join('');
-    $('trace-panel').innerHTML = '<div class="trace-head"><h3>Kurven</h3>' + pick + '</div>' +
-      (list ? '<div class="trace-list">' + list + '</div><p class="trace-note">Werte an M' + (state.activeMarker + 1) + '</p>' :
+    const shown = view.traces.filter(t => t.visible).length;
+    $('trace-panel').innerHTML = '<div class="trace-head"><h3>Kurven <small class="trace-count">' + shown + '/' + view.traces.length + '</small></h3>' + pick + '</div>' +
+      (list ? '<div class="trace-list">' + list + '</div>' + traceLegend(view) + '<p class="trace-note">Werte an M' + (state.activeMarker + 1) +
+        ' · Antippen blendet ein/aus</p>' :
         '<p class="trace-empty">Wähle Matrixelemente, um sie einzublenden.</p>');
+  }
+
+  function traceLegend(view) {
+    if (state.tab !== 's') return '';
+    const families = new Set(view.traces.map(t => t.family));
+    const items = [
+      ['dd', 'var(--mode-d)', 'DD Differential'], ['cc', 'var(--mode-c)', 'CC Gleichtakt'],
+      ['dc', 'var(--mode-dc)', 'Sdc C→D'], ['cd', 'var(--mode-cd)', 'Scd D→C'], ['p', 'var(--mode-p)', 'Einzelport']
+    ].filter(([family]) => families.has(family));
+    const lines = view.traces.some(t => t.dash) && view.traces.some(t => !t.dash)
+      ? '<span><i class="line-key"></i>Transmission</span><span><i class="line-key dashed"></i>Reflexion</span>' : '';
+    if (!items.length && !lines) return '';
+    return '<div class="mode-legend">' + items.map(([, color, label]) => '<span><i style="--c:' + color + '"></i>' + label + '</span>').join('') + lines + '</div>';
   }
 
   function markerInput(i) {
@@ -3565,7 +3671,7 @@ const Plot = (() => {
       const raw = complexAt(t.complex, active);
       let delta = second - first;
       if (view.format === 'phase' && Number.isFinite(delta)) delta = ((delta + 180) % 360 + 360) % 360 - 180;
-      return '<tr><td><span class="table-name"><span class="trace-dot" style="--trace:' + t.color + '"></span>' + esc(t.label) +
+      return '<tr><td><span class="table-name"><span class="trace-dot' + (t.dash ? ' is-dashed' : '') + '" style="--trace:' + t.color + '"></span>' + esc(t.label) +
         '</span></td><td>' + esc(valueWith(first, view.unit)) + '</td>' +
         (hasSecond ? '<td>' + esc(valueWith(second, view.unit)) + '</td><td>' + esc(valueWith(delta, view.unit)) + '</td>' : '') +
         (anyComplex ? '<td>' + esc(complexText(raw, view.native)) + '</td>' : '') +
@@ -3651,13 +3757,25 @@ const Plot = (() => {
     const modes = currentModes();
     const modalCount = modes.filter(mode => mode.type !== 'P').length;
     const selected = state.sKeys[state.basis];
-    const cells = modes.map((row, i) => '<tr><th scope="row" title="' + esc(modeLabel(row)) + '">' + esc(row.key) + '</th>' +
+    const blockStart = i => i > 0 && modes[i].type !== modes[i - 1].type ? ' class="block-start"' : '';
+    const familyName = {
+      dd: 'Differential → Differential', cc: 'Gleichtakt → Gleichtakt',
+      dc: 'Konversion Gleichtakt → Differential (Störfestigkeit)', cd: 'Konversion Differential → Gleichtakt (Abstrahlung)',
+      p: 'mit Einzelport', se: 'Single Ended'
+    };
+    const tag = mode => '<span class="mode-tag" style="--c:' + MODE_COLOR[mode.type] + '">' + esc(mode.key) + '</span>';
+    const cells = modes.map((row, i) => '<tr' + blockStart(i) + '><th scope="row" title="' + esc(modeLabel(row)) + '">' + tag(row) + '</th>' +
       modes.map((col, j) => {
-        const key = traceKey(row, col), label = traceLabel(row, col);
-        return '<td><button class="matrix-cell" type="button" id="matrix-' + i + '-' + j + '" data-action="select-curve" data-value="' +
-          esc(key) + '"' + pressed(selected.includes(key)) + ' title="' + esc(row.key + ' ← ' + col.key) + '">' +
+        const key = traceKey(row, col), label = traceLabel(row, col), family = traceFamily(row, col);
+        return '<td' + blockStart(j) + '><button class="matrix-cell fam-' + family + (i === j ? ' is-reflection' : '') + '" type="button" id="matrix-' + i + '-' + j +
+          '" data-action="select-curve" data-value="' + esc(key) + '"' + pressed(selected.includes(key)) +
+          ' title="' + esc(row.key + ' ← ' + col.key + ' · ' + familyName[family] + (i === j ? ' · Reflexion' : ' · Transmission')) + '">' +
           esc(label) + '</button></td>';
       }).join('') + '</tr>').join('');
+    const legend = state.basis === 'mm'
+      ? '<div class="mode-legend matrix-legend"><span><i style="--c:var(--mode-d)"></i>DD Differential</span><span><i style="--c:var(--mode-c)"></i>CC Gleichtakt</span>' +
+        '<span><i style="--c:var(--mode-dc)"></i>Sdc C→D · Störfestigkeit</span><span><i style="--c:var(--mode-cd)"></i>Scd D→C · Abstrahlung</span>' + (modes.some(m => m.type === 'P') ? '<span><i style="--c:var(--mode-p)"></i>Einzelport</span>' : '') +
+        '<span>Zeile = Antwort · Spalte = Anregung · Diagonale = Reflexion</span></div>' : '';
     const content = $('matrix-content');
     const previous = content.querySelector('.matrix-scroll');
     const position = previous ? [previous.scrollLeft, previous.scrollTop] : [0, 0];
@@ -3667,9 +3785,9 @@ const Plot = (() => {
       (state.basis === 'mm' ? actionButton('Modenkonversion', 'curve-preset', 'convert') : '') +
       (modes.length ** 2 <= MAX_TRACES ? actionButton('Alle ' + modes.length ** 2, 'curve-preset', 'all') : '') +
       (modalCount === 4 && modes.length > 4 ? actionButton('16 Mixed Mode', 'curve-preset', 'modal-all') : '') +
-      actionButton('Leeren', 'curve-preset', 'clear') + '</div><div class="matrix-scroll">' +
+      actionButton('Leeren', 'curve-preset', 'clear') + '</div>' + legend + '<div class="matrix-scroll">' +
       '<table class="matrix-table"><thead><tr><th scope="col">↓ / →</th>' +
-      modes.map(mode => '<th scope="col" title="' + esc(modeLabel(mode)) + '">' + esc(mode.key) + '</th>').join('') +
+      modes.map((mode, j) => '<th scope="col"' + blockStart(j) + ' title="' + esc(modeLabel(mode)) + '">' + tag(mode) + '</th>').join('') +
       '</tr></thead><tbody>' + cells + '</tbody></table></div><p class="matrix-meta">' + selected.length + ' / ' + MAX_TRACES + ' Kurven ausgewählt</p>');
     content.querySelector('.matrix-scroll').scrollTo(...position);
   }
