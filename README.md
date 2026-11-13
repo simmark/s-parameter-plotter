@@ -57,6 +57,43 @@ Die letzten 6 Dateien (je bis 30 MB) bleiben mit Portkonfiguration, Ansicht und 
 
 Windows: Installationssymbol in der Adressleiste von Chrome oder Edge. iPhone: Safari **Teilen → Zum Home-Bildschirm**.
 
+## Simulator (in Arbeit)
+
+`simulator.html` ist eine zweite Seite im selben Repo: kleine lineare Schaltungen im Frequenzbereich lösen und gegen Single-Pair-Ethernet-Grenzwerte prüfen. Stand: Rechenkern mit Textnetzliste, 10BASE-T1L als erster Standard. Der grafische Editor folgt später.
+
+**Öffnen:** https://simmark.github.io/s-parameter-plotter/simulator.html
+
+| Datei | Inhalt |
+|---|---|
+| `sim/rf-core.js` | Rechenkern des Analyzers, erzeugt aus `index.html` mit `python tools/extract_core.py` |
+| `sim/sim-core.js` | Netzliste, modifizierte Knotenanalyse, Touchstone-Blöcke, Mixed Mode |
+| `sim/limits.js` | Grenzkurven als Daten, jede mit Quelle und Prüfstatus |
+| `sim/templates.js` | Vorlagen (10BASE-T1L MDI, Lagevergleich der Gleichtaktdrossel, Speisung, Touchstone-Block) |
+| `sim/data/` | Öffentliche Messdaten von Würth Elektronik: `74930000.s7p` (WE-STST), `744235251.s4p` (WE-CNSW). Der Simulator lädt sie bei Bedarf nach |
+| `tests/` | `python tests/reference.py` rechnet die Referenz mit numpy und scikit-rf, `node tests/run-tests.js` vergleicht |
+
+Netzliste (Werte wie in SPICE, `1m` = Milli, `1Meg` = Mega, Masse = `0`):
+
+```
+R1 a b 50                 Widerstand
+C1 a b 100n esr=0.02      Kondensator, optional esr= esl=
+L1 a b 470u rs=0.1        Spule, optional rs= cp= rp=
+K1 L1 L2 0.998            Kopplung zweier Spulen (Punkt am 1. Knoten)
+T1 p+ p- s+ s- 2          idealer Übertrager, ü = Up/Us
+S1 n1 n2 n3 n4 ref=0 file=datei.s4p   Touchstone-Block
+P1 mdi_p 0 50             Port mit Bezugsimpedanz
+.pair 1 2                 Ports 1 und 2 als Mixed-Mode-Paar
+.sweep log 100k 20MHz 401
+.standard 10BASE-T1L [powered]
+```
+
+Portbelegung der mitgelieferten Dateien (aus den Messdaten bestimmt, nicht aus der Skizze im Dateikopf):
+
+- `74930000.s7p`: P1 und P3 sind die Enden der Wicklung mit Mittelanzapfung P2. Die zweite Seite besteht aus den Hälften P5–P4 und P7–P6; mit P5 + P6 verbunden liegen die Enden an P7 (gleichphasig zu P1) und P4.
+- `744235251.s4p`: Die Wicklungen liegen zwischen P1–P2 und P3–P4. Ein Leiterpaar ist also (P1, P3) auf der einen und (P2, P4) auf der anderen Seite. Die Datei beginnt bei 300 kHz.
+
+Grenzen: nur lineare Kleinsignalanalyse, Touchstone-Blöcke werden nicht extrapoliert, und der Simulator ist noch nicht im Offline-Cache der App (`sw.js`, `tools/build.py`). Nach einer Änderung am Rechenkern in `index.html` muss `tools/extract_core.py` neu laufen.
+
 ## GitHub Pages
 
 Settings → Pages → *Deploy from a branch* → `main` / `(root)`.
