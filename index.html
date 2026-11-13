@@ -670,6 +670,48 @@ html[lang="en"] .lang-de, html[lang="de"] .lang-en { display: none !important; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
 }
+
+/* Session list, comparison and port profile */
+.session-files { margin-top: 10px; min-width: 0; }
+.session-files h4 { margin: 0 0 4px; font-size: 11px; font-weight: 670; color: #666459; display: flex; align-items: center; gap: 5px; }
+.session-files h4 small { font-weight: 600; color: var(--muted); }
+.session-tools { margin-left: auto; display: flex; align-items: center; gap: 2px; }
+.session-tools .icon-button { width: 26px; height: 24px; min-height: 24px; }
+.session-tools .quiet-button { font-size: 10.5px; padding: 2px 4px; color: var(--muted); }
+[data-flip] .icon { transform: rotate(180deg); }
+.session-filter { width: 100%; min-height: 28px; margin-bottom: 4px; font-size: 11.5px; }
+.session-list { display: grid; gap: 2px; max-height: 300px; overflow: auto; padding-right: 2px; }
+.session-folder { font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing: .02em; padding: 5px 2px 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.session-row { display: grid; grid-template-columns: minmax(0, 1fr) 26px; gap: 2px; }
+.session-open { min-width: 0; display: flex; align-items: center; gap: 6px; min-height: 28px; padding: 3px 7px; border: 1px solid var(--line); border-radius: 5px; background: #ffffff; text-align: left; font-size: 11.5px; }
+.session-open span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+.session-open small { color: var(--muted); font-size: 10px; }
+.session-open:hover { border-color: var(--accent-line); background: var(--accent-soft); }
+.session-row.is-current .session-open { border-color: var(--accent); border-left: 4px solid var(--accent); background: var(--accent-soft); }
+.session-row.has-error .session-open span { color: #a23b2c; text-decoration: line-through; }
+.session-compare { border: 1px solid var(--line); border-radius: 5px; background: #ffffff; color: var(--muted); font-size: 11px; font-weight: 700; }
+.session-compare:hover { border-color: var(--accent-line); color: var(--accent-dark); }
+.session-compare[aria-pressed="true"] { background: var(--fc, var(--ink)); border-color: var(--fc, var(--ink)); color: #ffffff; }
+.file-nav { display: flex; align-items: center; gap: 2px; margin-left: 6px; }
+.file-nav[hidden] { display: none; }
+.file-nav .icon-button { width: 30px; height: 30px; min-height: 30px; }
+.file-nav span { font-size: 11px; color: var(--muted); min-width: 34px; text-align: center; }
+.compare-chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 4px 3px 10px; border: 1px solid var(--accent-line); border-radius: 999px; background: var(--accent-soft); font-size: 11.5px; font-weight: 650; align-self: end; }
+.compare-chip .button { min-height: 26px; padding: 3px 8px; font-size: 11px; }
+.compare-chip .button[aria-pressed="true"] { background: var(--ink); color: #ffffff; border-color: var(--ink); }
+.compare-chip .icon-button { width: 26px; height: 26px; min-height: 26px; }
+.profile-card { margin-bottom: 13px; }
+.profile-status { font-weight: 650; color: var(--accent-dark); }
+.profile-form { display: flex; flex-wrap: wrap; align-items: end; gap: 8px; }
+.profile-form .control { flex: 1 1 190px; max-width: 320px; }
+.profile-form .button { display: inline-flex; align-items: center; gap: 5px; }
+.template-chip { border-color: var(--accent-line); }
+.template-list { margin-top: 8px; font-size: 11.5px; }
+.template-list summary { cursor: pointer; font-weight: 650; color: #57554e; }
+.template-list ul { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 3px; }
+.template-list li { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 3px 4px 3px 8px; border: 1px solid var(--line); border-radius: 6px; }
+.template-list .icon-button { width: 26px; height: 26px; min-height: 26px; }
+.profile-badge { background: #ecf3ec; color: #2f6b3a; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
 </style>
 <script>
 'use strict';
@@ -678,6 +720,18 @@ window.I18N = (() => {
   let lang = 'de';
   try { lang = localStorage.getItem('spa-lang') || ((navigator.language || 'de').toLowerCase().startsWith('de') ? 'de' : 'en'); } catch { /* default */ }
   const EXACT = new Map(Object.entries({
+    'Dateien öffnen': 'Open files', 'Touchstone · ZIP · auch mehrere': 'Touchstone · ZIP · several at once', 'Ordner öffnen': 'Open folder',
+    'Dateien': 'Files', 'Einzelne Dateien': 'Single files', 'Filtern …': 'Filter …', 'Dateien filtern': 'Filter files', 'Kein Treffer.': 'No match.',
+    'Im Diagramm vergleichen': 'Compare in the plot', 'Vorherige Datei (Bild↑)': 'Previous file (PgUp)', 'Nächste Datei (Bild↓)': 'Next file (PgDn)',
+    'Vorherige Datei': 'Previous file', 'Nächste Datei': 'Next file', 'Nachbardateien aus dem Ordner laden': 'Load neighbouring files from the folder',
+    'Port-Profil': 'Port profile', 'Bauteiltyp': 'Component type', 'z. B. CMC, LAN-Übertrager': 'e.g. CMC, LAN transformer', 'In Datei speichern': 'Save to file',
+    'Als Vorlage lernen': 'Learn as template', 'Vorlagen prüfen': 'Check templates', 'Passende Vorlagen': 'Matching templates', 'Gelernte Vorlagen': 'Learned templates',
+    'Vergleich beenden': 'End comparison', 'Δ zu ⟨A⟩': 'Δ to ⟨A⟩', 'Differenz zur geöffneten Datei anzeigen': 'Show the difference to the open file', 'Profil aus Datei': 'Profile from file',
+    'Keine Touchstone-Dateien gefunden.': 'No Touchstone files found.', 'Öffne zuerst eine Touchstone-Datei.': 'Open a Touchstone file first.',
+    'Es gibt noch keine gelernten Vorlagen.': 'There are no learned templates yet.',
+    'Keine gelernte Vorlage passt zu dieser Portzahl und diesem Frequenzbereich.': 'No learned template fits this port count and frequency range.',
+    'Die geöffnete Datei ist die Referenz ⟨A⟩. Wähle weitere Dateien zum Vergleich.': 'The open file is the reference ⟨A⟩. Pick further files to compare.',
+    'Paare, Abschlüsse, Bezugsimpedanzen und Kurvenauswahl stehen als lesbarer Kommentarblock in der Touchstone-Datei (TS 2.x: im Block [Begin Information]) und werden beim nächsten Öffnen übernommen. Eine gelernte Vorlage erkennt ähnliche Bauteile am Verhalten, auch bei anderer Portreihenfolge.': 'Pairs, terminations, reference impedances and curve selection are stored as a readable comment block in the Touchstone file (TS 2.x: inside [Begin Information]) and are applied the next time it is opened. A learned template recognizes similar components by their behaviour, even with a different port order.',
     'Messnetzwerk': 'Network', 'Datei öffnen': 'Open file', 'Touchstone · .sNp / .ts': 'Touchstone · .sNp / .ts',
     'CMC-Beispiel': 'CMC example', '8-Port-Beispiel': '8-port example', 'Portschema': 'Port diagram', 'Ports bearbeiten': 'Edit ports',
     'Zuletzt geöffnet': 'Recently opened', 'Leeren': 'Clear', 'Frequenz': 'Frequency', 'Punkte': 'Points', 'Dateireferenz': 'File reference',
@@ -826,6 +880,15 @@ window.I18N = (() => {
     'S-Parameter Analyzer · von': 'S-Parameter Analyzer · by', 'S-Analyzer': 'S-Analyzer', 'S-Parameter Analyzer': 'S-Parameter Analyzer'
   }));
   const PATTERNS = [
+    [/^Vorlage „(.+)“ erkannt · (\d+) % · Ports automatisch zugeordnet$/, 'Template "$1" recognized · $2 % · ports assigned automatically'],
+    [/^Vorlage „(.+)“ angewendet · (\d+) %$/, 'Template "$1" applied · $2 %'],
+    [/^Vorlage „(.+)“ gelernt\. Ähnliche (\d+)-Port-Dateien werden künftig automatisch zugeordnet\.$/, 'Template "$1" learned. Similar $2-port files will be assigned automatically from now on.'],
+    [/^Vorlage (.+) löschen$/, 'Delete template $1'], [/^Vorlage (.+)$/, 'Template $1'],
+    [/^Profil in (.+) gespeichert\. Vorlage „(.+)“ gelernt\.$/, 'Profile saved to $1. Template "$2" learned.'], [/^Profil in (.+) gespeichert\.$/, 'Profile saved to $1.'],
+    [/^Kopie mit Profil heruntergeladen: (.+) Vorlage „(.+)“ gelernt\.$/, 'Copy with profile downloaded: $1 Template "$2" learned.'], [/^Kopie mit Profil heruntergeladen: (.+)$/, 'Copy with profile downloaded: $1'],
+    [/^(\d+) Dateien geladen · Bild↑\/Bild↓ blättert$/, '$1 files loaded · PgUp/PgDn steps through'], [/^(\d+) Dateien im Ordner · Bild↑\/Bild↓ blättert$/, '$1 files in the folder · PgUp/PgDn steps through'],
+    [/^Vergleich · (\d+) Dateien$/, 'Comparison · $1 files'], [/^(.+) vergleichen$/, 'Compare $1'],
+    [/^Es lassen sich höchstens (\d+) Dateien vergleichen\.$/, 'At most $1 files can be compared.'], [/^\+(\d+) weitere · Filter nutzen$/, '+$1 more · use the filter'],
     [/^Paar (\d+) bearbeiten$/, 'Edit pair $1'], [/^Polarität von Paar (\d+) tauschen$/, 'Swap polarity of pair $1'], [/^Paar (\d+) auflösen$/, 'Remove pair $1'],
     [/^Last an (P\d+) bearbeiten$/, 'Edit load at $1'], [/^Abschluss (P\d+)$/, 'Termination $1'],
     [/^Marker (\d) wählen$/, 'Select marker $1'], [/^Marker (\d) entfernen$/, 'Remove marker $1'], [/^Frequenz M(\d)$/, 'Frequency M$1'],
@@ -847,6 +910,16 @@ window.I18N = (() => {
     [/^Ungültige Zahl: (.+)$/, 'Invalid number: $1']
   ];
   const PHRASES = Object.entries({
+    'Zeile = Antwort · Spalte = Anregung': 'Row = response · column = stimulus',
+    'Noch kein Profil': 'No profile yet', 'In der Datei gespeichert': 'Stored in the file', 'Auf diesem Gerät gemerkt': 'Remembered on this device',
+    'Von der vorherigen Datei übernommen': 'Carried over from the previous file', 'Bekanntes Bauteil': 'Known component', 'Vorlage erkannt': 'Template recognized',
+    ' % Übereinstimmung': ' % match', ' · geändert': ' · modified', ' Beispiele': ' examples', ' Beispiel': ' example', ' · Differenz zu ⟨A⟩': ' · difference to ⟨A⟩',
+    'Portzahl weicht ab und die Datei hat kein eigenes Profil.': 'Port count differs and the file has no profile of its own.',
+    'Die Datei überschreitet 100 MiB.': 'The file exceeds 100 MiB.', 'Kein lesbares ZIP-Archiv.': 'Not a readable ZIP archive.',
+    'ZIP64-Archive werden nicht unterstützt.': 'ZIP64 archives are not supported.', 'Verschlüsselte ZIP-Einträge werden nicht unterstützt.': 'Encrypted ZIP entries are not supported.',
+    'Diese ZIP-Kompression wird hier nicht unterstützt.': 'This ZIP compression is not supported here.',
+    'Der Frequenzbereich ist für einen Fingerabdruck zu schmal.': 'The frequency range is too narrow for a fingerprint.',
+    'Die Portkonfiguration lässt sich nicht auswerten.': 'The port configuration cannot be evaluated.', 'Die Prüfung der neuen Datei ist fehlgeschlagen.': 'The check of the new file failed.',
     'Automatisch erkannt: ': 'Detected automatically: ', 'Automatisch · ': 'Automatic · ', '(galvanisch getrennt)': '(galvanically isolated)', '(Gleichtakt galvanisch verbunden)': '(common mode galvanically connected)',
     'Übertrager': 'Transformer', ' bei ': ' at ', 'Paar ': 'Pair ', 'Paarweise Renormierung · ': 'Pairwise renormalization · ', ' · OCL bei ': ' · OCL at ',
     'Lσ-Plateau ': 'Lσ plateau ', ' · Vertrauen ': ' · confidence ', ' · Cww-Band ': ' · Cww band ', ' · Polarität invertiert': ' · polarity inverted', ' · angepasst': ' · custom',
@@ -993,6 +1066,7 @@ window.I18N = (() => {
     <span class="brand-name"><span class="brand-long">S-Parameter Analyzer</span><span class="brand-short">S-Analyzer</span></span>
   </div>
   <button type="button" class="file-chip" id="file-chip" data-action="toggle-sidebar" aria-label="Datei und Portschema"><svg class="icon" aria-hidden="true"><use href="#i-file"/></svg><span id="file-chip-name">—</span><svg class="icon chip-caret" aria-hidden="true"><use href="#i-down"/></svg></button>
+  <div class="file-nav" id="file-nav" hidden><button type="button" class="icon-button" data-action="session-step" data-value="-1" data-flip title="Vorherige Datei (Bild↑)" aria-label="Vorherige Datei"><svg class="icon" aria-hidden="true"><use href="#i-chevron"/></svg></button><span id="file-nav-count" class="mono"></span><button type="button" class="icon-button" data-action="session-step" data-value="1" title="Nächste Datei (Bild↓)" aria-label="Nächste Datei"><svg class="icon" aria-hidden="true"><use href="#i-chevron"/></svg></button></div>
   <div class="bar-actions">
     <button class="bar-button lang-button" type="button" id="lang-button" data-action="lang" data-no-i18n title="Sprache: Deutsch / English" aria-label="Sprache wechseln"><span class="lang-code">EN</span></button>
     <button class="bar-button" id="pwa-install" type="button" title="App installieren" aria-label="App installieren" hidden><svg class="icon" aria-hidden="true"><use href="#i-install"/></svg><span>Installieren</span></button>
@@ -1013,16 +1087,19 @@ window.I18N = (() => {
     </div>
     <div class="sidebar-inner">
       <div class="source-section">
-        <input type="file" id="file-input" hidden>
+        <input type="file" id="file-input" multiple hidden>
+        <input type="file" id="folder-input" webkitdirectory multiple hidden>
         <button id="dropzone" class="dropzone" type="button">
           <span class="drop-icon"><svg class="icon" aria-hidden="true"><use href="#i-upload"/></svg></span>
-          <span><strong>Datei öffnen</strong><small>Touchstone · .sNp / .ts</small></span>
+          <span><strong>Dateien öffnen</strong><small>Touchstone · ZIP · auch mehrere</small></span>
         </button>
         <div id="dataset-summary" class="dataset-summary"></div>
         <div class="source-actions">
+          <button type="button" class="quiet-button" data-action="open-folder">Ordner öffnen</button>
           <button type="button" class="quiet-button" data-action="demo" data-value="4">CMC-Beispiel</button>
           <button type="button" class="quiet-button" data-action="demo" data-value="8">8-Port-Beispiel</button>
         </div>
+        <div id="session-files" class="session-files" hidden></div>
         <div id="recent-files" class="recent-files" hidden></div>
         <p id="import-notice" class="inline-notice" role="alert" hidden></p>
       </div>
@@ -1186,6 +1263,12 @@ window.I18N = (() => {
       <p>Danach folgen die Renormierung der aktiven Ports und die Wellentransformation mit <code>(a+ − a−)/√2</code> für DM und <code>(a+ + a−)/√2</code> für CM. Bei ungleichen Referenzen innerhalb eines Paares wird auf ihr geometrisches Mittel renormiert. Aus der gemeinsamen SE-Referenz R ergeben sich <code>Z₀,DM = 2R</code> und <code>Z₀,CM = R/2</code>.</p>
     </section>
     <section>
+      <h3>Port-Profil, Vorlagen und Dateivergleich</h3>
+      <p>„In Datei speichern“ schreibt Paare, Abschlüsse, Bezugsimpedanzen, Ansicht und Kurvenauswahl als Kommentarblock <code>! [SPA-Port-Profile] 1 … ! [End SPA-Port-Profile]</code> in die Touchstone-Datei. Bei Touchstone 1.x steht der Block am Dateianfang, bei 2.x innerhalb von <code>[Begin Information]</code>/<code>[End Information]</code>. Die Messdaten bleiben unverändert; andere Programme überlesen Kommentare. Das standardisierte Port-Mapping von Touchstone 3.0 ist noch ein Entwurf und wird deshalb nicht geschrieben.</p>
+      <p>Eine gelernte Vorlage speichert einen Fingerabdruck: |Sdd|, |Scc| und die Modenkonversion aller Paare auf einem festen logarithmischen Frequenzraster (4 Punkte je Dekade). Für eine neue Datei mit gleicher Portzahl werden alle Zuordnungen der Ports zu den Rollen der Vorlage durchgerechnet (höchstens 3000). Die Zuordnung mit der kleinsten mittleren Abweichung in dB gewinnt und wird bis 5 dB automatisch übernommen. Die Polarität folgt aus dem Vorzeichen von Sdd im Durchlassbereich.</p>
+      <p>Im Vergleich werden die Kurven der anderen Dateien linear auf das Frequenzraster der geöffneten Datei ⟨A⟩ interpoliert. Dateien mit eigenem Profil verwenden dieses, alle anderen die Portkonfiguration von ⟨A⟩.</p>
+    </section>
+    <section>
       <h3>Impedanz und Ersatzgrößen</h3>
       <p>Die Reflexionsimpedanz ist <code>Zin = Z₀(1 + Sii)/(1 − Sii)</code> bei angepassten übrigen aktiven Ports. Die Z-Matrix beschreibt Leerlaufparameter und Z₂₁ ist die Transferimpedanz. Für eine reine Serien-Fixture gilt <code>Zserie = 2Z₀(1/S21 − 1)</code>, für eine reine Shunt-Fixture <code>Zshunt = (Z₀/2) S21/(1 − S21)</code>. Der ausgewählte Zweitorblock wird bei unterschiedlichen Referenzen auf deren geometrisches Mittel renormiert.</p>
       <p>Für den Serienersatz gilt <code>Ls = X/ω</code> bei <code>X = Im Z &gt; 0</code> und <code>Cs = −1/(ωX)</code> bei X &lt; 0. Für den Parallelersatz gilt <code>Lp = −1/(ωB)</code> bei <code>B = Im(1/Z) &lt; 0</code> und <code>Cp = B/ω</code> bei B &gt; 0. Bei DC und bei unpassendem Vorzeichen erscheinen Lücken. Die Gruppenlaufzeit verwendet die lokal entfaltete Phase und die tatsächlichen Frequenzabstände.</p>
@@ -1240,6 +1323,12 @@ window.I18N = (() => {
       <h3>Port terminations and mixed mode</h3>
       <p>Loads act at the physical ports against the common reference. The load impedance gives <code>Γ = (ZL − Z₀)/(ZL + Z₀)</code>; the reduced network follows from <code>Saa + Sat Γ (I − Stt Γ)⁻¹ Sta</code>, with Z₀ taken from the file for each port.</p>
       <p>Then the active ports are renormalized and transformed with <code>(a+ − a−)/√2</code> for DM and <code>(a+ + a−)/√2</code> for CM. Unequal references within a pair are renormalized to their geometric mean. A common SE reference R gives <code>Z₀,DM = 2R</code> and <code>Z₀,CM = R/2</code>. Each pair can use its own mode impedances Z_D and Z_C (e.g. 0.1 Ω / 100 Ω for CISPR 17 line-filter tests); the mixed-mode matrix is then renormalized per mode. Touchstone export always writes the standard references.</p>
+    </section>
+    <section>
+      <h3>Port profile, templates and file comparison</h3>
+      <p>"Save to file" writes pairs, terminations, reference impedances, view and curve selection as a comment block <code>! [SPA-Port-Profile] 1 … ! [End SPA-Port-Profile]</code> into the Touchstone file. In Touchstone 1.x the block sits at the top of the file, in 2.x inside <code>[Begin Information]</code>/<code>[End Information]</code>. The measurement data stays unchanged; other programs skip comments. The standardized port mapping of Touchstone 3.0 is still a draft and is therefore not written.</p>
+      <p>A learned template stores a fingerprint: |Sdd|, |Scc| and the mode conversion of all pairs on a fixed logarithmic frequency grid (4 points per decade). For a new file with the same port count every assignment of ports to the roles of the template is evaluated (3000 at most). The assignment with the smallest mean deviation in dB wins and is applied automatically up to 5 dB. Polarity follows from the sign of Sdd in the passband.</p>
+      <p>In a comparison the curves of the other files are interpolated linearly onto the frequency grid of the open file ⟨A⟩. Files with their own profile use it, all others use the port configuration of ⟨A⟩.</p>
     </section>
     <section>
       <h3>Impedance and equivalent quantities</h3>
@@ -1555,7 +1644,7 @@ const RF = (() => {
     const deferredVendorRefs = [];
     let expected = null, noiseCount = 0, noiseLast = -Infinity, vendorRefsDiffer = false;
     let unknownVendorRefs = false;
-    let lineNumber = 0;
+    let lineNumber = 0, spa = null, spaOpen = false;
     const fail = message => { throw new Error('Zeile ' + lineNumber + ' · ' + message); };
 
     function readOptions(line) {
@@ -1684,6 +1773,14 @@ const RF = (() => {
     }
 
     function readComment(comment) {
+      const note = comment.trim();
+      if (/^\[SPA-Port-Profile\]/i.test(note)) {
+        spa = { name: '', pairs: [], loads: [], ref: null, view: {}, traces: {}, markers: [] };
+        spaOpen = true;
+        return;
+      }
+      if (/^\[End SPA-Port-Profile\]/i.test(note)) { spaOpen = false; return; }
+      if (spaOpen) { readProfileLine(spa, note); return; }
       const port = comment.match(/^\s*Port\s*\[\s*(\d+)\s*\]\s*=\s*(.+?)\s*$/i);
       if (port) portNames.set(Number(port[1]) - 1, port[2].slice(0, 80));
       lanPart ||= /\bP\/N\s*:\s*7490220115\b/i.test(comment);
@@ -1786,7 +1883,7 @@ const RF = (() => {
     return {
       name, n, refs, freq: Float64Array.from(freq), samples, version, format: options.format, sourceKind: options.kind,
       portNames: indices(n).map(i => portNames.get(i) || ''), sourcePairs: fileModes?.pairs || [],
-      profile, warnings: [...new Set(warnings)], noiseCount, demo: false
+      profile, embedded: spa, warnings: [...new Set(warnings)], noiseCount, demo: false
     };
   }
 
@@ -2235,6 +2332,84 @@ const RF = (() => {
     return { type: sddLow > sccLow ? 'transformer' : 'cmc', confidence: 0.3 };
   }
 
+  // ---- Port profile: a machine-readable comment block that travels inside the Touchstone file. ----
+  function keyValues(tokens) {
+    const out = {};
+    for (const token of tokens) {
+      const match = token.match(/^(\w+)=(.+)$/);
+      if (match) out[match[1].toLowerCase()] = match[2];
+    }
+    return out;
+  }
+
+  function readProfileLine(spa, text) {
+    const match = text.match(/^SPA\s+(\w+)(?:\s+([^:]*?))?\s*:\s*(.*)$/i);
+    if (!match) return;
+    const key = match[1].toLowerCase(), arg = (match[2] || '').trim(), value = match[3].trim();
+    const tokens = value.split(/\s+/).filter(Boolean);
+    if (key === 'name') spa.name = value.slice(0, 60);
+    else if (key === 'pair') {
+      const kv = keyValues(tokens);
+      spa.pairs.push({ id: Number(arg), p: Number(tokens[0]) - 1, q: Number(tokens[1]) - 1, zd: parseNum(kv.zd ?? ''), zc: parseNum(kv.zc ?? '') });
+    } else if (key === 'load') {
+      const kv = keyValues(tokens), load = { type: (tokens[0] || '').toLowerCase() };
+      for (const k of ['r', 'x', 'l', 'c']) if (k in kv) load[k] = parseNum(kv[k]);
+      spa.loads.push({ port: Number(arg) - 1, load });
+    } else if (key === 'ref') spa.ref = parseNum(value);
+    else if (key === 'view') spa.view = keyValues(tokens);
+    else if (key === 'traces') spa.traces[arg.toLowerCase()] = tokens.slice(0, 16);
+    else if (key === 'markers') spa.markers = tokens.map(parseNum).filter(Number.isFinite).slice(0, 4);
+  }
+
+  function profileLines(profile) {
+    const n = value => String(+Number(value).toPrecision(9));
+    const lines = ['[SPA-Port-Profile] 1', 'SPA app: S-Parameter Analyzer port profile, machine-readable, ports are 1-based'];
+    if (profile.name) lines.push('SPA name: ' + profile.name.replace(/[\r\n!]/g, ' ').slice(0, 60));
+    for (const pair of profile.pairs) {
+      lines.push('SPA pair ' + pair.id + ': ' + (pair.p + 1) + ' ' + (pair.q + 1) +
+        (pair.zd > 0 ? ' zd=' + n(pair.zd) : '') + (pair.zc > 0 ? ' zc=' + n(pair.zc) : ''));
+    }
+    profile.loads.forEach((load, port) => {
+      if (load.type === 'active') return;
+      lines.push('SPA load ' + (port + 1) + ': ' + load.type +
+        ['r', 'x', 'l', 'c'].filter(k => Number.isFinite(load[k]) && load[k] !== 0).map(k => ' ' + k + '=' + n(load[k])).join(''));
+    });
+    if (profile.ref > 0) lines.push('SPA ref: ' + n(profile.ref));
+    lines.push('SPA view: tab=' + profile.tab + ' basis=' + profile.basis + ' format=' + profile.sFormat);
+    for (const basis of ['mm', 'se']) {
+      if (profile.sKeys?.[basis]?.length) lines.push('SPA traces ' + basis + ': ' + profile.sKeys[basis].join(' '));
+    }
+    if (profile.markers?.length) lines.push('SPA markers: ' + profile.markers.map(n).join(' '));
+    lines.push('[End SPA-Port-Profile]');
+    return lines;
+  }
+
+  // Touchstone 1.x: comment block at the top. Touchstone 2.x: inside [Begin Information] … [End Information].
+  function annotate(text, lines) {
+    const eol = /\r\n/.test(text) ? '\r\n' : '\n';
+    const out = [];
+    let skip = false;
+    for (const line of text.replace(/^﻿/, '').split(/\r\n|\n|\r/)) {
+      const comment = /^\s*!/.test(line), body = line.replace(/^\s*!\s*/, '');
+      if (comment && /^\[SPA-Port-Profile\]/i.test(body)) { skip = true; continue; }
+      if (skip && comment) {
+        if (/^\[End SPA-Port-Profile\]/i.test(body)) skip = false;
+        continue;
+      }
+      skip = false;
+      out.push(line);
+    }
+    const block = lines.map(line => '! ' + line);
+    if (out.some(line => /^\s*\[version\]\s*2/i.test(line))) {
+      const begin = out.findIndex(line => /^\s*\[begin information\]/i.test(line));
+      const network = out.findIndex(line => /^\s*\[network data\]/i.test(line));
+      if (begin >= 0) out.splice(begin + 1, 0, ...block);
+      else if (network >= 0) out.splice(network, 0, '[Begin Information]', ...block, '[End Information]');
+      else out.unshift(...block);
+    } else out.unshift(...block);
+    return out.join(eol);
+  }
+
   function exportTouchstone(dataset, network, basis) {
     const layout = network.layout, active = layout.active;
     const mixed = basis === 'mm' && layout.hasMixed;
@@ -2279,7 +2454,7 @@ const RF = (() => {
     MAX_PORTS, TAU, RAD, abs, add, sub, mul, scale, div, get, put, matrix, indices, solve, submatrix,
     changeRef, toZY, fromZY, project, parseTouchstone, loadGamma, terminate, prepareNetwork, processPoint,
     reflection, twoPort, transmission, cispr, cmcNatural, fitCMC, demoNetwork, exportTouchstone,
-    plateau, crossing, peakFreq, lcFit, transformerPoint, analyzeTransformer, analyzeElement, classify4, median
+    plateau, crossing, peakFreq, lcFit, transformerPoint, analyzeTransformer, analyzeElement, classify4, median, profileLines, annotate
   };
 })();
 </script>
@@ -3165,6 +3340,7 @@ const Plot = (() => {
     cmc: { format: 'cap', band: null }, pairIn: 1, pairOut: 2,
     esb: { model: 'auto', tFormat: 'ocl', eFormat: 'z', input: '', output: '', evalFreq: 100e3 },
     axes: {}, markers: [0, null, null, null], activeMarker: 0,
+    compare: { ids: [], delta: false }, profile: { name: '', source: 'default', score: null, matches: [], key: '' },
     hiddenTraces: new Set(), collapsed: mobile.matches, job: 0, importJob: 0,
     busy: false, error: '', memo: new Map(), recordId: null, view: null, dialogLoad: null, pairDraft: null, toastTimer: null
   };
@@ -3313,21 +3489,9 @@ const Plot = (() => {
       state.busy = true;
       render();
       await nextTick();
-      let start = performance.now();
-      const se = [], mm = [];
-      let gaps = 0;
-      for (let i = 0; i < dataset.freq.length; i++) {
-        if ((i & 31) === 0 && performance.now() - start > 19) {
-          await nextTick();
-          if (id !== state.job) return;
-          start = performance.now();
-        }
-        const [single, mixed] = RF.processPoint(dataset, config, state.layout, i);
-        se.push(single); mm.push(mixed);
-        if (!single || !mixed) gaps++;
-      }
-      if (id !== state.job) return;
-      state.network = { layout: state.layout, se, mm, gaps };
+      const network = await computeNetwork(dataset, config, state.layout, () => id === state.job);
+      if (!network || id !== state.job) return;
+      state.network = network;
     } catch (error) {
       if (id !== state.job) return;
       state.error = error.message;
@@ -3335,6 +3499,7 @@ const Plot = (() => {
     if (id !== state.job) return;
     state.busy = false;
     render();
+    syncCompare();
   }
 
   // ---- Local library: the last files and their settings stay on this device (IndexedDB). ----
@@ -3436,38 +3601,833 @@ const Plot = (() => {
     return RF.parseTouchstone(decodeText(bytes), file.name);
   }
 
-  async function importFile(file, { remember = true } = {}) {
-    if (!file) return;
-    const id = ++state.importJob;
-    if (state.collapsed) {
+  // ---- Learned templates: a behaviour fingerprint finds the port assignment of a new file by itself. ----
+  const Templates = (() => {
+    const KEY = 'spa-templates', AUTO = 5, CAP = 3000;
+    const GRID = [];
+    for (let k = 12; k <= 41; k++) GRID.push(10 ** (k / 4));
+    let list = [];
+    try { list = JSON.parse(localStorage.getItem(KEY)) || []; } catch { list = []; }
+    if (!Array.isArray(list)) list = [];
+    const save = () => { try { localStorage.setItem(KEY, JSON.stringify(list)); } catch { /* storage full or blocked */ } };
+    const dB = value => Math.max(-70, Math.min(5, 20 * Math.log10(RF.abs(value))));
+    const similarity = score => Math.max(0, Math.round(100 * (1 - score / 20)));
+
+    function featureKeys(k, m) {
+      const keys = [];
+      for (let i = 1; i <= k; i++) {
+        keys.push('D' + i + ':D' + i, 'C' + i + ':C' + i, 'C' + i + ':D' + i);
+        for (let j = 1; j < i; j++) keys.push('D' + i + ':D' + j, 'C' + i + ':C' + j, 'C' + i + ':D' + j, 'D' + i + ':C' + j);
+      }
+      for (let a = 1; a <= m; a++) {
+        keys.push('S' + a + ':S' + a);
+        for (let b = 1; b < a; b++) keys.push('S' + a + ':S' + b);
+        if (k) keys.push('S' + a + ':D1');
+      }
+      return keys.slice(0, 40);
+    }
+
+    // Evaluates the feature curves of a dataset for one assignment of ports to the roles of a template.
+    function evaluate(dataset, shape, a, points, keys) {
+      const loads = RF.indices(dataset.n).map(() => ({ type: 'active' }));
+      a.loaded.forEach((port, i) => { loads[port] = shape.loads[i]; });
+      const config = { loads, ref: shape.ref ?? null, pairs: a.pairs.map(([p, q], i) => ({ id: i + 1, p, q, zd: shape.z[i]?.[0], zc: shape.z[i]?.[1] })) };
+      let layout;
+      try { layout = RF.prepareNetwork(dataset, config); } catch { return null; }
+      const index = new Map(layout.mmModes.map((mode, i) => [mode.type === 'P' ? 'S' + (a.singles.indexOf(mode.port) + 1) : mode.key, i]));
+      const cells = keys.map(key => key.split(':').map(k => index.get(k)));
+      const size = layout.mmModes.length, values = keys.map(() => []), raw = [];
+      for (const point of points) {
+        const mm = RF.processPoint(dataset, config, layout, point)[1];
+        raw.push(mm);
+        cells.forEach(([r, c], i) => values[i].push(mm && r !== undefined && c !== undefined ? dB(RF.get(mm, size, r, c)) : NaN));
+      }
+      return { values, raw, index, size };
+    }
+
+    // Sign of the through path D1 → Di in the passband; magnitudes cannot tell the polarity of a pair.
+    function polarity(result, k) {
+      const signs = [];
+      for (let i = 2; i <= k; i++) {
+        const r = result.index.get('D' + i), c = result.index.get('D1');
+        let top = null;
+        for (const mm of result.raw) {
+          const value = mm && RF.get(mm, result.size, r, c);
+          if (value && (!top || RF.abs(value) > RF.abs(top))) top = value;
+        }
+        signs.push(top && RF.abs(top) > 0.03 && Math.abs(top[0]) > 0.3 * RF.abs(top) ? Math.sign(top[0]) : 0);
+      }
+      return signs;
+    }
+
+    function* assignments(n, shape, first) {
+      if (first) yield first;
+      const used = new Array(n).fill(false), k = shape.z.length, count = shape.loads.length, m = shape.singles;
+      const same = shape.loads.map((load, i) => i > 0 && JSON.stringify(load) === JSON.stringify(shape.loads[i - 1]));
+      const a = { pairs: [], loaded: [], singles: [] };
+      function* single(i) {
+        if (i === m) { yield { pairs: a.pairs.map(pair => [...pair]), loaded: [...a.loaded], singles: [...a.singles] }; return; }
+        for (let p = 0; p < n; p++) {
+          if (used[p]) continue;
+          used[p] = true; a.singles[i] = p;
+          yield* single(i + 1);
+          used[p] = false;
+        }
+      }
+      function* load(i) {
+        if (i === count) { yield* single(0); return; }
+        for (let p = same[i] ? a.loaded[i - 1] + 1 : 0; p < n; p++) {
+          if (used[p]) continue;
+          used[p] = true; a.loaded[i] = p;
+          yield* load(i + 1);
+          used[p] = false;
+        }
+      }
+      function* pair(i) {
+        if (i === k) { yield* load(0); return; }
+        for (let p = 0; p < n; p++) {
+          if (used[p]) continue;
+          for (let q = p + 1; q < n; q++) {
+            if (used[q]) continue;
+            used[p] = used[q] = true; a.pairs[i] = [p, q];
+            yield* pair(i + 1);
+            used[p] = used[q] = false;
+          }
+        }
+      }
+      yield* pair(0);
+    }
+
+    async function match(dataset, alive = () => true) {
+      const out = [], fs = dataset.freq;
+      let clock = performance.now();
+      for (const tpl of list) {
+        if (tpl.n !== dataset.n) continue;
+        const common = tpl.fp.g.map((gi, i) => [gi, i]).filter(([gi]) => GRID[gi] >= fs[0] * 0.97 && GRID[gi] <= fs.at(-1) * 1.03);
+        if (common.length < 5) continue;
+        const points = common.map(([gi]) => Plot.nearest(fs, GRID[gi], true)), cols = common.map(([, i]) => i);
+        let best = null, count = 0, capped = false;
+        for (const a of assignments(dataset.n, tpl.shape, tpl.map)) {
+          if (++count > CAP) { capped = true; break; }
+          const result = evaluate(dataset, tpl.shape, a, points, tpl.fp.keys);
+          if (result) {
+            let sum = 0, num = 0;
+            result.values.forEach((row, r) => row.forEach((value, c) => {
+              const ref = tpl.fp.v[r][cols[c]];
+              if (Number.isFinite(value) && Number.isFinite(ref)) { sum += Math.abs(value - ref); num++; }
+            }));
+            const score = num >= 5 ? sum / num : Infinity;
+            if (!best || score < best.score - 0.05) best = { score, a, result };
+            if (count === 1 && score <= 1.5) break;
+          }
+          if (performance.now() - clock > 25) {
+            await nextTick();
+            if (!alive()) return [];
+            clock = performance.now();
+          }
+        }
+        if (!best || !Number.isFinite(best.score)) continue;
+        polarity(best.result, tpl.shape.z.length).forEach((sign, i) => {
+          if (sign && tpl.pol[i] && sign !== tpl.pol[i]) best.a.pairs[i + 1].reverse();
+        });
+        out.push({ tpl, score: best.score, a: best.a, capped });
+      }
+      out.sort((x, y) => x.score - y.score);
+      const seen = new Set();
+      return out.filter(item => !seen.has(item.tpl.name) && seen.add(item.tpl.name));
+    }
+
+    function learn(name, dataset, config, view) {
+      const paired = new Set(config.pairs.flatMap(pair => [pair.p, pair.q]));
+      const singles = [], loaded = [];
+      for (let i = 0; i < dataset.n; i++) {
+        if (paired.has(i)) continue;
+        if (config.loads[i].type === 'active') singles.push(i);
+        else loaded.push({ port: i, load: config.loads[i], key: JSON.stringify(config.loads[i]) });
+      }
+      loaded.sort((x, y) => x.key < y.key ? -1 : x.key > y.key ? 1 : x.port - y.port);
+      const shape = { z: config.pairs.map(pair => [pair.zd ?? null, pair.zc ?? null]), loads: loaded.map(item => item.load), singles: singles.length, ref: config.ref ?? null };
+      const map = { pairs: config.pairs.map(pair => [pair.p, pair.q]), loaded: loaded.map(item => item.port), singles };
+      const g = GRID.map((_, i) => i).filter(i => GRID[i] >= dataset.freq[0] && GRID[i] <= dataset.freq.at(-1));
+      if (g.length < 5) throw new Error('Der Frequenzbereich ist für einen Fingerabdruck zu schmal.');
+      const keys = featureKeys(shape.z.length, shape.singles);
+      const result = evaluate(dataset, shape, map, g.map(i => Plot.nearest(dataset.freq, GRID[i], true)), keys);
+      if (!result) throw new Error('Die Portkonfiguration lässt sich nicht auswerten.');
+      const toRole = key => key.split(':').map(k => k[0] === 'P' ? 'S' + (singles.indexOf(Number(k.slice(1)) - 1) + 1) : k).join(':');
+      const tpl = {
+        id: Date.now().toString(36) + Math.floor(Math.random() * 1296).toString(36), name, n: dataset.n, shape, map,
+        fp: { g, keys, v: result.values.map(row => row.map(value => Math.round(value * 10) / 10)) },
+        pol: polarity(result, shape.z.length), file: dataset.name, savedAt: Date.now(),
+        view: { tab: view.tab, basis: view.basis, sFormat: view.sFormat, traces: (view.sKeys.mm || []).map(toRole).filter(key => !/S0/.test(key)) }
+      };
+      list = list.filter(item => !(item.name === name && item.n === tpl.n && item.file === tpl.file));
+      list.unshift(tpl);
+      const group = list.filter(item => item.name === name && item.n === tpl.n);
+      if (group.length > 4) list = list.filter(item => item !== group.at(-1));
+      list = list.slice(0, 60);
+      save();
+      return tpl;
+    }
+
+    function settings({ tpl, a }, n) {
+      const loads = RF.indices(n).map(() => ({ type: 'active' }));
+      a.loaded.forEach((port, i) => { loads[port] = { ...tpl.shape.loads[i] }; });
+      const pairs = a.pairs.map(([p, q], i) => {
+        const [zd, zc] = tpl.shape.z[i];
+        return { id: i + 1, p, q, ...(zd ? { zd } : {}), ...(zc ? { zc } : {}) };
+      });
+      const fromRole = key => key.split(':').map(k => k[0] === 'S' ? 'P' + (a.singles[Number(k.slice(1)) - 1] + 1) : k).join(':');
+      const traces = tpl.view.traces.map(fromRole);
+      return {
+        config: { loads, pairs, ref: tpl.shape.ref }, tab: tpl.view.tab, basis: tpl.view.basis, sFormat: tpl.view.sFormat,
+        sKeys: { mm: traces.length ? traces : null, se: null }, profileName: tpl.name
+      };
+    }
+
+    function groups() {
+      const out = new Map();
+      for (const tpl of list) {
+        const key = tpl.n + '|' + tpl.name;
+        const group = out.get(key) ?? { key, name: tpl.name, n: tpl.n, count: 0, pairs: tpl.shape.z.length };
+        group.count++;
+        out.set(key, group);
+      }
+      return [...out.values()];
+    }
+
+    function remove(key) {
+      list = list.filter(tpl => tpl.n + '|' + tpl.name !== key);
+      save();
+    }
+
+    return { AUTO, match, learn, settings, groups, remove, similarity, get size() { return list.length; } };
+  })();
+
+  // ---- Session: several files at once, folders and ZIP archives, quick stepping and comparison. ----
+  const TOUCHSTONE_NAME = /\.(?:s\d+p|ts|snp)$/i, ZIP_NAME = /\.zip$/i;
+  const MAX_SESSION = 1000, MAX_COMPARE = 6, KEEP_PARSED = 6;
+  const FILE_COLORS = ['#c4622d', '#3266ce', '#008879', '#8a55b6', '#a26016', '#ca5260'];
+  const FILE_DASH = [[7, 3], [2, 3], [9, 3, 2, 3], [12, 4], [4, 2], [1, 2]];
+  const session = { items: [], current: null, seq: 0, filter: '', parsed: [] };
+  const compareCache = new Map();
+  const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+  const sessionItem = id => session.items.find(item => item.id === id);
+  const blankProfile = () => ({ name: '', source: 'default', score: null, matches: [], key: '' });
+  const configKey = () => JSON.stringify(state.config);
+  const fileSource = (file, path = '') => ({ name: file.name, path, size: file.size, handle: null, getFile: async () => file });
+  const handleSource = (handle, path = '') => ({ name: handle.name, path, size: null, handle, getFile: () => handle.getFile() });
+
+  function addItems(sources) {
+    const added = [];
+    for (const source of sources) {
+      const key = (source.path ? source.path + '/' : '') + source.name;
+      let item = session.items.find(existing => existing.key === key);
+      if (item) {
+        Object.assign(item, source, { dataset: null, error: '' });
+        compareCache.delete(item.id);
+      } else {
+        if (session.items.length >= MAX_SESSION) break;
+        item = { id: 'f' + (++session.seq), key, ports: Number(source.name.match(/\.s(\d+)p$/i)?.[1]) || null,
+          dataset: null, settings: null, profile: null, recordId: null, error: '', ...source };
+        session.items.push(item);
+      }
+      added.push(item);
+    }
+    session.items.sort((a, b) => collator.compare(a.path, b.path) || collator.compare(a.name, b.name));
+    return added;
+  }
+
+  function keepParsed(item) {
+    session.parsed = [item.id, ...session.parsed.filter(id => id !== item.id)];
+    for (const id of session.parsed.slice(KEEP_PARSED)) {
+      if (id === session.current || state.compare.ids.includes(id)) continue;
+      const old = sessionItem(id);
+      if (old) old.dataset = null;
+    }
+    session.parsed = session.parsed.filter(id => sessionItem(id)?.dataset);
+  }
+
+  async function loadDataset(item) {
+    if (!item.dataset) {
+      const file = await item.getFile();
+      if (file.size > 100 * 1024 * 1024) throw new Error('Die Datei überschreitet 100 MiB.');
+      item.size = file.size;
+      item.dataset = await parseFile(file.name === item.name ? file : new File([file], item.name));
+      item.ports = item.dataset.n;
+      item.error = '';
+    }
+    keepParsed(item);
+    return item.dataset;
+  }
+
+  function snapshotSettings() {
+    const fs = state.dataset.freq;
+    return JSON.parse(JSON.stringify({
+      config: state.config, tab: state.tab, basis: state.basis, sFormat: state.sFormat, sKeys: state.sKeys,
+      z: state.z, cispr: state.cispr, cmc: state.cmc, esb: state.esb, pairIn: state.pairIn, pairOut: state.pairOut,
+      markers: state.markers.map(i => i === null ? null : fs[i]), profileName: state.profile.name
+    }));
+  }
+
+  function settingsFromEmbedded(dataset) {
+    const e = dataset.embedded, n = dataset.n;
+    if (!e) return null;
+    const valid = p => Number.isInteger(p) && p >= 0 && p < n;
+    const positive = value => Number.isFinite(value) && value > 0;
+    const loads = RF.indices(n).map(() => ({ type: 'active' }));
+    for (const { port, load } of e.loads) {
+      if (!valid(port) || !LOADS.some(([type]) => type === load.type)) return null;
+      const value = k => Number.isFinite(load[k]) ? load[k] : 0;
+      loads[port] = EDITABLE_LOADS.includes(load.type)
+        ? { type: load.type, r: Math.max(0, value('r')), x: value('x'), l: Math.max(0, value('l')), c: Math.max(0, value('c')) }
+        : { type: load.type };
+    }
+    const used = new Set();
+    const pairs = [...e.pairs].sort((a, b) => a.id - b.id).map((pair, i) => ({
+      id: i + 1, p: pair.p, q: pair.q, ...(positive(pair.zd) ? { zd: pair.zd } : {}), ...(positive(pair.zc) ? { zc: pair.zc } : {})
+    }));
+    for (const pair of pairs) {
+      if (!valid(pair.p) || !valid(pair.q) || pair.p === pair.q || used.has(pair.p) || used.has(pair.q) ||
+        loads[pair.p].type !== 'active' || loads[pair.q].type !== 'active') return null;
+      used.add(pair.p); used.add(pair.q);
+    }
+    if (!loads.some(load => load.type === 'active')) return null;
+    return {
+      config: { loads, pairs, ref: positive(e.ref) ? e.ref : null }, tab: e.view.tab, basis: e.view.basis, sFormat: e.view.format,
+      sKeys: { mm: e.traces.mm ?? null, se: e.traces.se ?? null }, markers: e.markers.length ? e.markers : undefined, profileName: e.name
+    };
+  }
+
+  // Order: this session, this device, profile inside the file, learned template, previous file, default.
+  async function resolveSettings(item, record, alive) {
+    if (item.settings) return { settings: item.settings, profile: item.profile ?? blankProfile() };
+    const dataset = item.dataset, base = blankProfile();
+    if (record?.settings) {
+      return { settings: record.settings, profile: { ...base, source: 'local', name: record.settings.profileName || dataset.embedded?.name || '' } };
+    }
+    const embedded = settingsFromEmbedded(dataset);
+    if (embedded) return { settings: embedded, profile: { ...base, source: 'file', name: dataset.embedded.name } };
+    const matches = await Templates.match(dataset, alive);
+    if (matches[0] && matches[0].score <= Templates.AUTO) {
+      return { settings: Templates.settings(matches[0], dataset.n), profile: { ...base, source: 'template', name: matches[0].tpl.name, score: matches[0].score, matches } };
+    }
+    if (state.dataset && !state.dataset.demo && state.dataset.n === dataset.n) {
+      const carry = snapshotSettings();
+      delete carry.cmc;
+      return { settings: carry, profile: { ...base, source: 'carry', name: state.profile.name, matches } };
+    }
+    return { settings: null, profile: { ...base, source: dataset.profile ? 'builtin' : 'default', matches } };
+  }
+
+  async function openItem(id, { remember = false } = {}) {
+    const item = sessionItem(id);
+    if (!item) return;
+    const job = ++state.importJob;
+    const previous = sessionItem(session.current);
+    if (previous && previous.dataset === state.dataset && state.dataset) {
+      previous.settings = snapshotSettings();
+      previous.profile = state.profile;
+    }
+    if (state.collapsed && !mobile.matches) {
       state.collapsed = false;
       renderSidebar();
-    }
-    if (file.size > 100 * 1024 * 1024) {
-      $('import-notice').classList.remove('neutral');
-      notice('import-notice', 'Die Datei überschreitet 100 MiB.');
-      return;
     }
     notice('import-notice', 'Touchstone-Datei wird gelesen …');
     $('import-notice').classList.add('neutral');
     try {
-      const dataset = await parseFile(file);
-      if (id !== state.importJob) return;
+      const dataset = await loadDataset(item);
+      if (job !== state.importJob) return;
       let record = null;
       if (remember) {
-        try { record = await Library.remember(file); } catch { record = null; }
+        try { record = await Library.remember(await item.getFile()); } catch { record = null; }
+        if (record) item.recordId = record.id;
       }
-      if (id !== state.importJob) return;
+      if (job !== state.importJob) return;
+      const resolved = await resolveSettings(item, record, () => job === state.importJob);
+      if (job !== state.importJob) return;
       if (mobile.matches) state.collapsed = true;
-      state.recordId = record?.id ?? null;
-      initDataset(dataset, record?.settings);
-      if (dataset.warnings.length && mobile.matches) toast(dataset.warnings[0]);
+      state.recordId = item.recordId;
+      session.current = id;
+      state.profile = { ...resolved.profile };
+      initDataset(dataset, resolved.settings);
+      state.profile.key = configKey();
+      if (state.profile.source === 'template') {
+        toast('Vorlage „' + state.profile.name + '“ erkannt · ' + Templates.similarity(state.profile.score) + ' % · Ports automatisch zugeordnet');
+      } else if (dataset.warnings.length && mobile.matches) toast(dataset.warnings[0]);
       renderRecent();
+      renderSession();
     } catch (error) {
-      if (id === state.importJob) notice('import-notice', error.message);
+      if (job !== state.importJob) return;
+      item.error = error.message;
+      notice('import-notice', error.message);
+      if (session.items.length > 1) toast(item.name + ' · ' + error.message);
+      renderSession();
     } finally {
-      if (id === state.importJob) $('import-notice').classList.remove('neutral');
+      if (job === state.importJob) $('import-notice').classList.remove('neutral');
     }
+  }
+
+  async function openSources(sources, { remember = false } = {}) {
+    if (!sources.length) {
+      toast('Keine Touchstone-Dateien gefunden.');
+      return;
+    }
+    const added = addItems(sources);
+    if (!added.length) return;
+    renderSession();
+    await openItem(added[0].id, { remember: remember && added.length === 1 });
+    if (added.length > 1 && state.profile.source !== 'template') toast(added.length + ' Dateien geladen · Bild↑/Bild↓ blättert');
+  }
+
+  const importFile = (file, { remember = true } = {}) => file ? openSources([fileSource(file)], { remember }) : undefined;
+
+  function stepSession(delta) {
+    const index = session.items.findIndex(item => item.id === session.current);
+    const next = session.items[index + Number(delta)];
+    if (next) openItem(next.id);
+  }
+
+  function clearSession() {
+    session.items = session.items.filter(item => item.id === session.current);
+    state.compare.ids = [];
+    compareCache.clear();
+    session.filter = '';
+    renderSession();
+    if (state.dataset) renderMain();
+  }
+
+  // ---- Sources: folders (picker, drag & drop, fallback input) and ZIP archives. ----
+  async function walkDirectory(dir, path, out, depth = 0) {
+    for await (const [name, handle] of dir.entries()) {
+      if (out.length >= MAX_SESSION) return;
+      if (handle.kind === 'file') {
+        if (TOUCHSTONE_NAME.test(name)) out.push(handleSource(handle, path));
+      } else if (depth < 5) await walkDirectory(handle, path + '/' + name, out, depth + 1);
+    }
+  }
+
+  async function walkEntry(entry, path, out, top = false) {
+    if (out.length >= MAX_SESSION) return;
+    if (entry.isFile) {
+      if (!top && !TOUCHSTONE_NAME.test(entry.name)) return;
+      const file = await new Promise((resolve, reject) => entry.file(resolve, reject));
+      if (ZIP_NAME.test(file.name)) out.push(...await unzip(file));
+      else out.push(fileSource(file, path));
+      return;
+    }
+    const reader = entry.createReader(), here = path ? path + '/' + entry.name : entry.name;
+    for (;;) {
+      const batch = await new Promise((resolve, reject) => reader.readEntries(resolve, reject));
+      if (!batch.length) break;
+      for (const child of batch) await walkEntry(child, here, out);
+    }
+  }
+
+  async function unzip(file) {
+    const bytes = await file.arrayBuffer(), view = new DataView(bytes);
+    let end = -1;
+    for (let i = bytes.byteLength - 22; i >= Math.max(0, bytes.byteLength - 66000); i--) {
+      if (view.getUint32(i, true) === 0x06054b50) { end = i; break; }
+    }
+    if (end < 0) throw new Error('Kein lesbares ZIP-Archiv.');
+    const count = view.getUint16(end + 10, true);
+    let at = view.getUint32(end + 16, true);
+    if (count === 0xffff || at === 0xffffffff) throw new Error('ZIP64-Archive werden nicht unterstützt.');
+    const root = file.name.replace(ZIP_NAME, ''), out = [];
+    for (let k = 0; k < count && at + 46 <= bytes.byteLength; k++) {
+      if (view.getUint32(at, true) !== 0x02014b50) break;
+      const flags = view.getUint16(at + 8, true), method = view.getUint16(at + 10, true), packed = view.getUint32(at + 20, true);
+      const nameLength = view.getUint16(at + 28, true), local = view.getUint32(at + 42, true);
+      const full = new TextDecoder().decode(new Uint8Array(bytes, at + 46, nameLength));
+      at += 46 + nameLength + view.getUint16(at + 30, true) + view.getUint16(at + 32, true);
+      if (full.endsWith('/') || !TOUCHSTONE_NAME.test(full) || /(^|\/)__MACOSX\/|(^|\/)\._/.test(full)) continue;
+      const slash = full.lastIndexOf('/'), name = full.slice(slash + 1);
+      out.push({
+        name, path: root + (slash > 0 ? '/' + full.slice(0, slash) : ''), size: null, handle: null,
+        getFile: async () => {
+          if (flags & 1) throw new Error('Verschlüsselte ZIP-Einträge werden nicht unterstützt.');
+          const start = local + 30 + view.getUint16(local + 26, true) + view.getUint16(local + 28, true);
+          const data = new Uint8Array(bytes, start, packed);
+          if (method === 0) return new File([data], name);
+          if (method !== 8 || typeof DecompressionStream !== 'function') throw new Error('Diese ZIP-Kompression wird hier nicht unterstützt.');
+          const stream = new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+          return new File([await new Response(stream).blob()], name);
+        }
+      });
+    }
+    return out;
+  }
+
+  async function expandFiles(files, strict = false) {
+    const out = [];
+    for (const file of files) {
+      const rel = file.webkitRelativePath || '';
+      if (ZIP_NAME.test(file.name)) {
+        try { out.push(...await unzip(file)); } catch (error) { toast(file.name + ' · ' + error.message); }
+      } else if (!strict || TOUCHSTONE_NAME.test(file.name)) {
+        out.push(fileSource(file, rel.includes('/') ? rel.slice(0, rel.lastIndexOf('/')) : ''));
+      }
+    }
+    return out;
+  }
+
+  async function sourcesFromDrop(transfer) {
+    // Handles and entries must be requested synchronously while the drop event is alive.
+    const items = [...(transfer.items || [])].filter(item => item.kind === 'file');
+    const files = [...transfer.files];
+    const entries = items.map(item => item.webkitGetAsEntry?.() ?? null);
+    const handles = items.map(item => item.getAsFileSystemHandle ? item.getAsFileSystemHandle().catch(() => null) : null);
+    const out = [];
+    try {
+      const resolved = await Promise.all(handles);
+      if (resolved.length && resolved.every(Boolean)) {
+        for (const handle of resolved) {
+          if (handle.kind === 'directory') await walkDirectory(handle, handle.name, out);
+          else if (ZIP_NAME.test(handle.name)) out.push(...await unzip(await handle.getFile()));
+          else out.push(handleSource(handle));
+        }
+        return out;
+      }
+      if (entries.length && entries.every(Boolean)) {
+        for (const entry of entries) await walkEntry(entry, '', out, true);
+        return out;
+      }
+    } catch (error) {
+      toast(error.message);
+    }
+    return expandFiles(files);
+  }
+
+  async function openFolder(startIn = null) {
+    if (!window.showDirectoryPicker) {
+      $('folder-input').click();
+      return;
+    }
+    let dir;
+    try {
+      dir = await window.showDirectoryPicker({ id: 'spa-folder', mode: 'read', ...(startIn ? { startIn } : {}) });
+    } catch { return; }
+    const out = [];
+    try { await walkDirectory(dir, dir.name, out); } catch (error) { toast(error.message); return; }
+    const loose = startIn && sessionItem(session.current);
+    if (!loose) { openSources(out); return; }
+    // The opened file stays in view; it is replaced by its entry inside the folder.
+    const added = addItems(out);
+    for (const item of added) {
+      let same = false;
+      try { same = item.name === loose.name && await item.handle.isSameEntry(loose.handle); } catch { same = false; }
+      if (!same) continue;
+      Object.assign(item, { dataset: loose.dataset, settings: loose.settings, profile: loose.profile, recordId: loose.recordId });
+      session.items = session.items.filter(other => other !== loose);
+      session.parsed = session.parsed.map(id => id === loose.id ? item.id : id);
+      session.current = item.id;
+      break;
+    }
+    renderSession();
+    toast(added.length + ' Dateien im Ordner · Bild↑/Bild↓ blättert');
+  }
+
+  function compareLetter(id) {
+    const ids = state.compare.ids.filter(other => other !== session.current);
+    if (!ids.length) return '';
+    if (id === session.current) return 'A';
+    const index = ids.indexOf(id);
+    return index < 0 ? '' : 'BCDEFGH'[index];
+  }
+
+  function renderSession() {
+    const items = session.items, box = $('session-files');
+    const index = items.findIndex(item => item.id === session.current);
+    $('file-nav').hidden = items.length < 2;
+    $('file-nav-count').textContent = (index + 1) + '/' + items.length;
+    document.querySelectorAll('[data-action="session-step"]').forEach(button => {
+      button.disabled = button.dataset.value === '-1' ? index <= 0 : index < 0 || index >= items.length - 1;
+    });
+    const current = items[index];
+    const sibling = items.length === 1 && current?.handle && window.showDirectoryPicker;
+    box.hidden = items.length < 2 && !sibling;
+    if (box.hidden) { box.innerHTML = ''; return; }
+    if (sibling) {
+      insertHtml(box, actionButton('Nachbardateien aus dem Ordner laden', 'open-siblings', '', 'quiet-button', 'network'));
+      return;
+    }
+    const filter = session.filter.trim().toLowerCase();
+    const shown = filter ? items.filter(item => item.key.toLowerCase().includes(filter)) : items;
+    let folder = null;
+    const rows = shown.slice(0, 300).map(item => {
+      const letter = compareLetter(item.id), k = 'BCDEFGH'.indexOf(letter);
+      const head = item.path !== folder ? '<div class="session-folder" title="' + esc(item.path) + '">' + esc(item.path || 'Einzelne Dateien') + '</div>' : '';
+      folder = item.path;
+      return head + '<div class="session-row' + (item.id === session.current ? ' is-current' : '') + (item.error ? ' has-error' : '') + '"' +
+        (k >= 0 ? ' style="--fc:' + FILE_COLORS[k % FILE_COLORS.length] + '"' : '') + '>' +
+        '<button type="button" class="session-open" id="session-' + item.id + '" data-action="session-open" data-value="' + item.id + '" title="' + esc(item.error || item.key) + '">' +
+        '<span>' + esc(item.name) + '</span>' + (item.ports ? '<small>' + item.ports + 'P</small>' : '') + '</button>' +
+        '<button type="button" class="session-compare" data-action="session-compare" data-value="' + item.id + '"' + pressed(!!letter) +
+        ' title="Im Diagramm vergleichen" aria-label="' + esc(item.name) + ' vergleichen">' + (letter || '+') + '</button></div>';
+    }).join('');
+    insertHtml(box, '<h4>Dateien <small>' + items.length + '</small><span class="session-tools">' +
+      iconButton('Vorherige Datei (Bild↑)', 'session-step', -1, 'chevron', ' data-flip' + disabled(index <= 0)) +
+      iconButton('Nächste Datei (Bild↓)', 'session-step', 1, 'chevron', disabled(index >= items.length - 1)) +
+      actionButton('Leeren', 'session-clear', '', 'quiet-button') + '</span></h4>' +
+      (items.length > 8 ? '<input id="session-filter" class="field-input session-filter" type="search" placeholder="Filtern …" aria-label="Dateien filtern" value="' + esc(session.filter) + '">' : '') +
+      '<div class="session-list">' + rows + '</div>' +
+      (shown.length > 300 ? '<p class="note">+' + (shown.length - 300) + ' weitere · Filter nutzen</p>' : '') +
+      (!shown.length ? '<p class="note">Kein Treffer.</p>' : ''));
+    box.querySelector('.is-current')?.scrollIntoView({ block: 'nearest' });
+  }
+
+  // ---- Comparison: the same curves of other files, resampled onto the frequency grid of the open file. ----
+  async function computeNetwork(dataset, config, layout, alive) {
+    let start = performance.now();
+    const se = [], mm = [];
+    let gaps = 0;
+    for (let i = 0; i < dataset.freq.length; i++) {
+      if ((i & 31) === 0 && performance.now() - start > 19) {
+        await nextTick();
+        if (!alive()) return null;
+        start = performance.now();
+      }
+      const [single, mixed] = RF.processPoint(dataset, config, layout, i);
+      se.push(single); mm.push(mixed);
+      if (!single || !mixed) gaps++;
+    }
+    return { layout, se, mm, gaps };
+  }
+
+  let compareJob = 0;
+  async function syncCompare(force = false) {
+    const job = ++compareJob;
+    state.compare.ids = state.compare.ids.filter(id => sessionItem(id));
+    const ids = state.compare.ids.filter(id => id !== session.current);
+    for (const id of [...compareCache.keys()]) if (!ids.includes(id)) compareCache.delete(id);
+    let changed = force;
+    if (state.network) {
+      for (const id of ids) {
+        const item = sessionItem(id);
+        try {
+          const dataset = await loadDataset(item);
+          if (job !== compareJob) return;
+          const own = item.settings?.config ?? settingsFromEmbedded(dataset)?.config;
+          const config = own ?? (dataset.n === state.dataset.n ? state.config : null);
+          if (!config) throw new Error('Portzahl weicht ab und die Datei hat kein eigenes Profil.');
+          const key = JSON.stringify(config);
+          if (compareCache.get(id)?.key === key) continue;
+          const layout = RF.prepareNetwork(dataset, config);
+          const network = await computeNetwork(dataset, config, layout, () => job === compareJob);
+          if (!network) return;
+          compareCache.set(id, { key, ctx: { dataset, config, layout, network, memo: new Map() } });
+        } catch (error) {
+          if (job !== compareJob) return;
+          compareCache.set(id, { key: '', ctx: null });
+          toast(item.name + ' · ' + error.message);
+        }
+        changed = true;
+      }
+    }
+    if (job !== compareJob || !changed) return;
+    renderSession();
+    if (state.dataset && state.layout) renderMain();
+  }
+
+  function toggleCompare(id) {
+    if (id === session.current) {
+      toast('Die geöffnete Datei ist die Referenz ⟨A⟩. Wähle weitere Dateien zum Vergleich.');
+      return;
+    }
+    const ids = state.compare.ids;
+    if (ids.includes(id)) state.compare.ids = ids.filter(other => other !== id);
+    else if (ids.filter(other => other !== session.current).length >= MAX_COMPARE) {
+      toast('Es lassen sich höchstens ' + MAX_COMPARE + ' Dateien vergleichen.');
+      return;
+    } else ids.push(id);
+    renderSession();
+    syncCompare(true);
+  }
+
+  function inContext(ctx, factory) {
+    const keep = { dataset: state.dataset, config: state.config, layout: state.layout, network: state.network, memo: state.memo };
+    Object.assign(state, ctx);
+    try { return factory(); } catch { return null; } finally { Object.assign(state, keep); }
+  }
+
+  const unitFactor = unit => ({ m: 1e-3, 'µ': 1e-6, n: 1e-9, p: 1e-12, f: 1e-15 })[unit?.length === 2 && 'FHS'.includes(unit[1]) ? unit[0] : ''] ?? 1;
+
+  function resampler(source, target) {
+    const lo = new Int32Array(target.length).fill(-1), w = new Float64Array(target.length);
+    let j = 0;
+    for (let i = 0; i < target.length; i++) {
+      const f = target[i];
+      if (f < source[0] * (1 - 1e-9) || f > source.at(-1) * (1 + 1e-9)) continue;
+      while (j < source.length - 2 && source[j + 1] < f) j++;
+      const a = source[j], b = source[Math.min(j + 1, source.length - 1)];
+      lo[i] = j;
+      w[i] = b > a ? Math.max(0, Math.min(1, (f - a) / (b - a))) : 0;
+    }
+    return (data, stride = 1, factor = 1) => {
+      const out = new Float64Array(target.length * stride).fill(NaN);
+      const last = data.length / stride - 1;
+      for (let i = 0; i < target.length; i++) {
+        if (lo[i] < 0) continue;
+        const hi = Math.min(lo[i] + 1, last);
+        for (let s = 0; s < stride; s++) {
+          const a = data[lo[i] * stride + s], b = data[hi * stride + s];
+          out[i * stride + s] = (w[i] === 0 ? a : w[i] === 1 ? b : a + (b - a) * w[i]) * factor;
+        }
+      }
+      return out;
+    };
+  }
+
+  function compareView(view, factory) {
+    const ids = state.compare.ids.filter(id => id !== session.current && compareCache.get(id)?.ctx);
+    if (!ids.length || !view.traces?.length) return view;
+    const fs = state.dataset.freq, single = view.traces.length === 1, extra = [];
+    ids.forEach(id => {
+      const ctx = compareCache.get(id).ctx, other = inContext(ctx, factory);
+      if (!other?.traces) return;
+      const letter = compareLetter(id), k = 'BCDEFGH'.indexOf(letter);
+      const resample = resampler(ctx.dataset.freq, fs), factor = unitFactor(other.unit) / unitFactor(view.unit);
+      for (const base of view.traces) {
+        const match = other.traces.find(trace => trace.key === base.key);
+        if (!match) continue;
+        const key = 'cmp:' + id + ':' + base.key;
+        extra.push({
+          key, label: base.label + ' ⟨' + letter + '⟩', color: single ? FILE_COLORS[k % FILE_COLORS.length] : base.color,
+          dash: single ? base.dash : FILE_DASH[k % FILE_DASH.length], family: base.family, base,
+          complex: match.complex ? resample(match.complex, 2) : null, values: resample(match.values, 1, factor),
+          visible: !state.hiddenTraces.has(key)
+        });
+      }
+    });
+    if (!extra.length) return view;
+    if (state.compare.delta) {
+      return {
+        ...view, format: 'delta', floor: null, zeroBaseline: false, positive: false, refLines: null, smith: false,
+        yLabel: 'Δ ' + view.yLabel, caption: view.caption + ' · Differenz zu ⟨A⟩',
+        traces: extra.map(trace => ({ ...trace, label: 'Δ ' + trace.label, complex: null, values: trace.values.map((value, i) => value - trace.base.values[i]) }))
+      };
+    }
+    return { ...view, traces: [...view.traces.map(trace => ({ ...trace, label: trace.label + ' ⟨A⟩', dash: single ? trace.dash : null })), ...extra] };
+  }
+
+  // ---- Port profile: store in the file, learn as template, recognise in other files. ----
+  function currentProfile() {
+    const fs = state.dataset.freq;
+    return {
+      name: state.profile.name, pairs: state.config.pairs, loads: state.config.loads, ref: state.config.ref,
+      tab: state.tab === 'ports' ? 's' : state.tab, basis: state.basis, sFormat: state.sFormat, sKeys: state.sKeys,
+      markers: state.markers.filter(i => i !== null).map(i => fs[i])
+    };
+  }
+
+  function defaultProfileName() {
+    let type = '';
+    try { type = state.config.pairs.length >= 2 ? detectModel().type : ''; } catch { type = ''; }
+    return type === 'transformer' ? 'Übertrager' : type === 'cmc' ? 'CMC' : state.dataset.n + '-Port';
+  }
+
+  function learnTemplate(silent = false) {
+    const name = ($('profile-name')?.value ?? state.profile.name).trim() || defaultProfileName();
+    try {
+      Templates.learn(name, state.dataset, state.config, { tab: state.tab === 'ports' ? 's' : state.tab, basis: state.basis, sFormat: state.sFormat, sKeys: state.sKeys });
+    } catch (error) {
+      toast(error.message);
+      return false;
+    }
+    state.profile.name = name;
+    if (!silent) {
+      toast('Vorlage „' + name + '“ gelernt. Ähnliche ' + state.dataset.n + '-Port-Dateien werden künftig automatisch zugeordnet.');
+      renderConfig();
+    }
+    return true;
+  }
+
+  async function findTemplates() {
+    const dataset = state.dataset;
+    const matches = await Templates.match(dataset);
+    if (dataset !== state.dataset) return;
+    state.profile.matches = matches;
+    if (!matches.length) toast(Templates.size ? 'Keine gelernte Vorlage passt zu dieser Portzahl und diesem Frequenzbereich.' : 'Es gibt noch keine gelernten Vorlagen.');
+    renderConfig();
+  }
+
+  function applyTemplate(index) {
+    const match = state.profile.matches[Number(index)];
+    if (!match) return;
+    const matches = state.profile.matches;
+    state.profile = { ...blankProfile(), source: 'template', name: match.tpl.name, score: match.score, matches };
+    initDataset(state.dataset, Templates.settings(match, state.dataset.n));
+    state.profile.key = configKey();
+    toast('Vorlage „' + match.tpl.name + '“ angewendet · ' + Templates.similarity(match.score) + ' %');
+  }
+
+  async function saveProfile(form) {
+    const item = sessionItem(session.current);
+    if (!item || state.dataset.demo) {
+      toast('Öffne zuerst eine Touchstone-Datei.');
+      return;
+    }
+    state.profile.name = String(new FormData(form).get('name') || '').trim().slice(0, 60);
+    try {
+      const source = await item.getFile();
+      const text = RF.annotate(decodeText(await source.arrayBuffer()), RF.profileLines(currentProfile()));
+      const check = RF.parseTouchstone(text, item.name);
+      if (!check.embedded || check.freq.length !== state.dataset.freq.length) throw new Error('Die Prüfung der neuen Datei ist fehlgeschlagen.');
+      let inPlace = false;
+      if (item.handle?.createWritable) {
+        try {
+          if (await item.handle.requestPermission({ mode: 'readwrite' }) === 'granted') {
+            const writer = await item.handle.createWritable();
+            await writer.write(text);
+            await writer.close();
+            inPlace = true;
+          }
+        } catch { inPlace = false; }
+      }
+      const file = new File([text], item.name, { type: 'text/plain' });
+      if (!inPlace) saveBlob(file, item.name);
+      if (!item.handle || !inPlace) item.getFile = async () => file;
+      item.size = file.size;
+      state.dataset.embedded = check.embedded;
+      state.profile.source = 'file';
+      state.profile.key = configKey();
+      if (item.recordId) {
+        try {
+          const record = await Library.remember(file);
+          if (record) { item.recordId = record.id; state.recordId = record.id; }
+        } catch { /* the profile is in the file either way */ }
+        renderRecent();
+      }
+      const learned = !!state.profile.name && learnTemplate(true);
+      toast((inPlace ? 'Profil in ' + item.name + ' gespeichert.' : 'Kopie mit Profil heruntergeladen: ' + item.name) + (learned ? ' Vorlage „' + state.profile.name + '“ gelernt.' : ''));
+      render();
+    } catch (error) {
+      toast(error.message);
+    }
+  }
+
+  function profileCard() {
+    const p = state.profile;
+    const label = {
+      file: 'In der Datei gespeichert', template: 'Vorlage erkannt', local: 'Auf diesem Gerät gemerkt', carry: 'Von der vorherigen Datei übernommen',
+      builtin: 'Bekanntes Bauteil', default: 'Noch kein Profil'
+    }[p.source];
+    const status = label + (p.source === 'template' && p.score !== null ? ' · ' + Templates.similarity(p.score) + ' % Übereinstimmung' : '') +
+      (p.source !== 'default' && p.key && p.key !== configKey() ? ' · geändert' : '');
+    const chips = p.matches.map((match, i) => actionButton(match.tpl.name + ' · ' + Templates.similarity(match.score) + ' %', 'apply-template', i, 'button template-chip', '',
+      ' title="' + esc(match.a.pairs.map(([a, b], k) => 'D' + (k + 1) + ' = ' + portName(a) + '/' + portName(b)).join(' · ')) + '"')).join('');
+    const stored = Templates.groups().map(group => '<li><span><strong>' + esc(group.name) + '</strong> · ' + group.n + ' Ports · ' + group.pairs + ' Paare · ' +
+      group.count + (group.count === 1 ? ' Beispiel' : ' Beispiele') + '</span>' + iconButton('Vorlage ' + group.name + ' löschen', 'delete-template', group.key, 'close') + '</li>').join('');
+    return '<section class="config-card profile-card"><div class="config-head"><h2>Port-Profil</h2><p class="profile-status" id="profile-status">' + esc(status) + '</p></div>' +
+      '<div class="config-content"><form id="profile-form" class="profile-form">' +
+      textField('Bauteiltyp', 'name', p.name, 'z. B. CMC, LAN-Übertrager', 'profile-name') +
+      '<button class="button primary" type="submit"' + disabled(state.dataset.demo) + '>' + icon('file') + 'In Datei speichern</button>' +
+      actionButton('Als Vorlage lernen', 'learn-template', '', 'button', 'plus') +
+      actionButton('Vorlagen prüfen', 'match-templates', '', 'button', 'reset', disabled(!Templates.size)) + '</form>' +
+      (chips ? '<div class="preset-row"><span>Passende Vorlagen</span>' + chips + '</div>' : '') +
+      '<p class="note">Paare, Abschlüsse, Bezugsimpedanzen und Kurvenauswahl stehen als lesbarer Kommentarblock in der Touchstone-Datei (TS 2.x: im Block [Begin Information]) und werden beim nächsten Öffnen übernommen. Eine gelernte Vorlage erkennt ähnliche Bauteile am Verhalten, auch bei anderer Portreihenfolge.</p>' +
+      (stored ? '<details class="template-list"><summary>Gelernte Vorlagen</summary><ul>' + stored + '</ul></details>' : '') +
+      '</div></section>';
   }
 
   async function openRecent(recordId) {
@@ -3501,12 +4461,7 @@ const Plot = (() => {
     const recordId = state.recordId;
     settingsTimer = setTimeout(() => {
       if (recordId !== state.recordId) return;
-      const fs = state.dataset.freq;
-      const settings = JSON.parse(JSON.stringify({
-        config: state.config, tab: state.tab, basis: state.basis, sFormat: state.sFormat, sKeys: state.sKeys,
-        z: state.z, cispr: state.cispr, cmc: state.cmc, esb: state.esb, pairIn: state.pairIn, pairOut: state.pairOut,
-        markers: state.markers.map(i => i === null ? null : fs[i])
-      }));
+      const settings = snapshotSettings();
       Library.saveSettings(recordId, settings).catch(() => {});
     }, 500);
   }
@@ -3537,10 +4492,14 @@ const Plot = (() => {
   function loadDemo(n) {
     state.importJob++;
     state.recordId = null;
+    session.current = null;
+    state.profile = blankProfile();
     $('import-notice').classList.remove('neutral');
     if (mobile.matches) state.collapsed = true;
     initDataset(RF.demoNetwork(n));
+    state.profile.key = configKey();
     renderRecent();
+    renderSession();
   }
 
   // Start order: a file shared from Android, a file opened from the OS, the last file, otherwise the demo.
@@ -3567,7 +4526,8 @@ const Plot = (() => {
       window.launchQueue.setConsumer(async params => {
         if (!params.files?.length) return;
         launched = true;
-        importFile(await params.files[0].getFile());
+        // With "focus-existing" further files opened from the system land in this window and join the list.
+        openSources(params.files.map(handle => handleSource(handle)), { remember: true });
       });
     }
     if (await receiveSharedFile()) return;
@@ -3665,7 +4625,8 @@ const Plot = (() => {
     const active = state.layout?.active.length ?? d.n, loaded = d.n - active;
     $('network-summary').innerHTML = '<span class="badge active">' + active + ' aktiv</span>' +
       (state.config.pairs.length ? '<span class="badge">' + state.config.pairs.length + ' Paare</span>' : '') +
-      (loaded ? '<span class="badge loaded">' + loaded + ' abgeschlossen</span>' : '');
+      (loaded ? '<span class="badge loaded">' + loaded + ' abgeschlossen</span>' : '') +
+      ({ file: '<span class="badge profile-badge">Profil aus Datei</span>', template: '<span class="badge profile-badge">Vorlage ' + esc(state.profile.name) + '</span>' }[state.profile.source] ?? '');
   }
 
   function currentModes() {
@@ -3883,7 +4844,7 @@ const Plot = (() => {
     const automatic = layout.notices.map(p => 'Paar ' + p.id + ' → ' + display(p.ref) + ' Ω').join(' · ');
     const schematic = '<details class="port-schematic" id="port-schematic"' + ($('port-schematic')?.open ? ' open' : '') +
       '><summary>Portschema</summary>' + topoHtml(true) + '</details>';
-    const html = '<div class="config-grid"><div>' +
+    const html = profileCard() + '<div class="config-grid"><div>' +
       '<section class="config-card"><div class="config-head"><h2>Portzuordnung</h2><p>' + dataset.n +
       ' physische Ports · Tippe nacheinander auf Plus- und Minus-Port.</p></div><div class="config-content">' +
       renderPairEditor(groupFor) + (pairs ? '<div class="pair-list">' + pairs + '</div>' : '') + presets + schematic + '</div></section>' + impedance +
@@ -3987,6 +4948,12 @@ const Plot = (() => {
         html += '<form class="fit-fields" id="fit-form">' + textField('Fit ab', 'start', freqInput(state.cmc.band[0])) +
           textField('Fit bis', 'stop', freqInput(state.cmc.band[1])) + '<button class="button" type="submit">Fit anwenden</button></form>';
       }
+    }
+    const compared = state.compare.ids.filter(id => id !== session.current && compareCache.get(id)?.ctx).length;
+    if (compared) {
+      html += '<div class="compare-chip"><span>Vergleich · ' + (compared + 1) + ' Dateien</span>' +
+        actionButton('Δ zu ⟨A⟩', 'compare-delta', '', 'button', '', pressed(state.compare.delta) + ' title="Differenz zur geöffneten Datei anzeigen"') +
+        iconButton('Vergleich beenden', 'compare-clear', '', 'close') + '</div>';
     }
     insertHtml($('view-controls'), html);
   }
@@ -4657,6 +5624,7 @@ const Plot = (() => {
       empty('Auswahl ergänzen', state.view.empty, state.view.needsPairs);
       return;
     }
+    state.view = compareView(state.view, factory);
     $('empty-panel').hidden = true;
     $('chart-card').hidden = false;
     $('plot-heading').textContent = state.view.title;
@@ -5402,6 +6370,18 @@ const Plot = (() => {
       if (!state.collapsed) window.scrollTo({ top: 0, behavior: 'smooth' });
     },
     recent: openRecent,
+    'open-folder': () => openFolder(),
+    'open-siblings': () => openFolder(sessionItem(session.current)?.handle),
+    'session-open': value => openItem(value),
+    'session-step': stepSession,
+    'session-compare': toggleCompare,
+    'session-clear': clearSession,
+    'compare-delta': () => { state.compare.delta = !state.compare.delta; renderMain(); },
+    'compare-clear': () => { state.compare.ids = []; state.compare.delta = false; renderSession(); syncCompare(true); },
+    'learn-template': () => learnTemplate(),
+    'match-templates': findTemplates,
+    'apply-template': applyTemplate,
+    'delete-template': value => { Templates.remove(value); state.profile.matches = state.profile.matches.filter(m => m.tpl.n + '|' + m.tpl.name !== value); renderConfig(); },
     'clear-recent': async () => {
       try { await Library.clear(); } catch {}
       state.recordId = null;
@@ -5424,7 +6404,7 @@ const Plot = (() => {
 
   document.addEventListener('submit', event => {
     const handler = {
-      'pair-form': savePair, 'pairz-form': applyPairImpedance, 'reference-form': applyReference, 'fit-form': applyFit, 'axes-form': applyAxes, 'load-form': applyLoad
+      'pair-form': savePair, 'profile-form': saveProfile, 'pairz-form': applyPairImpedance, 'reference-form': applyReference, 'fit-form': applyFit, 'axes-form': applyAxes, 'load-form': applyLoad
     }[event.target.id];
     if (!handler) return;
     event.preventDefault();
@@ -5434,6 +6414,11 @@ const Plot = (() => {
     if (event.key === 'Enter' && event.target.matches('input[id^="marker-"]')) {
       event.preventDefault();
       enterMarker(event.target);
+      return;
+    }
+    if (['PageDown', 'PageUp'].includes(event.key) && session.items.length > 1 && !event.target.closest('input, select, textarea, dialog') && !document.querySelector('dialog[open]')) {
+      event.preventDefault();
+      stepSession(event.key === 'PageDown' ? 1 : -1);
       return;
     }
     if (!event.target.matches('[role="tab"]') || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
@@ -5449,9 +6434,20 @@ const Plot = (() => {
   $('method-button').addEventListener('click', () => openDialog('method-dialog'));
   $('export-button').addEventListener('click', exportDialog);
   $('dropzone').addEventListener('click', () => $('file-input').click());
-  $('file-input').addEventListener('change', event => {
-    importFile(event.target.files[0]);
+  $('file-input').addEventListener('change', async event => {
+    const files = [...event.target.files];
     event.target.value = '';
+    if (files.length) openSources(await expandFiles(files), { remember: true });
+  });
+  $('folder-input').addEventListener('change', async event => {
+    const files = [...event.target.files];
+    event.target.value = '';
+    if (files.length) openSources(await expandFiles(files, true));
+  });
+  document.addEventListener('input', event => {
+    if (event.target.id !== 'session-filter') return;
+    session.filter = event.target.value;
+    renderSession();
   });
   window.addEventListener('dragover', event => {
     if (!event.dataTransfer.types.includes('Files')) return;
@@ -5466,11 +6462,7 @@ const Plot = (() => {
     if (!event.dataTransfer.files.length) return;
     event.preventDefault();
     $('dropzone').classList.remove('is-dragging');
-    if (event.dataTransfer.files.length > 1) {
-      toast('Wähle jeweils eine Touchstone-Datei.');
-      return;
-    }
-    importFile(event.dataTransfer.files[0]);
+    sourcesFromDrop(event.dataTransfer).then(sources => openSources(sources, { remember: true }));
   });
 
   boot();

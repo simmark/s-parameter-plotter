@@ -35,6 +35,28 @@ Alle Berechnungen laufen lokal auf dem Gerät. Messdateien werden nicht hochgela
 - **Deutsch / English:** Umschalter oben rechts
 - **Würth 7490220115** (WE-LAN): Pinbelegung wird erkannt
 
+## Viewer, Port-Profil und Vorlagen (Version 3)
+
+- **Mehrere Dateien:** mehrere Dateien, einen Ordner (mit Unterordnern) oder ein ZIP öffnen bzw. hineinziehen. Die Dateiliste steht links, `Bild↑`/`Bild↓` oder die Pfeile oben blättern. Ansicht und Einstellungen bleiben je Datei erhalten.
+- **Vergleich:** `+` neben einer Datei legt deren Kurven über die geöffnete Datei ⟨A⟩, `Δ zu ⟨A⟩` zeigt die Differenz. Bis zu 6 Dateien.
+- **Port-Profil in der Datei:** „In Datei speichern“ (Tab Ports & Lasten) schreibt Paare, Abschlüsse, Bezugsimpedanzen und Kurvenauswahl als Kommentarblock in die Touchstone-Datei. Die Messdaten bleiben unverändert.
+
+  ```
+  ! [SPA-Port-Profile] 1
+  ! SPA name: LAN-Übertrager
+  ! SPA pair 1: 1 3
+  ! SPA pair 2: 4 6
+  ! SPA load 2: open
+  ! SPA load 5: open
+  ! SPA view: tab=s basis=mm format=db
+  ! SPA traces mm: D2:D1 C2:C1 D1:D1 C1:C1
+  ! [End SPA-Port-Profile]
+  ```
+
+  Touchstone 1.x: Block am Dateianfang. Touchstone 2.x: innerhalb von `[Begin Information]`/`[End Information]`.
+- **Lernende Vorlagen:** „Als Vorlage lernen“ speichert einen Verhaltens-Fingerabdruck (|Sdd|, |Scc|, Modenkonversion). Neue Dateien mit gleicher Portzahl werden damit automatisch zugeordnet, auch bei anderer Portreihenfolge.
+- **Grenzen des Browsers:** Direktes Überschreiben der Datei geht nur, wenn sie über „Öffnen mit“ (Desktop) oder die Ordnerauswahl geöffnet wurde; sonst wird eine Kopie heruntergeladen. „Öffnen mit“ aus dem Dateimanager gibt es nur auf Desktop-Chrome/Edge, auf Android läuft das über „Teilen“. Nachbardateien eines Ordners sieht die App erst nach einmaliger Ordnerfreigabe.
+
 ## Bedienung
 
 | Maus | Touch | Wirkung |
@@ -81,3 +103,7 @@ Highlights:
 - German/English UI.
 
 **Install on Android:** open the link in Chrome → ⋮ → *Install app*. Share `.sNp` files to *S-Analyzer* to open them.
+
+### Viewer, port profile and templates (version 3)
+
+Open several files, a folder or a ZIP; step through with PgUp/PgDn; overlay up to 6 files and show the difference to the open file. "Save to file" stores pairs, terminations, reference impedances and the curve selection as a comment block (`! [SPA-Port-Profile] 1 …`) inside the Touchstone file (2.x: inside `[Begin Information]`). "Learn as template" stores a behaviour fingerprint that assigns the ports of similar files automatically, even with a different port order.
