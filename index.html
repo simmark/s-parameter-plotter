@@ -6,24 +6,26 @@
 <meta name="color-scheme" content="light">
 <meta name="description" content="Offline-Analyse von Touchstone-Netzwerken, Mixed Mode, Impedanzen und Common Mode Chokes.">
 <title>S-Parameter Analyzer</title>
-<meta name="theme-color" content="#142837">
+<meta name="theme-color" content="#faf9f5">
+<meta name="author" content="Simon Mark">
 <link rel="manifest" href="./manifest.webmanifest">
-<link rel="apple-touch-icon" href="./icons/app-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/app-192.png">
+<link rel="apple-touch-icon" href="./icons/apple-180.png">
 <style>
 :root {
-  --ink: #152837;
-  --muted: #536876;
-  --subtle: #627887;
-  --line: #dce5e9;
-  --line-dark: #c4d3dc;
-  --canvas: #edf2f5;
-  --surface: #fff;
-  --tint: #f5f8fa;
-  --navy: #142837;
-  --accent: #007766;
-  --accent-dark: #006554;
-  --accent-soft: #e3f3ee;
-  --accent-line: #a6d6c9;
+  --ink: #1f1e1d;
+  --muted: #6b6a64;
+  --subtle: #73726c;
+  --line: #e8e6dc;
+  --line-dark: #d6d3c8;
+  --canvas: #f5f4ef;
+  --surface: #ffffff;
+  --tint: #faf9f5;
+  --navy: #1f1e1d;
+  --accent: #c96442;
+  --accent-dark: #a9512f;
+  --accent-soft: #f8ece5;
+  --accent-line: #e9c2b1;
   --mode-d: #1f5fd1;
   --mode-d-soft: #eaf1fd;
   --mode-d-line: #b7cdf3;
@@ -39,13 +41,15 @@
   --mode-cd-soft: #fdecef;
   --mode-p: #7a4fc2;
   --mode-p-soft: #f3eefb;
-  --select: #0b5c4e;
+  --select: #2b2a27;
   --warn-ink: #81501b;
   --warn-bg: #fff8ed;
   --warn-line: #ebd2aa;
   --radius: 8px;
   --ui: Inter, "Noto Sans", "Segoe UI", system-ui, sans-serif;
   --mono: "IBM Plex Mono", "Cascadia Mono", "DejaVu Sans Mono", ui-monospace, monospace;
+  --serif: "Tiempos Headline", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Noto Serif", ui-serif, serif;
+  --ivory: #faf9f5;
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
@@ -56,7 +60,7 @@ button, select { cursor: pointer; }
 button { color: inherit; }
 button:disabled, select:disabled, input:disabled { cursor: default; opacity: .50; }
 button:focus-visible, input:focus-visible, select:focus-visible, canvas:focus-visible, a:focus-visible {
-  outline: 2px solid #078371;
+  outline: 2px solid #c96442;
   outline-offset: 2px;
 }
 a { color: var(--accent-dark); text-underline-offset: 3px; }
@@ -71,7 +75,7 @@ svg.icon { height: 17px; width: 17px; flex: 0 0 auto; stroke: currentColor; stro
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  color: #f7fcff;
+  color: #fcfcfa;
   background: var(--navy);
   border-bottom: 1px solid #0d202e;
   position: sticky;
@@ -79,18 +83,18 @@ svg.icon { height: 17px; width: 17px; flex: 0 0 auto; stroke: currentColor; stro
   z-index: 6;
 }
 .app-brand { display: flex; align-items: center; gap: 11px; font-size: 16px; font-weight: 675; letter-spacing: -.025em; }
-.brand-icon { width: 35px; height: 35px; border-radius: 8px; background: #20483f; color: #a3ead8; border: 1px solid #346459; display: grid; place-items: center; }
+.brand-icon { width: 35px; height: 35px; border-radius: 8px; background: #2b2a27; color: #e8a385; border: 1px solid #3d3c38; display: grid; place-items: center; }
 .brand-icon .icon { width: 22px; height: 22px; }
 .bar-actions { display: flex; align-items: center; gap: 10px; }
-.offline-status { display: flex; gap: 7px; align-items: center; color: #bcd1db; font-size: 12px; padding-right: 6px; white-space: nowrap; }
-.offline-status > span, .status-dot { width: 6px; height: 6px; border-radius: 50%; background: #71d5b9; display: inline-block; flex-shrink: 0; }
-.bar-button { display: inline-flex; align-items: center; gap: 7px; border: 1px solid transparent; border-radius: 5px; background: none; padding: 7px 10px; color: #d7e6ec; white-space: nowrap; font-size: 12px; font-weight: 650; }
-.bar-button:hover { color: #fff; background: #26404f; }
-.export-button { border-color: #496170; background: #233a48; color: #f5fbfd; padding-inline: 12px; }
+.offline-status { display: flex; gap: 7px; align-items: center; color: #d4d0c3; font-size: 12px; padding-right: 6px; white-space: nowrap; }
+.offline-status > span, .status-dot { width: 6px; height: 6px; border-radius: 50%; background: #7fb36a; display: inline-block; flex-shrink: 0; }
+.bar-button { display: inline-flex; align-items: center; gap: 7px; border: 1px solid transparent; border-radius: 5px; background: none; padding: 7px 10px; color: #e6e4dd; white-space: nowrap; font-size: 12px; font-weight: 650; }
+.bar-button:hover { color: #ffffff; background: #3d3c38; }
+.export-button { border-color: #636056; background: #383733; color: #fbfaf7; padding-inline: 12px; }
 
 .app-layout { display: grid; grid-template-columns: 290px minmax(0, 1fr); min-height: calc(100vh - 61px); }
 .app-layout.sidebar-collapsed { grid-template-columns: 55px minmax(0, 1fr); }
-.sidebar { align-self: start; height: calc(100dvh - 61px); position: sticky; top: 61px; overflow: auto; background: #f8fafb; border-right: 1px solid var(--line); }
+.sidebar { align-self: start; height: calc(100dvh - 61px); position: sticky; top: 61px; overflow: auto; background: #fbfbf8; border-right: 1px solid var(--line); }
 .sidebar-heading { min-height: 49px; padding: 0 13px 0 18px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
 .sidebar-heading h2 { font-size: 13px; font-weight: 675; }
 .sidebar-actions { display: flex; align-items: center; gap: 6px; }
@@ -109,9 +113,9 @@ svg.icon { height: 17px; width: 17px; flex: 0 0 auto; stroke: currentColor; stro
   width: 100%;
   min-height: 61px;
   padding: 9px 11px;
-  border: 1px dashed #a9bec9;
+  border: 1px dashed #c4c0ae;
   border-radius: 6px;
-  background: #fff;
+  background: #ffffff;
   transition: border-color .15s, background .15s;
 }
 .dropzone:hover, .dropzone.is-dragging { border-color: var(--accent); background: var(--accent-soft); }
@@ -119,27 +123,27 @@ svg.icon { height: 17px; width: 17px; flex: 0 0 auto; stroke: currentColor; stro
 .dropzone strong, .dropzone small { display: block; }
 .dropzone strong { font-size: 12.5px; font-weight: 675; }
 .dropzone small { color: var(--muted); font-size: 11px; margin-top: 2px; }
-.dataset-summary { margin-top: 13px; padding: 11px; background: #fff; border: 1px solid var(--line); border-radius: 6px; }
+.dataset-summary { margin-top: 13px; padding: 11px; background: #ffffff; border: 1px solid var(--line); border-radius: 6px; }
 .file-title { display: flex; gap: 8px; align-items: center; min-width: 0; }
-.file-title .icon { width: 16px; height: 16px; color: #5c7889; }
+.file-title .icon { width: 16px; height: 16px; color: #7b776a; }
 .file-title strong { font-size: 12px; font-weight: 675; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .heading-file { display: none; font-weight: 600; color: var(--muted); font-size: 11.5px; margin-left: 4px; }
 .recent-files { margin-top: 10px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 3px; min-width: 0; }
-.recent-files h4 { margin: 0 0 2px; font-size: 11px; font-weight: 670; color: #4c6373; display: flex; justify-content: space-between; align-items: center; }
+.recent-files h4 { margin: 0 0 2px; font-size: 11px; font-weight: 670; color: #666459; display: flex; justify-content: space-between; align-items: center; }
 .recent-files h4 .quiet-button { font-size: 10.5px; padding: 2px 4px; color: var(--muted); }
-.recent-item { min-width: 0; display: flex; align-items: center; gap: 6px; width: 100%; min-height: 34px; padding: 5px 7px; border: 1px solid var(--line); border-radius: 5px; background: #fff; text-align: left; font-size: 11.5px; }
+.recent-item { min-width: 0; display: flex; align-items: center; gap: 6px; width: 100%; min-height: 34px; padding: 5px 7px; border: 1px solid var(--line); border-radius: 5px; background: #ffffff; text-align: left; font-size: 11.5px; }
 .recent-item:hover { border-color: var(--accent-line); background: var(--accent-soft); }
-.recent-item .icon { width: 14px; height: 14px; color: #5c7889; }
+.recent-item .icon { width: 14px; height: 14px; color: #7b776a; }
 .recent-item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; font-weight: 620; }
 .recent-item small { color: var(--muted); font-size: 10px; white-space: nowrap; }
 .recent-item.is-current { border-color: var(--accent); border-left: 4px solid var(--accent); background: var(--accent-soft); }
 .share-line { margin: 8px 2px 0; }
-.update-banner { position: fixed; left: 50%; transform: translateX(-50%); bottom: 16px; z-index: 13; display: flex; gap: 10px; align-items: center; background: #183747; color: #fff; border-radius: 6px; padding: 8px 8px 8px 13px; font-size: 12px; box-shadow: 0 5px 18px #13283738; max-width: calc(100% - 24px); }
+.update-banner { position: fixed; left: 50%; transform: translateX(-50%); bottom: 16px; z-index: 13; display: flex; gap: 10px; align-items: center; background: #183747; color: #ffffff; border-radius: 6px; padding: 8px 8px 8px 13px; font-size: 12px; box-shadow: 0 5px 18px #13283738; max-width: calc(100% - 24px); }
 .update-banner .button { min-height: 30px; }
-.demo-tag { background: #edf2f6; color: #4e6271; font-size: 10px; font-weight: 700; border-radius: 4px; padding: 2px 5px; margin-left: auto; }
+.demo-tag { background: #f6f4ed; color: #666459; font-size: 10px; font-weight: 700; border-radius: 4px; padding: 2px 5px; margin-left: auto; }
 .file-meta { color: var(--muted); font-size: 11.5px; display: grid; gap: 4px; margin: 10px 0 0; }
 .file-meta div { display: flex; justify-content: space-between; align-items: baseline; gap: 5px; }
-.file-meta dd { margin: 0; text-align: right; font-size: 11px; color: #254257; }
+.file-meta dd { margin: 0; text-align: right; font-size: 11px; color: #41403b; }
 .source-actions { display: flex; gap: 3px; margin-top: 9px; margin-left: -5px; flex-wrap: wrap; }
 .quiet-button { border: 0; background: transparent; color: var(--accent-dark); font-size: 11.5px; font-weight: 675; padding: 5px 6px; border-radius: 4px; text-align: left; }
 .quiet-button:hover { background: var(--accent-soft); }
@@ -156,52 +160,55 @@ svg.icon { height: 17px; width: 17px; flex: 0 0 auto; stroke: currentColor; stro
   align-items: stretch;
   min-height: 106px;
   padding: 11px 7px;
-  border: 1px solid #d8e3e8;
+  border: 1px solid #e5e3db;
   border-radius: 6px;
-  background-color: #eff5f7;
-  background-image: radial-gradient(#cbdbe2 0.75px, transparent 0.85px);
+  background-color: #f7f5ef;
+  background-image: radial-gradient(#dddad0 0.75px, transparent 0.85px);
   background-size: 8px 8px;
 }
-.net-core { align-self: stretch; display: grid; place-items: center; min-height: 56px; background: #e2eaee; border: 1px solid #98acb9; border-radius: 5px; color: #486477; box-shadow: 0 1px 3px #1327370e; font: 600 10px var(--mono); }
+.net-core { align-self: stretch; display: grid; place-items: center; min-height: 56px; background: #efece1; border: 1px solid #afaca2; border-radius: 5px; color: #666459; box-shadow: 0 1px 3px #1327370e; font: 600 10px var(--mono); }
 .net-side { display: grid; gap: 9px; align-content: center; }
 .net-group { display: grid; gap: 2px; position: relative; padding-block: 2px; }
 .net-wire { position: relative; display: flex; align-items: center; width: 100%; min-height: 21px; white-space: nowrap; }
-.net-wire::before { content: ""; height: 1px; flex: 1 1 4px; background: var(--wire, #91a7b4); order: 2; }
-.net-wire::after { content: ""; width: 5px; height: 5px; border: 1px solid var(--wire, #91a7b4); border-radius: 50%; order: 3; background: #f7fafc; margin-right: -3px; z-index: 1; }
+.net-wire::before { content: ""; height: 1px; flex: 1 1 4px; background: var(--wire, #a9a69c); order: 2; }
+.net-wire::after { content: ""; width: 5px; height: 5px; border: 1px solid var(--wire, #a9a69c); border-radius: 50%; order: 3; background: #fbfbf8; margin-right: -3px; z-index: 1; }
 .net-side.right .net-wire { flex-direction: row-reverse; }
 .net-side.right .net-wire::after { margin-right: 0; margin-left: -3px; }
-.net-chip { order: 1; display: flex; align-items: center; justify-content: space-between; gap: 5px; border: 1px solid #c4d5de; border-radius: 4px; padding: 2px 5px; color: #284659; background: #fbfdfe; font: 600 10px var(--mono); }
-.net-wire.is-paired .net-chip { border-color: #aad1c5; color: #126a58; background: #e9f6f1; }
+.net-chip { order: 1; display: flex; align-items: center; justify-content: space-between; gap: 5px; border: 1px solid #d8d5ca; border-radius: 4px; padding: 2px 5px; color: #44423d; background: #fdfdfc; font: 600 10px var(--mono); }
+.net-wire.is-paired .net-chip { border-color: #e3c4b4; color: #7a3e22; background: #faf1ec; }
 .net-wire.is-load .net-chip { border-color: #e6cfab; color: #805019; background: #fff9ef; }
 .net-chip em { font: 500 9px var(--ui); color: inherit; }
-.net-pair { color: #3e5667; font: 650 10px var(--mono); padding: 0 3px 1px; }
+.net-pair { color: #57554e; font: 650 10px var(--mono); padding: 0 3px 1px; }
 .net-pair b { font-weight: 750; }
 .net-pair .d { color: var(--mode-d); }
 .net-pair .c { color: var(--mode-c); }
 .net-side.right .net-pair { text-align: right; }
 .net-hidden { font-size: 11px; color: var(--muted); margin-top: 7px; }
-.badge { display: inline-flex; align-items: center; padding: 3px 6px; border-radius: 4px; background: #eaf0f4; color: #3e5667; font-size: 11px; font-weight: 650; white-space: nowrap; }
+.badge { display: inline-flex; align-items: center; padding: 3px 6px; border-radius: 4px; background: #f4f2ea; color: #57554e; font-size: 11px; font-weight: 650; white-space: nowrap; }
 .badge.active { background: var(--accent-soft); color: var(--accent-dark); }
 .badge.loaded { background: #fff3df; color: #83541e; }
 
 .main { min-width: 0; display: flex; flex-direction: column; }
-.tabs { min-height: 49px; display: flex; gap: 5px; align-items: stretch; padding: 0 20px; border-bottom: 1px solid var(--line); background: #fdfefe; overflow-x: auto; overflow-y: hidden; scrollbar-width: thin; }
-.tab { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 7px; flex: 0 0 auto; background: none; border: 0; border-bottom: 2px solid transparent; padding: 0 12px; color: #536977; font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+.tabs { min-height: 49px; display: flex; gap: 5px; align-items: stretch; padding: 0 20px; border-bottom: 1px solid var(--line); background: #fefefd; overflow-x: auto; overflow-y: hidden; scrollbar-width: thin; }
+.tab { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 7px; flex: 0 0 auto; background: none; border: 0; border-bottom: 2px solid transparent; padding: 0 12px; color: #6c695e; font-size: 12.5px; font-weight: 600; white-space: nowrap; }
 .tab .icon { width: 15px; height: 15px; }
-.tab { color: #4f6573; border-bottom-width: 3px; }
-.tab:hover { color: var(--ink); background: #f1f6f7; }
-.tab[aria-selected="true"] { color: var(--select); background: linear-gradient(#fff0, #e4f3ee); border-bottom-color: var(--accent); font-weight: 750; }
+.tab { color: #68655a; border-bottom-width: 3px; }
+.tab:hover { color: var(--ink); background: #f8f6f0; }
+.tab[aria-selected="true"] { color: var(--select); background: linear-gradient(#fff0, #f7ece5); border-bottom-color: var(--accent); font-weight: 750; }
 .tab[aria-selected="true"] .icon { color: var(--accent); }
 .main-body { width: 100%; max-width: 1820px; margin: 0 auto; padding: 20px 23px 24px; flex: 1; }
 .page-head { min-height: 54px; display: flex; justify-content: space-between; gap: 12px; align-items: center; margin: 0 0 14px; }
 .page-titles { min-width: 0; }
 .page-head h1 { font-size: clamp(23px, 2.15vw, 31px); line-height: 1.18; letter-spacing: -.04em; font-weight: 720; }
 .page-head p { margin-top: 5px; font-size: 12px; color: var(--muted); }
-.segment { background: #eef3f5; border: 1px solid #dbe5ea; display: inline-flex; align-items: stretch; padding: 2px; gap: 2px; border-radius: 6px; flex-shrink: 0; }
-.segment button { background: transparent; border: 1px solid transparent; border-radius: 4px; color: #506675; min-height: 26px; padding: 3px 10px; font-size: 11.5px; font-weight: 650; white-space: nowrap; }
-.segment button:hover:not(:disabled):not([aria-pressed="true"]) { color: #143b3a; background: #e1eaee; }
-.segment button[aria-pressed="true"] { border-color: var(--select); color: #fff; background: var(--select); box-shadow: 0 1px 3px #0b5c4e40; }
+.segment { background: #f6f4ed; border: 1px solid #e7e5de; display: inline-flex; align-items: stretch; padding: 2px; gap: 2px; border-radius: 6px; flex-shrink: 0; }
+.segment button { background: transparent; border: 1px solid transparent; border-radius: 4px; color: #69675c; min-height: 26px; padding: 3px 10px; font-size: 11.5px; font-weight: 650; white-space: nowrap; }
+.segment button:hover:not(:disabled):not([aria-pressed="true"]) { color: #143b3a; background: #efece0; }
+.segment button[aria-pressed="true"] { border-color: var(--select); color: #ffffff; background: var(--select); box-shadow: 0 1px 3px #2b2a2740; }
 .segment button[aria-pressed="true"]::before { content: "✓"; margin-right: 5px; font-weight: 800; }
+.axis-segment button[aria-pressed="true"]::before { content: none; }
+.segment-label { font: 700 10px var(--mono); color: var(--muted); padding: 0 4px 0 6px; align-self: center; }
+.segment[hidden] { display: none; }
 .basis-segment button { display: inline-flex; align-items: center; gap: 5px; }
 .mode-dots { display: inline-flex; gap: 2px; }
 .mode-dots i { width: 7px; height: 7px; border-radius: 50%; display: inline-block; box-shadow: 0 0 0 1px #fff8; }
@@ -209,107 +216,110 @@ svg.icon { height: 17px; width: 17px; flex: 0 0 auto; stroke: currentColor; stro
 .view-controls { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 8px 14px; margin-bottom: 11px; }
 .view-controls:empty { display: none; }
 .control { display: grid; gap: 4px; min-width: 0; }
-.control > span, .field-label { font-size: 11px; font-weight: 670; color: #4c6373; }
-select, input.field-input { color: var(--ink); background: #fff; border: 1px solid var(--line-dark); border-radius: 5px; height: 33px; padding: 4px 8px; font-size: 12px; max-width: 100%; }
+.control > span, .field-label { font-size: 11px; font-weight: 670; color: #666459; }
+select, input.field-input { color: var(--ink); background: #ffffff; border: 1px solid var(--line-dark); border-radius: 5px; height: 33px; padding: 4px 8px; font-size: 12px; max-width: 100%; }
 select { padding-right: 24px; }
-select:hover:not(:disabled), input.field-input:hover { border-color: #95b1bd; }
+select:hover:not(:disabled), input.field-input:hover { border-color: #afada3; }
 input.field-input { width: 100%; }
 input[type="checkbox"] { accent-color: var(--accent); }
 .view-controls .control { min-width: 126px; }
 .view-controls .narrow { min-width: 94px; }
 .view-controls .fit-fields .control { width: 108px; min-width: 0; }
 .fit-fields { display: flex; align-items: flex-end; gap: 8px; flex-wrap: wrap; }
-.button, .icon-button { border: 1px solid var(--line); border-radius: 5px; background: #fff; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px; font-weight: 660; min-height: 33px; padding: 5px 10px; white-space: nowrap; }
-.button:hover:not(:disabled), .icon-button:hover:not(:disabled) { border-color: #a9bec7; background: #f0f6f7; }
-.button.primary { color: #fff; background: var(--accent-dark); border-color: var(--accent-dark); }
-.button.primary:hover:not(:disabled) { background: #075749; border-color: #075749; }
-.icon-button { width: 33px; height: 33px; padding: 0; color: #4a6475; }
+.button, .icon-button { border: 1px solid var(--line); border-radius: 5px; background: #ffffff; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px; font-weight: 660; min-height: 33px; padding: 5px 10px; white-space: nowrap; }
+.button:hover:not(:disabled), .icon-button:hover:not(:disabled) { border-color: #c3bfad; background: #f7f6f0; }
+.button.primary { color: #ffffff; background: var(--accent-dark); border-color: var(--accent-dark); }
+.button.primary:hover:not(:disabled) { background: #8f4426; border-color: #8f4426; }
+.icon-button { width: 33px; height: 33px; padding: 0; color: #666459; }
 .icon-button .icon { width: 16px; height: 16px; }
 
-.chart-card { background: #fff; border: 1px solid #d4e1e7; border-radius: var(--radius); box-shadow: 0 2px 5px #263e4810; overflow: hidden; }
+.chart-card { background: #ffffff; border: 1px solid #e3e1d8; border-radius: var(--radius); box-shadow: 0 2px 5px #3a393410; overflow: hidden; }
 .chart-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; min-height: 57px; padding: 9px 13px 9px 16px; border-bottom: 1px solid var(--line); }
 .chart-head h2 { font-size: 14px; font-weight: 700; letter-spacing: -.01em; }
 .plot-caption { color: var(--muted); font-size: 11px; margin-top: 2px; }
 .chart-tools { display: flex; gap: 6px; align-items: center; }
 .plot-layout { display: grid; grid-template-columns: minmax(0, 1fr) 210px; }
-.plot-surface { min-width: 0; background: #fff; }
+.plot-surface { min-width: 0; background: #ffffff; }
 #plot { display: block; width: 100%; height: clamp(275px, 39vh, 570px); cursor: crosshair; touch-action: pan-y; }
 #plot:focus-visible { outline-offset: -3px; }
-.plot-hint { display: block; font-size: 10.5px; min-height: 24px; padding: 0 11px 6px 17px; color: #607685; }
-.trace-panel { background: #f8fafb; border-left: 1px solid var(--line); padding: 12px 11px 10px; min-width: 0; }
+.plot-hint { display: block; font-size: 10.5px; min-height: 24px; padding: 0 11px 6px 17px; color: #7b776a; }
+.trace-panel { background: #fbfbf8; border-left: 1px solid var(--line); padding: 12px 11px 10px; min-width: 0; }
 .trace-head { display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 7px; min-height: 28px; }
 .trace-head h3 { font-size: 12px; font-weight: 675; }
 .trace-count { font: 600 10.5px var(--mono); color: var(--muted); margin-left: 3px; }
 .trace-head .button { min-height: 26px; padding: 3px 7px; font-size: 10.5px; }
 .trace-head .icon { width: 13px; height: 13px; }
 .trace-list { display: grid; gap: 4px; }
-.trace-row { position: relative; display: grid; grid-template-columns: 15px 18px minmax(0, 1fr) auto; text-align: left; align-items: center; gap: 6px; width: 100%; background: #fff; border: 1px solid color-mix(in srgb, var(--trace) 38%, #dfe8ec); border-left: 4px solid var(--trace); border-radius: 5px; padding: 5px 7px 5px 6px; min-height: 34px; }
+.trace-row { position: relative; display: grid; grid-template-columns: 15px 18px minmax(0, 1fr) auto; text-align: left; align-items: center; gap: 6px; width: 100%; background: #ffffff; border: 1px solid color-mix(in srgb, var(--trace) 38%, #eae8e1); border-left: 4px solid var(--trace); border-radius: 5px; padding: 5px 7px 5px 6px; min-height: 34px; }
 .trace-row:hover { box-shadow: 0 0 0 1px color-mix(in srgb, var(--trace) 45%, transparent); }
-.trace-check { width: 15px; height: 15px; border-radius: 3px; display: grid; place-items: center; background: var(--trace); color: #fff; font: 800 10px/1 var(--ui); }
+.trace-check { width: 15px; height: 15px; border-radius: 3px; display: grid; place-items: center; background: var(--trace); color: #ffffff; font: 800 10px/1 var(--ui); }
 .trace-check::before { content: "✓"; }
-.trace-row[aria-pressed="false"] { background: #f4f6f8; color: #7a8b96; border: 1px dashed #c3d0d7; border-left: 4px solid #d3dde2; }
-.trace-row[aria-pressed="false"] .trace-check { background: #fff; box-shadow: inset 0 0 0 1.5px #a8b9c3; }
+.trace-row[aria-pressed="false"] { background: #f9f8f3; color: #908d80; border: 1px dashed #d5d2c5; border-left: 4px solid #e0ded5; }
+.trace-row[aria-pressed="false"] .trace-check { background: #ffffff; box-shadow: inset 0 0 0 1.5px #c1bdaa; }
 .trace-row[aria-pressed="false"] .trace-check::before { content: ""; }
-.trace-row[aria-pressed="false"] .trace-dot { --trace: #b4c3cb; }
-.trace-row[aria-pressed="false"] .trace-name { text-decoration: line-through; text-decoration-color: #a9b8c1; }
-.trace-row[aria-pressed="false"] .trace-value { color: #9aa9b2; }
+.trace-row[aria-pressed="false"] .trace-dot { --trace: #cac6b5; }
+.trace-row[aria-pressed="false"] .trace-name { text-decoration: line-through; text-decoration-color: #c1bca9; }
+.trace-row[aria-pressed="false"] .trace-value { color: #acaaa0; }
 .trace-name { font: 650 11px var(--mono); overflow: hidden; text-overflow: ellipsis; }
 .trace-dot { width: 18px; height: 3px; background: var(--trace); display: inline-block; flex: 0 0 18px; border-radius: 1px; }
 .trace-dot.is-dashed { background: repeating-linear-gradient(90deg, var(--trace) 0 5px, transparent 5px 8px); }
-.mode-legend { display: flex; flex-wrap: wrap; gap: 4px 9px; margin: 9px 1px 0; font-size: 10.5px; color: #4c6373; }
+.mode-legend { display: flex; flex-wrap: wrap; gap: 4px 9px; margin: 9px 1px 0; font-size: 10.5px; color: #666459; }
 .mode-legend span { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
 .mode-legend i { width: 9px; height: 9px; border-radius: 2px; background: var(--c); display: inline-block; }
-.mode-legend .line-key { width: 16px; height: 0; border-top: 2.5px solid #5b7383; border-radius: 0; background: none; }
+.mode-legend .line-key { width: 16px; height: 0; border-top: 2.5px solid #777467; border-radius: 0; background: none; }
 .mode-legend .line-key.dashed { border-top-style: dashed; }
-.mode-tag { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; padding: 1px 4px; border-radius: 3px; font: 700 10px var(--mono); color: #fff; background: var(--c, #5b7383); }
-.trace-value { font: 500 10.5px var(--mono); white-space: nowrap; color: #425969; }
+.mode-tag { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; padding: 1px 4px; border-radius: 3px; font: 700 10px var(--mono); color: #ffffff; background: var(--c, #777467); }
+.trace-value { font: 500 10.5px var(--mono); white-space: nowrap; color: #5a5851; }
 .trace-empty { color: var(--muted); font-size: 12px; padding: 5px 1px; }
 .trace-note { margin: 10px 1px 0; color: var(--muted); font-size: 11px; }
 
 .marker-panel { border-top: 1px solid var(--line); }
 .marker-tools { display: flex; justify-content: space-between; align-items: center; gap: 9px; flex-wrap: wrap; min-height: 48px; padding: 8px 13px; }
 .marker-heading { font-size: 12px; font-weight: 670; display: flex; align-items: center; gap: 7px; }
-.marker-heading .icon { color: #5b7484; width: 16px; height: 16px; }
+.marker-heading .icon { color: #777468; width: 16px; height: 16px; }
 .marker-controls { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-.marker-unit { display: flex; align-items: center; border: 1px solid var(--line); border-radius: 5px; overflow: hidden; background: #fff; }
-.marker-unit.is-active { border-color: var(--select); box-shadow: 0 0 0 2px #0b5c4e2e; }
-.marker-unit.is-active button { background: var(--select); color: #fff; }
-.marker-unit.is-active .marker2 { background: #a5640f; color: #fff; }
-.marker-unit button { border: 0; border-right: 1px solid var(--line); background: #edf3f6; padding: 4px 7px; font: 650 11px var(--mono); min-height: 28px; color: #344e60; }
-.marker-unit .marker2 { background: #fff2d9; color: #77501a; }
-.marker-unit input { width: 95px; height: 28px; border: 0; padding: 2px 6px; font: 500 11px var(--mono); background: #fff; color: var(--ink); }
+.marker-unit { --mk: #2b2a27; display: flex; align-items: center; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; background: #ffffff; }
+.marker-unit .marker-name { border: 0; background: color-mix(in srgb, var(--mk) 12%, #ffffff); color: var(--mk); padding: 4px 8px; font: 750 11px var(--mono); min-height: 30px; border-right: 1px solid var(--line); }
+.marker-unit.is-active { border-color: var(--mk); box-shadow: 0 0 0 2px color-mix(in srgb, var(--mk) 22%, transparent); }
+.marker-unit.is-active .marker-name { background: var(--mk); color: #ffffff; }
+.marker-unit input { width: 98px; height: 30px; border: 0; padding: 2px 6px; font: 500 11px var(--mono); background: #ffffff; color: var(--ink); }
+.marker-unit .marker-remove { border: 0; background: transparent; color: var(--muted); width: 24px; height: 30px; display: grid; place-items: center; padding: 0; }
+.marker-unit .marker-remove .icon { width: 13px; height: 13px; }
+.marker-unit .marker-remove:hover { color: var(--ink); background: var(--soft-bg, #f4f2e9); }
+.mk-dot { display: inline-block; width: 8px; height: 8px; border-radius: 2px; background: var(--mk); margin-right: 5px; vertical-align: 0; }
+.marker-table th.is-active-col, .marker-table td.is-active-col { background: color-mix(in srgb, var(--accent) 7%, transparent); font-weight: 650; }
 .marker-controls .button, .marker-controls .icon-button { min-height: 29px; height: 29px; font-size: 11px; }
 .marker-controls .icon-button { width: 29px; }
 .peak-buttons { display: inline-flex; gap: 4px; }
 .peak-buttons .button { padding-inline: 8px; }
 .table-scroll { overflow-x: auto; scrollbar-width: thin; }
 .data-table { width: 100%; border-collapse: collapse; font-size: 11.5px; text-align: left; }
-.data-table th { padding: 6px 12px; color: #516a7a; background: #f2f6f8; font-weight: 660; white-space: nowrap; }
-.data-table td { padding: 5px 12px; border-top: 1px solid #ecf1f3; white-space: nowrap; }
+.data-table th { padding: 6px 12px; color: #6d6a5e; background: #f8f7f2; font-weight: 660; white-space: nowrap; }
+.data-table td { padding: 5px 12px; border-top: 1px solid #f4f2eb; white-space: nowrap; }
 .data-table tr:last-child td { padding-bottom: 7px; }
 .data-table th:not(:first-child), .data-table td:not(:first-child) { text-align: right; }
 .data-table .table-name { display: flex; align-items: center; gap: 7px; font-family: var(--mono); font-weight: 650; }
 .data-table td:not(:first-child) { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 .marker-notice { padding: 5px 13px 10px; color: var(--muted); font-size: 11px; }
-.status-bar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 12px; align-items: center; min-height: 33px; padding: 6px 23px; border-top: 1px solid var(--line); background: #f6f9fa; color: #546b79; font-size: 11px; }
+.status-bar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 12px; align-items: center; min-height: 33px; padding: 6px 23px; border-top: 1px solid var(--line); background: #faf9f6; color: #6e6b5f; font-size: 11px; }
 .status-bar > span { display: inline-flex; gap: 7px; align-items: center; }
-.status-dot { background: #338b73; }
+.status-dot { background: #5f9a4c; }
 .status-dot.warn { background: #c68b3e; }
 .inline-notice { font-size: 12px; border-radius: 5px; padding: 8px 10px; border: 1px solid var(--warn-line); background: var(--warn-bg); color: var(--warn-ink); margin: 8px 0; overflow-wrap: anywhere; }
-.inline-notice.neutral { color: #31586c; border-color: #c9dce6; background: #edf5f8; }
-.empty-panel { display: grid; justify-items: start; align-content: center; gap: 8px; min-height: 220px; border: 1px solid var(--line); background: #fff; border-radius: var(--radius); padding: 24px; }
+.inline-notice.neutral { color: #52514b; border-color: #dedbd1; background: #f6f5ee; }
+.empty-panel { display: grid; justify-items: start; align-content: center; gap: 8px; min-height: 220px; border: 1px solid var(--line); background: #ffffff; border-radius: var(--radius); padding: 24px; }
 .empty-panel h2 { font-size: 17px; }
 .empty-panel p { max-width: 600px; color: var(--muted); font-size: 13px; }
 .empty-panel .button { margin-top: 4px; }
 .analysis-details { margin-top: 12px; display: grid; gap: 10px; }
 .analysis-details:empty { display: none; }
-.note { font-size: 11.5px; color: #4b6474; padding: 8px 0 0; }
+.note { font-size: 11.5px; color: #666459; padding: 8px 0 0; }
 .note .quiet-button { padding: 2px 4px; }
-.detail-card { border: 1px solid var(--line); border-radius: var(--radius); background: #fff; padding: 12px 14px; }
+.detail-card { border: 1px solid var(--line); border-radius: var(--radius); background: #ffffff; padding: 12px 14px; }
 .detail-card h3 { font-size: 13px; margin: 0 0 7px; }
 .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(126px, 1fr)); gap: 8px; }
-.metric { display: grid; gap: 4px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 6px; background: #f8fbfc; min-width: 0; }
-.metric strong { color: #0b6455; font: 650 16px var(--mono); white-space: nowrap; }
+.metric { display: grid; gap: 4px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 6px; background: #fcfbf8; min-width: 0; }
+.metric strong { color: #1f1e1d; font: 650 16px var(--mono); white-space: nowrap; }
 .metric span { color: var(--muted); font-size: 11px; }
 .metric.wide strong { font-size: 13px; }
 .fit-summary { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
@@ -322,15 +332,15 @@ input[type="checkbox"] { accent-color: var(--accent); }
   width: 100%;
   max-width: 640px;
   margin: 8px auto;
-  color: #294558;
-  background: #f8fbfc;
+  color: #44423d;
+  background: #fcfbf8;
   border: 1px solid var(--line);
   border-radius: 6px;
 }
 .cmc-schematic figcaption { color: var(--muted); font-size: 11.5px; text-align: center; }
 
 .config-grid { display: grid; grid-template-columns: minmax(0, .94fr) minmax(0, 1.24fr); align-items: start; gap: 13px; }
-.config-card { border: 1px solid #d4e0e6; background: #fff; border-radius: var(--radius); min-width: 0; }
+.config-card { border: 1px solid #e2e0d8; background: #ffffff; border-radius: var(--radius); min-width: 0; }
 .config-card + .config-card { margin-top: 12px; }
 .config-head { padding: 12px 14px; border-bottom: 1px solid var(--line); }
 .config-head h2 { font-size: 14px; }
@@ -340,8 +350,18 @@ input[type="checkbox"] { accent-color: var(--accent); }
 .config-content .net-chip { font-size: 11px; min-width: 54px; }
 .config-content .net-chip em { font-size: 10px; }
 .pair-list { display: grid; gap: 6px; margin-top: 9px; }
-.pair-card { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 7px; border: 1px solid var(--line); border-radius: 5px; background: #fbfdfe; }
-.pair-name { display: grid; place-items: center; min-width: 48px; min-height: 32px; padding: 3px 5px; color: var(--accent-dark); background: var(--accent-soft); border-radius: 4px; font: 650 10px var(--mono); }
+.pair-card { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 7px; border: 1px solid color-mix(in srgb, var(--pc) 35%, var(--line)); border-left: 5px solid var(--pc); border-radius: 7px; background: color-mix(in srgb, var(--pc) 6%, #ffffff); }
+.pair-name { display: grid; place-items: center; min-width: 52px; min-height: 32px; padding: 3px 6px; color: var(--ink); background: #ffffff; border: 1px solid color-mix(in srgb, var(--pc) 40%, var(--line)); border-radius: 5px; font: 650 10px var(--mono); }
+.pair-chip { display: inline-flex; align-items: center; gap: 5px; font: 650 11px var(--mono); }
+.pair-chip::before { content: ""; width: 9px; height: 9px; border-radius: 3px; background: var(--pc); }
+.pairz-table input { width: 100%; min-width: 74px; max-width: 120px; height: 30px; }
+.pairz-table tr { box-shadow: inset 4px 0 0 var(--pc); }
+.pair-badge { background: color-mix(in srgb, var(--pc) 14%, #ffffff); color: color-mix(in srgb, var(--pc) 75%, #201f1c); border: 1px solid color-mix(in srgb, var(--pc) 45%, #ffffff); }
+.net-group.is-pair .net-chip { border-color: color-mix(in srgb, var(--pc) 55%, #ffffff); background: color-mix(in srgb, var(--pc) 12%, #ffffff); color: color-mix(in srgb, var(--pc) 70%, #201f1c); }
+.net-group.is-pair { --wire: var(--pc); }
+.pc-dot { display: inline-block; width: 7px; height: 7px; border-radius: 2px; background: var(--pc); margin-right: 4px; }
+.detect-note { display: flex; align-items: center; gap: 6px; margin: 2px 0 10px; font-size: 12px; color: var(--ink); }
+.detect-note .icon { width: 15px; height: 15px; color: var(--accent); }
 .pair-card strong, .port-id { font: 650 11.5px var(--mono); }
 .pair-card small { display: block; color: var(--muted); font-size: 10px; margin-top: 2px; }
 .pair-buttons { display: flex; gap: 3px; }
@@ -349,14 +369,21 @@ input[type="checkbox"] { accent-color: var(--accent); }
 .pair-editor-head h3 { font-size: 13px; }
 .pair-targets, .pair-editor-actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-block: 8px; }
 .pair-targets .button { min-height: 38px; flex: 1 0 105px; justify-content: flex-start; }
-.pair-target[aria-pressed="true"] { background: var(--select); border-color: var(--select); color: #fff; }
+.pair-target[aria-pressed="true"] { background: var(--select); border-color: var(--select); color: #ffffff; }
 .assign-ports { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 6px; }
 .assign-port {
   display: grid; align-content: center; position: relative; min-width: 0; min-height: 48px; padding: 6px;
-  border: 1px solid var(--line-dark); border-radius: 6px; color: var(--ink); background: #f8fafb; text-align: left;
+  border: 1px solid var(--line-dark); border-radius: 6px; color: var(--ink); background: #fbfbf8; text-align: left;
 }
-.assign-port:hover { border-color: #7799ab; background: #eff5f7; }
-.assign-port[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent); }
+.assign-port:hover { border-color: #999689; background: #f7f5ef; }
+.assign-port.is-paired { border-left: 4px solid var(--pc); }
+.assign-port.is-paired .assign-role { color: var(--pc); }
+.assign-port.is-taken { background: #f4f2e9; border-color: #dedcd2; border-left-color: color-mix(in srgb, var(--pc) 55%, #dedcd2); color: #8d8a7c; }
+.assign-port.is-taken strong { color: #8d8a7c; }
+.assign-port.is-taken .assign-role { color: color-mix(in srgb, var(--pc) 60%, #8d8a7c); }
+.assign-port.is-taken:hover { background: #efecdf; color: var(--ink); }
+.assign-port[aria-pressed="true"] { border-color: var(--pc, var(--accent)); background: color-mix(in srgb, var(--pc, var(--accent)) 12%, #ffffff); box-shadow: inset 0 0 0 1.5px var(--pc, var(--accent)); color: var(--ink); }
+.assign-port[aria-pressed="true"] .assign-selection { background: var(--pc, var(--accent-dark)); }
 .assign-port-line { display: flex; gap: 3px; align-items: center; justify-content: space-between; min-width: 0; }
 .assign-port-line strong { font: 700 13px var(--mono); }
 .assign-role { color: var(--muted); font-size: 10px; font-weight: 650; overflow-wrap: anywhere; text-align: right; }
@@ -374,8 +401,8 @@ input[type="checkbox"] { accent-color: var(--accent); }
 .reference-form { display: flex; gap: 7px; align-items: end; flex-wrap: wrap; }
 .reference-form .control { width: 114px; }
 .ports-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-.ports-table th { text-align: left; padding: 8px 9px; color: #4e697a; background: #f3f7f9; font-size: 11px; font-weight: 670; }
-.ports-table td { padding: 7px 9px; border-top: 1px solid #e9eff2; }
+.ports-table th { text-align: left; padding: 8px 9px; color: #6b685d; background: #f9f8f3; font-size: 11px; font-weight: 670; }
+.ports-table td { padding: 7px 9px; border-top: 1px solid #f3f1e8; }
 .ports-table th:first-child, .ports-table td:first-child { padding-left: 13px; }
 .ports-table th:last-child, .ports-table td:last-child { padding-right: 13px; }
 .ports-table select { width: 118px; min-height: 28px; height: 28px; }
@@ -386,14 +413,14 @@ input[type="checkbox"] { accent-color: var(--accent); }
 .config-card .note { padding: 8px 13px 11px; }
 .config-content .note { padding: 8px 0 0; }
 
-.dialog { border: 1px solid #b7c9d3; border-radius: 9px; color: var(--ink); width: min(500px, calc(100% - 26px)); padding: 0; max-height: min(86dvh, 900px); box-shadow: 0 15px 55px #13283747; }
+.dialog { border: 1px solid #cecbbc; border-radius: 9px; color: var(--ink); width: min(500px, calc(100% - 26px)); padding: 0; max-height: min(86dvh, 900px); box-shadow: 0 15px 55px #13283747; }
 .dialog::backdrop { background: #13283877; }
 .wide-dialog { width: min(800px, calc(100% - 26px)); }
-.dialog-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: #fff; z-index: 2; }
+.dialog-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: #ffffff; z-index: 2; }
 .dialog-head h2 { font-size: 17px; letter-spacing: -.02em; }
 .dialog-head p { font-size: 12px; color: var(--muted); margin-top: 3px; }
 .dialog-body { padding: 14px 16px; }
-.dialog-foot { display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 10px 16px; border-top: 1px solid var(--line); background: #f8fafb; }
+.dialog-foot { display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 10px 16px; border-top: 1px solid var(--line); background: #fbfbf8; }
 .dialog-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
 .form-row { display: flex; gap: 8px; flex-wrap: wrap; }
 .form-note { font-size: 12px; color: var(--muted); margin: 9px 0 0; }
@@ -404,12 +431,12 @@ input[type="checkbox"] { accent-color: var(--accent); }
 .matrix-actions .button { min-height: 28px; font-size: 11px; }
 .matrix-scroll { max-height: 55vh; overflow: auto; border: 1px solid var(--line); border-radius: 5px; }
 .matrix-table { border-collapse: separate; border-spacing: 0; width: 100%; font: 550 11px var(--mono); }
-.matrix-table th { position: sticky; background: #edf3f6; color: #456174; z-index: 1; padding: 6px 7px; }
+.matrix-table th { position: sticky; background: #f6f4ed; color: #636056; z-index: 1; padding: 6px 7px; }
 .matrix-table thead th { top: 0; }
 .matrix-table tbody th, .matrix-table thead th:first-child { left: 0; }
 .matrix-table thead th:first-child { z-index: 2; }
-.matrix-table td { padding: 2px; border: solid #edf2f4; border-width: 0 1px 1px 0; min-width: 49px; }
-.matrix-cell { --c: #5b7383; --soft: #f5f8fa; background: var(--soft); border: 1px solid transparent; border-radius: 3px; width: 100%; min-height: 30px; color: #3f5a6b; font: inherit; }
+.matrix-table td { padding: 2px; border: solid #f5f3ec; border-width: 0 1px 1px 0; min-width: 49px; }
+.matrix-cell { --c: #777467; --soft: #faf9f5; background: var(--soft); border: 1px solid transparent; border-radius: 3px; width: 100%; min-height: 30px; color: #595851; font: inherit; }
 .matrix-cell.fam-dd { --c: var(--mode-d); --soft: var(--mode-d-soft); color: #234b8f; }
 .matrix-cell.fam-cc { --c: var(--mode-c); --soft: var(--mode-c-soft); color: #13603f; }
 .matrix-cell.fam-dc { --c: var(--mode-dc); --soft: var(--mode-dc-soft); color: #8a4a06; }
@@ -417,25 +444,78 @@ input[type="checkbox"] { accent-color: var(--accent); }
 .matrix-cell.fam-p { --c: var(--mode-p); --soft: var(--mode-p-soft); color: #563590; }
 .matrix-cell.is-reflection { font-style: italic; }
 .matrix-cell:hover { border-color: var(--c); }
-.matrix-cell[aria-pressed="true"] { background: var(--c); border-color: var(--c); color: #fff; font-weight: 750; font-style: normal; box-shadow: 0 1px 3px color-mix(in srgb, var(--c) 45%, transparent); }
+.matrix-cell[aria-pressed="true"] { background: var(--c); border-color: var(--c); color: #ffffff; font-weight: 750; font-style: normal; box-shadow: 0 1px 3px color-mix(in srgb, var(--c) 45%, transparent); }
 .matrix-cell[aria-pressed="true"]::before { content: "✓ "; }
-.matrix-table td.block-start, .matrix-table th.block-start { border-left: 2px solid #9fb3bf; }
-.matrix-table tr.block-start > * { border-top: 2px solid #9fb3bf; }
+.matrix-table td.block-start, .matrix-table th.block-start { border-left: 2px solid #b5b2a9; }
+.matrix-table tr.block-start > * { border-top: 2px solid #b5b2a9; }
 .matrix-table th .mode-tag { min-width: 26px; }
 .matrix-legend { margin: 0 0 9px; }
 .matrix-meta { color: var(--muted); font-size: 11px; margin-top: 7px; }
 .methods { display: grid; gap: 13px; }
 .methods h3 { font-size: 14px; margin-bottom: 5px; }
 .methods section + section { border-top: 1px solid var(--line); padding-top: 11px; }
-.methods p { color: #435b6c; font-size: 12px; margin-bottom: 5px; }
-.methods code { font: 500 11px var(--mono); color: #213d4d; overflow-wrap: anywhere; }
+.methods p { color: #5c5a53; font-size: 12px; margin-bottom: 5px; }
+.methods code { font: 500 11px var(--mono); color: #3a3934; overflow-wrap: anywhere; }
 .export-content { display: grid; gap: 7px; }
-.export-item { text-align: left; display: grid; grid-template-columns: 19px minmax(0, 1fr); align-items: center; gap: 9px; border: 1px solid var(--line); border-radius: 6px; padding: 9px; background: #f9fcfd; }
+.export-item { text-align: left; display: grid; grid-template-columns: 19px minmax(0, 1fr); align-items: center; gap: 9px; border: 1px solid var(--line); border-radius: 6px; padding: 9px; background: #fcfcfa; }
 .export-item:hover:not(:disabled) { border-color: var(--accent-line); background: var(--accent-soft); }
 .export-item strong, .export-item small { display: block; }
 .export-item strong { font-size: 12px; }
 .export-item small { font-size: 11px; color: var(--muted); margin-top: 3px; }
-.toast { position: fixed; right: 17px; bottom: 16px; z-index: 12; max-width: min(370px, calc(100% - 34px)); background: #183747; color: #fff; box-shadow: 0 5px 18px #13283738; border-radius: 6px; padding: 9px 12px; font-size: 12px; }
+.toast { position: fixed; right: 17px; bottom: 16px; z-index: 12; max-width: min(370px, calc(100% - 34px)); background: #183747; color: #ffffff; box-shadow: 0 5px 18px #13283738; border-radius: 6px; padding: 9px 12px; font-size: 12px; }
+
+/* ---------- Claude-style layer ---------- */
+body { background: var(--canvas); color: var(--ink); }
+.app-bar { min-height: 56px; background: var(--ivory); color: var(--ink); border-bottom: 1px solid var(--line); padding: 0 18px; gap: 14px; }
+.app-brand { gap: 10px; font: 600 18px/1.1 var(--serif); letter-spacing: -.01em; color: var(--ink); }
+.brand-logo { width: 32px; height: 32px; border-radius: 8px; flex: 0 0 auto; }
+.brand-short { display: none; }
+.bar-button { color: #3d3d3a; border-radius: 8px; }
+.bar-button:hover { color: var(--ink); background: #f0eee6; }
+.export-button { background: var(--ink); border-color: var(--ink); color: var(--ivory); }
+.export-button:hover { background: #3d3d3a; color: #fff; }
+.lang-button { min-width: 38px; justify-content: center; border: 1px solid var(--line-dark); font: 700 11px var(--mono); }
+.offline-status { color: var(--muted); }
+.file-chip { display: none; }
+.sidebar { background: var(--ivory); }
+.tabs { background: var(--ivory); gap: 2px; }
+.tab { color: #5e5d59; border-bottom-width: 2px; font-weight: 600; }
+.tab:hover { background: #f0eee6; color: var(--ink); }
+.tab[aria-selected="true"] { color: var(--ink); background: none; border-bottom-color: var(--accent); font-weight: 700; }
+.tab[aria-selected="true"] .icon { color: var(--accent); }
+.tab-short { display: none; }
+.page-head { min-height: 0; margin: 0 0 10px; align-items: center; }
+.page-head h1 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.page-head p { margin: 0; font-size: 12px; color: var(--muted); }
+.config-head h2, .detail-card h3, .dialog-head h2, .chart-head h2, .empty-panel h2, .methods h3, .pair-editor-head h3, .axis-group h3 { font-family: var(--serif); font-weight: 600; letter-spacing: -.005em; }
+.chart-head h2 { font-size: 15px; }
+.chart-card, .config-card, .detail-card, .empty-panel { border-color: var(--line); border-radius: 12px; box-shadow: 0 1px 2px #1f1e1d0a; }
+.chart-head { min-height: 50px; }
+.segment { background: #f0eee6; border-color: var(--line); border-radius: 9px; }
+.segment button { border-radius: 7px; color: #5e5d59; }
+.segment button:hover:not(:disabled):not([aria-pressed="true"]) { background: #e8e6dc; color: var(--ink); }
+.button, .icon-button { border-radius: 8px; border-color: var(--line-dark); }
+.button:hover:not(:disabled), .icon-button:hover:not(:disabled) { background: #f5f4ef; border-color: #c2bfb4; }
+.button.primary { background: var(--accent); border-color: var(--accent); }
+.button.primary:hover:not(:disabled) { background: var(--accent-dark); border-color: var(--accent-dark); }
+select, input.field-input { border-radius: 8px; }
+.metric { background: var(--ivory); border-radius: 9px; }
+.metric strong { color: var(--ink); }
+.trace-panel { background: var(--ivory); }
+.dialog { border-color: var(--line-dark); border-radius: 14px; }
+.dialog::backdrop { background: #1f1e1d66; }
+.dialog-foot { background: var(--ivory); }
+.toast, .update-banner { background: var(--ink); border-radius: 10px; }
+.status-bar { background: var(--ivory); }
+.credit { color: var(--muted); font-size: 11px; line-height: 1.5; }
+.credit a { color: var(--accent-dark); }
+.side-credit { padding: 12px 16px 16px; border-top: 1px solid var(--line); }
+.about-row { display: flex; gap: 14px; align-items: center; }
+.about-logo { width: 56px; height: 56px; border-radius: 13px; flex: 0 0 auto; }
+.about h3 { font-size: 18px; margin-bottom: 3px; }
+.pair-name { white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 2px; }
+.basis-short { display: none; }
+html[lang="en"] .lang-de, html[lang="de"] .lang-en { display: none !important; }
 
 @media (min-width: 1550px) {
   .app-layout { grid-template-columns: 310px minmax(0, 1fr); }
@@ -527,10 +607,343 @@ input[type="checkbox"] { accent-color: var(--accent); }
   .ports-table td:first-child, .ports-table th:first-child { padding-left: 8px; }
   .ports-table td:last-child, .ports-table th:last-child { padding-right: 8px; }
 }
+/* ---------- Compact phone layout: no duplicate titles, little scrolling ---------- */
+@media (max-width: 850px) {
+  .app-bar { min-height: 50px; padding: 0 10px; position: static; gap: 8px; }
+  .file-chip { display: inline-flex; align-items: center; gap: 5px; min-width: 0; flex: 1 1 auto; max-width: 52vw; height: 32px; padding: 0 8px; border: 1px solid var(--line-dark); border-radius: 8px; background: #fff; color: var(--ink); font: 600 11.5px var(--ui); }
+  .file-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+  .file-chip .icon { width: 14px; height: 14px; color: var(--muted); }
+  .file-chip .chip-caret { margin-left: auto; }
+  .sidebar-collapsed .sidebar-heading { display: none; }
+  .sidebar-collapsed .sidebar { border-bottom: 0; }
+  .app-layout:not(.sidebar-collapsed) .sidebar { box-shadow: 0 6px 18px #1f1e1d14; }
+  .tabs { position: sticky; top: 0; z-index: 5; min-height: 40px; }
+  .main-body { padding: 10px 10px 14px; }
+  .page-head { margin-bottom: 8px; gap: 8px; }
+  .page-titles { flex: 1; min-width: 0; }
+  .page-head p { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 11px; }
+}
+@media (max-width: 575px) {
+  .brand-long { display: none; }
+  .brand-short { display: inline; font-size: 16px; }
+  .brand-logo { width: 28px; height: 28px; border-radius: 7px; }
+  .bar-actions { gap: 2px; }
+  .bar-button { padding: 6px; }
+  .lang-button { min-width: 32px; padding: 5px; }
+  .bar-button.lang-button span.lang-code { display: inline; }
+  .brand-name { white-space: nowrap; }
+  .marker-unit input { width: 92px; font-size: 10.5px; padding-inline: 4px; }
+  .tab-long { display: none; }
+  .tab-short { display: inline; }
+  .tabs { justify-content: space-between; padding: 0 2px; gap: 0; }
+  .tab { padding-inline: 7px; gap: 4px; font-size: 12px; }
+  .basis-long { display: none; }
+  .basis-short { display: inline; }
+  .basis-segment button { padding: 3px 7px; font-size: 11px; }
+  .view-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 8px; margin-bottom: 8px; }
+  .view-controls .control, .view-controls .narrow { min-width: 0; width: 100%; }
+  .view-controls .control > span { font-size: 10px; }
+  .view-controls select, .view-controls input.field-input { height: 32px; width: 100%; max-width: none; font-size: 12px; }
+  .view-controls > .button { align-self: end; height: 32px; min-height: 32px; }
+  .view-controls .fit-fields { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr auto; }
+  .view-controls .fit-fields .control { width: auto; }
+  .chart-head { min-height: 0; padding: 6px 8px; gap: 6px; }
+  .chart-head > div:first-child { min-width: 0; flex: 1; }
+  .chart-head h2 { display: none; }
+  .plot-caption { margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .chart-tools .segment-label { padding: 0 2px 0 4px; font-size: 9px; }
+  #plot { height: clamp(240px, 47vh, 390px); }
+  .plot-hint { display: none; }
+  .trace-panel { padding: 6px 7px 7px; }
+  .trace-head { min-height: 24px; margin-bottom: 4px; }
+  .trace-note { display: none; }
+  .mode-legend { margin-top: 6px; font-size: 10px; gap: 3px 8px; }
+  .marker-tools { padding: 6px 7px; gap: 6px; }
+  .marker-unit input { width: 84px; }
+  .marker-controls { gap: 4px; }
+  .status-bar { padding: 6px 10px; font-size: 10px; }
+  .detail-card { padding: 10px; }
+  .metric { padding: 7px 8px; }
+  .metric strong { font-size: 14px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
 }
 </style>
+<script>
+'use strict';
+// Bilingual layer: the app renders German; in English mode every text node and label is translated on the fly.
+window.I18N = (() => {
+  let lang = 'de';
+  try { lang = localStorage.getItem('spa-lang') || ((navigator.language || 'de').toLowerCase().startsWith('de') ? 'de' : 'en'); } catch { /* default */ }
+  const EXACT = new Map(Object.entries({
+    'Messnetzwerk': 'Network', 'Datei öffnen': 'Open file', 'Touchstone · .sNp / .ts': 'Touchstone · .sNp / .ts',
+    'CMC-Beispiel': 'CMC example', '8-Port-Beispiel': '8-port example', 'Portschema': 'Port diagram', 'Ports bearbeiten': 'Edit ports',
+    'Zuletzt geöffnet': 'Recently opened', 'Leeren': 'Clear', 'Frequenz': 'Frequency', 'Punkte': 'Points', 'Dateireferenz': 'File reference',
+    'Format': 'Format', 'Rauschpunkte': 'Noise points', 'Demo': 'Demo', 'je Port': 'per port',
+    'S-Parameter': 'S-parameters', 'Ports & Lasten': 'Ports & loads', 'Smith-Chart': 'Smith chart', 'Impedanz': 'Impedance',
+    'CISPR 17': 'CISPR 17', 'ESB-Modell': 'Equivalent circuit', 'ESB': 'ECM', 'Smith': 'Smith', 'Z': 'Z', 'CISPR': 'CISPR', 'Ports': 'Ports', 'S': 'S',
+    'Installieren': 'Install', 'App installieren': 'Install app', 'Methodik': 'Methods', 'Export': 'Export',
+    'Offline bereit': 'Offline ready', 'Offline-Cache wird vorbereitet': 'Preparing offline cache', 'Offline-Cache fehlt': 'Offline cache missing', 'Lokale Datei': 'Local file',
+    'Die Messdaten bleiben im Browser': 'Measurement data stays in the browser', 'Datei und Portschema': 'File and port diagram',
+    'Sprache wechseln': 'Switch language', 'Sprache: Deutsch / English': 'Language: Deutsch / English',
+    'Messnetzwerk einklappen': 'Collapse network panel', 'Messnetzwerk ausklappen': 'Expand network panel', 'Messdatei und Portschema': 'Measurement file and port diagram',
+    'Analyseansichten': 'Analysis views', 'Portbasis': 'Port basis', 'Single Ended': 'Single-ended', 'Mixed Mode': 'Mixed mode', 'SE': 'SE', 'MM': 'MM',
+    'Lege zuerst ein Portpaar an': 'Create a port pair first', 'Differential (D), Gleichtakt (C) und Modenkonversion': 'Differential (D), common mode (C) and mode conversion',
+    'Darstellung': 'Display', 'Ports zuordnen': 'Assign ports', 'Frequenzgang': 'Frequency response', 'Zeile = Antwort · Spalte = Anregung': 'Row = response · column = stimulus',
+    'Frequenzachse': 'Frequency axis', 'Vertikale Achse': 'Vertical axis', 'Log': 'Log', 'Lin': 'Lin',
+    'Achsen einstellen': 'Axis settings', 'Ansicht zurücksetzen': 'Reset view',
+    'Interaktives Diagramm. Mit den Pfeiltasten den Marker verschieben.': 'Interactive chart. Move the marker with the arrow keys.',
+    'Die Diagrammwerte am Marker stehen in der Tabelle.': 'The chart values at the marker are listed in the table.',
+    'Kurven': 'Curves', 'Wählen': 'Select', 'Kurven wählen': 'Select curves', 'Wähle Matrixelemente, um sie einzublenden.': 'Select matrix elements to show them.',
+    'DD Differential': 'DD differential', 'CC Gleichtakt': 'CC common mode', 'Sdc C→D': 'Sdc C→D', 'Scd D→C': 'Scd D→C', 'Einzelport': 'Single port',
+    'Transmission': 'Transmission', 'Reflexion': 'Reflection',
+    'Marker': 'Marker', 'Min': 'Min', 'Max': 'Max', 'Markersuche': 'Marker search', 'Kurve': 'Curve',
+    'Weiteren Marker setzen (bis M4)': 'Add another marker (up to M4)',
+    'Aktiven Marker auf das Minimum der ersten sichtbaren Kurve im Ausschnitt setzen': 'Move the active marker to the minimum of the first visible curve in view',
+    'Aktiven Marker auf das Maximum der ersten sichtbaren Kurve im Ausschnitt setzen': 'Move the active marker to the maximum of the first visible curve in view',
+    'Frequenz, z. B. 10 MHz oder 10M': 'Frequency, e.g. 10 MHz or 10M',
+    'Für die Markerwerte muss mindestens eine Kurve sichtbar sein.': 'At least one curve must be visible for marker values.',
+    'Klick für Marker · Ziehen oder Mausrad zum Zoomen · Doppelklick setzt zurück': 'Click for marker · drag or wheel to zoom · double-click resets · drag M tags to move markers',
+    'Tippen oder waagerecht wischen für Marker · Zwei Finger zoomen · Doppeltippen setzt zurück': 'Tap or swipe sideways for markers · pinch to zoom · double-tap resets',
+    'Kurvenpunkt antippen oder Pfeiltasten für den Frequenzmarker': 'Tap a curve point or use the arrow keys for the frequency marker',
+    'Darstellungsgrenze −180 dB': 'display floor −180 dB', 'Fit-Band grün hinterlegt': 'fit band shaded',
+    'Betrag · dB': 'Magnitude · dB', 'Betrag · linear': 'Magnitude · linear', 'Phase · ±180°': 'Phase · ±180°', 'Phase · entfaltet': 'Phase · unwrapped',
+    'Realteil': 'Real part', 'Imaginärteil': 'Imaginary part', 'Gruppenlaufzeit': 'Group delay', 'Betrag': 'Magnitude', 'Phase': 'Phase',
+    'L · Serie': 'L · series', 'C · Serie': 'C · series', 'L · Parallel': 'L · parallel', 'C · Parallel': 'C · parallel',
+    'L Serie': 'L series', 'C Serie': 'C series', 'L Parallel': 'L parallel', 'C Parallel': 'C parallel',
+    'Reflexion · Zᵢₙ': 'Reflection · Zᵢₙ', 'Z-Matrix · Zᵢⱼ': 'Z matrix · Zᵢⱼ', 'Y-Matrix · Yᵢⱼ': 'Y matrix · Yᵢⱼ',
+    'Transmission · Serie': 'Transmission · series', 'Transmission · Shunt': 'Transmission · shunt',
+    'Vierport · CM / DM': 'Four-port · CM / DM', 'Zweitor · Serie': 'Two-port · series', 'Zweitor · Shunt': 'Two-port · shunt', 'Eintor · Reflexion': 'One-port · reflection',
+    'Aktiv': 'Active', 'Load Z₀': 'Load Z₀', 'Open': 'Open', 'Short': 'Short', 'R-Last': 'R load', 'R + jX': 'R + jX', 'RLC-Serie': 'RLC series', 'RLC-Parallel': 'RLC parallel',
+    'Reflexion an': 'Reflection at', 'Berechnung': 'Method', 'Port / Mode': 'Port / mode', 'Anregung': 'Stimulus', 'Antwort': 'Response', 'Eingang': 'Input', 'Ausgang': 'Output',
+    'Messanordnung': 'Setup', 'Modell': 'Model', 'Fit ab': 'Fit from', 'Fit bis': 'Fit to', 'Fit anwenden': 'Apply fit',
+    'Kapazitäten': 'Capacitances', 'Induktivitäten': 'Inductances',
+    'Automatisch': 'Automatic', 'CMC · zwei Wicklungen': 'CMC · two windings', 'Übertrager · T-Modell': 'Transformer · T model',
+    'Bauteil · Serie (L, Ferrit)': 'Component · series (L, ferrite)', 'Bauteil · Shunt (C)': 'Component · shunt (C)',
+    'Hauptinduktivität L₁₁ · L₂₂': 'Magnetizing inductance L₁₁ · L₂₂', 'Streuinduktivität Lσ': 'Leakage inductance Lσ', 'Kapazität Cww · Cg': 'Capacitance Cww · Cg',
+    'Wicklungswiderstand': 'Winding resistance', '|Z₁₁| Leerlauf': '|Z₁₁| open circuit', '|Z| · R': '|Z| · R', 'Induktivität L(f)': 'Inductance L(f)',
+    '|Z| · ESR': '|Z| · ESR', 'Kapazität C(f)': 'Capacitance C(f)', 'ESL L(f)': 'ESL L(f)',
+    'Übertrager': 'Transformer', 'Serienbauteil': 'Series component', 'Shuntbauteil': 'Shunt component', 'Serie': 'Series', 'Shunt': 'Shunt', 'CMC': 'CMC',
+    'Übertrager · Ersatzschaltbild': 'Transformer · equivalent circuit', 'T-Ersatzschaltbild': 'T equivalent circuit', 'T-Ersatzschaltbild eines Übertragers': 'T equivalent circuit of a transformer',
+    'Lσ = Streuung je Seite · L_h = Hauptinduktivität (≈ OCL) · Cww = Koppelkapazität · C_p = Wicklungskapazität · ideales Übersetzungsverhältnis n': 'Lσ = leakage per side · L_h = magnetizing inductance (≈ OCL) · Cww = interwinding capacitance · C_p = winding capacitance · ideal turns ratio n',
+    'OCL₀ · LC-Fit unterhalb f_res': 'OCL₀ · LC fit below f_res', 'L₂₂ · Sekundär': 'L₂₂ · secondary', 'n · √(L₂₂/L₁₁)': 'n · √(L₂₂/L₁₁)',
+    'Lσ · Streuung, Sek. kurzgeschl.': 'Lσ · leakage, sec. shorted', 'Cww · Wicklung↔Wicklung': 'Cww · winding↔winding', 'R · Prim.+Sek. bei tiefer f': 'R · prim.+sec. at low f',
+    'f_res · Leerlauf-Eigenresonanz': 'f_res · open-circuit self-resonance', 'C_par · Wicklungskapazität (Fit)': 'C_par · winding capacitance (fit)',
+    'Kleinsignalwerte aus S-Parametern ohne DC-Bias. Datenblätter messen OCL oft mit Gleichstrom-Vormagnetisierung (z. B. 100 kHz, 100 mV, 8–18 mA), Abweichungen sind deshalb normal.': 'Small-signal values from S-parameters without DC bias. Datasheets often measure OCL with DC bias (e.g. 100 kHz, 100 mV, 8–18 mA), so deviations are normal.',
+    'Formeln: OCL = Im Z₁₁/ω · Lσ = Im(Z₁₁ − Z₁₂Z₂₁/Z₂₂)/ω · Cww = −Im Y₁₂(CC)/ω · ω/X = 1/L − ω²C.': 'Formulas: OCL = Im Z₁₁/ω · Lσ = Im(Z₁₁ − Z₁₂Z₂₁/Z₂₂)/ω · Cww = −Im Y₁₂(CC)/ω · ω/X = 1/L − ω²C.',
+    'L · LC-Fit unterhalb SRF': 'L · LC fit below SRF', 'L · Plateau': 'L · plateau', 'R_DC · tiefste Frequenzen': 'R_DC · lowest frequencies', 'SRF · Maximum von |Z|': 'SRF · maximum of |Z|',
+    'C_p · 1/((2π·SRF)²·L)': 'C_p · 1/((2π·SRF)²·L)', 'R_p · Re Z bei SRF': 'R_p · Re Z at SRF', 'C · Plateau unterhalb SRF': 'C · plateau below SRF', 'SRF · Im Z = 0': 'SRF · Im Z = 0',
+    'ESL · oberhalb SRF': 'ESL · above SRF', 'ESR · Re Z bei SRF': 'ESR · Re Z at SRF',
+    'Wähle zwei verschiedene aktive Ports oder Moden als Eingang und Ausgang der Serien- bzw. Shunt-Fixture.': 'Select two different active ports or modes as input and output of the series or shunt fixture.',
+    'Für CMC- und Übertragermodell werden zwei Portpaare benötigt. Für ein Einzelbauteil wähle „Bauteil · Serie“ oder „Bauteil · Shunt“.': 'The CMC and transformer models need two port pairs. For a single component choose “Component · series” or “Component · shunt”.',
+    'Ersatzschaltbild · Fit': 'Equivalent circuit · fit', 'Reaktives Ersatzschaltbild': 'Reactive equivalent circuit',
+    'Cw · Koppelkapazität je Seite': 'Cw · coupling capacitance per side', 'Ct · Wicklung (H-Mode)': 'Ct · winding (H mode)', 'Cg · je Anschluss': 'Cg · per terminal',
+    'L · je Wicklung': 'L · per winding', 'M · Gegeninduktivität': 'M · mutual inductance', 'k · M/L': 'k · M/L',
+    'Eigenresonanz CM · H-Mode': 'Self-resonance CM · H mode', 'Eigenresonanz DM · D-Mode': 'Self-resonance DM · D mode',
+    'Im Fit-Band sind mindestens drei gültige positive Frequenzpunkte nötig.': 'The fit band needs at least three valid positive frequency points.',
+    'Der Fit liefert für dieses Band negative Kapazitäten oder keine gültige Induktivität. Prüfe Portpolarität, DUT-Symmetrie und Fit-Band.': 'The fit gives negative capacitances or no valid inductance in this band. Check port polarity, DUT symmetry and fit band.',
+    'Cw je Seite zwischen den Wicklungen · Ct parallel je Wicklung · Cg je Anschluss gegen Masse': 'Cw per side between the windings · Ct across each winding · Cg per terminal to ground',
+    'Cw und Cg sind Modellwerte für eine möglichst symmetrische CMC. Übrige aktive Ports sind mit Z₀ abgeschlossen.': 'Cw and Cg are model values for a CMC that is as symmetric as possible. Other active ports are terminated with Z₀.',
+    'Parasitärkapazitäten': 'Parasitic capacitances', 'Wirksame Induktivitäten': 'Effective inductances',
+    'Projektion der Vierport-Y-Matrix auf die natürlichen CMC-Moden': 'Projection of the four-port Y matrix onto the natural CMC modes',
+    'Aus dem Imaginärteil von Z CM und Z DM · je Wicklung': 'From the imaginary part of Z CM and Z DM · per winding',
+    'Kapazität': 'Capacitance', 'Induktivität': 'Inductance',
+    'Definiere zwei Portpaare als Eingang und Ausgang für CM und DM.': 'Define two port pairs as input and output for CM and DM.',
+    'Definiere zwei Portpaare und ordne Plus und Minus an beiden Seiten entlang derselben Wicklungen zu.': 'Define two port pairs and assign plus and minus on both sides along the same windings.',
+    'Symmetrie am Marker': 'Symmetry at marker', 'Auswertung': 'Evaluation', 'Fixture-Bedingung': 'Fixture condition',
+    'Die Vierportformel setzt eine hinreichend symmetrische Struktur und Messdaten an den DUT-Referenzebenen voraus.': 'The four-port formula assumes a sufficiently symmetric structure and data at the DUT reference planes.',
+    'Eintor-Auswertung aus Reflexion an der DUT-Referenzebene.': 'One-port evaluation from reflection at the DUT reference plane.',
+    'Bei geeigneter Fixture sollte die angezeigte Bedingungszahl deutlich kleiner als 1 sein.': 'With a suitable fixture the condition number shown should be well below 1.',
+    'Wähle zwei verschiedene aktive Ports oder Moden für den Zweitoraufbau.': 'Select two different active ports or modes for the two-port setup.',
+    'Impedanz nach CISPR 17': 'Impedance per CISPR 17', 'Impedanzverlauf': 'Impedance', 'Admittanz': 'Admittance', 'Smith-Diagramm': 'Smith chart',
+    'Übrige aktive Ports und Moden sind mit ihren jeweiligen Bezugsimpedanzen abgeschlossen.': 'Other active ports and modes are terminated with their reference impedances.',
+    'Diese Transmissionsformel gilt für die gewählte reine Serien- oder Shunt-Fixture. Übrige aktive Ports und Moden sind angepasst.': 'This transmission formula applies to the selected pure series or shunt fixture. Other active ports and modes are matched.',
+    'Die beiden ausgewählten Kanäle haben unterschiedliche Moden.': 'The two selected channels have different modes.',
+    'Die Y-Matrix gibt die Kurzschluss-Admittanzen des bereits mit den konfigurierten Lasten reduzierten Netzwerks an.': 'The Y matrix gives the short-circuit admittances of the network reduced with the configured loads.',
+    'Die Z-Matrix gibt die Leerlaufimpedanzen des bereits mit den konfigurierten Lasten reduzierten Netzwerks an.': 'The Z matrix gives the open-circuit impedances of the network reduced with the configured loads.',
+    'Für die Transmissionsimpedanz werden zwei verschiedene aktive Ports oder Moden benötigt.': 'The transmission impedance needs two different active ports or modes.',
+    'Portpaare, physische Abschlüsse und Bezugsimpedanzen': 'Port pairs, physical terminations and reference impedances',
+    'Komplexe Reflexion · normiert auf die gewählte Portreferenz': 'Complex reflection · normalized to the selected port reference',
+    'Eingangs-, Transfer- und Fixture-Impedanz': 'Input, transfer and fixture impedance', 'Indirekte Impedanzauswertung · CISPR 17:2011': 'Indirect impedance evaluation · CISPR 17:2011',
+    'Ersatzschaltbilder: CMC, Übertrager und Einzelbauteile': 'Equivalent circuits: CMC, transformer and single components',
+    'Portzuordnung': 'Port assignment', 'Neues Paar': 'New pair', 'Polarität wählen': 'Choose polarity', '+ Plus': '+ Plus', '− Minus': '− Minus',
+    'Einzeln': 'Single', 'Paar anlegen': 'Create pair', 'Änderungen übernehmen': 'Apply changes', 'Auswahl zurücksetzen': 'Reset selection',
+    'Vorlagen': 'Presets', 'Benachbart (1,2)(3,4)…': 'Adjacent (1,2)(3,4)…', 'Gekreuzt (1,3)(2,4)…': 'Crossed (1,3)(2,4)…', 'Alle auflösen': 'Remove all',
+    '7490220115 · CT Open': '7490220115 · CT open',
+    'Modenimpedanz je Paar': 'Mode impedance per pair',
+    'Bezugsimpedanz der D- und C-Moden. Leer = Standard (Z_D = 2R, Z_C = R/2). Für Netzfilter z. B. 0,1 Ω an einer Seite und 100 Ω an der anderen (CISPR 17).': 'Reference impedance of the D and C modes. Empty = default (Z_D = 2R, Z_C = R/2). For line filters e.g. 0.1 Ω on one side and 100 Ω on the other (CISPR 17).',
+    'Paar': 'Pair', 'Anwenden': 'Apply', 'Standard': 'Default', '0,1 Ω → 100 Ω': '0.1 Ω → 100 Ω', '100 Ω → 0,1 Ω': '100 Ω → 0.1 Ω',
+    'Modenimpedanzen müssen reell und positiv sein, z. B. 0,1 oder 100.': 'Mode impedances must be real and positive, e.g. 0.1 or 100.',
+    'Bezugsimpedanz': 'Reference impedance', 'Renormierung der aktiven Single-Ended-Ports.': 'Renormalization of the active single-ended ports.',
+    'Einheitlich [Ω]': 'Uniform [Ω]', 'Wie Datei': 'As file', 'Ein leeres Feld verwendet die Dateireferenzen.': 'An empty field uses the file references.',
+    'Physische Ports': 'Physical ports', 'Lasten wirken gegen Masse. Gepaarte Ports bleiben aktiv.': 'Loads act against ground. Paired ports stay active.',
+    'Port': 'Port', 'Zuordnung / Abschluss': 'Assignment / termination', 'Z₀ Datei': 'Z₀ file', 'Z₀ aktiv': 'Z₀ active',
+    'Load Z₀ schließt mit der Dateireferenz ab. Die Werte rechts gelten für die Berechnung des aktiven Netzes.': 'Load Z₀ terminates with the file reference. The values on the right apply to the active network.',
+    'Eingang +': 'Input +', 'Eingang −': 'Input −', 'Ausgang +': 'Output +', 'Ausgang −': 'Output −',
+    'Für ein Portpaar sind mindestens zwei physische Ports nötig.': 'A port pair needs at least two physical ports.',
+    'Wähle zwei verschiedene Ports für Plus und Minus.': 'Select two different ports for plus and minus.',
+    'Die Bezugsimpedanz muss reell und positiv sein.': 'The reference impedance must be real and positive.',
+    'Mindestens ein physischer Port muss aktiv bleiben.': 'At least one physical port must stay active.',
+    'Portabschluss': 'Port termination', 'Abbrechen': 'Cancel', 'Übernehmen': 'Apply', 'Schließen': 'Close', 'Fertig': 'Done',
+    '0 oder ein leeres Feld lässt das jeweilige Bauteil weg.': '0 or an empty field omits that component.',
+    'X bleibt über den Sweep konstant. Verwende für ein L oder C die RLC-Last.': 'X stays constant over the sweep. Use the RLC load for an L or C.',
+    'R, L und C müssen nichtnegative Zahlen sein. X kann ein Vorzeichen haben.': 'R, L and C must be non-negative numbers. X may be signed.',
+    'Ports konfigurieren': 'Configure ports', 'Auswahl ergänzen': 'Complete the selection', 'Auswertung fehlgeschlagen': 'Evaluation failed',
+    'Keine Netzwerkdaten': 'No network data', 'Netzwerk wird berechnet': 'Computing network', 'Netzwerk wird berechnet …': 'Computing network …',
+    'Die Portlasten und Referenzen werden für alle Messpunkte angewendet.': 'Port loads and references are applied to all points.',
+    'Öffne eine Touchstone-Datei.': 'Open a Touchstone file.', 'Touchstone-Datei wird gelesen …': 'Reading Touchstone file …',
+    'Synthetische Beispieldaten': 'Synthetic example data', 'Berechnung im Browser': 'Computed in the browser',
+    'Kurven als CSV': 'Curves as CSV', 'Alle Frequenzen der sichtbaren Kurven · Komma-getrennt, Dezimalpunkt': 'All frequencies of the visible curves · comma-separated, decimal point',
+    'Kurven als CSV für Excel (DE)': 'Curves as CSV for Excel (German locale)', 'Semikolon-getrennt, Dezimalkomma · öffnet direkt in deutschem Excel': 'Semicolon-separated, decimal comma · for German-locale Excel',
+    'Diagramm als PNG': 'Chart as PNG', 'Aktuelle Ansicht mit Achsen und Markern': 'Current view with axes and markers', 'Netzwerk als Touchstone': 'Network as Touchstone',
+    'Das Diagramm ist für den Bildexport nicht verfügbar.': 'The chart is not available for image export.',
+    'Es sind keine gültigen Matrixpunkte vorhanden.': 'There are no valid matrix points.',
+    'Achsen einstellen ': 'Axis settings', 'Skala': 'Scale', 'Linear': 'Linear', 'Logarithmisch': 'Logarithmic', 'Logarithmisch · positive Werte': 'Logarithmic · positive values',
+    'Von': 'From', 'Bis': 'To', 'Automatisch ': 'Automatic',
+    'Leere Grenzwerte verwenden die automatische Skalierung. Frequenzen akzeptieren z. B. 20 MHz.': 'Empty limits use automatic scaling. Frequencies accept e.g. 20 MHz.',
+    'Gib einen aufsteigenden Frequenzbereich ein. Bei Log-Skalierung muss die untere Grenze positiv sein.': 'Enter an ascending frequency range. With log scaling the lower limit must be positive.',
+    'Gib zwei aufsteigende Y-Grenzen ein. Bei Log-Skalierung müssen beide positiv sein.': 'Enter two ascending Y limits. With log scaling both must be positive.',
+    'Gib ein positives, aufsteigendes Fit-Band ein.': 'Enter a positive, ascending fit band.',
+    'Standard ': 'Default', 'Übertragung': 'Transmission', 'Modenkonversion': 'Mode conversion', 'Leeren ': 'Clear', '16 Mixed Mode': '16 mixed mode',
+    'Differential → Differential': 'Differential → differential', 'Gleichtakt → Gleichtakt': 'Common mode → common mode',
+    'Konversion Gleichtakt → Differential (Störfestigkeit)': 'Conversion common mode → differential (immunity)', 'Konversion Differential → Gleichtakt (Abstrahlung)': 'Conversion differential → common mode (emission)',
+    'mit Einzelport': 'with single port', 'Sdc C→D · Störfestigkeit': 'Sdc C→D · immunity', 'Scd D→C · Abstrahlung': 'Scd D→C · emission',
+    'Zeile = Antwort · Spalte = Anregung · Diagonale = Reflexion': 'Row = response · column = stimulus · diagonal = reflection',
+    'Blende zuerst eine Kurve ein.': 'Show a curve first.', 'Im Ausschnitt gibt es keine gültigen Werte.': 'No valid values in view.',
+    'Wähle eine Frequenz innerhalb des Messbereichs.': 'Choose a frequency inside the measured range.', 'Es sind bereits vier Marker gesetzt.': 'Four markers are already set.',
+    'Liste geleert. Die geöffnete Datei bleibt bis zum Schließen geladen.': 'List cleared. The open file stays loaded until you close it.',
+    'Die Datei überschreitet 100 MiB.': 'The file exceeds 100 MiB.', 'Neue Version verfügbar.': 'New version available.', 'Neu laden': 'Reload',
+    'Android · Chrome': 'Android · Chrome', 'Windows · Chrome oder Edge': 'Windows · Chrome or Edge', 'iPhone · Safari': 'iPhone · Safari',
+    'Über das Teilen-Menü senden (Mail, Drive, Messenger …)': 'Send via the share menu (mail, Drive, messenger …)',
+    'Keine positiven Werte im Bereich': 'No positive values in range', 'Keine Kurvendaten im Bereich': 'No curve data in range',
+    'Werte außerhalb |Γ| = 1': 'Values outside |Γ| = 1', 'Keine Kurve eingeblendet': 'No curve shown',
+    'Streuinduktivität [nH]': 'Leakage inductance [nH]', 'Kapazität [pF]': 'Capacitance [pF]', 'Induktivität [µH]': 'Inductance [µH]', 'Widerstand [Ω]': 'Resistance [Ω]', 'Impedanz [Ω]': 'Impedance [Ω]',
+    'DUT': 'DUT', 'Max. CM↔DM-Konversion im gewählten Vierport ·': 'Max. CM↔DM conversion in the selected four-port ·',
+    'Geteilt.snp': 'Shared.snp', 'Worker-Fehler': 'Worker error', 'Entwickelt von': 'Developed by',
+    'Alle Berechnungen laufen lokal im Browser. Messdateien verlassen das Gerät nicht.': 'All calculations run locally in the browser. Measurement files never leave the device.',
+    'S-Parameter Analyzer · von': 'S-Parameter Analyzer · by', 'S-Analyzer': 'S-Analyzer', 'S-Parameter Analyzer': 'S-Parameter Analyzer'
+  }));
+  const PATTERNS = [
+    [/^Paar (\d+) bearbeiten$/, 'Edit pair $1'], [/^Polarität von Paar (\d+) tauschen$/, 'Swap polarity of pair $1'], [/^Paar (\d+) auflösen$/, 'Remove pair $1'],
+    [/^Last an (P\d+) bearbeiten$/, 'Edit load at $1'], [/^Abschluss (P\d+)$/, 'Termination $1'],
+    [/^Marker (\d) wählen$/, 'Select marker $1'], [/^Marker (\d) entfernen$/, 'Remove marker $1'], [/^Frequenz M(\d)$/, 'Frequency M$1'],
+    [/^(.+) ausblenden$/, 'Hide $1'], [/^(.+) einblenden$/, 'Show $1'],
+    [/^Werte an M(\d) · Antippen blendet ein\/aus$/, 'Values at M$1 · tap to show/hide'],
+    [/^(\d+) Paare · (\d+) aktive Ports(.*)$/, '$1 pairs · $2 active ports$3'], [/^(\d+) physische Ports · (\d+) aktiv$/, '$1 physical ports · $2 active'],
+    [/^(\d+) physische Ports · Tippe nacheinander auf Plus- und Minus-Port\.$/, '$1 physical ports · tap the plus port, then the minus port.'],
+    [/^Alle (\d+) physischen Ports$/, 'All $1 physical ports'], [/^(\d+) \/ (\d+) Kurven ausgewählt$/, '$1 / $2 curves selected'], [/^Alle (\d+)$/, 'All $1'],
+    [/^(\d+) aktiv$/, '$1 active'], [/^(\d+) Paare$/, '$1 pairs'], [/^(\d+) abgeschlossen$/, '$1 terminated'],
+    [/^Paar (\d+) ([+−])$/, 'Pair $1 $2'], [/^Paar (\d+) \((P\d+)\/(P\d+)\) wird aufgelöst\.$/, 'Pair $1 ($2/$3) will be removed.'],
+    [/^Abschlüsse an (.+) werden entfernt\.$/, 'Terminations at $1 will be removed.'],
+    [/^(.+) gültige Punkte$/, '$1 valid points'], [/^(.+) singuläre Punkte im reduzierten Netzwerk\. Diese Frequenzen erscheinen als Lücken\.$/, '$1 singular points in the reduced network. These frequencies appear as gaps.'],
+    [/^M(\d) → Maximum von (.+) bei (.+)$/, 'M$1 → maximum of $2 at $3'], [/^M(\d) → Minimum von (.+) bei (.+)$/, 'M$1 → minimum of $2 at $3'],
+    [/^Es sind bereits (\d+) Kurven ausgewählt\.$/, '$1 curves are already selected.'], [/^Die ersten (\d+) passenden Matrixelemente wurden gewählt\.$/, 'The first $1 matching matrix elements were selected.'],
+    [/^(.+) gespeichert\.$/, '$1 saved.'], [/^Reflexion an (.+)$/, 'Reflection at $1'], [/^Normierung · (.+)$/, 'Normalized · $1'],
+    [/^OCL · L₁₁ bei (.+)$/, 'OCL · L₁₁ at $1'], [/^Komplex · M(\d)$/, 'Complex · M$1'], [/^Hälften \(1,(\d+)\)\(2,(\d+)\)…$/, 'Halves (1,$1)(2,$2)…'],
+    [/^Paar (\d+) · (P\d+)\/(P\d+)$/, 'Pair $1 · $2/$3'], [/^Paar (\d+) bearbeiten$/, 'Edit pair $1'],
+    [/^Die gespeicherte Datei lässt sich nicht öffnen: (.+)$/, 'The saved file cannot be opened: $1'],
+    [/^Ungültige Zahl: (.+)$/, 'Invalid number: $1']
+  ];
+  const PHRASES = Object.entries({
+    'Automatisch erkannt: ': 'Detected automatically: ', 'Automatisch · ': 'Automatic · ', '(galvanisch getrennt)': '(galvanically isolated)', '(Gleichtakt galvanisch verbunden)': '(common mode galvanically connected)',
+    'Übertrager': 'Transformer', ' bei ': ' at ', 'Paar ': 'Pair ', 'Paarweise Renormierung · ': 'Pairwise renormalization · ', ' · OCL bei ': ' · OCL at ',
+    'Lσ-Plateau ': 'Lσ plateau ', ' · Vertrauen ': ' · confidence ', ' · Cww-Band ': ' · Cww band ', ' · Polarität invertiert': ' · polarity inverted', ' · angepasst': ' · custom',
+    'Sek. offen': 'sec. open', 'Prim. offen': 'prim. open', 'Sek. kurzgeschl.': 'sec. shorted', 'Prim.↔Sek.': 'prim.↔sec.', ' · T-Ersatzschaltbild': ' · T equivalent circuit',
+    ' · Ersatzschaltbild': ' · equivalent circuit', 'Serienbauteil': 'Series component', 'Shuntbauteil': 'Shunt component', 'Z Serie': 'Z series',
+    ' · Fit-Band grün hinterlegt': ' · fit band shaded', ' · Darstellungsgrenze −180 dB': ' · display floor −180 dB', 'Darstellungsgrenze': 'display floor',
+    'L+M ': 'L+M ', ' · Ct aus D ': ' · Ct from D ', ' · Fitrest H/D ': ' · fit residual H/D ', ' · Modenkopplung im Y-Modell ': ' · mode coupling in Y model ',
+    ' Punkte': ' points', 'gewählt für Plus': 'selected for plus', 'gewählt für Minus': 'selected for minus', 'Einzeln': 'Single',
+    'Frequenz_Hz': 'Frequency_Hz', '_Wert': '_value', 'Mixed-Mode': 'mixed mode', 'Reduzierte S-Matrix · ': 'Reduced S matrix · ',
+    'Ungültige ': 'Invalid ', 'Ungültiger ': 'Invalid ', 'Ungültiges ': 'Invalid ', 'fehlt': 'missing', 'Datei': 'file',
+    ' wählen': ' select', 'Paare': 'pairs', 'Kurven': 'curves', 'Induktivität [': 'Inductance [', 'Kapazität [': 'Capacitance [',
+    'Betrag [': 'Magnitude [', 'Realteil [': 'Real part [', 'Imaginärteil [': 'Imaginary part [', 'Gruppenlaufzeit [': 'Group delay [',
+    'L Serie [': 'L series [', 'C Serie [': 'C series [', 'L Parallel [': 'L parallel [', 'C Parallel [': 'C parallel [', 'Phase [': 'Phase [',
+    'Automatisch': 'Automatic',
+    'Klick für Marker · Ziehen oder Mausrad zum Zoomen · Doppelklick setzt zurück': 'Click for marker · drag or wheel to zoom · double-click resets · drag M tags to move markers',
+    'Tippen oder waagerecht wischen für Marker · Zwei Finger zoomen · Doppeltippen setzt zurück': 'Tap or swipe sideways for markers · pinch to zoom · double-tap resets',
+    'Kleinsignalwerte aus S-Parametern ohne DC-Bias. Datenblätter messen OCL oft mit Gleichstrom-Vormagnetisierung (z. B. 100 kHz, 100 mV, 8–18 mA), Abweichungen sind deshalb normal.': 'Small-signal values from S-parameters without DC bias. Datasheets often measure OCL with DC bias (e.g. 100 kHz, 100 mV, 8–18 mA), so deviations are normal.',
+    'Formeln: ': 'Formulas: ',
+    'Die Formel gilt für eine reine Serien-Fixture zwischen den gewählten Ports.': 'The formula applies to a pure series fixture between the selected ports.',
+    'Die Formel gilt für eine reine Shunt-Fixture zwischen den gewählten Ports.': 'The formula applies to a pure shunt fixture between the selected ports.',
+    'Für kleine Impedanzen (Serie) bzw. große Impedanzen (Shunt) sinkt die Messgenauigkeit eines VNA deutlich.': 'For small impedances (series) or large impedances (shunt) the VNA accuracy drops considerably.',
+    'Max. CM↔DM-Konversion im gewählten Vierport · ': 'Max. CM↔DM conversion in the selected four-port · ',
+    'Konversion Gleichtakt → Differential (Störfestigkeit)': 'Conversion common mode → differential (immunity)',
+    'Konversion Differential → Gleichtakt (Abstrahlung)': 'Conversion differential → common mode (emission)',
+    'Differential → Differential': 'Differential → differential', 'Gleichtakt → Gleichtakt': 'Common mode → common mode', 'mit Einzelport': 'with single port',
+    ' · Reflexion': ' · reflection', ' · Transmission': ' · transmission',
+    'CMC zwischen ': 'CMC between ', ' und ': ' and ', 'Eingang': 'Input', 'Ausgang': 'Output', 'CMC-Mehrport-Beispiel': 'CMC multiport example', 'CMC-Beispiel': 'CMC example',
+    'Cw und Cg sind Modellwerte für eine möglichst symmetrische CMC. Übrige aktive Ports sind mit Z₀ abgeschlossen.': 'Cw and Cg are model values for a CMC that is as symmetric as possible. Other active ports are terminated with Z₀.',
+    'Die Vierportformel setzt eine hinreichend symmetrische Struktur und Messdaten an den DUT-Referenzebenen voraus.': 'The four-port formula assumes a sufficiently symmetric structure and data at the DUT reference planes.',
+    'Bei geeigneter Fixture sollte die angezeigte Bedingungszahl deutlich kleiner als 1 sein.': 'With a suitable fixture the condition number shown should be well below 1.',
+    'Eintor-Auswertung aus Reflexion an der DUT-Referenzebene.': 'One-port evaluation from reflection at the DUT reference plane.',
+    'Übrige aktive Ports und Moden sind mit ihren jeweiligen Bezugsimpedanzen abgeschlossen.': 'Other active ports and modes are terminated with their reference impedances.',
+    'Diese Transmissionsformel gilt für die gewählte reine Serien- oder Shunt-Fixture. Übrige aktive Ports und Moden sind angepasst.': 'This transmission formula applies to the selected pure series or shunt fixture. Other active ports and modes are matched.',
+    'Die Y-Matrix gibt die Kurzschluss-Admittanzen des bereits mit den konfigurierten Lasten reduzierten Netzwerks an.': 'The Y matrix gives the short-circuit admittances of the network reduced with the configured loads.',
+    'Die Z-Matrix gibt die Leerlaufimpedanzen des bereits mit den konfigurierten Lasten reduzierten Netzwerks an.': 'The Z matrix gives the open-circuit impedances of the network reduced with the configured loads.',
+    'Methodik': 'Methods'
+  }).sort((a, b) => b[0].length - a[0].length);
+  const cache = new Map();
+  function t(text) {
+    if (lang === 'de' || typeof text !== 'string') return text;
+    const raw = text.trim();
+    if (!raw || !/[A-Za-zÄÖÜäöüß]/.test(raw)) return text;
+    if (cache.has(raw)) return text.replace(raw, cache.get(raw));
+    let out = EXACT.get(raw);
+    if (out === undefined) {
+      for (const [re, rep] of PATTERNS) if (re.test(raw)) { out = raw.replace(re, rep); break; }
+    }
+    if (out === undefined) {
+      out = raw;
+      for (const [de, en] of PHRASES) if (out.includes(de)) out = out.split(de).join(en);
+    }
+    if (cache.size > 5000) cache.clear();
+    cache.set(raw, out);
+    return text.replace(raw, out);
+  }
+  const ATTRS = ['title', 'aria-label', 'placeholder', 'alt'];
+  function translateElement(el) {
+    for (const name of ATTRS) {
+      const value = el.getAttribute?.(name);
+      if (value) { const next = t(value); if (next !== value) el.setAttribute(name, next); }
+    }
+  }
+  function apply(root) {
+    if (lang === 'de' || !root) return;
+    if (root.nodeType === 3) { const next = t(root.nodeValue); if (next !== root.nodeValue) root.nodeValue = next; return; }
+    if (root.nodeType !== 1 && root.nodeType !== 9 && root.nodeType !== 11) return;
+    if (root.closest?.('[data-no-i18n], script, style')) return;
+    if (root.nodeType === 1) translateElement(root);
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT, {
+      acceptNode: node => node.nodeType === 1 && (node.matches('script, style, [data-no-i18n]')) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT
+    });
+    let node;
+    while ((node = walker.nextNode())) {
+      if (node.nodeType === 3) { const next = t(node.nodeValue); if (next !== node.nodeValue) node.nodeValue = next; }
+      else translateElement(node);
+    }
+  }
+  function start() {
+    document.documentElement.lang = lang;
+    if (lang === 'de') return;
+    document.title = 'S-Parameter Analyzer';
+    apply(document.body);
+    new MutationObserver(records => {
+      for (const r of records) {
+        if (r.type === 'characterData') apply(r.target);
+        else if (r.type === 'attributes') translateElement(r.target);
+        else r.addedNodes.forEach(apply);
+      }
+    }).observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ATTRS });
+  }
+  function set(next) {
+    try { localStorage.setItem('spa-lang', next); } catch { /* ignore */ }
+    location.reload();
+  }
+  return { get lang() { return lang; }, locale: lang === 'en' ? 'en-US' : 'de-DE', t, apply, start, set };
+})();
+</script>
 </head>
 <body>
 <svg class="symbol-bank" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
@@ -562,10 +975,26 @@ input[type="checkbox"] { accent-color: var(--accent); }
 
 <header class="app-bar">
   <div class="app-brand">
-    <span class="brand-icon"><svg class="icon" aria-hidden="true"><use href="#i-wave"/></svg></span>
-    <span>S-Parameter Analyzer</span>
+    <svg class="brand-logo" viewBox="0 0 512 512" aria-hidden="true">
+  <rect width="512" height="512" rx="112" fill="#1f1e1d"/>
+  <g fill="none" stroke="#f0eee6" stroke-linecap="round">
+    <g stroke-width="7" opacity=".38">
+      <circle cx="331" cy="256" r="75"/>
+      <circle cx="381" cy="256" r="25"/>
+      <path d="M106 256H406"/>
+      <path d="M406 256A150 150 0 0 1 256 106"/>
+      <path d="M406 256A150 150 0 0 0 256 406"/>
+    </g>
+    <circle cx="256" cy="256" r="150" stroke-width="13"/>
+  </g>
+  <path d="M118 338C196 338 196 168 258 168S322 330 394 214" fill="none" stroke="#d97757" stroke-width="24" stroke-linecap="round"/>
+  <circle cx="394" cy="214" r="21" fill="#d97757" stroke="#1f1e1d" stroke-width="9"/>
+</svg>
+    <span class="brand-name"><span class="brand-long">S-Parameter Analyzer</span><span class="brand-short">S-Analyzer</span></span>
   </div>
+  <button type="button" class="file-chip" id="file-chip" data-action="toggle-sidebar" aria-label="Datei und Portschema"><svg class="icon" aria-hidden="true"><use href="#i-file"/></svg><span id="file-chip-name">—</span><svg class="icon chip-caret" aria-hidden="true"><use href="#i-down"/></svg></button>
   <div class="bar-actions">
+    <button class="bar-button lang-button" type="button" id="lang-button" data-action="lang" data-no-i18n title="Sprache: Deutsch / English" aria-label="Sprache wechseln"><span class="lang-code">EN</span></button>
     <button class="bar-button" id="pwa-install" type="button" title="App installieren" aria-label="App installieren" hidden><svg class="icon" aria-hidden="true"><use href="#i-install"/></svg><span>Installieren</span></button>
     <span class="offline-status" title="Die Messdaten bleiben im Browser"><span></span><strong id="pwa-status">Offline-Cache wird vorbereitet</strong></span>
     <button class="bar-button" type="button" id="method-button" aria-label="Methodik"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg><span>Methodik</span></button>
@@ -605,6 +1034,7 @@ input[type="checkbox"] { accent-color: var(--accent); }
         <div id="topology"></div>
         <div id="network-summary" class="network-summary"></div>
       </div>
+      <p class="credit side-credit">S-Parameter Analyzer · von <strong>Simon Mark</strong><br><a href="mailto:info.simonlation@gmail.com">info.simonlation@gmail.com</a></p>
     </div>
     <div class="sidebar-rail">
       <button class="icon-button" data-action="open-file" title="Datei öffnen" aria-label="Datei öffnen"><svg class="icon" aria-hidden="true"><use href="#i-upload"/></svg></button>
@@ -614,12 +1044,12 @@ input[type="checkbox"] { accent-color: var(--accent); }
 
   <main class="main" id="main">
     <nav class="tabs" role="tablist" aria-label="Analyseansichten">
-      <button class="tab" type="button" id="tab-s" role="tab" aria-controls="panel" data-action="tab" data-value="s" aria-selected="true"><svg class="icon" aria-hidden="true"><use href="#i-wave"/></svg>S-Parameter</button>
-      <button class="tab" type="button" id="tab-ports" role="tab" aria-controls="panel" data-action="tab" data-value="ports" aria-selected="false"><svg class="icon" aria-hidden="true"><use href="#i-network"/></svg>Ports &amp; Lasten</button>
-      <button class="tab" type="button" id="tab-smith" role="tab" aria-controls="panel" data-action="tab" data-value="smith" aria-selected="false"><svg class="icon" aria-hidden="true"><use href="#i-smith"/></svg>Smith-Chart</button>
-      <button class="tab" type="button" id="tab-z" role="tab" aria-controls="panel" data-action="tab" data-value="z" aria-selected="false"><svg class="icon" aria-hidden="true"><use href="#i-imp"/></svg>Impedanz</button>
-      <button class="tab" type="button" id="tab-cispr" role="tab" aria-controls="panel" data-action="tab" data-value="cispr" aria-selected="false"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg>CISPR 17</button>
-      <button class="tab" type="button" id="tab-cmc" role="tab" aria-controls="panel" data-action="tab" data-value="cmc" aria-selected="false"><svg class="icon" aria-hidden="true"><use href="#i-coil"/></svg>CMC-Modell</button>
+      <button class="tab" type="button" id="tab-s" role="tab" aria-controls="panel" data-action="tab" data-value="s" aria-selected="true"><svg class="icon" aria-hidden="true"><use href="#i-wave"/></svg><span class="tab-long">S-Parameter</span><span class="tab-short">S</span></button>
+      <button class="tab" type="button" id="tab-ports" role="tab" aria-controls="panel" data-action="tab" data-value="ports" aria-selected="false"><svg class="icon" aria-hidden="true"><use href="#i-network"/></svg><span class="tab-long">Ports &amp; Lasten</span><span class="tab-short">Ports</span></button>
+      <button class="tab" type="button" id="tab-smith" role="tab" aria-controls="panel" data-action="tab" data-value="smith" aria-selected="false"><svg class="icon" aria-hidden="true"><use href="#i-smith"/></svg><span class="tab-long">Smith-Chart</span><span class="tab-short">Smith</span></button>
+      <button class="tab" type="button" id="tab-z" role="tab" aria-controls="panel" data-action="tab" data-value="z" aria-selected="false"><svg class="icon" aria-hidden="true"><use href="#i-imp"/></svg><span class="tab-long">Impedanz</span><span class="tab-short">Z</span></button>
+      <button class="tab" type="button" id="tab-cispr" role="tab" aria-controls="panel" data-action="tab" data-value="cispr" aria-selected="false"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg><span class="tab-long">CISPR 17</span><span class="tab-short">CISPR</span></button>
+      <button class="tab" type="button" id="tab-cmc" role="tab" aria-controls="panel" data-action="tab" data-value="cmc" aria-selected="false"><svg class="icon" aria-hidden="true"><use href="#i-coil"/></svg><span class="tab-long">ESB-Modell</span><span class="tab-short">ESB</span></button>
     </nav>
 
     <section id="panel" class="main-body" role="tabpanel" aria-labelledby="tab-s">
@@ -643,8 +1073,14 @@ input[type="checkbox"] { accent-color: var(--accent); }
             </div>
             <div class="chart-tools" id="chart-tools">
               <div class="segment axis-segment" aria-label="Frequenzachse">
+                <span class="segment-label" aria-hidden="true">X</span>
                 <button type="button" data-action="x-scale" data-value="log" aria-pressed="true">Log</button>
-                <button type="button" data-action="x-scale" data-value="linear" aria-pressed="false">Linear</button>
+                <button type="button" data-action="x-scale" data-value="linear" aria-pressed="false">Lin</button>
+              </div>
+              <div class="segment axis-segment" id="y-scale-segment" aria-label="Vertikale Achse">
+                <span class="segment-label" aria-hidden="true">Y</span>
+                <button type="button" data-action="y-scale" data-value="log" aria-pressed="false">Log</button>
+                <button type="button" data-action="y-scale" data-value="linear" aria-pressed="true">Lin</button>
               </div>
               <button class="icon-button" id="axes-button" type="button" data-action="axes" title="Achsen einstellen" aria-label="Achsen einstellen"><svg class="icon" aria-hidden="true"><use href="#i-sliders"/></svg></button>
               <button class="icon-button" type="button" data-action="reset-plot" title="Ansicht zurücksetzen" aria-label="Ansicht zurücksetzen"><svg class="icon" aria-hidden="true"><use href="#i-reset"/></svg></button>
@@ -716,6 +1152,27 @@ input[type="checkbox"] { accent-color: var(--accent); }
     <button class="icon-button" type="button" data-action="close-dialog" aria-label="Schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
   </div>
   <div class="dialog-body methods">
+    <div class="lang-de" data-no-i18n>
+    <section class="about">
+      <div class="about-row"><svg class="about-logo" viewBox="0 0 512 512" aria-hidden="true">
+  <rect width="512" height="512" rx="112" fill="#1f1e1d"/>
+  <g fill="none" stroke="#f0eee6" stroke-linecap="round">
+    <g stroke-width="7" opacity=".38">
+      <circle cx="331" cy="256" r="75"/>
+      <circle cx="381" cy="256" r="25"/>
+      <path d="M106 256H406"/>
+      <path d="M406 256A150 150 0 0 1 256 106"/>
+      <path d="M406 256A150 150 0 0 0 256 406"/>
+    </g>
+    <circle cx="256" cy="256" r="150" stroke-width="13"/>
+  </g>
+  <path d="M118 338C196 338 196 168 258 168S322 330 394 214" fill="none" stroke="#d97757" stroke-width="24" stroke-linecap="round"/>
+  <circle cx="394" cy="214" r="21" fill="#d97757" stroke="#1f1e1d" stroke-width="9"/>
+</svg>
+        <div><h3>S-Parameter Analyzer</h3><p>Entwickelt von <strong>Simon Mark</strong> · <a href="mailto:info.simonlation@gmail.com">info.simonlation@gmail.com</a></p>
+        <p>Alle Berechnungen laufen lokal im Browser. Messdateien verlassen das Gerät nicht.</p></div>
+      </div>
+    </section>
     <section>
       <h3>Touchstone und Portreferenzen</h3>
       <p>Import für 1 bis 32 Ports in RI, MA und DB. Touchstone 1.0, 1.1, 2.0 und 2.1 mit S, Y und Z sowie H und G bei zwei Ports. Unterstützt werden Full, Upper, Lower, [Reference] und [Mixed-Mode Order]. Zweitor-Rauschdaten werden separat erkannt. Die Anzeige verwendet die Netzwerkdaten.</p>
@@ -740,11 +1197,73 @@ input[type="checkbox"] { accent-color: var(--accent); }
       <p><a href="https://webstore.iec.ch/en/publication/65" target="_blank" rel="noopener noreferrer">IEC · CISPR 17:2011</a></p>
     </section>
     <section>
+      <h3>Übertrager und Einzelbauteile (ESB)</h3>
+      <p>Automatische Erkennung: Ein CMC verbindet den Gleichtakt bei tiefer Frequenz galvanisch (|Scc₂₁| → 1), ein Übertrager trennt ihn (|Scc₂₁| → 0). Aus den DD-Blöcken zweier Paare folgt die Z-Matrix. <code>OCL = Im Z₁₁/ω</code>, <code>k = M/√(L₁₁L₂₂)</code>, <code>n = √(L₂₂/L₁₁)</code>. Die Streuinduktivität entspricht der Datenblattmessung mit kurzgeschlossener Sekundärseite: <code>Lσ = Im(Z₁₁ − Z₁₂Z₂₁/Z₂₂)/ω</code>. Aus dem CC-Block folgt <code>Cww = −Im Y₁₂/ω</code>. Unterhalb der Eigenresonanz gilt <code>ω/X = 1/L − ω²C</code>; die lineare Regression liefert OCL₀ ohne Resonanzüberhöhung und die Wicklungskapazität. Die Eigenresonanz ist das Maximum von |Z₁₁| mit Parabelinterpolation.</p>
+      <p>Einzelbauteile werden über die Serien- bzw. Shunt-Fixture ausgewertet: Serie mit L (LC-Fit), R<sub>DC</sub>, SRF (Maximum von |Z|) und C<sub>p</sub>; Shunt mit C, SRF (Im Z = 0), ESL und ESR. Plateaus werden als längstes Fenster mit kleiner Streuung um den Median gesucht (nach Touchstone Studio).</p>
+    </section>
+    <section>
       <h3>CMC-Ersatzmodell</h3>
       <p>Beide Portpaare müssen dieselbe Wicklungspolarität abbilden. Aus der Vierport-Y-Matrix in der Reihenfolge IN+, IN−, OUT+, OUT− werden die vier natürlichen Moden C, V, H und D mit den normierten Vorzeichenvektoren <code>[++++]</code>, <code>[+−+−]</code>, <code>[++−−]</code> und <code>[+−−+]</code> projiziert.</p>
       <p><code>Cw = Im(YV − YC)/(2ω)</code> ist die Kapazität zwischen den Wicklungen je Paarseite. <code>Cg = Im(YC)/ω</code> ist die Kapazität gegen Masse je Anschluss. Beide Werte werden als Median im Fit-Band ausgegeben. Aus <code>Im(YH,D) ≈ Aω − 2/(ωL)</code> werden <code>L+M</code> und <code>L−M</code> je Wicklung sowie zwei Schätzungen für <code>Ct</code> gewonnen. Das Modell setzt zwei möglichst gleiche Wicklungen voraus. Der Fit-Fehler und die verbleibende Kopplung der natürlichen Moden helfen bei der Wahl des Frequenzbands.</p>
       <p><a href="https://doi.org/10.3390/electronics9030381" target="_blank" rel="noopener noreferrer">Electronics 9 (2020) · Modalanalyse einer CMC</a></p>
     </section>
+  </div>
+    <div class="lang-en" data-no-i18n>
+    <section class="about">
+      <div class="about-row"><svg class="about-logo" viewBox="0 0 512 512" aria-hidden="true">
+  <rect width="512" height="512" rx="112" fill="#1f1e1d"/>
+  <g fill="none" stroke="#f0eee6" stroke-linecap="round">
+    <g stroke-width="7" opacity=".38">
+      <circle cx="331" cy="256" r="75"/>
+      <circle cx="381" cy="256" r="25"/>
+      <path d="M106 256H406"/>
+      <path d="M406 256A150 150 0 0 1 256 106"/>
+      <path d="M406 256A150 150 0 0 0 256 406"/>
+    </g>
+    <circle cx="256" cy="256" r="150" stroke-width="13"/>
+  </g>
+  <path d="M118 338C196 338 196 168 258 168S322 330 394 214" fill="none" stroke="#d97757" stroke-width="24" stroke-linecap="round"/>
+  <circle cx="394" cy="214" r="21" fill="#d97757" stroke="#1f1e1d" stroke-width="9"/>
+</svg>
+        <div><h3>S-Parameter Analyzer</h3><p>Developed by <strong>Simon Mark</strong> · <a href="mailto:info.simonlation@gmail.com">info.simonlation@gmail.com</a></p>
+        <p>All calculations run locally in the browser. Measurement files never leave the device.</p></div>
+      </div>
+    </section>
+    <section>
+      <h3>Touchstone and port references</h3>
+      <p>Import for 1 to 32 ports in RI, MA and DB. Touchstone 1.0, 1.1, 2.0 and 2.1 with S, Y and Z, plus H and G for two ports. Full, Upper, Lower, [Reference] and [Mixed-Mode Order] are supported. Two-port noise data is detected separately; the display uses the network data.</p>
+      <p>Up to 150,000 frequency points, 4 million complex matrix entries and 100 MiB per file.</p>
+      <p>Wave references must be positive, real and frequency-independent. For proprietary, deviating wave references export the file with a constant real reference. The bundled examples are synthetic.</p>
+      <p><a href="https://ibis.org/touchstone_ver2.1/touchstone_ver2_1.pdf" target="_blank" rel="noopener noreferrer">IBIS · Touchstone 2.1</a></p>
+    </section>
+    <section>
+      <h3>Port terminations and mixed mode</h3>
+      <p>Loads act at the physical ports against the common reference. The load impedance gives <code>Γ = (ZL − Z₀)/(ZL + Z₀)</code>; the reduced network follows from <code>Saa + Sat Γ (I − Stt Γ)⁻¹ Sta</code>, with Z₀ taken from the file for each port.</p>
+      <p>Then the active ports are renormalized and transformed with <code>(a+ − a−)/√2</code> for DM and <code>(a+ + a−)/√2</code> for CM. Unequal references within a pair are renormalized to their geometric mean. A common SE reference R gives <code>Z₀,DM = 2R</code> and <code>Z₀,CM = R/2</code>. Each pair can use its own mode impedances Z_D and Z_C (e.g. 0.1 Ω / 100 Ω for CISPR 17 line-filter tests); the mixed-mode matrix is then renormalized per mode. Touchstone export always writes the standard references.</p>
+    </section>
+    <section>
+      <h3>Impedance and equivalent quantities</h3>
+      <p>The reflection impedance is <code>Zin = Z₀(1 + Sii)/(1 − Sii)</code> with the other active ports matched. The Z matrix gives open-circuit parameters, Z₂₁ is the transfer impedance. A pure series fixture gives <code>Zseries = 2Z₀(1/S21 − 1)</code>, a pure shunt fixture <code>Zshunt = (Z₀/2) S21/(1 − S21)</code>. A selected two-port block with different references is renormalized to their geometric mean.</p>
+      <p>Series equivalent: <code>Ls = X/ω</code> for <code>X = Im Z &gt; 0</code> and <code>Cs = −1/(ωX)</code> for X &lt; 0. Parallel equivalent: <code>Lp = −1/(ωB)</code> for <code>B = Im(1/Z) &lt; 0</code> and <code>Cp = B/ω</code> for B &gt; 0. At DC and for the wrong sign gaps appear. Group delay uses the locally unwrapped phase and the actual frequency steps.</p>
+    </section>
+    <section>
+      <h3>CISPR 17:2011 · clause 6.3.1</h3>
+      <p>§ 6.3.1.2 uses the reflection impedance. In § 6.3.1.3 and § 6.3.1.4 each selected two-port block gives <code>R = (S11 + S22)/2</code> and <code>T = (S21 + S12)/2</code>. Series evaluation <code>Z₀((1 + R)² − T²)/(2T)</code>, shunt evaluation <code>Z₀(2T)/((1 − R)² − T²)</code>. In the four-port case the series formula applies separately to CM and DM.</p>
+      <p>The evaluation assumes a suitable calibrated fixture, DUT reference planes and, for the averaged formulas, a sufficiently symmetric DUT. The deviations at the marker show the differences of the complex S values. For the two-port the condition number <code>|(1−T)²−R²|/|2T|</code> should be well below 1.</p>
+      <p><a href="https://webstore.iec.ch/en/publication/65" target="_blank" rel="noopener noreferrer">IEC · CISPR 17:2011</a></p>
+    </section>
+    <section>
+      <h3>Transformers and single components (equivalent circuit)</h3>
+      <p>Automatic detection: a CMC connects common mode galvanically at low frequency (|Scc₂₁| → 1), a transformer isolates it (|Scc₂₁| → 0). The DD blocks of two pairs give the Z matrix: <code>OCL = Im Z₁₁/ω</code>, <code>k = M/√(L₁₁L₂₂)</code>, <code>n = √(L₂₂/L₁₁)</code>. Leakage follows the datasheet method with the secondary shorted: <code>Lσ = Im(Z₁₁ − Z₁₂Z₂₁/Z₂₂)/ω</code>. The CC block gives <code>Cww = −Im Y₁₂/ω</code>. Below self-resonance <code>ω/X = 1/L − ω²C</code>; the linear regression yields OCL₀ without resonance rise and the winding capacitance. Self-resonance is the maximum of |Z₁₁| with parabolic interpolation.</p>
+      <p>Single components use the series or shunt fixture: series with L (LC fit), R<sub>DC</sub>, SRF (maximum of |Z|) and C<sub>p</sub>; shunt with C, SRF (Im Z = 0), ESL and ESR. Plateaus are found as the longest window with small spread around the median (after Touchstone Studio).</p>
+    </section>
+    <section>
+      <h3>CMC equivalent model</h3>
+      <p>Both port pairs must represent the same winding polarity. The four-port Y matrix in the order IN+, IN−, OUT+, OUT− is projected onto the four natural modes C, V, H and D with the normalized sign vectors <code>[++++]</code>, <code>[+−+−]</code>, <code>[++−−]</code> and <code>[+−−+]</code>.</p>
+      <p><code>Cw = Im(YV − YC)/(2ω)</code> is the capacitance between the windings per side, <code>Cg = Im(YC)/ω</code> the capacitance to ground per terminal; both are reported as the median in the fit band. From <code>Im(YH,D) ≈ Aω − 2/(ωL)</code> follow <code>L+M</code> and <code>L−M</code> per winding and two estimates of <code>Ct</code>. The model assumes two nearly equal windings. The fit error and the remaining coupling of the natural modes help to choose the frequency band.</p>
+      <p><a href="https://doi.org/10.3390/electronics9030381" target="_blank" rel="noopener noreferrer">Electronics 9 (2020) · modal analysis of a CMC</a></p>
+    </section>
+    </div>
   </div>
 </dialog>
 
@@ -1342,21 +1861,26 @@ const RF = (() => {
     }
     const seModes = active.map((port, i) => ({ key: 'P' + (port + 1), type: 'P', id: port + 1, port, ref: seRefs[i] }));
     const mmModes = [], rows = [];
+    const custom = value => Number.isFinite(value) && value > 0 ? value : null;
     for (const type of ['D', 'C']) {
       for (const pair of config.pairs) {
         const p = active.indexOf(pair.p), q = active.indexOf(pair.q);
-        const ref = seRefs[p] * (type === 'D' ? 2 : 0.5);
-        mmModes.push({ key: type + pair.id, type, id: pair.id, pair, ref });
+        const natRef = seRefs[p] * (type === 'D' ? 2 : 0.5);
+        // Optional per-pair mode impedance, e.g. 0.1 Ω / 100 Ω systems for line filters.
+        const ref = custom(type === 'D' ? pair.zd : pair.zc) ?? natRef;
+        mmModes.push({ key: type + pair.id, type, id: pair.id, pair, ref, natRef });
         rows.push([[p, ROOT_HALF], [q, type === 'D' ? -ROOT_HALF : ROOT_HALF]]);
       }
     }
     seModes.forEach((mode, i) => {
       if (!pairPortSet.has(mode.port)) {
-        mmModes.push(mode);
+        mmModes.push({ ...mode, natRef: mode.ref });
         rows.push([[i, 1]]);
       }
     });
-    return { active, reducedLoads, nativeRefs, seRefs, seModes, mmModes, rows, notices, hasMixed: !!config.pairs.length };
+    const mmNatRefs = mmModes.map(mode => mode.natRef), mmRefs = mmModes.map(mode => mode.ref);
+    const mmRenorm = mmRefs.some((ref, i) => ref !== mmNatRefs[i]);
+    return { active, reducedLoads, nativeRefs, seRefs, seModes, mmModes, rows, notices, mmNatRefs, mmRefs, mmRenorm, hasMixed: !!config.pairs.length };
   }
 
   function processPoint(dataset, config, layout, index) {
@@ -1365,7 +1889,8 @@ const RF = (() => {
     if (gamma.some(v => !v)) return [null, null];
     const raw = terminate(dataset.samples[index], dataset.n, active, reducedLoads, gamma);
     const se = raw && changeRef(raw, nativeRefs, seRefs);
-    const mm = hasMixed && se ? project(se, active.length, rows) : se;
+    let mm = hasMixed && se ? project(se, active.length, rows) : se;
+    if (hasMixed && mm && layout.mmRenorm) mm = changeRef(mm, layout.mmNatRefs, layout.mmRefs);
     return [se, mm];
   }
 
@@ -1532,10 +2057,190 @@ const RF = (() => {
     };
   }
 
+  // ---------- Equivalent-circuit (ESB) extraction ----------
+  // Plateau search after Touchstone Studio: the longest window whose spread around its median stays below tol.
+  function plateau(freq, values, fLo, fHi, tol = 0.15) {
+    const idx = [];
+    for (let i = 0; i < freq.length; i++) {
+      if (freq[i] >= fLo && freq[i] <= fHi && Number.isFinite(values[i]) && values[i] > 0) idx.push(i);
+    }
+    if (idx.length < 3) return { value: NaN, conf: 0, stable: false, band: null };
+    const sub = idx.map(i => values[i]);
+    let best = { value: median(sub), conf: 0, stable: false, band: [freq[idx[0]], freq[idx.at(-1)]] };
+    for (let ws = sub.length; ws >= Math.max(3, Math.floor(sub.length / 6)); ws = Math.floor(ws * 0.8)) {
+      for (let start = 0; start + ws <= sub.length; start += Math.max(1, Math.floor(ws / 8))) {
+        const win = sub.slice(start, start + ws);
+        const m = median(win);
+        const spread = Math.max(...win.map(v => Math.abs(v - m))) / m;
+        if (spread < tol) {
+          const conf = ws / sub.length * (1 - spread / tol);
+          if (conf > best.conf) best = { value: m, conf, stable: true, band: [freq[idx[start]], freq[idx[start + ws - 1]]] };
+        }
+      }
+      if (best.stable) break;
+    }
+    return best;
+  }
+
+  // Frequency where y changes sign in the given direction (+1: − → +), log-interpolated.
+  function crossing(freq, y, direction = 1, from = 0) {
+    let prev = null;
+    for (let i = from; i < freq.length; i++) {
+      const v = y[i];
+      if (!(freq[i] > 0) || !Number.isFinite(v)) { prev = null; continue; }
+      if (prev && Math.sign(prev.v) === -direction && Math.sign(v) !== -direction) {
+        const t = prev.v / (prev.v - v);
+        return Math.exp(Math.log(prev.f) + t * (Math.log(freq[i]) - Math.log(prev.f)));
+      }
+      prev = { f: freq[i], v };
+    }
+    return NaN;
+  }
+
+  // Resonance as the maximum of |Z| with a parabola through log f / log |Z| (a pole is not a zero crossing).
+  function peakFreq(freq, values, fLo = 0, fHi = Infinity) {
+    let best = -1;
+    for (let i = 0; i < freq.length; i++) {
+      if (freq[i] > 0 && freq[i] >= fLo && freq[i] <= fHi && Number.isFinite(values[i]) && values[i] > 0 && (best < 0 || values[i] > values[best])) best = i;
+    }
+    if (best <= 0 || best >= freq.length - 1) return NaN;
+    const [a, b, c] = [best - 1, best, best + 1];
+    if (![values[a], values[c]].every(v => Number.isFinite(v) && v > 0)) return freq[best];
+    const x = [a, b, c].map(i => Math.log(freq[i])), y = [a, b, c].map(i => Math.log(values[i]));
+    const den = (x[0] - x[1]) * (x[0] - x[2]) * (x[1] - x[2]);
+    const A = (x[2] * (y[1] - y[0]) + x[1] * (y[0] - y[2]) + x[0] * (y[2] - y[1])) / den;
+    const B = (x[2] ** 2 * (y[0] - y[1]) + x[1] ** 2 * (y[2] - y[0]) + x[0] ** 2 * (y[1] - y[2])) / den;
+    return A < 0 ? Math.exp(-B / (2 * A)) : freq[best];
+  }
+
+  // Below a parallel resonance X = ωL/(1 − ω²LC), so ω/X = 1/L − ω²C is linear in ω².
+  function lcFit(freq, x, fHi) {
+    let n = 0, sx = 0, sy = 0, sxx = 0, sxy = 0;
+    for (let i = 0; i < freq.length; i++) {
+      const w = TAU * freq[i];
+      if (!(freq[i] > 0) || freq[i] > fHi || !(x[i] > 0)) continue;
+      const u = w * w, v = w / x[i];
+      n++; sx += u; sy += v; sxx += u * u; sxy += u * v;
+    }
+    if (n < 5) return { l: NaN, c: NaN, n };
+    const slope = (n * sxy - sx * sy) / (n * sxx - sx * sx), intercept = (sy - slope * sx) / n;
+    return { l: intercept > 0 ? 1 / intercept : NaN, c: -slope, n };
+  }
+
+  function lowMedian(freq, values, count = 5) {
+    const picked = [];
+    for (let i = 0; i < freq.length && picked.length < count; i++) {
+      if (freq[i] > 0 && Number.isFinite(values[i])) picked.push(values[i]);
+    }
+    return picked.length ? median(picked) : NaN;
+  }
+
+  function nearestIndex(freq, target) {
+    let best = 0;
+    for (let i = 1; i < freq.length; i++) if (Math.abs(Math.log(freq[i] / target)) < Math.abs(Math.log(freq[best] / target))) best = i;
+    return best;
+  }
+
+  // Per frequency: transformer quantities from the DD block (Z) and the CC block (Y) of two pairs.
+  function transformerPoint(dd, ddRefs, cc, ccRefs, f) {
+    const w = TAU * f;
+    const z = dd && toZY(dd, ddRefs, 'Z');
+    const y = cc && toZY(cc, ccRefs, 'Y');
+    const out = { l11: NaN, l22: NaN, m: NaN, lsc: NaN, rsc: NaN, x11: NaN, z11: NaN, cww: NaN, c1g: NaN, c2g: NaN };
+    if (z && w > 0) {
+      const z11 = get(z, 2, 0, 0), z22 = get(z, 2, 1, 1), z12 = get(z, 2, 0, 1), z21 = get(z, 2, 1, 0);
+      out.x11 = z11[1]; out.z11 = abs(z11);
+      out.l11 = z11[1] / w; out.l22 = z22[1] / w;
+      out.m = (z12[1] + z21[1]) / 2 / w;
+      // Primary with the secondary shorted: Zsc = Z11 − Z12·Z21/Z22 (datasheet leakage method).
+      const ratio = div(mul(z12, z21), z22);
+      if (ratio) {
+        const zsc = sub(z11, ratio);
+        out.lsc = zsc[1] / w; out.rsc = zsc[0];
+      }
+    }
+    if (y && w > 0) {
+      const y11 = get(y, 2, 0, 0), y22 = get(y, 2, 1, 1), y12 = get(y, 2, 0, 1), y21 = get(y, 2, 1, 0);
+      out.cww = -(y12[1] + y21[1]) / 2 / w;
+      out.c1g = (y11[1] + y12[1]) / w;
+      out.c2g = (y22[1] + y21[1]) / w;
+    }
+    return out;
+  }
+
+  function analyzeTransformer(freq, points, evalFreq = 100e3) {
+    const series = key => Float64Array.from(points, p => p ? p[key] : NaN);
+    const l11 = series('l11'), l22 = series('l22'), m = series('m'), lsc = series('lsc'), rsc = series('rsc');
+    const x11 = series('x11'), z11 = series('z11'), cww = series('cww');
+    const fres = peakFreq(freq, z11);
+    const fEnd = Number.isFinite(fres) ? fres / 3 : freq.at(-1);
+    const iEval = nearestIndex(freq, Math.min(Math.max(evalFreq, freq.find(f => f > 0) ?? evalFreq), fEnd));
+    const ocl = l11[iEval], ls = l22[iEval], mm = m[iEval];
+    const k = mm / Math.sqrt(ocl * ls);
+    const leak = plateau(freq, lsc, freq.find(f => f > 0) ?? 0, Number.isFinite(fres) ? fres / 2 : freq.at(-1), 0.15);
+    const cap = plateau(freq, cww, 0, Number.isFinite(fres) ? fres : freq.at(-1), 0.2);
+    const fit = lcFit(freq, x11, Number.isFinite(fres) ? fres / 2 : freq.at(-1));
+    return {
+      fEval: freq[iEval], ocl, ocl0: fit.l, l22: ls, m: mm, k, n: Math.sqrt(ls / ocl),
+      leak: leak.value, leakConf: leak.conf, leakBand: leak.band,
+      rdc: lowMedian(freq, rsc), cww: cap.value, cwwConf: cap.conf, cwwBand: cap.band,
+      fres, cpar: fit.c > 0 ? fit.c : NaN,
+      series: { l11, l22, m, lsc, rsc, cww, z11 }
+    };
+  }
+
+  // Two-terminal component from Z(f): 'series' (inductor, ferrite) or 'shunt' (capacitor).
+  function analyzeElement(freq, z, kind) {
+    const re = Float64Array.from(freq, (_, i) => z[i]?.[0] ?? NaN);
+    const im = Float64Array.from(freq, (_, i) => z[i]?.[1] ?? NaN);
+    const w = f => TAU * f;
+    const first = freq.find(f => f > 0) ?? 0;
+    if (kind === 'series') {
+      const mag = Float64Array.from(freq, (_, i) => Math.hypot(re[i], im[i]));
+      const fsrf = peakFreq(freq, mag);
+      const lCurve = Float64Array.from(freq, (f, i) => f > 0 && im[i] > 0 ? im[i] / w(f) : NaN);
+      const fit = lcFit(freq, im, Number.isFinite(fsrf) ? fsrf / 2 : freq.at(-1));
+      const flat = plateau(freq, lCurve, first, Number.isFinite(fsrf) ? fsrf / 3 : freq.at(-1), 0.12);
+      const l = Number.isFinite(fit.l) ? { value: fit.l, conf: flat.conf, band: flat.band } : flat;
+      let rPeak = NaN;
+      if (Number.isFinite(fsrf)) {
+        for (let i = 0; i < freq.length; i++) {
+          if (freq[i] > fsrf / 2 && freq[i] < fsrf * 2 && Number.isFinite(re[i])) rPeak = Number.isFinite(rPeak) ? Math.max(rPeak, re[i]) : re[i];
+        }
+      }
+      return {
+        kind, l: l.value, lConf: l.conf, lBand: l.band, rdc: lowMedian(freq, re), fsrf,
+        cp: Number.isFinite(fsrf) && l.value > 0 ? 1 / ((TAU * fsrf) ** 2 * l.value) : NaN, rp: rPeak, lFlat: flat.value,
+        series: { l: lCurve, r: re }
+      };
+    }
+    const fsrf = crossing(freq, im, 1);
+    const cCurve = Float64Array.from(freq, (f, i) => f > 0 && im[i] < 0 ? -1 / (w(f) * im[i]) : NaN);
+    const lCurve = Float64Array.from(freq, (f, i) => f > 0 && im[i] > 0 ? im[i] / w(f) : NaN);
+    const c = plateau(freq, cCurve, first, Number.isFinite(fsrf) ? fsrf / 3 : freq.at(-1), 0.12);
+    const esl = Number.isFinite(fsrf) ? plateau(freq, lCurve, fsrf * 2, freq.at(-1), 0.2) : { value: NaN, conf: 0 };
+    let esr = NaN;
+    if (Number.isFinite(fsrf)) esr = re[nearestIndex(freq, fsrf)];
+    return {
+      kind, c: c.value, cConf: c.conf, cBand: c.band, fsrf, esl: esl.value, eslConf: esl.conf, esr,
+      series: { c: cCurve, l: lCurve, r: re }
+    };
+  }
+
+  // A CMC conducts common mode galvanically at low frequency, a transformer isolates it.
+  function classify4(freq, sccLow, sddLow) {
+    if (!Number.isFinite(sccLow)) return { type: 'unknown', confidence: 0 };
+    if (sccLow > 0.5) return { type: 'cmc', confidence: Math.min(1, (sccLow - 0.5) / 0.4 + 0.5) };
+    if (sccLow < 0.2) return { type: 'transformer', confidence: Math.min(1, (0.2 - sccLow) / 0.18 + 0.5) };
+    return { type: sddLow > sccLow ? 'transformer' : 'cmc', confidence: 0.3 };
+  }
+
   function exportTouchstone(dataset, network, basis) {
     const layout = network.layout, active = layout.active;
     const mixed = basis === 'mm' && layout.hasMixed;
-    const samples = mixed ? network.mm : network.se;
+    let samples = mixed ? network.mm : network.se;
+    // Touchstone mixed-mode data refer to 2R / R/2; custom pair impedances are undone for the file.
+    if (mixed && layout.mmRenorm) samples = samples.map(s => s && changeRef(s, layout.mmRefs, layout.mmNatRefs));
     const count = samples.filter(Boolean).length, n = active.length;
     if (!count) throw new Error('Es sind keine gültigen Matrixpunkte vorhanden.');
     const num = value => Number(value.toPrecision(13)).toString();
@@ -1573,7 +2278,8 @@ const RF = (() => {
   return {
     MAX_PORTS, TAU, RAD, abs, add, sub, mul, scale, div, get, put, matrix, indices, solve, submatrix,
     changeRef, toZY, fromZY, project, parseTouchstone, loadGamma, terminate, prepareNetwork, processPoint,
-    reflection, twoPort, transmission, cispr, cmcNatural, fitCMC, demoNetwork, exportTouchstone
+    reflection, twoPort, transmission, cispr, cmcNatural, fitCMC, demoNetwork, exportTouchstone,
+    plateau, crossing, peakFreq, lcFit, transformerPoint, analyzeTransformer, analyzeElement, classify4, median
   };
 })();
 </script>
@@ -1585,20 +2291,22 @@ const Plot = (() => {
   const ctx = canvas.getContext('2d');
   const uiFont = 'Inter, "Noto Sans", system-ui, sans-serif';
   const monoFont = '"IBM Plex Mono", "DejaVu Sans Mono", monospace';
-  const ink = '#233e50', axisInk = '#526c7c', grid = '#e2eaee', minorGrid = '#eff4f6';
-  const markerColors = ['#334e62', '#a26b1d'];
-  const formatter = new Intl.NumberFormat('de-DE', { maximumSignificantDigits: 4, useGrouping: false });
-  let model, geometry, hovering = null, dragging = null, frame = 0, rendered = null;
+  const ink = '#2b2a27', axisInk = '#6b6a64', grid = '#e8e5dc', minorGrid = '#f3f1eb';
+  const markerColors = ['#2b2a27', '#c4622d', '#6a4fb3', '#1e7f78'];
+  const LOC = window.I18N?.locale || 'de-DE', COMMA = LOC.startsWith('de');
+  const tr = text => window.I18N ? window.I18N.t(text) : text;
+  const formatter = new Intl.NumberFormat(LOC, { maximumSignificantDigits: 4, useGrouping: false });
+  let model, geometry, hovering = null, dragging = null, markerDrag = null, frame = 0, rendered = null;
 
   const formatNumber = value => {
     if (Object.is(value, -0)) return '0';
     if (Math.abs(value) >= 1e6 || (value !== 0 && Math.abs(value) < 0.001)) {
-      return value.toExponential(2).replace('.', ',').replace(/e\+?/, 'e');
+      return value.toExponential(2).replace('.', COMMA ? ',' : '.').replace(/e\+?/, 'e');
     }
     return formatter.format(value);
   };
 
-  const preciseFormatter = new Intl.NumberFormat('de-DE', { maximumSignificantDigits: 7, useGrouping: false });
+  const preciseFormatter = new Intl.NumberFormat(LOC, { maximumSignificantDigits: 7, useGrouping: false });
 
   function formatFreq(f, precise = false) {
     if (!Number.isFinite(f)) return '—';
@@ -1737,13 +2445,21 @@ const Plot = (() => {
     ctx.lineWidth = 1.2; ctx.strokeStyle = '#fff'; ctx.stroke();
   }
 
-  function markerTag(x, y, name, color) {
-    ctx.font = '600 10px ' + monoFont;
-    const w = ctx.measureText(name).width + 9;
+  function roundRect(x, y, w, h, r) {
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x, y, w, h, r);
+    else ctx.rect(x, y, w, h);
+  }
+
+  function markerTag(x, y, name, color, active = false) {
+    ctx.font = '700 10px ' + monoFont;
+    const w = ctx.measureText(name).width + 12, h = 16;
     const left = Math.min(geometry.right - w, Math.max(geometry.left, x - w / 2));
-    ctx.fillStyle = color; ctx.fillRect(left, y, w, 15);
+    if (active) { ctx.fillStyle = color; roundRect(left - 2, y - 2, w + 4, h + 4, 5); ctx.globalAlpha = 0.25; ctx.fill(); ctx.globalAlpha = 1; }
+    ctx.fillStyle = color; roundRect(left, y, w, h, 4); ctx.fill();
     ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(name, left + w / 2, y + 7.7);
+    ctx.fillText(name, left + w / 2, y + h / 2 + 0.5);
+    return { x0: left - 4, x1: left + w + 4, y0: y - 4, y1: y + h + 4 };
   }
 
   function tracePath(trace, start, end, x, y) {
@@ -1822,12 +2538,12 @@ const Plot = (() => {
     const yBase = yMap(ylo), ySpan = yMap(yhi) - yBase;
     const y = value => bottom - (yMap(value) - yBase) / ySpan * (bottom - top);
     geometry = { left, right, top, bottom, x, y, fAt, xlo, xhi, xBase, xSpan, unMap };
-    ctx.fillStyle = '#fbfdfe'; ctx.fillRect(left, top, right - left, bottom - top);
+    ctx.fillStyle = '#fffefb'; ctx.fillRect(left, top, right - left, bottom - top);
     if (model.fitBand) {
       const fitLeft = Math.max(left, x(model.fitBand[0]));
       const fitRight = Math.min(right, x(model.fitBand[1]));
       if (fitRight > fitLeft) {
-        ctx.fillStyle = '#e9f5f0';
+        ctx.fillStyle = '#f6ece3';
         ctx.fillRect(fitLeft, top, fitRight - fitLeft, bottom - top);
       }
     }
@@ -1853,14 +2569,14 @@ const Plot = (() => {
       lastLabelRight = textX + half;
       lastLabel = label;
     }
-    ctx.strokeStyle = '#cbd9e0'; ctx.lineWidth = 1; ctx.strokeRect(left, top, right - left, bottom - top);
+    ctx.strokeStyle = '#d6d2c6'; ctx.lineWidth = 1; ctx.strokeRect(left, top, right - left, bottom - top);
     ctx.font = '600 11px ' + uiFont;
     ctx.fillStyle = ink; ctx.textBaseline = 'middle'; ctx.textAlign = 'center';
-    ctx.fillText('Frequenz', (left + right) / 2, h - 11);
+    ctx.fillText(tr('Frequenz'), (left + right) / 2, h - 11);
     ctx.save();
     ctx.translate(small ? 10 : 17, (top + bottom) / 2);
     ctx.rotate(-Math.PI / 2);
-    ctx.fillText(model.yLabel, 0, 0);
+    ctx.fillText(tr(model.yLabel), 0, 0);
     ctx.restore();
 
     ctx.save();
@@ -1870,54 +2586,135 @@ const Plot = (() => {
     for (const trace of model.traces) {
       if (trace.visible) tracePath(trace, start, end, x, y);
     }
+    // Extracted ESB values as dashed reference lines.
+    for (const ref of model.refLines || []) {
+      const yy = y(ref.value);
+      if (!Number.isFinite(yy) || yy < top || yy > bottom) continue;
+      ctx.setLineDash([6, 4]); line(left, yy, right, yy, ref.color, 1.2); ctx.setLineDash([]);
+      ctx.font = '700 10px ' + monoFont;
+      const refLabel = tr(ref.label);
+      const tw = ctx.measureText(refLabel).width + 10;
+      ctx.fillStyle = ref.color; roundRect(right - tw - 6, yy - 17, tw, 15, 3); ctx.fill();
+      ctx.fillStyle = '#fff'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+      ctx.fillText(refLabel, right - tw - 1, yy - 9.2);
+    }
     if (!hasValues) {
       ctx.font = '600 12px ' + uiFont;
       ctx.fillStyle = axisInk; ctx.textAlign = 'center';
-      ctx.fillText(yLog ? 'Keine positiven Werte im Bereich' : 'Keine Kurvendaten im Bereich', (left + right) / 2, (top + bottom) / 2);
-    }
-    if (hovering && !dragging) {
-      ctx.setLineDash([3, 4]);
-      line(hovering.x, top, hovering.x, bottom, '#8198a7');
-      ctx.setLineDash([]);
+      ctx.fillText(tr(yLog ? 'Keine positiven Werte im Bereich' : 'Keine Kurvendaten im Bereich'), (left + right) / 2, (top + bottom) / 2);
     }
     if (dragging && Math.abs(dragging.current - dragging.start) > 8) {
       const x1 = Math.min(dragging.current, dragging.start), x2 = Math.max(dragging.current, dragging.start);
-      ctx.fillStyle = '#0b806324'; ctx.fillRect(x1, top, x2 - x1, bottom - top);
-      ctx.strokeStyle = '#16816f'; ctx.strokeRect(x1, top, x2 - x1, bottom - top);
+      ctx.fillStyle = '#c9644222'; ctx.fillRect(x1, top, x2 - x1, bottom - top);
+      ctx.strokeStyle = '#c96442'; ctx.strokeRect(x1, top, x2 - x1, bottom - top);
     }
-    model.markers.forEach((index, i) => {
-      if (index === null) return;
+    const markerList = model.markers.map((index, i) => ({ index, i })).filter(m => m.index !== null && m.index !== undefined);
+    const visibleTraces = model.traces.filter(t => t.visible);
+    for (const { index, i } of markerList) {
       const xx = x(model.f[index]);
-      if (xx < left - 0.1 || xx > right + 0.1 || !Number.isFinite(xx)) return;
+      if (xx < left - 0.1 || xx > right + 0.1 || !Number.isFinite(xx)) continue;
       ctx.setLineDash(i === model.activeMarker ? [] : [4, 3]);
-      line(xx, top, xx, bottom, markerColors[i], 1);
+      line(xx, top, xx, bottom, markerColors[i], i === model.activeMarker ? 1.3 : 1);
       ctx.setLineDash([]);
-      for (const trace of model.traces) {
-        if (!trace.visible) continue;
+      for (const trace of visibleTraces) {
         const yy = y(toPlotValue(trace, index));
-        if (Number.isFinite(yy)) dot(xx, yy, trace.color);
+        if (Number.isFinite(yy)) dot(xx, yy, trace.color, i === model.activeMarker ? 4 : 3.4);
       }
-    });
+    }
+    // Values next to the marker points, only while the plot stays readable (≤ 4 visible curves).
+    if (visibleTraces.length && visibleTraces.length <= 4) {
+      ctx.font = '600 10px ' + monoFont; ctx.textBaseline = 'middle';
+      // All markers get labels while that stays sparse, otherwise only the active one.
+      const labelled = visibleTraces.length * markerList.length <= 6 ? markerList : markerList.filter(m => m.i === model.activeMarker);
+      for (const { index, i } of labelled) {
+        const xx = x(model.f[index]);
+        if (xx < left || xx > right || !Number.isFinite(xx)) continue;
+        const labels = visibleTraces.map(trace => {
+          const v = trace.values[index];
+          return { trace, v, yy: y(toPlotValue(trace, index)) };
+        }).filter(l => Number.isFinite(l.yy) && Number.isFinite(l.v)).sort((a, b) => a.yy - b.yy);
+        for (let k = 1; k < labels.length; k++) labels[k].yy = Math.max(labels[k].yy, labels[k - 1].yy + 14);
+        const overflow = labels.length ? labels.at(-1).yy - (bottom - 8) : 0;
+        if (overflow > 0) labels.forEach(l => { l.yy -= overflow; });
+        for (const l of labels) {
+          const text = formatNumber(l.v).replace(/^-/, '−') + (model.unit ? ' ' + model.unit : '');
+          const tw = ctx.measureText(text).width + 8;
+          const onLeft = xx + 8 + tw > right;
+          const bx = onLeft ? xx - 8 - tw : xx + 8;
+          const by = Math.max(top + 2, Math.min(bottom - 15, l.yy - 7.5));
+          ctx.fillStyle = 'rgba(255,255,255,.9)'; roundRect(bx, by, tw, 15, 3); ctx.fill();
+          ctx.strokeStyle = l.trace.color; ctx.lineWidth = 1; ctx.stroke();
+          ctx.fillStyle = l.trace.color; ctx.textAlign = 'left';
+          ctx.fillText(text, bx + 4, by + 7.8);
+        }
+      }
+    }
     ctx.restore();
 
-    const m1x = model.markers[0] === null ? NaN : x(model.f[model.markers[0]]);
-    model.markers.forEach((index, i) => {
-      if (index === null) return;
+    geometry.tags = [];
+    const placed = [];
+    for (const { index, i } of markerList) {
       const xx = x(model.f[index]);
-      if (xx >= left - 0.1 && xx <= right + 0.1) {
-        const overlap = i === 1 && Math.abs(xx - m1x) < 24;
-        markerTag(xx, overlap ? top + 4 : top - 18, 'M' + (i + 1), markerColors[i]);
-      }
-    });
-    if (hovering && !dragging) {
+      if (xx < left - 0.1 || xx > right + 0.1) continue;
+      // Tags of nearby markers step down so every tag stays clickable.
+      let row = 0;
+      while (placed.some(p => p.row === row && Math.abs(p.x - xx) < 26)) row++;
+      placed.push({ x: xx, row });
+      const rect = markerTag(xx, top - 18 + row * 17, 'M' + (i + 1), markerColors[i], i === model.activeMarker);
+      geometry.tags.push({ i, ...rect });
+    }
+
+    if (hovering && !dragging && !markerDrag) {
       const index = nearest(model.f, fAt(hovering.x), xLog);
-      const label = formatFreq(model.f[index]);
-      ctx.font = '500 10px ' + monoFont;
-      const ww = ctx.measureText(label).width + 12;
-      const xx = Math.min(right - ww, Math.max(left, hovering.x - ww / 2));
-      ctx.fillStyle = '#284657'; ctx.fillRect(xx, bottom - 21, ww, 17);
-      ctx.fillStyle = '#fff'; ctx.textBaseline = 'middle'; ctx.textAlign = 'center';
-      ctx.fillText(label, xx + ww / 2, bottom - 12.5);
+      const hx = x(model.f[index]);
+      let snap = null;
+      for (const trace of visibleTraces) {
+        const yy = y(toPlotValue(trace, index));
+        if (!Number.isFinite(yy)) continue;
+        const distance = Math.abs(yy - hovering.y);
+        if (distance < 32 && (!snap || distance < snap.distance)) snap = { trace, yy, distance };
+      }
+      ctx.save();
+      ctx.beginPath(); ctx.rect(left, top, right - left, bottom - top); ctx.clip();
+      ctx.setLineDash([3, 4]);
+      line(hx, top, hx, bottom, '#9a978f');
+      ctx.setLineDash([]);
+      ctx.restore();
+      if (snap) {
+        // Magnetic snap: ring on the curve and a compact readout next to it.
+        ctx.beginPath(); ctx.arc(hx, snap.yy, 6, 0, 2 * Math.PI);
+        ctx.strokeStyle = snap.trace.color; ctx.lineWidth = 2; ctx.stroke();
+        dot(hx, snap.yy, snap.trace.color, 3);
+        const v = snap.trace.values[index];
+        const valueText = (Number.isFinite(v) ? formatNumber(v).replace(/^-/, '−') : '—') + (model.unit ? ' ' + model.unit : '');
+        const freqText = formatFreq(model.f[index]);
+        ctx.font = '700 11px ' + monoFont;
+        const snapLabel = tr(snap.trace.label);
+        const w1 = ctx.measureText(snapLabel + '  ' + valueText).width;
+        ctx.font = '500 10px ' + monoFont;
+        const w2 = ctx.measureText(freqText).width;
+        const bw = Math.max(w1, w2) + 22, bh = 34;
+        let bx = hx + 12, by = snap.yy - bh - 8;
+        if (bx + bw > right) bx = hx - 12 - bw;
+        if (by < top) by = snap.yy + 10;
+        ctx.fillStyle = 'rgba(31,30,29,.94)'; roundRect(bx, by, bw, bh, 6); ctx.fill();
+        ctx.fillStyle = snap.trace.color; ctx.fillRect(bx + 8, by + 9, 3, 16);
+        ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+        ctx.font = '700 11px ' + monoFont; ctx.fillStyle = '#fff';
+        ctx.fillText(snapLabel + '  ' + valueText, bx + 16, by + 12);
+        ctx.font = '500 10px ' + monoFont; ctx.fillStyle = '#d6d3ca';
+        ctx.fillText(freqText, bx + 16, by + 25);
+        geometry.snap = { index, trace: snap.trace.key };
+      } else {
+        geometry.snap = null;
+        const label = formatFreq(model.f[index]);
+        ctx.font = '500 10px ' + monoFont;
+        const ww = ctx.measureText(label).width + 12;
+        const xx = Math.min(right - ww, Math.max(left, hx - ww / 2));
+        ctx.fillStyle = '#1f1e1d'; roundRect(xx, bottom - 21, ww, 17, 4); ctx.fill();
+        ctx.fillStyle = '#fff'; ctx.textBaseline = 'middle'; ctx.textAlign = 'center';
+        ctx.fillText(label, xx + ww / 2, bottom - 12.5);
+      }
     }
     rendered = { xlo, xhi, ylo, yhi };
   }
@@ -1925,12 +2722,12 @@ const Plot = (() => {
   function smithGrid(cx, cy, radius) {
     const rs = [0, 0.2, 0.5, 1, 2, 5];
     ctx.beginPath(); ctx.arc(cx, cy, radius, 0, RF.TAU);
-    ctx.fillStyle = '#fbfdfe'; ctx.fill();
+    ctx.fillStyle = '#fffefb'; ctx.fill();
     ctx.save();
     ctx.clip();
     for (const r of rs) {
       ctx.beginPath(); ctx.arc(cx + radius * r / (1 + r), cy, radius / (1 + r), 0, RF.TAU);
-      ctx.strokeStyle = r === 0 ? '#9fb4c2' : '#d6e3e9'; ctx.lineWidth = r === 0 ? 1.5 : 1; ctx.stroke();
+      ctx.strokeStyle = r === 0 ? '#b5b1a5' : '#e3dfd4'; ctx.lineWidth = r === 0 ? 1.5 : 1; ctx.stroke();
     }
     for (const reactance of [0.2, 0.5, 1, 2, 5]) {
       for (const sign of [-1, 1]) {
@@ -1945,13 +2742,13 @@ const Plot = (() => {
           else ctx.lineTo(cx + radius * re, cy - radius * im);
         }
         ctx.lineTo(cx + radius, cy);
-        ctx.strokeStyle = '#d6e3e9'; ctx.lineWidth = 1; ctx.stroke();
+        ctx.strokeStyle = '#e3dfd4'; ctx.lineWidth = 1; ctx.stroke();
       }
     }
-    line(cx - radius, cy, cx + radius, cy, '#a9becb');
+    line(cx - radius, cy, cx + radius, cy, '#c2beb2');
     ctx.font = '10px ' + monoFont;
     ctx.textAlign = 'center'; ctx.textBaseline = 'top'; ctx.fillStyle = axisInk;
-    rs.slice(1).forEach(r => ctx.fillText(String(r).replace('.', ','), cx + radius * (r - 1) / (r + 1), cy + 4));
+    rs.slice(1).forEach(r => ctx.fillText(COMMA ? String(r).replace('.', ',') : String(r), cx + radius * (r - 1) / (r + 1), cy + 4));
     ctx.restore();
     // Reactance labels sit just outside the unit circle where each x arc meets it.
     ctx.font = '9.5px ' + monoFont; ctx.fillStyle = axisInk; ctx.textBaseline = 'middle';
@@ -1960,7 +2757,7 @@ const Plot = (() => {
         const x = reactance * sign, norm = x * x + 1;
         const re = (x * x - 1) / norm, im = 2 * x / norm;
         ctx.textAlign = re > 0.15 ? 'left' : re < -0.15 ? 'right' : 'center';
-        const label = (sign > 0 ? '+j' : '−j') + String(reactance).replace('.', ',');
+        const label = (sign > 0 ? '+j' : '−j') + (COMMA ? String(reactance).replace('.', ',') : String(reactance));
         ctx.fillText(label, cx + (radius + 11) * re, cy - (radius + 9) * im);
       }
     }
@@ -1998,17 +2795,17 @@ const Plot = (() => {
       for (const trace of traces) {
         const point = xy(trace.complex[index * 2], trace.complex[index * 2 + 1]);
         if (!point.every(Number.isFinite)) continue;
-        dot(...point, markerColors[i], 4.3);
-        markerTag(point[0] + (i ? 11 : -11), Math.max(2, point[1] - 20), 'M' + (i + 1), markerColors[i]);
+        dot(...point, markerColors[i], i === model.activeMarker ? 5 : 4.3);
+        markerTag(point[0] + (i % 2 ? 13 : -13), Math.max(2, point[1] - 21 - (i > 1 ? 17 : 0)), 'M' + (i + 1), markerColors[i], i === model.activeMarker);
       }
     });
     if (maximum > 1.0001) {
       ctx.font = '10px ' + uiFont; ctx.textAlign = 'left'; ctx.textBaseline = 'top'; ctx.fillStyle = axisInk;
-      ctx.fillText('Werte außerhalb |Γ| = 1', 10, h - 16);
+      ctx.fillText(tr('Werte außerhalb |Γ| = 1'), 10, h - 16);
     }
     if (!traces.length) {
       ctx.font = '600 12px ' + uiFont; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = axisInk;
-      ctx.fillText('Keine Kurve eingeblendet', cx, cy - 18);
+      ctx.fillText(tr('Keine Kurve eingeblendet'), cx, cy - 18);
     }
     rendered = null;
   }
@@ -2054,7 +2851,23 @@ const Plot = (() => {
 
   const indexAt = p => model.smith ? pickSmith(p) : nearest(model.f, geometry.fAt(p.x), model.xScale === 'log');
   const touches = new Map();
-  let gesture = null, lastTap = null, pendingMarker = null, pendingZoom = null, gestureFrame = 0;
+  let gesture = null, lastTap = null, pendingMarker = null, pendingZoom = null, pendingDrag = null, gestureFrame = 0;
+
+  // A marker is grabbed at its tag above the plot or within a few pixels of its line.
+  function markerHit(p) {
+    if (!model || !geometry) return null;
+    for (const tag of geometry.tags || []) {
+      if (p.x >= tag.x0 && p.x <= tag.x1 && p.y >= tag.y0 && p.y <= tag.y1) return tag.i;
+    }
+    if (model.smith || p.y < geometry.top || p.y > geometry.bottom) return null;
+    let best = null;
+    model.markers.forEach((index, i) => {
+      if (index === null || index === undefined) return;
+      const d = Math.abs(geometry.x(model.f[index]) - p.x);
+      if (d <= 5 && (best === null || d < best.d)) best = { i, d };
+    });
+    return best?.i ?? null;
+  }
 
   // Marker and zoom updates from touch moves are coalesced to one per animation frame.
   function flushGesture() {
@@ -2062,9 +2875,12 @@ const Plot = (() => {
     if (!model) return;
     if (pendingZoom) { const range = pendingZoom; pendingZoom = null; model.onZoom(range); }
     if (pendingMarker !== null) { const index = pendingMarker; pendingMarker = null; model.onMarker(index); }
+    if (pendingDrag) { const [i, index] = pendingDrag; pendingDrag = null; model.onMarkerDrag?.(i, index); }
   }
   function queue(kind, value) {
-    if (kind === 'zoom') pendingZoom = value; else pendingMarker = value;
+    if (kind === 'zoom') pendingZoom = value;
+    else if (kind === 'drag') pendingDrag = value;
+    else pendingMarker = value;
     if (!gestureFrame) gestureFrame = requestAnimationFrame(flushGesture);
   }
 
@@ -2098,11 +2914,21 @@ const Plot = (() => {
   canvas.addEventListener('pointerdown', e => {
     if (!model || e.button !== 0 || !geometry) return;
     const p = pointFrom(e);
+    const hit = markerHit(p);
     if (e.pointerType === 'touch') {
       touches.set(e.pointerId, p);
       if (touches.size === 2 && !model.smith) startPinch();
-      else if (touches.size === 1) gesture = inside(p) ? { type: 'touch', start: p, moved: false } : null;
+      else if (touches.size === 1 && hit !== null && !model.smith) {
+        gesture = { type: 'marker', i: hit, start: p };
+        model.onMarkerSelect?.(hit);
+      } else if (touches.size === 1) gesture = inside(p) ? { type: 'touch', start: p, moved: false } : null;
       else gesture = null;
+      return;
+    }
+    if (hit !== null && !model.smith) {
+      markerDrag = { i: hit, id: e.pointerId, moved: false };
+      canvas.setPointerCapture(e.pointerId);
+      model.onMarkerSelect?.(hit);
       return;
     }
     if (!inside(p)) return;
@@ -2118,7 +2944,10 @@ const Plot = (() => {
       if (!touches.has(e.pointerId)) return;
       touches.set(e.pointerId, p);
       if (gesture?.type === 'pinch' && touches.size === 2) movePinch();
-      else if (gesture?.type === 'touch') {
+      else if (gesture?.type === 'marker') {
+        const index = nearest(model.f, geometry.fAt(clamp(p.x, geometry.left, geometry.right)), model.xScale === 'log');
+        queue('drag', [gesture.i, index]);
+      } else if (gesture?.type === 'touch') {
         const dx = p.x - gesture.start.x, dy = p.y - gesture.start.y;
         // A mostly horizontal swipe drags the marker; vertical swipes keep scrolling the page.
         if (!gesture.moved && Math.abs(dx) > 6 && Math.abs(dx) > Math.abs(dy)) gesture.moved = true;
@@ -2131,8 +2960,15 @@ const Plot = (() => {
       return;
     }
     if (model.smith) return;
+    if (markerDrag) {
+      markerDrag.moved = true;
+      const index = nearest(model.f, geometry.fAt(clamp(p.x, geometry.left, geometry.right)), model.xScale === 'log');
+      queue('drag', [markerDrag.i, index]);
+      return;
+    }
     if (dragging) dragging.current = clamp(p.x, geometry.left, geometry.right);
     hovering = inside(p) ? p : null;
+    canvas.style.cursor = markerHit(p) !== null ? 'ew-resize' : inside(p) ? 'crosshair' : '';
     schedule();
   });
   canvas.addEventListener('pointerleave', e => {
@@ -2140,15 +2976,20 @@ const Plot = (() => {
   });
   canvas.addEventListener('pointercancel', e => {
     touches.delete(e.pointerId);
-    gesture = null; dragging = null; hovering = null; schedule();
+    gesture = null; dragging = null; markerDrag = null; hovering = null; schedule();
   });
   canvas.addEventListener('pointerup', e => {
     if (!model || e.button !== 0 || !geometry) return;
     const p = pointFrom(e);
+    if (markerDrag && e.pointerType !== 'touch') {
+      markerDrag = null;
+      schedule();
+      return;
+    }
     if (e.pointerType === 'touch') {
       touches.delete(e.pointerId);
       const current = gesture;
-      if (current?.type === 'pinch') { gesture = touches.size ? { type: 'idle' } : null; return; }
+      if (current?.type === 'pinch' || current?.type === 'marker') { gesture = touches.size ? { type: 'idle' } : null; return; }
       gesture = null;
       if (!current || current.type !== 'touch' || current.moved || !inside(p)) return;
       const now = performance.now();
@@ -2228,26 +3069,29 @@ const Plot = (() => {
     const ec = exportCanvas.getContext('2d');
     ec.setTransform(ratio, 0, 0, ratio, 0, 0);
     ec.fillStyle = '#fff'; ec.fillRect(0, 0, exportCanvas.width / ratio, exportCanvas.height / ratio);
-    ec.fillStyle = ink; ec.font = '700 18px ' + uiFont; ec.fillText(title, 16, 24, canvas.clientWidth - 30);
-    ec.fillStyle = axisInk; ec.font = '12px ' + uiFont; ec.fillText(subtitle, 16, 43, canvas.clientWidth - 30);
+    ec.fillStyle = ink; ec.font = '700 18px ' + uiFont; ec.fillText(tr(title), 16, 24, canvas.clientWidth - 30);
+    ec.fillStyle = axisInk; ec.font = '12px ' + uiFont; ec.fillText(tr(subtitle), 16, 43, canvas.clientWidth - 30);
     ec.drawImage(canvas, 0, header, canvas.clientWidth, canvas.clientHeight);
     visible.forEach((t, i) => {
       const x = 16 + (i % cols) * 143, y = header + canvas.clientHeight + Math.floor(i / cols) * lineHeight + 7;
       ec.setLineDash(t.dash ? [4, 2.5] : []); ec.strokeStyle = t.color; ec.lineWidth = 2;
       ec.beginPath(); ec.moveTo(x, y - 4); ec.lineTo(x + 14, y - 4); ec.stroke(); ec.setLineDash([]);
-      ec.fillStyle = ink; ec.font = '11px ' + monoFont; ec.fillText(t.label, x + 17, y, 116);
+      ec.fillStyle = ink; ec.font = '11px ' + monoFont; ec.fillText(tr(t.label), x + 17, y, 116);
     });
     return new Promise(resolve => exportCanvas.toBlob(resolve, 'image/png'));
   }
 
-  return { set, image, domain, lastLimits: () => rendered, formatFreq, parseFreq, nearest, lowerBound, formatNumber };
+  return { set, image, domain, lastLimits: () => rendered, snapInfo: () => geometry?.snap ?? null, tagRects: () => geometry?.tags ?? [], formatFreq, parseFreq, nearest, lowerBound, formatNumber };
 })();
 </script>
 <script>
 'use strict';
 
 (() => {
+  window.I18N.start();
   const $ = id => document.getElementById(id);
+  document.querySelector('#lang-button .lang-code').textContent = window.I18N.lang === 'de' ? 'EN' : 'DE';
+  const LOCALE = window.I18N.locale;
   const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
   const icon = name => '<svg class="icon" aria-hidden="true"><use href="#i-' + name + '"/></svg>';
   const num = Plot.formatNumber, hz = Plot.formatFreq, parseHz = Plot.parseFreq;
@@ -2281,9 +3125,13 @@ const Plot = (() => {
     return text.replace(/\b(D\d+)/g, '<b class="d">$1</b>').replace(/\b(C\d+)/g, '<b class="c">$1</b>');
   }
 
+  // One colour per differential pair, used wherever ports appear (editor, table, schematic).
+  const PAIR_COLORS = ['#3a9fbf', '#d98a0b', '#7b8a92', '#a8a21e', '#a06cc7', '#d0607a', '#4c9f70', '#5b6fd6', '#b5713a', '#2f8f9f', '#8f6bb0', '#c25555'];
+  const pairColor = id => PAIR_COLORS[(Math.max(1, id) - 1) % PAIR_COLORS.length];
+
   const COLORS = ['#3266ce', '#008879', '#a26016', '#8a55b6', '#ca5260', '#4f842f', '#157eab', '#a04d7b', '#967234', '#5059a8', '#47616d', '#bb6235', '#007385', '#6b4d33', '#a32c63', '#6b7428'];
   const MAX_TRACES = COLORS.length;
-  const TABS = { s: 'S-Parameter', ports: 'Ports & Lasten', smith: 'Smith-Chart', z: 'Impedanz', cispr: 'CISPR 17', cmc: 'CMC-Modell' };
+  const TABS = { s: 'S-Parameter', ports: 'Ports & Lasten', smith: 'Smith-Chart', z: 'Impedanz', cispr: 'CISPR 17', cmc: 'ESB-Modell' };
   const S_FORMATS = [
     ['db', 'Betrag · dB'], ['mag', 'Betrag · linear'], ['phase', 'Phase · ±180°'], ['unwrap', 'Phase · entfaltet'],
     ['re', 'Realteil'], ['im', 'Imaginärteil'], ['delay', 'Gruppenlaufzeit']
@@ -2308,18 +3156,21 @@ const Plot = (() => {
   const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
   const mobile = matchMedia('(max-width: 850px)');
   const coarse = matchMedia('(pointer: coarse)');
-  const defaultAxes = () => ({ x: 'log', xRange: null, y: 'linear', yRange: null });
+  const defaultAxes = tab => ({ x: 'log', xRange: null, y: ['z', 'cispr'].includes(tab) ? 'log' : 'linear', yRange: null });
   const state = {
     dataset: null, config: null, layout: null, network: null, tab: 's', basis: 'mm',
     sFormat: 'db', sKeys: { se: null, mm: null }, smith: '',
     z: { method: 'reflection', format: 'mag', input: '', output: '' },
     cispr: { method: 'four', format: 'mag', input: '', output: '' },
     cmc: { format: 'cap', band: null }, pairIn: 1, pairOut: 2,
-    axes: {}, markers: [0, null], activeMarker: 0,
+    esb: { model: 'auto', tFormat: 'ocl', eFormat: 'z', input: '', output: '', evalFreq: 100e3 },
+    axes: {}, markers: [0, null, null, null], activeMarker: 0,
     hiddenTraces: new Set(), collapsed: mobile.matches, job: 0, importJob: 0,
     busy: false, error: '', memo: new Map(), recordId: null, view: null, dialogLoad: null, pairDraft: null, toastTimer: null
   };
-  const axis = () => state.axes[state.tab] ??= defaultAxes();
+  const axis = () => state.axes[state.tab] ??= defaultAxes(state.tab);
+  // Log Y only for quantities that are positive by nature (|Z|, L, C, ...); dB and phase stay linear.
+  const effectiveY = () => axis().y === 'log' && canUseYLog() ? 'log' : 'linear';
 
   function numberValue(text) {
     const raw = String(text ?? '').trim();
@@ -2433,12 +3284,13 @@ const Plot = (() => {
     const start = fs[0] > 0 ? fs[0] : fs[1] ?? 0;
     const end = fs.at(-1);
     state.cmc = { format: 'cap', band: dataset.demo ? [1e6, 100e6] : [start, end] };
+    state.esb = { model: 'auto', tFormat: 'ocl', eFormat: 'z', input: '', output: '', evalFreq: 100e3 };
     state.pairIn = config.pairs[0]?.id ?? 1;
     state.pairOut = config.pairs[1]?.id ?? 2;
     state.hiddenTraces.clear();
     state.axes = {};
     const target = dataset.demo ? 10e6 : Math.sqrt(start) * Math.sqrt(end);
-    state.markers = [Plot.nearest(fs, target, true), null];
+    state.markers = [Plot.nearest(fs, target, true), null, null, null];
     state.activeMarker = 0;
     state.tab = 's';
     if (saved) {
@@ -2652,7 +3504,7 @@ const Plot = (() => {
       const fs = state.dataset.freq;
       const settings = JSON.parse(JSON.stringify({
         config: state.config, tab: state.tab, basis: state.basis, sFormat: state.sFormat, sKeys: state.sKeys,
-        z: state.z, cispr: state.cispr, cmc: state.cmc, pairIn: state.pairIn, pairOut: state.pairOut,
+        z: state.z, cispr: state.cispr, cmc: state.cmc, esb: state.esb, pairIn: state.pairIn, pairOut: state.pairOut,
         markers: state.markers.map(i => i === null ? null : fs[i])
       }));
       Library.saveSettings(recordId, settings).catch(() => {});
@@ -2674,10 +3526,11 @@ const Plot = (() => {
     if (saved.z?.method) state.z = { ...state.z, ...saved.z };
     if (saved.cispr?.method) state.cispr = { ...state.cispr, ...saved.cispr };
     if (Array.isArray(saved.cmc?.band) && saved.cmc.band.every(Number.isFinite)) state.cmc = { ...state.cmc, ...saved.cmc };
+    if (saved.esb?.model) state.esb = { ...state.esb, ...saved.esb };
     if (Number.isInteger(saved.pairIn)) state.pairIn = saved.pairIn;
     if (Number.isInteger(saved.pairOut)) state.pairOut = saved.pairOut;
     if (Array.isArray(saved.markers)) {
-      state.markers = [0, 1].map(i => Number.isFinite(saved.markers[i]) ? Plot.nearest(dataset.freq, saved.markers[i], true) : (i ? null : state.markers[0]));
+      state.markers = [0, 1, 2, 3].map(i => Number.isFinite(saved.markers[i]) ? Plot.nearest(dataset.freq, saved.markers[i], true) : (i ? null : state.markers[0]));
     }
   }
 
@@ -2758,7 +3611,7 @@ const Plot = (() => {
     const { dataset, config } = state;
     const paired = new Set(config.pairs.flatMap(p => [p.p, p.q]));
     const groups = config.pairs.map(p => ({
-      title: 'D' + p.id + ' / C' + p.id,
+      title: 'D' + p.id + ' / C' + p.id, color: pairColor(p.id),
       ports: [[p.p, '+'], [p.q, '−']]
     }));
     const singles = RF.indices(dataset.n).filter(i => !paired.has(i));
@@ -2777,7 +3630,8 @@ const Plot = (() => {
           '" title="' + esc(tooltip) + '"><span class="net-chip">' + portName(i) +
           (label ? '<em>' + esc(label) + '</em>' : '') + '</span></div>';
       }).join('');
-      return '<div class="net-group">' + (item.title ? '<span class="net-pair">' + modeMarkup(esc(item.title)) + '</span>' : '') + wires + '</div>';
+      return '<div class="net-group' + (item.color ? ' is-pair' : '') + '"' + (item.color ? ' style="--pc:' + item.color + '"' : '') + '>' +
+        (item.title ? '<span class="net-pair"><i class="pc-dot"></i>' + modeMarkup(esc(item.title)) + '</span>' : '') + wires + '</div>';
     };
     const left = limited.filter((_, i) => i % 2 === 0).map(group).join('');
     const right = limited.filter((_, i) => i % 2 === 1).map(group).join('');
@@ -2795,12 +3649,14 @@ const Plot = (() => {
     const d = state.dataset;
     if (!d) return;
     $('heading-file').textContent = d.name;
+    $('file-chip-name').textContent = d.name;
+    $('file-chip').setAttribute('aria-expanded', String(!state.collapsed));
     $('dataset-summary').innerHTML =
       '<div class="file-title" title="' + esc(d.name) + '">' + icon('file') + '<strong>' + esc(d.name) + '</strong>' +
       (d.demo ? '<span class="demo-tag">Demo</span>' : '') + '</div>' +
       '<dl class="file-meta">' +
       '<div><dt>Frequenz</dt><dd class="mono">' + esc(hz(d.freq[0])) + ' – ' + esc(hz(d.freq.at(-1))) + '</dd></div>' +
-      '<div><dt>Punkte</dt><dd class="mono">' + d.freq.length.toLocaleString('de-DE') + '</dd></div>' +
+      '<div><dt>Punkte</dt><dd class="mono">' + d.freq.length.toLocaleString(LOCALE) + '</dd></div>' +
       '<div><dt>Dateireferenz</dt><dd class="mono">' + esc(refsSummary(d.refs)) + '</dd></div>' +
       '<div><dt>Format</dt><dd class="mono">TS ' + esc(d.version) + ' · ' + esc(d.sourceKind + '/' + d.format) + '</dd></div>' +
       (d.noiseCount ? '<div><dt>Rauschpunkte</dt><dd class="mono">' + d.noiseCount + '</dd></div>' : '') +
@@ -2862,19 +3718,19 @@ const Plot = (() => {
       smith: 'Komplexe Reflexion · normiert auf die gewählte Portreferenz',
       z: 'Eingangs-, Transfer- und Fixture-Impedanz',
       cispr: 'Indirekte Impedanzauswertung · CISPR 17:2011',
-      cmc: 'Vierport-Ersatzmodell für zwei symmetrische Wicklungen'
+      cmc: 'Ersatzschaltbilder: CMC, Übertrager und Einzelbauteile'
     }[state.tab];
   }
 
   function renderStatus() {
     const text = state.error || (state.busy ? 'Netzwerk wird berechnet …' :
-      (state.network?.gaps ? state.network.gaps.toLocaleString('de-DE') + ' singuläre Punkte im reduzierten Netzwerk. Diese Frequenzen erscheinen als Lücken.' : ''));
+      (state.network?.gaps ? state.network.gaps.toLocaleString(LOCALE) + ' singuläre Punkte im reduzierten Netzwerk. Diese Frequenzen erscheinen als Lücken.' : ''));
     notice('global-status', text);
     $('global-status').classList.toggle('neutral', state.busy);
     const d = state.dataset;
     const scope = (d.demo ? 'Synthetische Beispieldaten' : d.name) + ' · ' + d.n + ' Ports';
     $('status-bar').innerHTML = '<span><span class="status-dot' + (state.error || state.busy ? ' warn' : '') + '"></span>' +
-      esc(scope) + '</span><span>' + (state.network?.gaps ? esc((d.freq.length - state.network.gaps).toLocaleString('de-DE')) + ' gültige Punkte' : 'Berechnung im Browser') + '</span>';
+      esc(scope) + '</span><span>' + (state.network?.gaps ? esc((d.freq.length - state.network.gaps).toLocaleString(LOCALE)) + ' gültige Punkte' : 'Berechnung im Browser') + '</span>';
   }
 
   function chooseDefaults() {
@@ -2884,11 +3740,11 @@ const Plot = (() => {
     const pick = (k, alt) => valid(k) ? k : alt;
     const first = keys[0] || '', second = keys[1] || first;
     state.smith = pick(state.smith, first);
-    for (const type of ['z', 'cispr']) {
+    for (const type of ['z', 'cispr', 'esb']) {
       const settings = state[type];
       settings.input = pick(settings.input, first);
       settings.output = pick(settings.output, second);
-      const needsDistinct = type === 'z' ? settings.method.startsWith('tx') : ['series', 'shunt'].includes(settings.method);
+      const needsDistinct = type === 'z' ? settings.method.startsWith('tx') : type === 'esb' || ['series', 'shunt'].includes(settings.method);
       if (needsDistinct && settings.input === settings.output && keys.length > 1) {
         settings.output = keys.find(key => key !== settings.input);
       }
@@ -2937,6 +3793,7 @@ const Plot = (() => {
     const ports = [draft.plus, draft.minus].filter(port => port !== null);
     const target = (side, label) => actionButton(label + ' · ' + (draft[side] === null ? 'wählen' : portName(draft[side])),
       'pair-target', side, 'button pair-target', '', ' id="pair-target-' + side + '"' + pressed(draft.side === side));
+    const draftColor = pairColor(draft.id ?? config.pairs.length + 1);
     const cards = RF.indices(dataset.n).map(port => {
       const pair = groupFor(port);
       const load = config.loads[port];
@@ -2944,7 +3801,11 @@ const Plot = (() => {
       const role = pair ? 'D' + pair.id + (pair.p === port ? ' +' : ' −') : isLoaded ? loadName(load) : 'Einzeln';
       const chosen = draft.plus === port ? '+' : draft.minus === port ? '−' : '';
       const name = dataset.portNames[port];
-      return '<button type="button" class="assign-port" id="assign-port-' + port + '" data-action="pair-port" data-value="' + port + '"' +
+      // Ports that already belong to another pair are greyed out but stay selectable (they are then moved).
+      const taken = pair && pair.id !== draft.id && !chosen;
+      const color = chosen ? draftColor : pair ? pairColor(pair.id) : '';
+      return '<button type="button" class="assign-port' + (taken ? ' is-taken' : '') + (pair ? ' is-paired' : '') + '" id="assign-port-' + port +
+        '" data-action="pair-port" data-value="' + port + '"' + (color ? ' style="--pc:' + color + '"' : '') +
         pressed(!!chosen) + ' aria-label="' + esc([portName(port), name, role, chosen && ('gewählt für ' + (chosen === '+' ? 'Plus' : 'Minus'))].filter(Boolean).join(' · ')) + '">' +
         '<span class="assign-port-line"><strong>' + portName(port) + '</strong><span class="assign-role' +
         (pair ? ' paired' : isLoaded ? ' terminated' : '') + '">' + esc(role) + '</span></span>' +
@@ -2972,18 +3833,36 @@ const Plot = (() => {
   function renderConfig() {
     const { dataset, config, layout } = state;
     const groupFor = port => config.pairs.find(p => p.p === port || p.q === port);
+    const modeRef = (type, id) => layout.mmModes.find(m => m.key === type + id);
     const pairs = config.pairs.map(pair => {
-      const ref = layout.seRefs[layout.active.indexOf(pair.p)];
-      return '<div class="pair-card"><span class="pair-name">D' + pair.id + ' / C' + pair.id + '</span><div><strong>' +
-        portName(pair.p) + ' (+) &nbsp; ' + portName(pair.q) + ' (−)</strong><small>DM ' + esc(display(2 * ref)) + ' Ω · CM ' +
-        esc(display(ref / 2)) + ' Ω</small></div><div class="pair-buttons">' +
+      const d = modeRef('D', pair.id), c = modeRef('C', pair.id);
+      return '<div class="pair-card" style="--pc:' + pairColor(pair.id) + '"><span class="pair-name">' + modeMarkup('D' + pair.id + ' / C' + pair.id) + '</span><div><strong>' +
+        portName(pair.p) + ' (+) &nbsp; ' + portName(pair.q) + ' (−)</strong><small>Z<sub>D</sub> ' + esc(display(d?.ref)) + ' Ω · Z<sub>C</sub> ' +
+        esc(display(c?.ref)) + ' Ω' + (d && (d.ref !== d.natRef || c.ref !== c.natRef) ? ' · angepasst' : '') + '</small></div><div class="pair-buttons">' +
         iconButton('Paar ' + pair.id + ' bearbeiten', 'edit-pair', pair.id, 'edit') +
         iconButton('Polarität von Paar ' + pair.id + ' tauschen', 'swap-pair', pair.id, 'swap') +
         iconButton('Paar ' + pair.id + ' auflösen', 'remove-pair', pair.id, 'close') + '</div></div>';
     }).join('');
-    const presets = dataset.n >= 4 ? '<div class="preset-row"><span>Vorlagen</span>' +
+    const half = Math.floor(dataset.n / 2);
+    const presets = dataset.n >= 2 ? '<div class="preset-row"><span>Vorlagen</span>' +
       (dataset.profile ? actionButton('7490220115 · CT Open', 'pair-preset', 'lan') : '') +
-      actionButton('(1,3) / (2,4)', 'pair-preset', 'cross') + actionButton('(1,2) / (3,4)', 'pair-preset', 'adjacent') + '</div>' : '';
+      actionButton('Benachbart (1,2)(3,4)…', 'pair-preset', 'adjacent') +
+      (dataset.n >= 4 ? actionButton('Gekreuzt (1,3)(2,4)…', 'pair-preset', 'cross') : '') +
+      (dataset.n >= 4 ? actionButton('Hälften (1,' + (half + 1) + ')(2,' + (half + 2) + ')…', 'pair-preset', 'half') : '') +
+      (config.pairs.length ? actionButton('Alle auflösen', 'pair-preset', 'none') : '') + '</div>' : '';
+    const impedance = config.pairs.length ? '<section class="config-card"><div class="config-head"><h2>Modenimpedanz je Paar</h2>' +
+      '<p>Bezugsimpedanz der D- und C-Moden. Leer = Standard (Z_D = 2R, Z_C = R/2). Für Netzfilter z. B. 0,1 Ω an einer Seite und 100 Ω an der anderen (CISPR 17).</p></div>' +
+      '<div class="config-content"><form id="pairz-form"><div class="table-scroll"><table class="ports-table pairz-table"><thead><tr><th scope="col">Paar</th>' +
+      '<th scope="col">Z<sub>D</sub> [Ω]</th><th scope="col">Z<sub>C</sub> [Ω]</th></tr></thead><tbody>' +
+      config.pairs.map(pair => {
+        const d = modeRef('D', pair.id), c = modeRef('C', pair.id);
+        return '<tr style="--pc:' + pairColor(pair.id) + '"><td><span class="pair-chip">' + modeMarkup('D' + pair.id + ' / C' + pair.id) + '</span></td>' +
+          '<td><input class="field-input mono" name="zd-' + pair.id + '" inputmode="decimal" value="' + esc(pair.zd ?? '') + '" placeholder="' + esc(display(d?.natRef)) + '" aria-label="Z D Paar ' + pair.id + '"></td>' +
+          '<td><input class="field-input mono" name="zc-' + pair.id + '" inputmode="decimal" value="' + esc(pair.zc ?? '') + '" placeholder="' + esc(display(c?.natRef)) + '" aria-label="Z C Paar ' + pair.id + '"></td></tr>';
+      }).join('') + '</tbody></table></div><div class="preset-row"><button class="button primary" type="submit">Anwenden</button>' +
+      actionButton('Standard', 'pairz-preset', 'reset') +
+      (config.pairs.length >= 2 ? actionButton('0,1 Ω → 100 Ω', 'pairz-preset', 'low-high') + actionButton('100 Ω → 0,1 Ω', 'pairz-preset', 'high-low') : '') +
+      '</div><p class="inline-notice" id="pairz-error" role="alert" hidden></p></form></div></section>' : '';
     const rows = RF.indices(dataset.n).map(port => {
       const pair = groupFor(port);
       const load = config.loads[port];
@@ -2992,7 +3871,7 @@ const Plot = (() => {
       const label = dataset.portNames[port];
       return '<tr><td><span class="port-id">' + portName(port) + '</span>' +
         (label ? '<small title="' + esc(label) + '">' + esc(label) + '</small>' : '') +
-        '</td><td>' + (pair ? '<span class="badge active">Paar ' + pair.id + ' ' + (pair.p === port ? '+' : '−') + '</span>' :
+        '</td><td>' + (pair ? '<span class="badge pair-badge" style="--pc:' + pairColor(pair.id) + '">Paar ' + pair.id + ' ' + (pair.p === port ? '+' : '−') + '</span>' :
           '<div class="load-cell"><select id="port-load-' + port + '" aria-label="Abschluss ' + portName(port) +
           '" data-change="load-type" data-port="' + port + '">' + options(LOADS, load.type) + '</select>' +
           (EDITABLE_LOADS.includes(load.type) ? iconButton('Last an ' + portName(port) + ' bearbeiten', 'edit-load', port, 'edit') : '') +
@@ -3007,7 +3886,7 @@ const Plot = (() => {
     const html = '<div class="config-grid"><div>' +
       '<section class="config-card"><div class="config-head"><h2>Portzuordnung</h2><p>' + dataset.n +
       ' physische Ports · Tippe nacheinander auf Plus- und Minus-Port.</p></div><div class="config-content">' +
-      renderPairEditor(groupFor) + (pairs ? '<div class="pair-list">' + pairs + '</div>' : '') + presets + schematic + '</div></section>' +
+      renderPairEditor(groupFor) + (pairs ? '<div class="pair-list">' + pairs + '</div>' : '') + presets + schematic + '</div></section>' + impedance +
       '<section class="config-card"><div class="config-head"><h2>Bezugsimpedanz</h2><p>Renormierung der aktiven Single-Ended-Ports.</p></div>' +
       '<div class="config-content"><form id="reference-form" class="reference-form">' +
       textField('Einheitlich [Ω]', 'reference', config.ref ?? '', 'Wie Datei') +
@@ -3034,13 +3913,14 @@ const Plot = (() => {
     $('panel').setAttribute('aria-labelledby', 'tab-' + state.tab);
     $('page-title').textContent = TABS[state.tab];
     $('page-context').textContent = pageInfo();
-    const showBasis = ['s', 'smith', 'z'].includes(state.tab) || (state.tab === 'cispr' && state.cispr.method !== 'four');
+    const showBasis = ['s', 'smith', 'z'].includes(state.tab) || (state.tab === 'cispr' && state.cispr.method !== 'four') ||
+      (state.tab === 'cmc' && ['series', 'shunt'].includes(esbModel()));
     $('basis-control').innerHTML = showBasis
       ? '<div class="segment basis-segment" aria-label="Portbasis">' +
-        actionButton('Single Ended', 'basis', 'se', '', '', pressed(state.basis === 'se')) +
+        '<button type="button" data-action="basis" data-value="se"' + pressed(state.basis === 'se') + '><span class="basis-long">Single Ended</span><span class="basis-short">SE</span></button>' +
         '<button type="button" data-action="basis" data-value="mm"' + pressed(state.basis === 'mm') + disabled(!state.layout.hasMixed) +
           (!state.layout.hasMixed ? ' title="Lege zuerst ein Portpaar an"' : ' title="Differential (D), Gleichtakt (C) und Modenkonversion"') +
-          '>Mixed Mode<span class="mode-dots" aria-hidden="true"><i style="background:var(--mode-d)"></i><i style="background:var(--mode-c)"></i><i style="background:var(--mode-dc)"></i><i style="background:var(--mode-cd)"></i></span></button></div>'
+          '><span class="basis-long">Mixed Mode</span><span class="basis-short">MM</span><span class="mode-dots" aria-hidden="true"><i style="background:var(--mode-d)"></i><i style="background:var(--mode-c)"></i><i style="background:var(--mode-dc)"></i><i style="background:var(--mode-cd)"></i></span></button></div>'
       : '';
     const isConfig = state.tab === 'ports';
     $('config-panel').hidden = !isConfig;
@@ -3092,8 +3972,18 @@ const Plot = (() => {
           (settings.method === 'one' ? '' : selectField('Ausgang', 'cispr-output', modeOptions(), settings.output))) +
         selectField('Darstellung', 'cispr-format', Z_FORMATS, settings.format);
     } else if (state.tab === 'cmc') {
-      html = controlsPairs() + selectField('Darstellung', 'cmc-format', [['cap', 'Kapazitäten'], ['ind', 'Induktivitäten']], state.cmc.format);
-      if (state.config.pairs.length >= 2) {
+      const model = esbModel();
+      const autoLabel = 'Automatisch · ' + (model === 'transformer' ? 'Übertrager' : model === 'cmc' ? 'CMC' : model === 'shunt' ? 'Shunt' : 'Serie');
+      html = selectField('Modell', 'esb-model', ESB_MODELS.map(([key, label]) => [key, key === 'auto' ? autoLabel : label]), state.esb.model);
+      if (model === 'transformer') {
+        html += controlsPairs() + selectField('Darstellung', 'esb-tformat', TRANSFORMER_FORMATS, state.esb.tFormat);
+      } else if (model === 'series' || model === 'shunt') {
+        html += selectField('Eingang', 'esb-input', modeOptions(), state.esb.input) + selectField('Ausgang', 'esb-output', modeOptions(), state.esb.output) +
+          selectField('Darstellung', 'esb-eformat', model === 'series' ? SERIES_FORMATS : SHUNT_FORMATS, state.esb.eFormat);
+      } else {
+        html += controlsPairs() + selectField('Darstellung', 'cmc-format', [['cap', 'Kapazitäten'], ['ind', 'Induktivitäten']], state.cmc.format);
+      }
+      if (model === 'cmc' && state.config.pairs.length >= 2) {
         html += '<form class="fit-fields" id="fit-form">' + textField('Fit ab', 'start', freqInput(state.cmc.band[0])) +
           textField('Fit bis', 'stop', freqInput(state.cmc.band[1])) + '<button class="button" type="submit">Fit anwenden</button></form>';
       }
@@ -3464,7 +4354,7 @@ const Plot = (() => {
     return `<figure class="detail-card cmc-schematic">
       <h3>Reaktives Ersatzschaltbild</h3>
       <svg viewBox="0 0 540 286" role="img" aria-label="${esc(title)}">
-        <g fill="none" stroke="#294558" stroke-width="1.8" stroke-linejoin="round">
+        <g fill="none" stroke="#2b2a27" stroke-width="1.8" stroke-linejoin="round">
           <path d="${winding}"/><path d="${winding}" transform="translate(0 128)"/>
           <path d="M238 130h64m-64 8h64"/>
           <circle cx="50" cy="77" r="4"/><circle cx="490" cy="77" r="4"/>
@@ -3478,11 +4368,11 @@ const Plot = (() => {
             <path d="${groundCap}" transform="translate(0 128)"/><path d="${groundCap}" transform="translate(380 128)"/>
           </g>
         </g>
-        <g fill="#294558">
+        <g fill="#2b2a27">
           ${junctions}
           <circle cx="202" cy="68" r="3"/><circle cx="202" cy="196" r="3"/>
         </g>
-        <g fill="#294558" text-anchor="middle" font-family="monospace" font-size="16" font-weight="600">
+        <g fill="#2b2a27" text-anchor="middle" font-family="monospace" font-size="16" font-weight="600">
           <text x="270" y="60">L</text><text x="270" y="188">L</text><text x="270" y="159">M</text>
           <g fill="#93601f"><text x="270" y="19">Ct</text><text x="270" y="279">Ct</text></g>
           <g fill="#007766"><text x="163" y="147">Cw</text><text x="377" y="147">Cw</text></g>
@@ -3541,6 +4431,205 @@ const Plot = (() => {
     };
   }
 
+  // ---------- ESB tab: automatic choice between CMC, transformer and single component ----------
+  const ESB_MODELS = [
+    ['auto', 'Automatisch'], ['cmc', 'CMC · zwei Wicklungen'], ['transformer', 'Übertrager · T-Modell'],
+    ['series', 'Bauteil · Serie (L, Ferrit)'], ['shunt', 'Bauteil · Shunt (C)']
+  ];
+  const TRANSFORMER_FORMATS = [
+    ['ocl', 'Hauptinduktivität L₁₁ · L₂₂'], ['leak', 'Streuinduktivität Lσ'], ['cap', 'Kapazität Cww · Cg'],
+    ['r', 'Wicklungswiderstand'], ['z', '|Z₁₁| Leerlauf']
+  ];
+  const SERIES_FORMATS = [['z', '|Z| · R'], ['l', 'Induktivität L(f)']];
+  const SHUNT_FORMATS = [['z', '|Z| · ESR'], ['c', 'Kapazität C(f)'], ['l', 'ESL L(f)']];
+  const modelName = model => ESB_MODELS.find(([key]) => key === model)?.[1] ?? model;
+
+  function detectModel() {
+    if (!state.network) return { type: 'cmc', confidence: 0 };
+    const pairs = selectedPairs();
+    if (pairs) {
+      return cache('classify:' + pairs.map(p => p.id).join(':'), () => {
+        const view = getView('mm');
+        const at = key => view.modes.findIndex(m => m.key === key);
+        const [a, b] = pairs;
+        const i = view.samples.findIndex(Boolean);
+        if (i < 0) return { type: 'cmc', confidence: 0 };
+        const s = view.samples[i], n = view.modes.length;
+        const scc = RF.abs(RF.get(s, n, at('C' + b.id), at('C' + a.id)));
+        const sdd = RF.abs(RF.get(s, n, at('D' + b.id), at('D' + a.id)));
+        const result = RF.classify4(state.dataset.freq, scc, sdd);
+        return { ...result, scc, sdd, f: state.dataset.freq[i] };
+      });
+    }
+    return { type: currentModes().length >= 2 ? 'series' : 'none', confidence: 0 };
+  }
+
+  function esbModel() {
+    if (state.esb.model !== 'auto') return state.esb.model;
+    const type = detectModel().type;
+    return type === 'transformer' ? 'transformer' : type === 'none' ? 'series' : type;
+  }
+
+  function scaled(values, factor) {
+    return Float64Array.from(values, v => Number.isFinite(v) ? v / factor : NaN);
+  }
+
+  function transformerData(pairs) {
+    const view = getView('mm');
+    const at = key => view.modes.findIndex(m => m.key === key);
+    const [a, b] = pairs;
+    const d = [at('D' + a.id), at('D' + b.id)], c = [at('C' + a.id), at('C' + b.id)];
+    const n = view.modes.length;
+    const refs = idx => idx.map(i => view.modes[i].ref);
+    return cache('transformer:' + pairs.map(p => p.id).join(':') + ':' + state.esb.evalFreq, () => {
+      const points = Array.from(state.dataset.freq, (f, i) => {
+        const s = view.samples[i];
+        return s ? RF.transformerPoint(RF.submatrix(s, n, d), refs(d), RF.submatrix(s, n, c), refs(c), f) : null;
+      });
+      return RF.analyzeTransformer(state.dataset.freq, points, state.esb.evalFreq);
+    });
+  }
+
+  function transformerView(pairs) {
+    const t = transformerData(pairs), fmt = state.esb.tFormat, sr = t.series;
+    const mk = (key, label, color, values, dash = null) => ({
+      key: 'tr:' + key, label, color, values, dash, visible: !state.hiddenTraces.has('tr:' + key)
+    });
+    let traces, unit, yLabel, refLines = [];
+    if (fmt === 'ocl') {
+      traces = [mk('l11', 'L₁₁ · Sek. offen', MODE_PALETTE.dd[0], scaled(sr.l11, 1e-6)), mk('l22', 'L₂₂ · Prim. offen', MODE_PALETTE.dd[1], scaled(sr.l22, 1e-6), REFLECTION_DASH)];
+      unit = 'µH'; yLabel = 'Induktivität [µH]';
+      refLines = [{ value: t.ocl0 / 1e-6, color: '#c4622d', label: 'OCL₀ ' + display(t.ocl0 / 1e-6) + ' µH' }];
+    } else if (fmt === 'leak') {
+      traces = [mk('lsc', 'Lσ · Sek. kurzgeschl.', MODE_PALETTE.dc[0], scaled(sr.lsc, 1e-9))];
+      unit = 'nH'; yLabel = 'Streuinduktivität [nH]';
+      refLines = [{ value: t.leak / 1e-9, color: '#c4622d', label: 'Lσ ' + display(t.leak / 1e-9) + ' nH' }];
+    } else if (fmt === 'cap') {
+      traces = [mk('cww', 'Cww · Prim.↔Sek.', MODE_PALETTE.cc[0], scaled(sr.cww, 1e-12))];
+      unit = 'pF'; yLabel = 'Kapazität [pF]';
+      refLines = [{ value: t.cww / 1e-12, color: '#c4622d', label: 'Cww ' + display(t.cww / 1e-12) + ' pF' }];
+    } else if (fmt === 'r') {
+      traces = [mk('rsc', 'R · Sek. kurzgeschl.', MODE_PALETTE.cd[0], scaled(sr.rsc, 1))];
+      unit = 'Ω'; yLabel = 'Widerstand [Ω]';
+    } else {
+      traces = [mk('z11', '|Z₁₁| · Sek. offen', MODE_PALETTE.dd[0], scaled(sr.z11, 1))];
+      unit = 'Ω'; yLabel = '|Z| [Ω]';
+    }
+    const k = Math.abs(t.k);
+    const details = () => '<section class="detail-card"><div class="fit-summary"><h3>Übertrager · Ersatzschaltbild</h3><small>' +
+      esc('Paar ' + pairs[0].id + ' → Paar ' + pairs[1].id + ' · OCL bei ' + hz(t.fEval)) + '</small></div><div class="metric-grid">' +
+      metric('OCL · L₁₁ bei ' + hz(t.fEval), t.ocl * 1e6, 'µH') + metric('OCL₀ · LC-Fit unterhalb f_res', t.ocl0 * 1e6, 'µH') +
+      metric('L₂₂ · Sekundär', t.l22 * 1e6, 'µH') + metric('n · √(L₂₂/L₁₁)', t.n, '') +
+      metric('|k| · M/√(L₁₁L₂₂)' + (t.k < 0 ? ' · Polarität invertiert' : ''), k, '') +
+      metric('Lσ · Streuung, Sek. kurzgeschl.', t.leak * 1e9, 'nH') + metric('Cww · Wicklung↔Wicklung', t.cww * 1e12, 'pF') +
+      metric('R · Prim.+Sek. bei tiefer f', t.rdc, 'Ω') +
+      '<div class="metric"><strong>' + esc(Number.isFinite(t.fres) ? hz(t.fres) : '—') + '</strong><span>f_res · Leerlauf-Eigenresonanz</span></div>' +
+      metric('C_par · Wicklungskapazität (Fit)', t.cpar * 1e12, 'pF') + '</div>' +
+      '<p class="diagnostics">' + esc('Lσ-Plateau ' + (t.leakBand ? hz(t.leakBand[0]) + ' – ' + hz(t.leakBand[1]) : '—') +
+        ' · Vertrauen ' + Math.round(100 * t.leakConf) + ' % · Cww-Band ' + (t.cwwBand ? hz(t.cwwBand[0]) + ' – ' + hz(t.cwwBand[1]) : '—')) + '</p>' +
+      '<p class="note">Kleinsignalwerte aus S-Parametern ohne DC-Bias. Datenblätter messen OCL oft mit Gleichstrom-Vormagnetisierung (z. B. 100 kHz, 100 mV, 8–18 mA), Abweichungen sind deshalb normal. ' +
+      'Formeln: OCL = Im Z₁₁/ω · Lσ = Im(Z₁₁ − Z₁₂Z₂₁/Z₂₂)/ω · Cww = −Im Y₁₂(CC)/ω · ω/X = 1/L − ω²C. ' + help + '</p></section>' +
+      transformerSchematic(pairs);
+    return { traces, unit, yLabel, title: 'Übertrager', caption: 'Paar ' + pairs[0].id + ' → Paar ' + pairs[1].id + ' · T-Ersatzschaltbild', native: '', positive: true, refLines, details };
+  }
+
+  function elementData(kind) {
+    const view = getView(), settings = state.esb;
+    const a = view.modes.findIndex(m => m.key === settings.input), b = view.modes.findIndex(m => m.key === settings.output);
+    if (a < 0 || b < 0 || a === b) return null;
+    return cache('element:' + state.basis + ':' + kind + ':' + a + ':' + b, () => {
+      const z = Array.from(state.dataset.freq, (_, i) => {
+        const s = view.samples[i];
+        if (!s) return null;
+        const two = RF.twoPort(s, view.modes, a, b);
+        return two.s && RF.transmission(RF.get(two.s, 2, 1, 0), two.ref, kind);
+      });
+      return { z, result: RF.analyzeElement(state.dataset.freq, z, kind), from: view.modes[a], to: view.modes[b] };
+    });
+  }
+
+  function elementView(kind) {
+    const data = elementData(kind);
+    if (!data) return { empty: 'Wähle zwei verschiedene aktive Ports oder Moden als Eingang und Ausgang der Serien- bzw. Shunt-Fixture.' };
+    const { z, result: r, from, to } = data, fmt = state.esb.eFormat;
+    const mk = (key, label, color, values, dash = null) => ({ key: 'el:' + key, label, color, values, dash, visible: !state.hiddenTraces.has('el:' + key) });
+    let traces, unit, yLabel, refLines = [];
+    if (fmt === 'l') {
+      const lu = kind === 'series' ? 1e-6 : 1e-9;
+      unit = kind === 'series' ? 'µH' : 'nH';
+      traces = [mk('l', kind === 'series' ? 'L = X/ω' : 'ESL = X/ω', MODE_PALETTE.dd[0], scaled(r.series.l, lu))];
+      yLabel = 'Induktivität [' + unit + ']';
+      const value = kind === 'series' ? r.l : r.esl;
+      refLines = [{ value: value / lu, color: '#c4622d', label: (kind === 'series' ? 'L ' : 'ESL ') + display(value / lu) + ' ' + unit }];
+    } else if (fmt === 'c' && kind === 'shunt') {
+      const [factor, cu] = engineeringScale([{ values: r.series.c }], 'F');
+      unit = cu;
+      traces = [mk('c', 'C = −1/(ωX)', MODE_PALETTE.cc[0], scaled(r.series.c, factor))];
+      yLabel = 'Kapazität [' + unit + ']';
+      refLines = [{ value: r.c / factor, color: '#c4622d', label: 'C ' + display(r.c / factor) + ' ' + unit }];
+    } else {
+      unit = 'Ω'; yLabel = 'Impedanz [Ω]';
+      traces = [
+        mk('zabs', '|Z|', MODE_PALETTE.dd[0], Float64Array.from(z, v => v ? Math.hypot(v[0], v[1]) : NaN)),
+        mk('zre', kind === 'series' ? 'R = Re Z' : 'ESR = Re Z', MODE_PALETTE.dc[0], Float64Array.from(z, v => v ? v[0] : NaN), REFLECTION_DASH)
+      ];
+    }
+    const details = () => '<section class="detail-card"><div class="fit-summary"><h3>' + (kind === 'series' ? 'Serienbauteil' : 'Shuntbauteil') +
+      ' · Ersatzschaltbild</h3><small>' + esc(from.key + ' → ' + to.key + ' · ' + (kind === 'series' ? 'Z = 2Z₀(1/S₂₁ − 1)' : 'Z = (Z₀/2)·S₂₁/(1 − S₂₁)')) + '</small></div>' +
+      '<div class="metric-grid">' + (kind === 'series'
+        ? metric('L · LC-Fit unterhalb SRF', r.l * 1e6, 'µH') + metric('L · Plateau', r.lFlat * 1e6, 'µH') + metric('R_DC · tiefste Frequenzen', r.rdc, 'Ω') +
+          '<div class="metric"><strong>' + esc(Number.isFinite(r.fsrf) ? hz(r.fsrf) : '—') + '</strong><span>SRF · Maximum von |Z|</span></div>' +
+          metric('C_p · 1/((2π·SRF)²·L)', r.cp * 1e12, 'pF') + metric('R_p · Re Z bei SRF', r.rp, 'Ω')
+        : metric('C · Plateau unterhalb SRF', r.c * 1e9, 'nF') +
+          '<div class="metric"><strong>' + esc(Number.isFinite(r.fsrf) ? hz(r.fsrf) : '—') + '</strong><span>SRF · Im Z = 0</span></div>' +
+          metric('ESL · oberhalb SRF', r.esl * 1e9, 'nH') + metric('ESR · Re Z bei SRF', r.esr * 1e3, 'mΩ')) +
+      '</div><p class="note">Die Formel gilt für eine reine ' + (kind === 'series' ? 'Serien' : 'Shunt') +
+      '-Fixture zwischen den gewählten Ports. Für kleine Impedanzen (Serie) bzw. große Impedanzen (Shunt) sinkt die Messgenauigkeit eines VNA deutlich. ' + help + '</p></section>';
+    return {
+      traces, unit, yLabel, title: kind === 'series' ? 'Serienbauteil' : 'Shuntbauteil', caption: from.key + ' → ' + to.key,
+      native: '', positive: true, refLines, details
+    };
+  }
+
+  function esbView() {
+    const model = esbModel();
+    if (model === 'series' || model === 'shunt') return elementView(model);
+    const pairs = selectedPairs();
+    if (!pairs) return { empty: 'Für CMC- und Übertragermodell werden zwei Portpaare benötigt. Für ein Einzelbauteil wähle „Bauteil · Serie“ oder „Bauteil · Shunt“.', needsPairs: true };
+    const view = model === 'transformer' ? transformerView(pairs) : cmcView();
+    if (state.esb.model === 'auto' && !view.empty) {
+      const detected = detectModel();
+      const base = view.details;
+      view.details = () => '<p class="detect-note">' + icon('check') + esc('Automatisch erkannt: ' + (detected.type === 'transformer' ? 'Übertrager' : 'CMC') +
+        ' · |Scc₂₁| = ' + display(detected.scc) + ' bei ' + hz(detected.f) + (detected.type === 'transformer' ? ' (galvanisch getrennt)' : ' (Gleichtakt galvanisch verbunden)')) + '</p>' + base();
+    }
+    return view;
+  }
+
+  function transformerSchematic([a, b]) {
+    const coil = x => 'M' + x + ' 60a9 9 0 0 1 18 0a9 9 0 0 1 18 0a9 9 0 0 1 18 0';
+    return `<figure class="detail-card cmc-schematic">
+      <h3>T-Ersatzschaltbild</h3>
+      <svg viewBox="0 0 540 200" role="img" aria-label="T-Ersatzschaltbild eines Übertragers">
+        <g fill="none" stroke="#2b2a27" stroke-width="1.8" stroke-linejoin="round">
+          <path d="M40 60H70m30 0h20"/><rect x="70" y="52" width="30" height="16" rx="2"/>
+          <path d="${coil(120)}"/><path d="M174 60H270"/>
+          <path d="${coil(330)}"/><path d="M270 60H330m54 0h20"/><rect x="404" y="52" width="30" height="16" rx="2"/><path d="M434 60H500"/>
+          <path d="M270 60v22"/><path d="M270 82a9 9 0 0 1 0 18a9 9 0 0 1 0 18a9 9 0 0 1 0 18" transform="rotate(0)"/><path d="M270 136v24"/>
+          <path d="M40 160H500"/>
+          <path stroke="#08875a" d="M60 60V22h200m20 0h200V60M260 12v20m20-20v20"/>
+          <path stroke="#c4622d" d="M150 60v20m0 22v18m-12-38h24m-24 6h24"/>
+        </g>
+        <g fill="#2b2a27" font-family="monospace" font-size="14" font-weight="600" text-anchor="middle">
+          <text x="85" y="88">R₁</text><text x="147" y="44">Lσ₁</text><text x="357" y="44">Lσ₂</text><text x="419" y="88">R₂</text>
+          <text x="298" y="113">L_h</text><text x="270" y="12" fill="#08875a">Cww</text><text x="180" y="100" fill="#c4622d">C_p</text>
+          <text x="40" y="52">Paar ${a.id}</text><text x="500" y="52">Paar ${b.id}</text>
+        </g>
+      </svg>
+      <figcaption>Lσ = Streuung je Seite · L_h = Hauptinduktivität (≈ OCL) · Cww = Koppelkapazität · C_p = Wicklungskapazität · ideales Übersetzungsverhältnis n</figcaption>
+    </figure>`;
+  }
+
   function empty(title, content, canConfigure = false) {
     state.view = null;
     $('chart-card').hidden = true;
@@ -3557,7 +4646,7 @@ const Plot = (() => {
         state.busy ? 'Die Portlasten und Referenzen werden für alle Messpunkte angewendet.' : state.error || 'Öffne eine Touchstone-Datei.');
       return;
     }
-    const factory = { s: sView, smith: smithView, z: zView, cispr: cisprView, cmc: cmcView }[state.tab];
+    const factory = { s: sView, smith: smithView, z: zView, cispr: cisprView, cmc: esbView }[state.tab];
     try {
       state.view = factory();
     } catch (error) {
@@ -3580,10 +4669,13 @@ const Plot = (() => {
       (state.view.hint ? ' · ' + state.view.hint : '');
     const a = axis();
     if (state.dataset.freq.at(-1) <= 0) a.x = 'linear';
-    if (a.y === 'log' && !canUseYLog()) { a.y = 'linear'; a.yRange = null; }
     document.querySelectorAll('[data-action="x-scale"]').forEach(button => {
       button.setAttribute('aria-pressed', String(button.dataset.value === a.x));
       button.disabled = button.dataset.value === 'log' && state.dataset.freq.at(-1) <= 0;
+    });
+    $('y-scale-segment').hidden = !canUseYLog();
+    document.querySelectorAll('[data-action="y-scale"]').forEach(button => {
+      button.setAttribute('aria-pressed', String(button.dataset.value === effectiveY()));
     });
     updatePlot();
     renderTraces();
@@ -3595,8 +4687,9 @@ const Plot = (() => {
     if (!state.view) return;
     const a = axis();
     Plot.set({
-      ...state.view, f: state.dataset.freq, xScale: a.x, xRange: a.xRange, yScale: a.y, yRange: a.yRange,
+      ...state.view, f: state.dataset.freq, xScale: a.x, xRange: a.xRange, yScale: effectiveY(), yRange: effectiveY() === a.y ? a.yRange : null,
       markers: state.markers, activeMarker: state.activeMarker, onMarker: index => setMarker(state.activeMarker, index),
+      onMarkerDrag: (i, index) => setMarker(i, index), onMarkerSelect: i => { if (i !== state.activeMarker) switchMarker(i); },
       onZoom: range => { axis().xRange = range; updatePlot(true); }
     }, preserveHover);
   }
@@ -3635,45 +4728,48 @@ const Plot = (() => {
     return '<div class="mode-legend">' + items.map(([, color, label]) => '<span><i style="--c:' + color + '"></i>' + label + '</span>').join('') + lines + '</div>';
   }
 
+  const MARKER_COLORS = ['#2b2a27', '#c4622d', '#6a4fb3', '#1e7f78'];
+
   function markerInput(i) {
-    return '<div class="marker-unit' + (state.activeMarker === i ? ' is-active' : '') + '" data-marker-unit="' + i + '">' +
-      actionButton('M' + (i + 1), 'active-marker', i, 'marker' + (i + 1), '', pressed(state.activeMarker === i) + ' aria-label="Marker ' + (i + 1) + ' wählen"') +
-      '<input id="marker-' + i + '" type="text" aria-label="Frequenz M' + (i + 1) + '" title="Frequenz, z. B. 10 MHz" autocomplete="off" value="' +
-      esc(freqInput(state.dataset.freq[state.markers[i]])) + '"></div>';
+    const count = state.markers.filter(m => m !== null).length;
+    return '<div class="marker-unit' + (state.activeMarker === i ? ' is-active' : '') + '" data-marker-unit="' + i + '" style="--mk:' + MARKER_COLORS[i] + '">' +
+      actionButton('M' + (i + 1), 'active-marker', i, 'marker-name', '', pressed(state.activeMarker === i) + ' aria-label="Marker ' + (i + 1) + ' wählen"') +
+      '<input id="marker-' + i + '" type="text" inputmode="decimal" aria-label="Frequenz M' + (i + 1) + '" title="Frequenz, z. B. 10 MHz oder 10M" autocomplete="off" value="' +
+      esc(freqInput(state.dataset.freq[state.markers[i]])) + '">' +
+      (count > 1 ? actionButton('', 'remove-marker', i, 'marker-remove', 'close', ' title="Marker ' + (i + 1) + ' entfernen" aria-label="Marker ' + (i + 1) + ' entfernen"') : '') + '</div>';
   }
 
   function renderMarker(rebuild = false) {
     const view = state.view, fs = state.dataset.freq;
-    const [m1, m2] = state.markers;
-    if (rebuild || !$('marker-data')) {
-      $('marker-panel').innerHTML = '<div class="marker-tools"><h3 class="marker-heading">' + icon('marker') +
-        ' Messmarker</h3><div class="marker-controls">' + markerInput(0) +
-        (m2 === null ? actionButton('M2', 'add-marker', '', 'button', 'plus', ' aria-label="Marker 2 hinzufügen"') :
-          markerInput(1) + iconButton('Marker 2 entfernen', 'remove-marker', '', 'close')) +
-        '<span class="peak-buttons" role="group" aria-label="Markersuche">' +
+    const used = state.markers.map((m, i) => m === null ? null : i).filter(i => i !== null);
+    if (rebuild || !$('marker-data') || $('marker-panel').dataset.count !== String(used.length)) {
+      $('marker-panel').dataset.count = String(used.length);
+      $('marker-panel').innerHTML = '<div class="marker-tools"><div class="marker-controls">' + used.map(markerInput).join('') +
+        (used.length < 4 ? actionButton('Marker', 'add-marker', '', 'button add-marker', 'plus', ' title="Weiteren Marker setzen (bis M4)"') : '') +
+        '</div><span class="peak-buttons" role="group" aria-label="Markersuche">' +
         actionButton('Min', 'peak', 'min', 'button', '', ' title="Aktiven Marker auf das Minimum der ersten sichtbaren Kurve im Ausschnitt setzen"') +
         actionButton('Max', 'peak', 'max', 'button', '', ' title="Aktiven Marker auf das Maximum der ersten sichtbaren Kurve im Ausschnitt setzen"') +
-        '</span></div></div><div id="marker-data"></div>';
+        '</span></div><div id="marker-data"></div>';
     }
-    for (const [i, m] of state.markers.entries()) {
+    for (const i of used) {
       const input = $('marker-' + i);
-      if (!input || m === null) continue;
-      input.value = freqInput(fs[m]);
+      if (!input) continue;
+      if (document.activeElement !== input) input.value = freqInput(fs[state.markers[i]]);
       input.parentElement.classList.toggle('is-active', i === state.activeMarker);
       input.previousElementSibling.setAttribute('aria-pressed', String(i === state.activeMarker));
     }
     const visible = view.traces.filter(t => t.visible);
-    const active = state.markers[state.activeMarker];
+    const activeIndex = state.markers[state.activeMarker];
     const anyComplex = visible.some(t => t.complex);
-    const hasSecond = m2 !== null;
+    const reference = state.markers[0];
+    const showDelta = state.activeMarker !== 0 && reference !== null && activeIndex !== null;
     const rows = visible.map(t => {
-      const first = traceValue(t, m1), second = traceValue(t, m2);
-      const raw = complexAt(t.complex, active);
-      let delta = second - first;
+      const raw = complexAt(t.complex, activeIndex);
+      let delta = traceValue(t, activeIndex) - traceValue(t, reference);
       if (view.format === 'phase' && Number.isFinite(delta)) delta = ((delta + 180) % 360 + 360) % 360 - 180;
       return '<tr><td><span class="table-name"><span class="trace-dot' + (t.dash ? ' is-dashed' : '') + '" style="--trace:' + t.color + '"></span>' + esc(t.label) +
-        '</span></td><td>' + esc(valueWith(first, view.unit)) + '</td>' +
-        (hasSecond ? '<td>' + esc(valueWith(second, view.unit)) + '</td><td>' + esc(valueWith(delta, view.unit)) + '</td>' : '') +
+        '</span></td>' + used.map(i => '<td' + (i === state.activeMarker ? ' class="is-active-col"' : '') + '>' + esc(valueWith(traceValue(t, state.markers[i]), view.unit)) + '</td>').join('') +
+        (showDelta ? '<td>' + esc(valueWith(delta, view.unit)) + '</td>' : '') +
         (anyComplex ? '<td>' + esc(complexText(raw, view.native)) + '</td>' : '') +
         (view.smith ? '<td>' + esc(complexText(raw?.every(Number.isFinite) ? RF.reflection(raw, view.smithRef) : null, 'Ω')) + '</td>' : '') + '</tr>';
     }).join('');
@@ -3681,16 +4777,17 @@ const Plot = (() => {
       $('marker-data').innerHTML = '<p class="marker-notice">Für die Markerwerte muss mindestens eine Kurve sichtbar sein.</p>';
       return;
     }
-    $('marker-data').innerHTML = '<div class="table-scroll"><table class="data-table"><thead><tr><th scope="col">Kurve</th><th scope="col">M1 · ' +
-      esc(hz(fs[m1])) + '</th>' +
-      (hasSecond ? '<th scope="col">M2 · ' + esc(hz(fs[m2])) + '</th><th scope="col">Δ · ' + esc(hz(fs[m2] - fs[m1])) + '</th>' : '') +
-      (anyComplex ? '<th scope="col">Komplex · M' + (state.activeMarker + 1) + '</th>' : '') +
-      (view.smith ? '<th scope="col">Zᵢₙ · M' + (state.activeMarker + 1) + '</th>' : '') +
+    const k = state.activeMarker + 1;
+    $('marker-data').innerHTML = '<div class="table-scroll"><table class="data-table marker-table"><thead><tr><th scope="col">Kurve</th>' +
+      used.map(i => '<th scope="col"' + (i === state.activeMarker ? ' class="is-active-col"' : '') + '><span class="mk-dot" style="--mk:' + MARKER_COLORS[i] + '"></span>M' + (i + 1) + ' · ' + esc(hz(fs[state.markers[i]])) + '</th>').join('') +
+      (showDelta ? '<th scope="col">Δ M' + k + '−M1 · ' + esc(hz(fs[activeIndex] - fs[reference])) + '</th>' : '') +
+      (anyComplex ? '<th scope="col">Komplex · M' + k + '</th>' : '') +
+      (view.smith ? '<th scope="col">Zᵢₙ · M' + k + '</th>' : '') +
       '</tr></thead><tbody>' + rows + '</tbody></table></div>';
   }
 
   function setMarker(marker, index) {
-    if (!state.view || marker < 0 || marker > 1) return;
+    if (!state.view || marker < 0 || marker > 3 || index === null) return;
     state.markers[marker] = index;
     state.activeMarker = marker;
     updatePlot(true);
@@ -3709,6 +4806,7 @@ const Plot = (() => {
       return;
     }
     setMarker(marker, Plot.nearest(fs, value));
+    input.value = freqInput(fs[state.markers[marker]]);
   }
 
   function peakSearch(kind) {
@@ -3732,25 +4830,30 @@ const Plot = (() => {
 
   function addMarker() {
     const fs = state.dataset.freq;
-    const index = state.markers[0];
+    const slot = state.markers.findIndex(m => m === null);
+    if (slot < 0) { toast('Es sind bereits vier Marker gesetzt.'); return; }
+    const from = state.markers[state.activeMarker] ?? state.markers.find(m => m !== null) ?? 0;
     const offset = Math.max(1, Math.round(fs.length / 10));
-    const next = index + offset < fs.length ? index + offset : Math.max(0, index - offset);
-    state.markers[1] = next;
-    state.activeMarker = 1;
+    state.markers[slot] = from + offset < fs.length ? from + offset : Math.max(0, from - offset);
+    state.activeMarker = slot;
     updatePlot();
     renderTraces();
     renderMarker(true);
     renderDetails();
-    $('marker-1')?.focus({ preventScroll: true });
+    persistSettings();
+    $('marker-' + slot)?.focus({ preventScroll: true });
   }
 
-  function removeMarker() {
-    state.markers[1] = null;
-    state.activeMarker = 0;
+  function removeMarker(value) {
+    const i = Number(value);
+    if (state.markers.filter(m => m !== null).length <= 1) return;
+    state.markers[i] = null;
+    if (state.activeMarker === i) state.activeMarker = state.markers.findIndex(m => m !== null);
     updatePlot();
     renderTraces();
     renderMarker(true);
     renderDetails();
+    persistSettings();
   }
 
   function renderMatrix() {
@@ -3849,7 +4952,15 @@ const Plot = (() => {
   }
 
   function canUseYLog() {
-    return !!state.view && !state.view.smith && !['db', 'phase', 'unwrap'].includes(state.view.format);
+    return !!state.view && !state.view.smith && (state.view.positive || ['mag', 'ls', 'cs', 'lp', 'cp'].includes(state.view.format));
+  }
+
+  function setYScale(value) {
+    const a = axis();
+    if (a.y === value) return;
+    a.y = value;
+    a.yRange = null;
+    renderAnalysis();
   }
 
   function openAxes() {
@@ -3945,7 +5056,7 @@ const Plot = (() => {
     const id = state.pairDraft.id;
     const displaced = new Set(displacedPairs([p, q], id).map(pair => pair.id));
     const next = config.pairs.filter(pair => !displaced.has(pair.id))
-      .map(pair => pair.id === id ? { id, p, q } : pair);
+      .map(pair => pair.id === id ? { ...pair, id, p, q } : pair);
     if (id === null) next.push({ id, p, q });
     if (!config.pairs.length) state.basis = 'mm';
     for (const port of [p, q]) config.loads[port] = { type: 'active' };
@@ -3954,21 +5065,49 @@ const Plot = (() => {
 
   function applyPairPreset(value) {
     const config = state.config;
-    if (state.dataset.n < 4) return;
+    const n = state.dataset.n;
     const profile = state.dataset.profile;
     if (value === 'lan' && profile) {
       config.pairs = profile.pairs.map((pair, i) => ({ ...pair, id: i + 1 }));
       config.loads = config.loads.map((_, i) => ({ type: profile.taps.includes(i) ? 'open' : 'active' }));
     } else {
-      const remaining = config.pairs.filter(pair => pair.p >= 4 && pair.q >= 4);
-      const coords = value === 'cross' ? [[0, 2], [1, 3]] : [[0, 1], [2, 3]];
-      config.pairs = [...coords.map(([p, q]) => ({ p, q })), ...remaining].map((pair, i) => ({ ...pair, id: i + 1 }));
-      for (let i = 0; i < 4; i++) config.loads[i] = { type: 'active' };
+      const coords = [];
+      if (value === 'adjacent') for (let i = 0; i + 1 < n; i += 2) coords.push([i, i + 1]);
+      if (value === 'cross') for (let i = 0; i + 3 < n; i += 4) coords.push([i, i + 2], [i + 1, i + 3]);
+      if (value === 'half') for (let i = 0; i < Math.floor(n / 2); i++) coords.push([i, i + Math.floor(n / 2)]);
+      config.pairs = coords.map(([p, q], i) => ({ p, q, id: i + 1 }));
+      for (const [p, q] of coords) { config.loads[p] = { type: 'active' }; config.loads[q] = { type: 'active' }; }
     }
+    if (!config.pairs.length) state.basis = 'se';
     state.pairIn = 1; state.pairOut = 2;
     state.pairDraft = null;
     state.sKeys.mm = null;
-    state.basis = 'mm';
+    if (config.pairs.length) state.basis = 'mm';
+    refreshNetwork();
+  }
+
+  function applyPairImpedance(form) {
+    const data = new FormData(form);
+    const read = name => {
+      const text = String(data.get(name) ?? '').trim();
+      return text ? numberValue(text) : null;
+    };
+    const next = state.config.pairs.map(pair => ({ ...pair, zd: read('zd-' + pair.id), zc: read('zc-' + pair.id) }));
+    if (next.some(pair => [pair.zd, pair.zc].some(v => v !== null && !(Number.isFinite(v) && v > 0)))) {
+      notice('pairz-error', 'Modenimpedanzen müssen reell und positiv sein, z. B. 0,1 oder 100.');
+      return;
+    }
+    state.config.pairs = next;
+    refreshNetwork();
+  }
+
+  function pairImpedancePreset(value) {
+    const pairs = state.config.pairs;
+    pairs.forEach((pair, i) => {
+      if (value === 'reset') { pair.zd = null; pair.zc = null; return; }
+      const low = value === 'low-high' ? i === 0 : i !== 0;
+      pair.zd = low ? 0.1 : 100; pair.zc = low ? 0.1 : 100;
+    });
     refreshNetwork();
   }
 
@@ -4094,6 +5233,11 @@ const Plot = (() => {
       case 'cispr-output': chooseMode(state.cispr, 'output', value, state.cispr.method !== 'one'); break;
       case 'cispr-format': state.cispr.format = value; break;
       case 'cmc-format': state.cmc.format = value; break;
+      case 'esb-model': state.esb.model = value; axis().yRange = null; break;
+      case 'esb-tformat': state.esb.tFormat = value; axis().yRange = null; break;
+      case 'esb-eformat': state.esb.eFormat = value; axis().yRange = null; break;
+      case 'esb-input': chooseMode(state.esb, 'input', value, true); break;
+      case 'esb-output': chooseMode(state.esb, 'output', value, true); break;
       case 'pair-in': choosePair('pairIn', Number(value)); break;
       case 'pair-out': choosePair('pairOut', Number(value)); break;
       default: return;
@@ -4151,7 +5295,7 @@ const Plot = (() => {
       }
       if (view.smith) heads.push(t.label + '_Zin_Re_Ω', t.label + '_Zin_Im_Ω');
     });
-    const rows = [heads.map(quote).join(separator)];
+    const rows = [heads.map(h => quote(window.I18N.t(h))).join(separator)];
     for (let i = 0; i < fs.length; i++) {
       const line = [scalar(fs[i])];
       for (const t of traces) {
@@ -4223,6 +5367,7 @@ const Plot = (() => {
     tab: setTab,
     basis: setBasis,
     'x-scale': setXScale,
+    'y-scale': setYScale,
     axes: openAxes,
     'reset-plot': resetPlot,
     matrix: pickCurves,
@@ -4246,9 +5391,16 @@ const Plot = (() => {
     },
     'remove-pair': value => commitPairs(state.config.pairs.filter(pair => pair.id !== Number(value))),
     'pair-preset': applyPairPreset,
+    'pairz-preset': pairImpedancePreset,
     'reset-ref': () => { state.config.ref = null; refreshNetwork(); },
     'edit-load': value => openLoad(Number(value), state.config.loads[Number(value)].type),
     'close-dialog': (_, button) => button.closest('dialog').close(),
+    lang: () => window.I18N.set(window.I18N.lang === 'de' ? 'en' : 'de'),
+    'toggle-sidebar': () => {
+      state.collapsed = !state.collapsed;
+      renderSidebar();
+      if (!state.collapsed) window.scrollTo({ top: 0, behavior: 'smooth' });
+    },
     recent: openRecent,
     'clear-recent': async () => {
       try { await Library.clear(); } catch {}
@@ -4272,7 +5424,7 @@ const Plot = (() => {
 
   document.addEventListener('submit', event => {
     const handler = {
-      'pair-form': savePair, 'reference-form': applyReference, 'fit-form': applyFit, 'axes-form': applyAxes, 'load-form': applyLoad
+      'pair-form': savePair, 'pairz-form': applyPairImpedance, 'reference-form': applyReference, 'fit-form': applyFit, 'axes-form': applyAxes, 'load-form': applyLoad
     }[event.target.id];
     if (!handler) return;
     event.preventDefault();
@@ -4328,9 +5480,16 @@ const Plot = (() => {
   <div class="dialog-head"><div><h2 id="pwa-title">App installieren</h2></div>
     <button class="icon-button" type="button" data-action="close-dialog" aria-label="Schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button></div>
   <div class="dialog-body methods">
+    <div class="lang-en" data-no-i18n>
+    <section><h3>Android · Chrome</h3><p>Menu <strong>⋮</strong> → <strong>Install app</strong> or <strong>Add to home screen</strong>. Afterwards .sNp files can be opened from the file manager or mail via <strong>Share → S-Analyzer</strong>.</p></section>
+    <section><h3>Windows · Chrome or Edge</h3><p>Install icon on the right of the address bar, or menu → <strong>Apps → Install this site as an app</strong>.</p></section>
+    <section><h3>iPhone · Safari</h3><p><strong>Share → Add to Home Screen</strong>.</p></section>
+    </div>
+    <div class="lang-de" data-no-i18n>
     <section><h3>Android · Chrome</h3><p>Menü <strong>⋮</strong> → <strong>App installieren</strong> bzw. <strong>Zum Startbildschirm hinzufügen</strong>. Danach lassen sich .sNp-Dateien aus Dateimanager oder Mail über <strong>Teilen → S-Analyzer</strong> öffnen.</p></section>
     <section><h3>Windows · Chrome oder Edge</h3><p>Installationssymbol rechts in der Adressleiste oder Menü → <strong>Apps → Diese Seite als App installieren</strong>.</p></section>
     <section><h3>iPhone · Safari</h3><p><strong>Teilen → Zum Home-Bildschirm</strong>.</p></section>
+    </div>
   </div>
   <div class="dialog-foot"><button class="button primary" type="button" data-action="close-dialog">Fertig</button></div>
 </dialog>

@@ -1,13 +1,13 @@
 'use strict';
 
 // CACHE_VERSION is replaced by build.py with a hash of the app files.
-const CACHE_VERSION = '8d74be1a435944ab';
+const CACHE_VERSION = '5911ccfc0742b7b6';
 const CACHE_PREFIX = 's-parameter-analyzer:' + self.registration.scope + ':';
 const CACHE = CACHE_PREFIX + CACHE_VERSION;
 const SHARED = 's-parameter-analyzer:shared';
 const app = new URL('index.html', self.registration.scope);
 const shareTarget = new URL('share-target', self.registration.scope);
-const shell = ['index.html', 'manifest.webmanifest', 'icons/app-192.png', 'icons/app-512.png', 'icons/maskable-512.png'];
+const shell = ['index.html', 'manifest.webmanifest', 'icons/app-192.png', 'icons/app-512.png', 'icons/maskable-512.png', 'icons/apple-180.png'];
 const staticUrls = new Set(shell.map(path => new URL(path, app).href));
 
 self.addEventListener('install', event => {
