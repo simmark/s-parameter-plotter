@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="description" content="Kleine lineare Schaltungen im Frequenzbereich lösen und gegen Single-Pair-Ethernet-Grenzwerte prüfen.">
+<title>SPE-Schaltungssimulator</title>
+<meta name="theme-color" content="#faf9f5">
+<meta name="author" content="Simon Mark">
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/app-192.png">
+<style>
+:root {
+  --ink: #1f1e1d; --muted: #6b6a64; --line: #e8e6dc; --line-dark: #d6d3c8;
+  --canvas: #f5f4ef; --surface: #ffffff; --tint: #faf9f5;
+  --accent: #c96442; --accent-dark: #a9512f; --accent-soft: #f8ece5; --accent-line: #e9c2b1;
+  --mode-d: #1f5fd1; --mode-c: #08875a; --mode-dc: #e07b0f; --mode-cd: #c62f4b; --mode-p: #7a4fc2;
+  --good: #08875a; --good-bg: #e6f6ee; --bad: #c62f4b; --bad-bg: #fdecef;
+  --warn-ink: #81501b; --warn-bg: #fff8ed; --warn-line: #ebd2aa;
+  --radius: 8px;
+  --ui: Inter, "Noto Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", "Cascadia Mono", "DejaVu Sans Mono", ui-monospace, monospace;
+  --serif: "Tiempos Headline", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Noto Serif", ui-serif, serif;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { min-width: 320px; }
+body { margin: 0; color: var(--ink); background: var(--canvas); font: 14px/1.45 var(--ui); }
+button, input, select, textarea { font: inherit; color: inherit; }
+button, select { cursor: pointer; }
+a { color: var(--accent-dark); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.app-bar { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; padding: 14px 20px; background: var(--tint); border-bottom: 1px solid var(--line); }
+.app-bar h1 { margin: 0; font: 600 21px/1.2 var(--serif); letter-spacing: -0.01em; }
+.app-bar p { margin: 0; color: var(--muted); flex: 1 1 280px; }
+.app-bar nav a { white-space: nowrap; }
+
+main { display: grid; grid-template-columns: minmax(320px, 440px) minmax(0, 1fr); gap: 16px; padding: 16px 20px 28px; max-width: 1500px; margin: 0 auto; }
+@media (max-width: 900px) { main { grid-template-columns: minmax(0, 1fr); padding: 12px; } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; min-width: 0; }
+.card + .card { margin-top: 14px; }
+h2 { margin: 0 0 10px; font: 600 13px/1.3 var(--ui); letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+label.field { display: block; font-weight: 600; margin-bottom: 4px; }
+select, textarea { width: 100%; border: 1px solid var(--line-dark); border-radius: 6px; background: var(--surface); }
+select { padding: 7px 8px; }
+textarea { min-height: 380px; padding: 10px; font: 12.5px/1.5 var(--mono); resize: vertical; white-space: pre; overflow: auto; tab-size: 2; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }
+.btn { border: 1px solid var(--line-dark); background: var(--surface); border-radius: 6px; padding: 7px 12px; }
+.btn:hover { background: var(--tint); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+.btn.primary:hover { background: var(--accent-dark); }
+.hint { color: var(--muted); font-size: 12.5px; }
+.message { margin-top: 10px; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--warn-line); background: var(--warn-bg); color: var(--warn-ink); }
+.message.error { border-color: #f1b8c2; background: var(--bad-bg); color: #8c1f33; }
+.message ul { margin: 0; padding-left: 18px; }
+
+.drop { border: 1px dashed var(--line-dark); border-radius: 6px; padding: 10px; text-align: center; color: var(--muted); background: var(--tint); }
+.drop.over { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); }
+.files { list-style: none; margin: 8px 0 0; padding: 0; }
+.files li { display: flex; gap: 8px; align-items: baseline; padding: 4px 0; border-top: 1px solid var(--line); }
+.files code { font: 12.5px var(--mono); overflow-wrap: anywhere; }
+.files span { color: var(--muted); font-size: 12.5px; margin-left: auto; white-space: nowrap; }
+.files button { border: 0; background: none; color: var(--muted); padding: 0 4px; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line-dark); border-radius: 999px; padding: 3px 10px; background: var(--surface); font: 12.5px var(--mono); }
+.chip i { width: 14px; height: 0; border-top: 2.5px solid currentColor; }
+.chip i.dash { border-top-style: dashed; }
+.chip[aria-pressed="false"] { opacity: 0.45; }
+.plot-wrap { position: relative; margin-top: 10px; }
+canvas { display: block; width: 100%; height: 440px; border: 1px solid var(--line); border-radius: 6px; background: #fff; touch-action: none; }
+.readout { min-height: 22px; margin-top: 6px; font: 12.5px var(--mono); color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.readout b { font-weight: 600; }
+
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 7px 8px; border-top: 1px solid var(--line); vertical-align: top; }
+th { border-top: 0; color: var(--muted); font-weight: 600; font-size: 12.5px; }
+td.num { font-family: var(--mono); white-space: nowrap; }
+.badge { display: inline-block; border-radius: 999px; padding: 1px 9px; font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+.badge.pass { background: var(--good-bg); color: var(--good); }
+.badge.fail { background: var(--bad-bg); color: var(--bad); }
+.badge.none { background: var(--tint); color: var(--muted); border: 1px solid var(--line); }
+.badge.status { background: var(--warn-bg); color: var(--warn-ink); border: 1px solid var(--warn-line); font-weight: 500; }
+.badge.status.ok { background: var(--tint); color: var(--muted); border-color: var(--line); }
+.table-scroll { overflow-x: auto; }
+details { margin-top: 10px; }
+details summary { cursor: pointer; font-weight: 600; }
+details pre { font: 12.5px/1.5 var(--mono); background: var(--tint); border: 1px solid var(--line); border-radius: 6px; padding: 10px; overflow: auto; margin: 8px 0 0; }
+footer { padding: 0 20px 24px; color: var(--muted); font-size: 12.5px; max-width: 1500px; margin: 0 auto; }
+</style>
+</head>
+<body>
+<header class="app-bar">
+  <h1>SPE-Schaltungssimulator</h1>
+  <p>Kleine lineare Schaltungen im Frequenzbereich lösen und gegen Single-Pair-Ethernet-Grenzwerte prüfen. Alles rechnet lokal im Browser.</p>
+  <nav><a href="./index.html">← S-Parameter Analyzer</a></nav>
+</header>
+
+<main>
+  <section aria-label="Eingabe">
+    <div class="card">
+      <h2>Schaltung</h2>
+      <label class="field" for="template">Vorlage</label>
+      <select id="template"></select>
+      <label class="field" for="netlist" style="margin-top:12px">Netzliste</label>
+      <textarea id="netlist" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
+      <div class="row">
+        <button class="btn primary" id="run" type="button">Berechnen</button>
+        <span class="hint">Strg + Eingabe</span>
+      </div>
+      <div class="message error" id="error" role="alert" hidden></div>
+      <details>
+        <summary>Schreibweise der Netzliste</summary>
+<pre>R1 a b 50                 Widerstand
+C1 a b 100n esr=0.02      Kondensator, optional esr= esl=
+L1 a b 470u rs=0.1        Spule, optional rs= cp= rp=
+K1 L1 L2 0.998            Kopplung zweier Spulen (Punkt am 1. Knoten)
+T1 p+ p- s+ s- 2          idealer Übertrager, ü = Up/Us
+S1 n1 n2 n3 n4 ref=0 file=datei.s4p   Touchstone-Block
+P1 mdi_p 0 50             Port mit Bezugsimpedanz
+.pair 1 2                 Ports 1 und 2 als Mixed-Mode-Paar
+.sweep log 100k 20MHz 401 Frequenzbereich, log oder lin
+.standard 10BASE-T1L [powered]   Grenzwerte auswählen
+
+Masse heißt 0 oder gnd. Werte wie in SPICE:
+f p n u m k Meg G, also 1m = Milli und 1Meg = Mega.
+Kommentare beginnen mit * oder ;</pre>
+      </details>
+    </div>
+
+    <div class="card">
+      <h2>Touchstone-Dateien für Blöcke</h2>
+      <div class="drop" id="drop">Dateien hierher ziehen oder <button class="btn" id="pick" type="button">auswählen</button>
+        <input id="file" type="file" multiple hidden accept=".s1p,.s2p,.s3p,.s4p,.s5p,.s6p,.s7p,.s8p,.ts,.snp,text/plain"></div>
+      <ul class="files" id="files"></ul>
+      <p class="hint" style="margin:8px 0 0">Einbinden mit <code>S1 … file=&lt;Dateiname&gt;</code>. Die Knoten stehen in der Reihenfolge der Ports der Datei. Außerhalb des gemessenen Frequenzbereichs wird nicht gerechnet.</p>
+    </div>
+  </section>
+
+  <section aria-label="Ergebnis">
+    <div class="card">
+      <h2 id="plot-title">Ergebnis</h2>
+      <div class="chips" id="chips"></div>
+      <div class="plot-wrap"><canvas id="plot" aria-label="Frequenzgang in dB"></canvas></div>
+      <div class="readout" id="readout"></div>
+      <div class="row">
+        <button class="btn" id="hold" type="button" disabled>Als Vergleich merken</button>
+        <button class="btn" id="unhold" type="button" hidden>Vergleich entfernen</button>
+        <button class="btn" id="export" type="button" disabled>Als Touchstone speichern</button>
+        <span class="hint" id="stats"></span>
+      </div>
+      <div class="message" id="warnings" hidden></div>
+    </div>
+
+    <div class="card">
+      <h2>Bewertung gegen Grenzwerte</h2>
+      <div class="table-scroll"><table>
+        <thead><tr><th>Kriterium</th><th>Kurve</th><th>Ergebnis</th><th>Kleinste Reserve</th><th>bei</th><th>Beleg der Grenzkurve</th></tr></thead>
+        <tbody id="verdicts"><tr><td colspan="6" class="hint">Noch nichts berechnet.</td></tr></tbody>
+      </table></div>
+      <p class="hint" id="limit-note" style="margin:10px 0 0">Die Grenzkurven stammen aus öffentlichen IEEE-Arbeitsdokumenten oder Folien und sind noch nicht gegen den veröffentlichten Normtext geprüft. Das Ergebnis ist eine Auslegungshilfe, keine Konformitätsaussage.</p>
+    </div>
+  </section>
+</main>
+
+<footer>Entwickelt von Simon Mark · info.simonlation@gmail.com · Rechenkern geprüft gegen scikit-rf und Handrechnung (tests/).</footer>
+
+<script src="./sim/rf-core.js"></script>
+<script src="./sim/sim-core.js"></script>
+<script src="./sim/limits.js"></script>
+<script src="./sim/templates.js"></script>
+<script>
+'use strict';
+(() => {
+  const $ = id => document.getElementById(id);
+  const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const STORE = 'spe-sim:netlist';
+  const FLOOR = -120; // darunter gilt eine Kurve als rechnerisch null
+  const STATUS = { bestaetigt: 'an IEEE-Arbeitsdokument bestätigt', offen: 'Endfassung offen', ungeprueft: 'ungeprüft' };
+  const state = { files: new Map(), net: null, result: null, mixed: null, curves: [], visible: new Set(), limits: [], held: null, hover: null, view: null };
+
+  const demo = RF.demoNetwork(4);
+  state.files.set(demo.name.toLowerCase(), demo);
+
+  // ---------- Eingabe ----------
+  const select = $('template'), area = $('netlist');
+  SIM_TEMPLATES.forEach(t => select.add(new Option(t.name, t.id)));
+  select.add(new Option('Eigene Netzliste', ''));
+  let stored = null;
+  try { stored = localStorage.getItem(STORE); } catch { /* ohne Speicher weiter */ }
+  if (stored && stored.trim()) {
+    area.value = stored;
+    const match = SIM_TEMPLATES.find(t => t.text === stored);
+    select.value = match ? match.id : '';
+  } else area.value = SIM_TEMPLATES[0].text;
+  select.addEventListener('change', () => {
+    const t = SIM_TEMPLATES.find(item => item.id === select.value);
+    if (t) { area.value = t.text; run(); }
+  });
+  area.addEventListener('input', () => {
+    const match = SIM_TEMPLATES.find(t => t.text === area.value);
+    select.value = match ? match.id : '';
+  });
+  area.addEventListener('keydown', event => {
+    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) { event.preventDefault(); run(); }
+  });
+  $('run').addEventListener('click', run);
+
+  // ---------- Dateien ----------
+  function listFiles() {
+    const list = $('files');
+    list.textContent = '';
+    for (const [key, data] of state.files) {
+      const li = document.createElement('li');
+      const name = document.createElement('code'); name.textContent = data.name;
+      const info = document.createElement('span');
+      info.textContent = data.n + ' Ports · ' + SIM.formatFreq(data.freq[0]) + ' – ' + SIM.formatFreq(data.freq[data.freq.length - 1]) + (data.demo ? ' · Beispiel' : data.library ? ' · Würth Elektronik' : '');
+      li.append(name, info);
+      if (!data.demo && !data.library) {
+        const remove = document.createElement('button');
+        remove.type = 'button'; remove.textContent = '✕'; remove.title = 'Entfernen'; remove.setAttribute('aria-label', data.name + ' entfernen');
+        remove.addEventListener('click', () => { state.files.delete(key); listFiles(); });
+        li.append(remove);
+      }
+      list.append(li);
+    }
+  }
+  async function addFiles(fileList) {
+    const problems = [];
+    for (const file of fileList) {
+      try {
+        const data = RF.parseTouchstone(await file.text(), file.name);
+        state.files.set(file.name.toLowerCase(), data);
+      } catch (error) { problems.push(file.name + ': ' + error.message); }
+    }
+    listFiles();
+    if (problems.length) showError(problems.join(' · ')); else if (fileList.length) run();
+  }
+  const drop = $('drop');
+  $('pick').addEventListener('click', () => $('file').click());
+  $('file').addEventListener('change', event => { addFiles([...event.target.files]); event.target.value = ''; });
+  ['dragenter', 'dragover'].forEach(type => drop.addEventListener(type, event => { event.preventDefault(); drop.classList.add('over'); }));
+  ['dragleave', 'drop'].forEach(type => drop.addEventListener(type, event => { event.preventDefault(); drop.classList.remove('over'); }));
+  drop.addEventListener('drop', event => addFiles([...event.dataTransfer.files]));
+
+  // ---------- Rechnen ----------
+  function showError(text) {
+    const box = $('error');
+    box.hidden = !text;
+    box.textContent = text || '';
+  }
+
+  function curveLabel(a, b) {
+    if (a.type === 'P' && b.type === 'P') return a.id < 10 && b.id < 10 ? 'S' + a.id + b.id : 'S' + a.id + ',' + b.id;
+    if (a.type === 'P' || b.type === 'P') return 'S(' + a.key + ',' + b.key + ')';
+    return 'S' + a.type.toLowerCase() + b.type.toLowerCase() + a.id + b.id;
+  }
+  function curveColor(a, b) {
+    const kind = a.type + b.type;
+    return css({ DD: '--mode-d', CC: '--mode-c', CD: '--mode-cd', DC: '--mode-dc' }[kind] || '--mode-p');
+  }
+
+  // Lädt Messdateien der mitgelieferten Bibliothek (sim/data/) nach, wenn die Netzliste sie nennt.
+  async function ensureLibrary(net) {
+    for (const el of net.elements) {
+      if (el.kind !== 'S') continue;
+      const key = el.file.toLowerCase();
+      if (state.files.has(key) || !SIM_LIBRARY.includes(key)) continue;
+      $('stats').textContent = 'Lade ' + key + ' …';
+      let text;
+      try {
+        const response = await fetch('./sim/data/' + key);
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        text = new TextDecoder('windows-1252').decode(await response.arrayBuffer());
+      } catch {
+        throw new Error('„' + key + '“ konnte nicht aus sim/data/ geladen werden. Wenn die Seite lokal per Doppelklick geöffnet ist, die Datei bitte links in das Dateifeld ziehen.');
+      }
+      const data = RF.parseTouchstone(text, key);
+      data.library = true;
+      state.files.set(key, data);
+      listFiles();
+    }
+  }
+
+  let runToken = 0;
+  async function run() {
+    const token = ++runToken;
+    showError('');
+    try { localStorage.setItem(STORE, area.value); } catch { /* ohne Speicher weiter */ }
+    let net, result, mixed;
+    let started = performance.now();
+    try {
+      net = SIM.parseNetlist(area.value);
+      await ensureLibrary(net);
+      if (token !== runToken) return;
+      started = performance.now();
+      result = SIM.simulate(net, state.files);
+      mixed = SIM.mixedMode(result, net.pairs);
+    } catch (error) {
+      if (token === runToken) { showError(error.message); $('stats').textContent = ''; }
+      return;
+    }
+    const elapsed = performance.now() - started;
+    const modes = mixed.modes, n = modes.length;
+    const previous = new Set(state.visible), hadCurves = state.curves.length > 0;
+    const sameSet = hadCurves && state.curves.length === n * n && state.curves.every((c, i) => c.label === curveLabel(modes[Math.floor(i / n)], modes[i % n]));
+    state.curves = [];
+    for (let i = 0; i < n; i++) {
+      for (let j = 0; j < n; j++) {
+        const a = modes[i], b = modes[j];
+        state.curves.push({
+          label: curveLabel(a, b), row: a, col: b, reflection: i === j,
+          color: curveColor(a, b), db: SIM.magnitudeDb(mixed.mm, n, i, j)
+        });
+      }
+    }
+    if (sameSet) state.visible = previous;
+    else {
+      state.visible = new Set(state.curves.filter(c => {
+        const kind = c.row.type + c.col.type;
+        if (n <= 2 && kind === 'PP') return true;
+        if (kind === 'PP') return c.reflection;
+        return kind === 'DD' || (kind === 'CD' && c.row.id === c.col.id);
+      }).map(c => c.label));
+    }
+    Object.assign(state, { net, result, mixed, hover: null, view: null });
+    state.limits = SPE.forStandard(net.standard, net.powered);
+
+    $('plot-title').textContent = (net.title || 'Ergebnis') + (net.standard ? ' · ' + net.standard + (net.powered ? ' mit Speisung' : '') : '');
+    $('stats').textContent = result.stats.points + ' Punkte · ' + result.stats.unknowns + ' Unbekannte · ' + elapsed.toFixed(0) + ' ms';
+    $('hold').disabled = false; $('export').disabled = false;
+    const warn = $('warnings');
+    const notes = [...result.warnings];
+    if (net.standard && !state.limits.length) notes.push('Für „' + net.standard + '“ sind noch keine Grenzwerte hinterlegt.');
+    warn.hidden = !notes.length;
+    warn.textContent = '';
+    if (notes.length) {
+      const ul = document.createElement('ul');
+      notes.forEach(text => { const li = document.createElement('li'); li.textContent = text; ul.append(li); });
+      warn.append(ul);
+    }
+    renderChips(); renderVerdicts(); draw();
+  }
+
+  function renderChips() {
+    const box = $('chips');
+    box.textContent = '';
+    for (const curve of state.curves) {
+      const chip = document.createElement('button');
+      chip.type = 'button'; chip.className = 'chip'; chip.style.color = curve.color;
+      chip.setAttribute('aria-pressed', String(state.visible.has(curve.label)));
+      const swatch = document.createElement('i');
+      if (!curve.reflection) swatch.className = 'dash';
+      const text = document.createElement('span'); text.textContent = curve.label; text.style.color = css('--ink');
+      chip.append(swatch, text);
+      chip.addEventListener('click', () => {
+        if (state.visible.has(curve.label)) state.visible.delete(curve.label); else state.visible.add(curve.label);
+        chip.setAttribute('aria-pressed', String(state.visible.has(curve.label)));
+        draw();
+      });
+      box.append(chip);
+    }
+  }
+
+  // Kurven, auf die eine Grenzkurve angewendet wird (Reflexion am selben Paar).
+  function curvesFor(limit) {
+    // Modenwandlung: Scd und Sdc sind bei reziproken Schaltungen gleich, bewertet wird Scd.
+    const kinds = limit.quantity === 'MC' ? ['CD'] : limit.modes;
+    return state.curves.filter(c => c.row.type !== 'P' && c.row.id === c.col.id && kinds.includes(c.row.type + c.col.type));
+  }
+
+  function renderVerdicts() {
+    const body = $('verdicts');
+    body.textContent = '';
+    const cell = (text, className) => { const td = document.createElement('td'); if (className) td.className = className; td.textContent = text; return td; };
+    if (!state.limits.length) {
+      const tr = document.createElement('tr');
+      const td = cell(state.net.standard ? 'Für diesen Standard sind noch keine Grenzwerte hinterlegt.' : 'Kein Standard gewählt. Mit „.standard 10BASE-T1L“ in der Netzliste werden die Grenzkurven eingeblendet.', 'hint');
+      td.colSpan = 6; tr.append(td); body.append(tr);
+      return;
+    }
+    for (const limit of state.limits) {
+      const targets = curvesFor(limit);
+      if (!targets.length) {
+        const tr = document.createElement('tr');
+        tr.append(cell(limit.label), cell('–'));
+        const td = cell('Nicht bewertbar: Dafür braucht die Netzliste ein Portpaar (.pair).', 'hint'); td.colSpan = 4; tr.append(td);
+        body.append(tr);
+      }
+      for (const curve of targets) {
+        const result = SPE.evaluate(limit, state.result.freq, curve.db);
+        const ideal = limit.quantity === 'MC' && curve.db.every(v => Number.isNaN(v) || v < FLOOR);
+        const tr = document.createElement('tr');
+        tr.append(cell(limit.label + ' · ' + limit.clause), cell(curve.label, 'num'));
+        const verdict = document.createElement('td');
+        const badge = document.createElement('span');
+        if (ideal) { badge.className = 'badge none'; badge.textContent = 'nicht bewertbar'; }
+        else if (result.pass === null) { badge.className = 'badge none'; badge.textContent = 'außerhalb des Sweeps'; }
+        else { badge.className = 'badge ' + (result.pass ? 'pass' : 'fail'); badge.textContent = result.pass ? 'eingehalten' : 'verletzt'; }
+        verdict.append(badge);
+        if (ideal) verdict.append(document.createElement('br'), Object.assign(document.createElement('span'), { className: 'hint', textContent: 'Schaltung ideal symmetrisch, Modenwandlung rechnerisch null' }));
+        else if (result.pass !== null && !result.covered) verdict.append(document.createElement('br'), Object.assign(document.createElement('span'), { className: 'hint', textContent: 'Sweep deckt ' + limit.segments[0].from + '–' + limit.segments.at(-1).to + ' MHz nicht ganz ab' }));
+        tr.append(verdict);
+        const show = !ideal && result.margin !== null;
+        tr.append(cell(show ? (result.margin >= 0 ? '+' : '−') + Math.abs(result.margin).toFixed(1) + ' dB' : '–', 'num'));
+        tr.append(cell(show ? SIM.formatFreq(result.at) : '–', 'num'));
+        const proof = document.createElement('td');
+        const status = document.createElement('span');
+        status.className = 'badge status' + (limit.status === 'bestaetigt' ? ' ok' : '');
+        status.textContent = STATUS[limit.status] || limit.status;
+        const link = document.createElement('a');
+        link.href = limit.source; link.target = '_blank'; link.rel = 'noopener'; link.textContent = 'Quelle';
+        const note = document.createElement('div'); note.className = 'hint'; note.textContent = limit.note;
+        proof.append(status, ' ', link, note);
+        tr.append(proof);
+        body.append(tr);
+      }
+    }
+  }
+
+  // ---------- Diagramm ----------
+  const canvas = $('plot');
+  const PAD = { left: 56, right: 16, top: 14, bottom: 40 };
+
+  function niceTicksLog(lo, hi) {
+    const ticks = [];
+    for (let e = Math.floor(Math.log10(lo)); e <= Math.ceil(Math.log10(hi)); e++) {
+      for (const m of [1, 2, 5]) {
+        const v = m * 10 ** e;
+        if (v >= lo * 0.999 && v <= hi * 1.001) ticks.push({ v, major: m === 1 });
+      }
+    }
+    return ticks;
+  }
+
+  function draw() {
+    const ratio = window.devicePixelRatio || 1;
+    const width = canvas.clientWidth, height = canvas.clientHeight;
+    if (canvas.width !== Math.round(width * ratio) || canvas.height !== Math.round(height * ratio)) {
+      canvas.width = Math.round(width * ratio); canvas.height = Math.round(height * ratio);
+    }
+    const g = canvas.getContext('2d');
+    g.setTransform(ratio, 0, 0, ratio, 0, 0);
+    g.clearRect(0, 0, width, height);
+    g.font = '12px ' + css('--ui');
+    if (!state.result) {
+      g.fillStyle = css('--muted'); g.textAlign = 'center';
+      g.fillText('Netzliste eingeben und „Berechnen“ wählen.', width / 2, height / 2);
+      return;
+    }
+    const freq = state.result.freq, log = state.net.sweep.scale === 'log';
+    const f0 = freq[0], f1 = freq[freq.length - 1];
+    const shown = state.curves.filter(c => state.visible.has(c.label));
+    const heldShown = state.held ? state.held.curves.filter(c => state.visible.has(c.label)) : [];
+
+    // y-Bereich aus Kurven und Grenzlinien, auf 10 dB gerundet
+    let top = -Infinity, bottom = Infinity;
+    const take = v => { if (Number.isFinite(v) && v >= FLOOR) { top = Math.max(top, v); bottom = Math.min(bottom, v); } };
+    shown.forEach(c => c.db.forEach(take));
+    heldShown.forEach(c => c.db.forEach(take));
+    for (const limit of state.limits) {
+      if (!curvesFor(limit).some(c => state.visible.has(c.label))) continue;
+      for (const seg of limit.segments) { take(-SPE.value(limit, seg.from)); take(-SPE.value(limit, seg.to)); }
+    }
+    if (!Number.isFinite(top)) { top = 0; bottom = -60; }
+    top = Math.min(20, Math.ceil((top + 0.5) / 10) * 10);
+    bottom = Math.max(FLOOR, Math.floor((bottom - 2) / 10) * 10);
+    if (top - bottom < 20) bottom = top - 20;
+    const step = top - bottom > 80 ? 20 : 10;
+    bottom = top - Math.ceil((top - bottom) / step) * step;
+
+    const left = PAD.left, right = width - PAD.right, y0 = PAD.top, y1 = height - PAD.bottom;
+    const X = f => left + (log ? Math.log(f / f0) / Math.log(f1 / f0) : (f - f0) / (f1 - f0)) * (right - left);
+    const Y = v => y0 + (top - v) / (top - bottom) * (y1 - y0);
+    state.view = { left, right, y0, y1, X, f0, f1, log };
+
+    // Gitter
+    g.lineWidth = 1; g.textBaseline = 'middle'; g.textAlign = 'right';
+    for (let v = top; v >= bottom - 1e-9; v -= step) {
+      g.strokeStyle = css('--line'); g.beginPath(); g.moveTo(left, Math.round(Y(v)) + 0.5); g.lineTo(right, Math.round(Y(v)) + 0.5); g.stroke();
+      g.fillStyle = css('--muted'); g.fillText(String(v), left - 8, Y(v));
+    }
+    g.textAlign = 'center'; g.textBaseline = 'top';
+    const ticks = log ? niceTicksLog(f0, f1) : Array.from({ length: 6 }, (_, i) => ({ v: f0 + (f1 - f0) * i / 5, major: true }));
+    for (const tick of ticks) {
+      const x = Math.round(X(tick.v)) + 0.5;
+      g.strokeStyle = tick.major ? css('--line-dark') : css('--line');
+      g.beginPath(); g.moveTo(x, y0); g.lineTo(x, y1); g.stroke();
+      if (tick.major || ticks.length < 8) { g.fillStyle = css('--muted'); g.fillText(SIM.formatFreq(tick.v), x, y1 + 6); }
+    }
+    g.strokeStyle = css('--line-dark'); g.strokeRect(left + 0.5, y0 + 0.5, right - left - 1, y1 - y0 - 1);
+    g.save(); g.translate(14, (y0 + y1) / 2); g.rotate(-Math.PI / 2); g.fillStyle = css('--muted'); g.textBaseline = 'middle'; g.fillText('|S| in dB', 0, 0); g.restore();
+    g.fillStyle = css('--muted'); g.textBaseline = 'bottom'; g.fillText('Frequenz', (left + right) / 2, height - 4);
+
+    g.save();
+    g.beginPath(); g.rect(left, y0, right - left, y1 - y0); g.clip();
+
+    // Grenzlinien: verbotener Bereich liegt oberhalb der Linie (|S| zu groß)
+    for (const limit of state.limits) {
+      const targets = curvesFor(limit).filter(c => state.visible.has(c.label));
+      if (!targets.length) continue;
+      const color = targets[0].color;
+      const [lo, hi] = SPE.range(limit);
+      const pts = [];
+      const a = Math.max(lo * 1e6, f0), b = Math.min(hi * 1e6, f1);
+      if (b <= a) continue;
+      for (let i = 0; i <= 240; i++) {
+        const f = log ? a * (b / a) ** (i / 240) : a + (b - a) * i / 240;
+        pts.push([X(f), Y(-SPE.value(limit, Math.min(hi, Math.max(lo, f / 1e6))))]);
+      }
+      g.beginPath(); pts.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y));
+      g.lineTo(pts[pts.length - 1][0], y0); g.lineTo(pts[0][0], y0); g.closePath();
+      g.globalAlpha = 0.07; g.fillStyle = color; g.fill(); g.globalAlpha = 1;
+      g.beginPath(); pts.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y));
+      g.strokeStyle = color; g.lineWidth = 2.5; g.setLineDash([2, 3]); g.stroke(); g.setLineDash([]);
+      g.fillStyle = color; g.textAlign = 'left'; g.textBaseline = 'bottom';
+      const mid = pts[Math.floor(pts.length * 0.45)];
+      g.fillText('Grenze ' + limit.quantity + (limit.status === 'bestaetigt' ? '' : ' (' + (STATUS[limit.status] || limit.status) + ')'), mid[0] + 4, mid[1] - 9);
+    }
+
+    const trace = (db, xs, color, dashed, widthPx, alpha) => {
+      g.beginPath();
+      let pen = false;
+      for (let i = 0; i < db.length; i++) {
+        if (Number.isNaN(db[i])) { pen = false; continue; }
+        const x = X(xs[i]), y = Y(Math.max(db[i], FLOOR - 20));
+        if (pen) g.lineTo(x, y); else g.moveTo(x, y);
+        pen = true;
+      }
+      g.globalAlpha = alpha; g.strokeStyle = color; g.lineWidth = widthPx; g.setLineDash(dashed); g.stroke(); g.setLineDash([]); g.globalAlpha = 1;
+    };
+    heldShown.forEach(c => trace(c.db, state.held.freq, c.color, [1, 3], 2, 0.9));
+    shown.forEach(c => trace(c.db, freq, c.color, c.reflection ? [] : [7, 4], 2, 1));
+
+    if (state.hover !== null) {
+      const x = Math.round(X(freq[state.hover])) + 0.5;
+      g.strokeStyle = css('--ink'); g.lineWidth = 1; g.globalAlpha = 0.5;
+      g.beginPath(); g.moveTo(x, y0); g.lineTo(x, y1); g.stroke(); g.globalAlpha = 1;
+      shown.forEach(c => {
+        const v = c.db[state.hover];
+        if (Number.isNaN(v) || v < bottom) return;
+        g.beginPath(); g.arc(X(freq[state.hover]), Y(v), 3.5, 0, 2 * Math.PI); g.fillStyle = c.color; g.fill();
+      });
+    }
+    g.restore();
+    renderReadout(shown);
+  }
+
+  function renderReadout(shown) {
+    const box = $('readout');
+    box.textContent = '';
+    if (state.hover === null) {
+      box.textContent = state.held ? 'Gepunktet: Vergleich „' + state.held.title + '“. Über das Diagramm fahren, um Werte abzulesen.' : 'Über das Diagramm fahren, um Werte abzulesen.';
+      return;
+    }
+    const f = document.createElement('b'); f.textContent = SIM.formatFreq(state.result.freq[state.hover]);
+    box.append(f);
+    for (const c of shown) {
+      const v = c.db[state.hover];
+      const item = document.createElement('span'); item.style.color = c.color;
+      item.textContent = c.label + ' ' + (Number.isNaN(v) ? '–' : v < FLOOR ? '< ' + FLOOR + ' dB' : v.toFixed(2) + ' dB');
+      box.append(item);
+    }
+  }
+
+  function pointer(event) {
+    if (!state.view || !state.result) return;
+    const rect = canvas.getBoundingClientRect();
+    const { left, right, f0, f1, log } = state.view;
+    const t = Math.min(1, Math.max(0, (event.clientX - rect.left - left) / (right - left)));
+    const f = log ? f0 * (f1 / f0) ** t : f0 + (f1 - f0) * t;
+    const freq = state.result.freq;
+    let best = 0;
+    for (let i = 1; i < freq.length; i++) if (Math.abs(freq[i] - f) < Math.abs(freq[best] - f)) best = i;
+    if (best !== state.hover) { state.hover = best; draw(); }
+  }
+  canvas.addEventListener('pointermove', pointer);
+  canvas.addEventListener('pointerdown', pointer);
+  canvas.addEventListener('pointerleave', () => { if (state.hover !== null) { state.hover = null; draw(); } });
+  window.addEventListener('resize', draw);
+
+  // ---------- Vergleich und Export ----------
+  $('hold').addEventListener('click', () => {
+    state.held = { title: state.net.title || 'Vergleich', freq: state.result.freq, curves: state.curves.map(c => ({ label: c.label, color: c.color, db: c.db })) };
+    $('unhold').hidden = false;
+    draw();
+  });
+  $('unhold').addEventListener('click', () => { state.held = null; $('unhold').hidden = true; draw(); });
+  $('export').addEventListener('click', () => {
+    let text;
+    try {
+      text = RF.exportTouchstone(state.result, { layout: state.mixed.layout, se: state.mixed.se, mm: state.mixed.mm }, 'se');
+    } catch (error) { showError(error.message); return; }
+    const name = state.result.name.replace(/[^\w.\-äöüÄÖÜß ]+/g, '_');
+    const url = URL.createObjectURL(new Blob([text], { type: 'text/plain' }));
+    const link = Object.assign(document.createElement('a'), { href: url, download: name });
+    document.body.append(link); link.click(); link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  });
+
+  listFiles();
+  run();
+})();
+</script>
+</body>
+</html>
