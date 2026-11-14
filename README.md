@@ -82,6 +82,14 @@ Alle Berechnungen laufen lokal auf dem Gerät. Messdateien werden nicht hochgela
 
 - Stapel analysieren (Seitenleiste → „Stapel“ oder Vorlagen-Dialog): lernt aus allen geladenen Dateien mit gespeichertem Port-Profil Fingerabdrücke und erkennt die übrigen damit automatisch, auch bei vertauschten Ports. Nicht erkannte Dateien werden als „Unbekannt“ aufgelistet.
 
+## Bauteil-Erkennung (Physik)
+
+- Beim Öffnen von 1-, 2- und 4-Port-Dateien wertet die App die komplexe S-Matrix aus. Vierpole: Wicklungspfade, L₁, L₂, k, Windungsverhältnis, Kernverlust, Eigenresonanz, Sdd21/Scc21/Sdc21. Daraus folgt der Kandidat CMC, gekoppelte Doppeldrossel, Übertrager oder „nicht eindeutig“. Zweipole: Induktivität (Ferrit, Luft/Keramik, Perle), Kondensator, Widerstand.
+- Die Karte „Bauteil-Erkennung“ im Tab Ports zeigt Begründung, Herstellerangabe aus dem Dateikopf (getrennt bewertet) und die Knöpfe „Als Leitungen/Wicklungen übernehmen“. Nichts wird ohne Klick übernommen.
+- Eine gelernte Vorlage wird nicht mehr automatisch angewendet, wenn die Messung ihrer Klasse widerspricht (z. B. „CMC“-Vorlage auf einer Doppeldrossel).
+- Gelernte Vorlagen speichern zusätzlich Klasse und Physik-Fingerabdruck (spa-pack v1, optionale Felder).
+- Methode, Ergebnisse und Grenzen: [docs/magnetik-erkennung.md](docs/magnetik-erkennung.md). Tests: `node tests/magnetic.unit.mjs`.
+
 ## Lizenz
 
 © 2026 Simon Mark · info.simonlation@gmail.com. Alle Rechte vorbehalten. Kein Open Source: Kopieren, Verändern oder Weiterverwenden des Quelltexts, auch in Teilen, nur mit schriftlicher Zustimmung des Autors.
