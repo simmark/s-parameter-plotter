@@ -984,6 +984,17 @@ html[data-theme="dark"] .app-bar .bar-button:hover { background: #3a382f; color:
 .pack-url .field-input { flex: 1; min-width: 0; }
 .pack-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
 .pack-list li { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; font-size: 12.5px; }
+
+/* ---------- v8: batch dialog ---------- */
+.batch-progress { font-size: 12px; color: var(--muted); }
+.batch-summary { font-size: 13px; margin: 8px 0; }
+.batch-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; max-height: 46vh; overflow: auto; }
+.batch-open { display: grid; grid-template-columns: 78px minmax(0, 1fr); column-gap: 8px; width: 100%; text-align: left; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); font-size: 12.5px; }
+.batch-open small { grid-column: 2; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.batch-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.batch-state { font-weight: 700; font-size: 11px; align-self: center; grid-row: span 2; }
+.batch-row.is-learned .batch-state { color: #1e7f78; } .batch-row.is-known .batch-state { color: #3266ce; } .batch-row.is-unknown .batch-state { color: #a26016; } .batch-row.is-error .batch-state { color: #b3261e; }
+html[data-theme="dark"] .batch-row.is-learned .batch-state { color: #5cc9bf; } html[data-theme="dark"] .batch-row.is-known .batch-state { color: #8fb0ff; } html[data-theme="dark"] .batch-row.is-unknown .batch-state { color: #e0a85c; } html[data-theme="dark"] .batch-row.is-error .batch-state { color: #ff8a80; }
 </style>
 <script>
 'use strict';
@@ -1030,6 +1041,10 @@ window.I18N = (() => {
     'Format': 'Format', 'Rauschpunkte': 'Noise points', 'Demo': 'Demo', 'je Port': 'per port',
     'S-Parameter': 'S-parameters', 'Ports & Lasten': 'Ports & loads', 'Smith-Chart': 'Smith chart', 'Impedanz': 'Impedance',
     'CISPR 17': 'CISPR 17', 'ESB-Modell': 'Equivalent circuit', 'ESB': 'ECM', 'Smith': 'Smith', 'Z': 'Z', 'CISPR': 'CISPR', 'Ports': 'Ports', 'S': 'S',
+    'Stapel': 'Batch', 'Stapel analysieren': 'Analyze batch', 'Alle Dateien analysieren und Fingerabdrücke lernen': 'Analyze all files and learn fingerprints',
+    'Fingerabdrücke aus allen geladenen Dateien lernen und Bekanntes erkennen': 'Learn fingerprints from all loaded files and recognize known ones',
+    'Dateien mit gespeichertem Port-Profil (Paare, Abschlüsse, Bauteiltyp) liefern Fingerabdrücke. Alle anderen werden damit verglichen und, wenn sie passen, automatisch zugeordnet. Dateien ohne Profil und ohne passende Vorlage bleiben „Unbekannt“: Ordne bei einer davon die Ports zu und lerne sie als Vorlage, danach werden ähnliche erkannt.': 'Files with a stored port profile (pairs, terminations, device type) provide fingerprints. All others are compared with them and assigned automatically if they match. Files without a profile and without a matching template stay "Unknown": assign the ports on one of them and learn it as a template, then similar ones are recognized.',
+    'Gelernt': 'Learned', 'Erkannt': 'Recognized', 'Unbekannt': 'Unknown', 'Wartet': 'Waiting', 'Erneut starten': 'Start again', 'Stapel abgebrochen.': 'Batch cancelled.',
     'Einstellungen': 'Settings', 'Dateien & Bibliothek': 'Files & library', 'Sprache': 'Language', 'Deutsch / English': 'German / English',
     'Methodik & Info': 'Methods & info', 'Rechenwege, Formeln, Autor': 'Calculations, formulas, author', 'Bild, CSV, Touchstone, SPICE': 'Image, CSV, Touchstone, SPICE',
     'Offline am Startbildschirm': 'Offline on the home screen',
@@ -1187,6 +1202,10 @@ window.I18N = (() => {
     'S-Parameter Analyzer · von': 'S-Parameter Analyzer · by', 'S-Analyzer': 'S-Analyzer', 'S-Parameter Analyzer': 'S-Parameter Analyzer'
   }));
   const PATTERNS = [
+    [/^(\d+) Dateien analysieren$/, 'Analyze $1 files'], [/^(\d+) Dateien$/, '$1 files'],
+    [/^(\d+) Fingerabdrücke gelernt · (\d+) erkannt · (\d+) unbekannt(?: · (\d+) Fehler)?$/, '$1 fingerprints learned · $2 recognized · $3 unknown · $4 errors'],
+    [/^Stapel fertig: (\d+) gelernt · (\d+) erkannt\.$/, 'Batch done: $1 learned · $2 recognized.'],
+    [/^(Lernen|Erkennen) (\d+) \/ (\d+)$/, '$1 $2 / $3'], [/^(.+) · (\d+) Ports$/, '$1 · $2 ports'], [/^(\d+) Ports$/, '$1 ports'],
     [/^(\d+) Fingerabdrücke · (\d+) gemerkte Kurvenwahlen \(pro Bauteiltyp\)\. Die Kurvenwahl und ausgeblendete Kurven bleiben beim Blättern durch Dateien und nach einem Neustart erhalten\.$/, '$1 fingerprints · $2 stored curve selections (per device type). The curve selection and hidden curves are kept while stepping through files and after a restart.'],
     [/^(.+): (\d+) Fingerabdrücke neu(?: · (\d+) Kurvenwahlen übernommen)?(?: · (\d+) ungültige übersprungen)?$/, '$1: $2 new fingerprints · $3 curve selections adopted · $4 invalid skipped'],
     [/^(\d+) Kurven(?: · (\d+) ausgeblendet)?$/, '$1 curves · $2 hidden'],
@@ -1536,6 +1555,15 @@ window.I18N = (() => {
     <button class="icon-button" type="button" data-action="close-dialog" aria-label="Schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
   </div>
   <div id="pack-content" class="dialog-body"></div>
+  <div class="dialog-foot"><button class="button primary" type="button" data-action="close-dialog">Fertig</button></div>
+</dialog>
+
+<dialog id="batch-dialog" class="dialog wide-dialog" aria-labelledby="batch-title">
+  <div class="dialog-head">
+    <div><h2 id="batch-title">Stapel analysieren</h2><p>Fingerabdrücke aus allen geladenen Dateien lernen und Bekanntes erkennen</p></div>
+    <button class="icon-button" type="button" data-action="close-dialog" aria-label="Schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+  </div>
+  <div id="batch-content" class="dialog-body"></div>
   <div class="dialog-foot"><button class="button primary" type="button" data-action="close-dialog">Fertig</button></div>
 </dialog>
 
@@ -5049,7 +5077,7 @@ const Plot = (() => {
     insertHtml(box, '<h4>Dateien <small>' + items.length + '</small><span class="session-tools">' +
       iconButton('Vorherige Datei (Bild↑)', 'session-step', -1, 'chevron', ' data-flip' + disabled(index <= 0)) +
       iconButton('Nächste Datei (Bild↓)', 'session-step', 1, 'chevron', disabled(index >= items.length - 1)) +
-      actionButton('Leeren', 'session-clear', '', 'quiet-button') + '</span></h4>' +
+      actionButton('Stapel', 'batch-open', '', 'quiet-button', '', ' title="Alle Dateien analysieren und Fingerabdrücke lernen"') + actionButton('Leeren', 'session-clear', '', 'quiet-button') + '</span></h4>' +
       (items.length > 8 ? '<input id="session-filter" class="field-input session-filter" type="search" placeholder="Filtern …" aria-label="Dateien filtern" value="' + esc(session.filter) + '">' : '') +
       '<div class="session-list">' + rows + '</div>' +
       (shown.length > 300 ? '<p class="note">+' + (shown.length - 300) + ' weitere · Filter nutzen</p>' : '') +
@@ -7047,7 +7075,7 @@ const typed = state.tab === 's' && state.basis === 'mm' && ['cmc', 'lan'].includ
       '<section class="pack-section"><h3>Auf diesem Gerät</h3><p class="note">' + Templates.size + ' Fingerabdrücke · ' + Prefs.size + ' gemerkte Kurvenwahlen (pro Bauteiltyp). ' +
       'Die Kurvenwahl und ausgeblendete Kurven bleiben beim Blättern durch Dateien und nach einem Neustart erhalten.</p>' +
       '<div class="pack-actions">' + actionButton('Paket exportieren', 'pack-export', '', 'button primary', 'export', disabled(!Templates.size && !Prefs.size)) +
-      actionButton('Datei laden …', 'pack-import', '', 'button', 'upload') +
+      actionButton('Datei laden …', 'pack-import', '', 'button', 'upload') + actionButton('Stapel analysieren', 'batch-open', '', 'button', 'network', disabled(session.items.length < 2)) +
       actionButton('Kurvenwahl zurücksetzen', 'pack-reset', '', 'button', 'reset', disabled(!Prefs.size)) + '</div></section>' +
       '<section class="pack-section"><h3>Aus dem Netz laden</h3><p class="note">Adresse eines Pakets, z. B. aus deinem GitHub-Repository (github.com/…/blob/… oder raw.githubusercontent.com/…).</p>' +
       '<form id="pack-url-form" class="pack-url"><input class="field-input mono" id="pack-url" type="url" inputmode="url" placeholder="https://raw.githubusercontent.com/…/default.json" aria-label="Adresse des Pakets" autocomplete="off">' +
@@ -7058,6 +7086,71 @@ const typed = state.tab === 's' && state.basis === 'mm' && ['cmc', 'lan'].includ
   }
 
   function openPacks() { renderPacks(); openDialog('pack-dialog'); }
+
+  // ---- Batch: learn fingerprints from every profiled file of the loaded set, then recognise the rest with them. ----
+  const batch = { running: false, cancel: false, rows: [], done: 0, total: 0, pass: '' };
+  const BATCH_LABEL = { learned: 'Gelernt', known: 'Erkannt', unknown: 'Unbekannt', error: 'Fehler', wait: 'Wartet' };
+
+  function openBatch() { renderBatch(); openDialog('batch-dialog'); }
+
+  function renderBatch() {
+    const box = $('batch-content');
+    if (!box) return;
+    const count = key => batch.rows.filter(r => r.status === key).length;
+    const items = session.items.length;
+    const rows = batch.rows.slice(0, 300).map(r => '<li class="batch-row is-' + r.status + '"><button type="button" class="batch-open" data-action="batch-file" data-value="' + esc(r.id) + '">' +
+      '<span class="batch-state">' + esc(BATCH_LABEL[r.status] || r.status) + '</span><span class="batch-name">' + esc(r.name) + '</span><small>' + esc(r.detail) + '</small></button></li>').join('');
+    insertHtml(box,
+      '<p class="note">Dateien mit gespeichertem Port-Profil (Paare, Abschlüsse, Bauteiltyp) liefern Fingerabdrücke. Alle anderen werden damit verglichen und, wenn sie passen, automatisch zugeordnet. ' +
+      'Dateien ohne Profil und ohne passende Vorlage bleiben „Unbekannt“: Ordne bei einer davon die Ports zu und lerne sie als Vorlage, danach werden ähnliche erkannt.</p>' +
+      '<div class="pack-actions">' + (batch.running ? actionButton('Abbrechen', 'batch-cancel', '', 'button') : actionButton(batch.rows.length ? 'Erneut starten' : items + ' Dateien analysieren', 'batch-run', '', 'button primary', 'network', disabled(items < 1))) +
+      '<span class="batch-progress mono">' + (batch.running ? esc(batch.pass) + ' ' + batch.done + ' / ' + batch.total : batch.rows.length ? batch.rows.length + ' Dateien' : '') + '</span></div>' +
+      (batch.rows.length ? '<p class="batch-summary">' + count('learned') + ' Fingerabdrücke gelernt · ' + count('known') + ' erkannt · ' + count('unknown') + ' unbekannt' +
+        (count('error') ? ' · ' + count('error') + ' Fehler' : '') + '</p><ul class="batch-list">' + rows + '</ul>' : ''));
+  }
+
+  async function runBatch() {
+    if (batch.running) return;
+    const items = session.items.slice();
+    Object.assign(batch, { running: true, cancel: false, rows: [], done: 0, total: items.length, pass: 'Lernen' });
+    const rowOf = new Map(items.map(item => [item.id, { id: item.id, name: item.name, status: 'wait', detail: '' }]));
+    batch.rows = [...rowOf.values()];
+    renderBatch();
+    const pending = [];
+    const leaf = path => String(path || '').split('/').filter(Boolean).pop() || '';
+    const step = async () => { batch.done++; if (batch.done % 3 === 0) { renderBatch(); await nextTick(); } };
+    for (const item of items) {
+      if (batch.cancel) break;
+      const row = rowOf.get(item.id);
+      try {
+        const dataset = await loadDataset(item);
+        const embedded = settingsFromEmbedded(dataset);
+        if (embedded && embedded.config.pairs.length) {
+          const name = embedded.profileName || leaf(item.path) || dataset.n + '-Port';
+          Templates.learn(name, dataset, embedded.config, { tab: 's', basis: 'mm', sFormat: embedded.sFormat || 'db', sKeys: { mm: embedded.sKeys?.mm ?? null } });
+          Object.assign(row, { status: 'learned', detail: name + ' · ' + dataset.n + ' Ports' });
+        } else pending.push(item);
+      } catch (error) { Object.assign(row, { status: 'error', detail: error.message }); }
+      await step();
+    }
+    batch.pass = 'Erkennen'; batch.done = 0; batch.total = pending.length;
+    for (const item of pending) {
+      if (batch.cancel) break;
+      const row = rowOf.get(item.id);
+      try {
+        const dataset = await loadDataset(item);
+        const matches = await Templates.match(dataset, () => !batch.cancel);
+        if (matches[0] && matches[0].score <= Templates.AUTO) Object.assign(row, { status: 'known', detail: matches[0].tpl.name + ' · ' + Templates.similarity(matches[0].score) + ' %' });
+        else Object.assign(row, { status: 'unknown', detail: dataset.n + ' Ports' });
+      } catch (error) { Object.assign(row, { status: 'error', detail: error.message }); }
+      await step();
+    }
+    batch.running = false;
+    renderBatch();
+    if ($('pack-dialog').open) renderPacks();
+    if (state.dataset) renderConfig();
+    toast(batch.cancel ? 'Stapel abgebrochen.' : 'Stapel fertig: ' + batch.rows.filter(r => r.status === 'learned').length + ' gelernt · ' + batch.rows.filter(r => r.status === 'known').length + ' erkannt.');
+  }
 
   async function packAction(kind) {
     try {
@@ -7558,6 +7651,10 @@ const typed = state.tab === 's' && state.basis === 'mm' && ['cmc', 'lan'].includ
     'select-curve': selectCurve,
     'curve-preset': curvePreset,
     packs: openPacks,
+    'batch-open': () => { $('pack-dialog').open && $('pack-dialog').close(); openBatch(); },
+    'batch-run': runBatch,
+    'batch-cancel': () => { batch.cancel = true; },
+    'batch-file': value => { $('batch-dialog').close(); openItem(value, { keepTab: true, remember: true }); },
     'pack-export': () => packAction('export'),
     'pack-import': () => packAction('import'),
     'pack-reset': () => packAction('reset'),

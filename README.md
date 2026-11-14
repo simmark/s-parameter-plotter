@@ -80,6 +80,8 @@ Alle Berechnungen laufen lokal auf dem Gerät. Messdateien werden nicht hochgela
 - Deine Kurvenauswahl und ausgeblendete Kurven gelten pro Bauteiltyp für alle Dateien (auch beim Durchblättern) und bleiben nach einem Neustart erhalten. Die zuletzt angesehene Datei wird beim Start wieder geöffnet.
 - „Vorlagen & Einstellungen": Fingerabdrücke und Kurvenwahl als JSON-Paket exportieren, aus Datei oder per https-Adresse (GitHub) laden. Siehe `fingerprints/README.md`.
 
+- Stapel analysieren (Seitenleiste → „Stapel“ oder Vorlagen-Dialog): lernt aus allen geladenen Dateien mit gespeichertem Port-Profil Fingerabdrücke und erkennt die übrigen damit automatisch, auch bei vertauschten Ports. Nicht erkannte Dateien werden als „Unbekannt“ aufgelistet.
+
 ## Lizenz
 
 © 2026 Simon Mark · info.simonlation@gmail.com. Alle Rechte vorbehalten. Kein Open Source: Kopieren, Verändern oder Weiterverwenden des Quelltexts, auch in Teilen, nur mit schriftlicher Zustimmung des Autors.
