@@ -57,6 +57,21 @@ Alle Berechnungen laufen lokal auf dem Gerät. Messdateien werden nicht hochgela
 - **Lernende Vorlagen:** „Als Vorlage lernen“ speichert einen Verhaltens-Fingerabdruck (|Sdd|, |Scc|, Modenkonversion). Neue Dateien mit gleicher Portzahl werden damit automatisch zugeordnet, auch bei anderer Portreihenfolge.
 - **Grenzen des Browsers:** Direktes Überschreiben der Datei geht nur, wenn sie über „Öffnen mit“ (Desktop) oder die Ordnerauswahl geöffnet wurde; sonst wird eine Kopie heruntergeladen. „Öffnen mit“ aus dem Dateimanager gibt es nur auf Desktop-Chrome/Edge, auf Android läuft das über „Teilen“. Nachbardateien eines Ordners sieht die App erst nach einmaliger Ordnerfreigabe.
 
+## Version 4: SPICE-Viewer, Bibliothek, Ersatzschaltbild, dunkles Design
+
+- **SPICE-Bibliotheken:** `.lib`/`.sub`/`.cir` öffnen (auch im ZIP). Jeder Subcircuit wird ein Listeneintrag und per AC-Analyse in S-Parameter umgerechnet. Unterstützt sind R, L, C, K, X und `.subckt` mit Parametern; der Sweep ist links einstellbar.
+- **Bibliothek:** „Ablegen“ speichert geöffnete Dateien dauerhaft in der App, in Ordnern je Bauteiltyp. Ein Klick auf einen Ordner lädt ihn zum Durchblättern.
+- **Blättern:** `←`/`→` (auch im Diagramm; `Umschalt`+Pfeil bewegt den Marker). Der gewählte Tab bleibt dabei erhalten.
+- **Ansicht:** Knopf im Diagrammkopf schaltet normal → reduziert → Vollbild, `Esc` beendet.
+- **Marker:** 0 bis 4 Marker; die Tabelle zeigt nur die gewählte Darstellung.
+- **Ports verbinden:** Abschluss „Verbinden mit Px“ schließt Pins zu einem Knoten zusammen, der dann aktiv bleibt, in ein Paar geht oder einen Abschluss bekommt.
+- **ESB:** L(f) mit Vorzeichen, C über die Thomson-Gleichung mit Kontrolle über der Frequenz, Skala auf den Nennwert begrenzt. Für Induktivitäten und CMCs ein Modell bis zur 2. Resonanz, als SPICE-`.lib` exportierbar.
+- **Design:** hell/dunkel, folgt dem System oder dem Knopf oben.
+
+## Lizenz
+
+© 2026 Simon Mark · info.simonlation@gmail.com. Alle Rechte vorbehalten. Kein Open Source: Kopieren, Verändern oder Weiterverwenden des Quelltexts, auch in Teilen, nur mit schriftlicher Zustimmung des Autors.
+
 ## Bedienung
 
 | Maus | Touch | Wirkung |
@@ -107,3 +122,11 @@ Highlights:
 ### Viewer, port profile and templates (version 3)
 
 Open several files, a folder or a ZIP; step through with PgUp/PgDn; overlay up to 6 files and show the difference to the open file. "Save to file" stores pairs, terminations, reference impedances and the curve selection as a comment block (`! [SPA-Port-Profile] 1 …`) inside the Touchstone file (2.x: inside `[Begin Information]`). "Learn as template" stores a behaviour fingerprint that assigns the ports of similar files automatically, even with a different port order.
+
+### Version 4
+
+SPICE library viewer (R, L, C, K, X, parameterised subcircuits → S-parameters), in-app library with folders, arrow-key stepping, reduced and full-screen view, 0–4 markers, tying ports together, equivalent circuit up to the second resonance with SPICE export, dark theme.
+
+### License
+
+© 2026 Simon Mark. All rights reserved. Not open source: copying, modifying or reusing the source code, in whole or in part, requires the written permission of the author.

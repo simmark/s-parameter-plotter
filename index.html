@@ -1,4 +1,11 @@
 <!doctype html>
+<!--
+  S-Parameter Analyzer · © 2026 Simon Mark · info.simonlation@gmail.com
+  Alle Rechte vorbehalten. Kein Open Source: Kopieren, Verändern oder Weiterverwenden des Quelltexts, auch in Teilen,
+  nur mit schriftlicher Zustimmung des Autors.
+  All rights reserved. Not open source: copying, modifying or reusing this source code, in whole or in part,
+  requires the written permission of the author.
+-->
 <html lang="de">
 <head>
 <meta charset="utf-8">
@@ -11,6 +18,48 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="./icons/app-192.png">
 <link rel="apple-touch-icon" href="./icons/apple-180.png">
+<script>
+// Theme: follows the system unless chosen by hand. Neutral colours are mirrored in lightness, curve colours stay.
+window.Theme = (() => {
+  const KEY = 'spa-theme', media = matchMedia('(prefers-color-scheme: dark)'), cache = new Map();
+  let pref = 'auto';
+  try { pref = localStorage.getItem(KEY) || 'auto'; } catch { pref = 'auto'; }
+  const dark = () => pref === 'dark' || (pref === 'auto' && media.matches);
+  function apply() {
+    document.documentElement.dataset.theme = dark() ? 'dark' : 'light';
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark() ? '#1d1c1a' : '#faf9f5');
+  }
+  function shift(r, g, b) {
+    const max = Math.max(r, g, b) / 255, min = Math.min(r, g, b) / 255, l = (max + min) / 2, d = max - min;
+    const s = d ? d / (1 - Math.abs(2 * l - 1)) : 0;
+    if (s >= 0.3 && l >= 0.25 && l <= 0.8) return [r, g, b];
+    let h = 0;
+    if (d) h = max === r / 255 ? ((g - b) / 255 / d) % 6 : max === g / 255 ? (b - r) / 255 / d + 2 : (r - g) / 255 / d + 4;
+    const nl = 0.105 + 0.82 * (1 - l), ns = Math.min(nl < 0.3 ? s * 0.55 : s, nl < 0.3 || nl > 0.8 ? 0.14 : 1), c = (1 - Math.abs(2 * nl - 1)) * ns, x = c * (1 - Math.abs(h % 2 - 1)), m = nl - c / 2;
+    const k = ((Math.floor(h) % 6) + 6) % 6, rgb = [[c, x, 0], [x, c, 0], [0, c, x], [0, x, c], [x, 0, c], [c, 0, x]][k];
+    return rgb.map(v => Math.round(255 * (v + m)));
+  }
+  function map(color) {
+    if (!dark()) return color;
+    if (cache.has(color)) return cache.get(color);
+    let out = color;
+    const hex = /^#([0-9a-f]{3,8})$/i.exec(color), rgb = /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+)\s*)?\)$/i.exec(color);
+    if (hex && [3, 6, 8].includes(hex[1].length)) {
+      const h = hex[1].length === 3 ? hex[1].replace(/./g, '$&$&') : hex[1];
+      const v = shift(parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16));
+      out = '#' + v.map(n => n.toString(16).padStart(2, '0')).join('') + h.slice(6);
+    } else if (rgb) {
+      const v = shift(+rgb[1], +rgb[2], +rgb[3]);
+      out = 'rgba(' + v.join(',') + ',' + (rgb[4] ?? 1) + ')';
+    }
+    cache.set(color, out);
+    return out;
+  }
+  media.addEventListener('change', apply);
+  apply();
+  return { map, dark, toggle() { pref = dark() ? 'light' : 'dark'; try { localStorage.setItem(KEY, pref); } catch { /* not persisted */ } apply(); } };
+})();
+</script>
 <style>
 :root {
   --ink: #1f1e1d;
@@ -712,6 +761,169 @@ html[lang="en"] .lang-de, html[lang="de"] .lang-en { display: none !important; }
 .template-list li { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 3px 4px 3px 8px; border: 1px solid var(--line); border-radius: 6px; }
 .template-list .icon-button { width: 26px; height: 26px; min-height: 26px; }
 .profile-badge { background: #ecf3ec; color: #2f6b3a; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+
+/* v4: sweep form, theme button */
+.sweep-form { display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr) auto; gap: 5px; align-items: center; margin-top: 8px; font-size: 11px; color: var(--muted); }
+.sweep-form .field-input { min-height: 28px; padding: 2px 6px; font: 500 11px var(--mono); min-width: 0; }
+.theme-button .icon { stroke: currentColor; stroke-width: 1.8; }
+html[data-theme="dark"] .topology svg, html[data-theme="dark"] .cmc-schematic svg, html[data-theme="dark"] .port-schematic svg { filter: invert(1) hue-rotate(180deg); }
+html[data-theme="dark"] { color-scheme: dark; }
+html[data-theme="dark"] .export-button, html[data-theme="dark"] .export-button * { color: #1d1c1a !important; }
+html[data-theme="dark"] .theme-button { color: #e9e7df !important; }
+html[data-theme="dark"] .marker-name, html[data-theme="dark"] .mk-dot { filter: invert(1) hue-rotate(180deg); }
+html[data-theme="dark"] .marker-name { color: #ffffff !important; }
+@media (max-width: 760px) { .theme-button { display: none; } }
+
+/* v5: library, drawer button, view modes */
+.shelf-form { display: grid; gap: 6px; margin: 4px 0 8px; padding: 8px; border: 1px solid var(--accent-line); border-radius: 7px; background: var(--accent-soft); }
+.shelf-form-actions { display: flex; gap: 6px; align-items: center; }
+.shelf-list { display: grid; gap: 2px; max-height: 220px; overflow: auto; }
+.shelf-confirm { background: #b3261e; border-color: #b3261e; color: #ffffff; }
+.drawer-button { display: none; flex: none; width: 36px; height: 36px; margin-right: 6px; }
+@media (max-width: 760px) { .drawer-button { display: inline-grid; place-items: center; } .page-head { align-items: center; } }
+[data-action="view-mode"][aria-pressed="true"] { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+body.view-focus .sidebar, body.view-focus .tabs, body.view-focus .page-head, body.view-focus #view-controls, body.view-focus #analysis-details, body.view-focus .app-bar > :not(.file-chip):not(.file-nav) { display: none !important; }
+body.view-focus .app-bar { min-height: 0; padding-block: 4px; }
+body.view-focus .file-chip { display: inline-flex !important; max-width: 60vw; border: 0; background: none; pointer-events: none; }
+body.view-focus .file-chip .chip-caret { display: none; }
+body.view-focus .app-layout { display: block; }
+body.view-focus .main-body { padding-top: 6px; }
+body.view-full .app-bar, body.view-full .trace-panel, body.view-full .marker-tools, body.view-full .chart-head > div:first-child, body.view-full #global-status { display: none !important; }
+body.view-focus #plot { height: clamp(300px, 60vh, 900px) !important; }
+body.view-full .plot-surface canvas { height: calc(100vh - 150px) !important; min-height: 240px; }
+body.view-full .chart-card { margin: 0; border-radius: 0; }
+body.view-full .main-body { padding: 0; }
+/* dark:start (generated by tools/dark.py) */
+html[data-theme="dark"] { --ink: #d5d3d2; --muted: #9b9a93; --subtle: #94938d; --line: #38362d; --line-dark: #47453d; --canvas: #2a2921; --surface: #1b1b1b; --tint: #26241c; --navy: #d5d3d2; --accent-soft: #2e2723; --accent-line: #4d403a; --mode-d-soft: #1f2329; --mode-d-line: #353b46; --mode-c-soft: #232e29; --mode-x-soft: #2a2420; --mode-dc-soft: #2c2821; --mode-cd-soft: #281e20; --mode-p-soft: #221e28; --select: #cdccc8; --warn-bg: #27231d; --ivory: #26241c; }
+html[data-theme="dark"] .app-bar { color: #22221a; border-bottom: 1px solid #ced5da; }
+html[data-theme="dark"] .brand-icon { background: #cdccc8; border: 1px solid #bfbeb9; }
+html[data-theme="dark"] .offline-status { color: #4b483f; }
+html[data-theme="dark"] .bar-button { color: #37352f; }
+html[data-theme="dark"] .bar-button:hover { color: #1b1b1b; background: #bfbeb9; }
+html[data-theme="dark"] .export-button { border-color: #a7a499; background: #c3c2bd; color: #24221b; }
+html[data-theme="dark"] .sidebar { background: #24241b; }
+html[data-theme="dark"] .dropzone { border: 1px dashed #615d47; background: #1b1b1b; }
+html[data-theme="dark"] .dataset-summary { background: #1b1b1b; }
+html[data-theme="dark"] .file-title .icon { color: #969286; }
+html[data-theme="dark"] .recent-files h4 { color: #a4a297; }
+html[data-theme="dark"] .recent-item { background: #1b1b1b; }
+html[data-theme="dark"] .recent-item .icon { color: #969286; }
+html[data-theme="dark"] .update-banner { background: #a8cee2; color: #1b1b1b; }
+html[data-theme="dark"] .demo-tag { background: #2b2921; color: #a4a297; }
+html[data-theme="dark"] .file-meta dd { color: #bcbbb6; }
+html[data-theme="dark"] .topology-board { border: 1px solid #393730; background-color: #2a271f; background-image: radial-gradient(#413f37 0.75px, transparent 0.85px); }
+html[data-theme="dark"] .net-core { background: #343127; border: 1px solid #69665a; color: #a4a297; }
+html[data-theme="dark"] .net-wire::before { background: var(--wire, #6e6b5f); }
+html[data-theme="dark"] .net-wire::after { border: 1px solid var(--wire, #6e6b5f); background: #24241b; }
+html[data-theme="dark"] .net-chip { border: 1px solid #46443b; color: #bbb9b3; background: #20201a; }
+html[data-theme="dark"] .net-wire.is-paired .net-chip { background: #2a231f; }
+html[data-theme="dark"] .net-wire.is-load .net-chip { background: #26231d; }
+html[data-theme="dark"] .net-pair { color: #adaba3; }
+html[data-theme="dark"] .badge { background: #2d2b22; color: #adaba3; }
+html[data-theme="dark"] .badge.loaded { background: #2d2922; }
+html[data-theme="dark"] .tabs { background: #202018; }
+html[data-theme="dark"] .tab { color: #a09d92; }
+html[data-theme="dark"] .tab { color: #a3a095; }
+html[data-theme="dark"] .tab:hover { background: #29261f; }
+html[data-theme="dark"] .tab[aria-selected="true"] { background: linear-gradient(#fff0, #2e2723); }
+html[data-theme="dark"] .segment { background: #2b2921; border: 1px solid #36352e; }
+html[data-theme="dark"] .segment button { color: #a2a095; }
+html[data-theme="dark"] .segment button:hover:not(:disabled):not([aria-pressed="true"]) { color: #b2e5e4; background: #343228; }
+html[data-theme="dark"] .segment button[aria-pressed="true"] { color: #1b1b1b; }
+html[data-theme="dark"] .control > span, html[data-theme="dark"] .field-label { color: #a4a297; }
+html[data-theme="dark"] select, html[data-theme="dark"] input.field-input { background: #1b1b1b; }
+html[data-theme="dark"] select:hover:not(:disabled), html[data-theme="dark"] input.field-input:hover { border-color: #68665b; }
+html[data-theme="dark"] .button, html[data-theme="dark"] .icon-button { background: #1b1b1b; }
+html[data-theme="dark"] .button:hover:not(:disabled), html[data-theme="dark"] .icon-button:hover:not(:disabled) { border-color: #625d48; background: #29281f; }
+html[data-theme="dark"] .button.primary { color: #1b1b1b; }
+html[data-theme="dark"] .icon-button { color: #a4a297; }
+html[data-theme="dark"] .chart-card { background: #1b1b1b; border: 1px solid #3b3931; }
+html[data-theme="dark"] .plot-surface { background: #1b1b1b; }
+html[data-theme="dark"] .plot-hint { color: #969286; }
+html[data-theme="dark"] .trace-panel { background: #24241b; }
+html[data-theme="dark"] .trace-row { background: #1b1b1b; border: 1px solid color-mix(in srgb, var(--trace) 38%, #34322b); }
+html[data-theme="dark"] .trace-check { color: #1b1b1b; }
+html[data-theme="dark"] .trace-row[aria-pressed="false"] { background: #27251d; color: #858274; border: 1px dashed #4a483e; border-left: 4px solid #3d3c34; }
+html[data-theme="dark"] .trace-row[aria-pressed="false"] .trace-check { background: #1b1b1b; }
+html[data-theme="dark"] .trace-row[aria-pressed="false"] .trace-dot { --trace: #5c5742; }
+html[data-theme="dark"] .trace-row[aria-pressed="false"] .trace-name { text-decoration-color: #666049; }
+html[data-theme="dark"] .trace-row[aria-pressed="false"] .trace-value { color: #6a685d; }
+html[data-theme="dark"] .mode-legend { color: #a4a297; }
+html[data-theme="dark"] .mode-legend .line-key { border-top: 2.5px solid #999689; }
+html[data-theme="dark"] .mode-tag { color: #1b1b1b; background: var(--c, #999689); }
+html[data-theme="dark"] .trace-value { color: #aaa8a1; }
+html[data-theme="dark"] .marker-heading .icon { color: #989589; }
+html[data-theme="dark"] .marker-unit { --mk: #cdccc8; background: #1b1b1b; }
+html[data-theme="dark"] .marker-unit .marker-name { background: color-mix(in srgb, var(--mk) 12%, #1b1b1b); }
+html[data-theme="dark"] .marker-unit.is-active .marker-name { color: #1b1b1b; }
+html[data-theme="dark"] .marker-unit input { background: #1b1b1b; }
+html[data-theme="dark"] .marker-unit .marker-remove:hover { background: var(--soft-bg, #2e2c23); }
+html[data-theme="dark"] .data-table th { color: #a09d91; background: #28261e; }
+html[data-theme="dark"] .data-table td { border-top: 1px solid #2d2b22; }
+html[data-theme="dark"] .status-bar { background: #25231c; color: #9f9c90; }
+html[data-theme="dark"] .inline-notice.neutral { color: #afaea8; border-color: #413e36; background: #2b2920; }
+html[data-theme="dark"] .empty-panel { background: #1b1b1b; }
+html[data-theme="dark"] .note { color: #a4a297; }
+html[data-theme="dark"] .detail-card { background: #1b1b1b; }
+html[data-theme="dark"] .metric { background: #23211b; }
+html[data-theme="dark"] .metric strong { color: #d5d3d2; }
+html[data-theme="dark"] .cmc-schematic svg { color: #bbb9b3; background: #23211b; }
+html[data-theme="dark"] .config-card { border: 1px solid #3b3932; background: #1b1b1b; }
+html[data-theme="dark"] .pair-card { background: color-mix(in srgb, var(--pc) 6%, #1b1b1b); }
+html[data-theme="dark"] .pair-name { background: #1b1b1b; }
+html[data-theme="dark"] .pair-badge { background: color-mix(in srgb, var(--pc) 14%, #1b1b1b); color: color-mix(in srgb, var(--pc) 75%, #d6d5d0); border: 1px solid color-mix(in srgb, var(--pc) 45%, #1b1b1b); }
+html[data-theme="dark"] .net-group.is-pair .net-chip { border-color: color-mix(in srgb, var(--pc) 55%, #1b1b1b); background: color-mix(in srgb, var(--pc) 12%, #1b1b1b); color: color-mix(in srgb, var(--pc) 70%, #d6d5d0); }
+html[data-theme="dark"] .pair-target[aria-pressed="true"] { color: #1b1b1b; }
+html[data-theme="dark"] .assign-port { background: #24241b; }
+html[data-theme="dark"] .assign-port:hover { border-color: #7d7a6c; background: #2a271f; }
+html[data-theme="dark"] .assign-port.is-taken { background: #2e2c23; border-color: #403e36; border-left-color: color-mix(in srgb, var(--pc) 55%, #403e36); color: #888576; }
+html[data-theme="dark"] .assign-port.is-taken strong { color: #888576; }
+html[data-theme="dark"] .assign-port.is-taken .assign-role { color: color-mix(in srgb, var(--pc) 60%, #888576); }
+html[data-theme="dark"] .assign-port.is-taken:hover { background: #353328; }
+html[data-theme="dark"] .assign-port[aria-pressed="true"] { background: color-mix(in srgb, var(--pc, var(--accent)) 12%, #1b1b1b); }
+html[data-theme="dark"] .assign-selection { color: #1b1b1b; }
+html[data-theme="dark"] .ports-table th { color: #a19e93; background: #27251d; }
+html[data-theme="dark"] .ports-table td { border-top: 1px solid #2f2d23; }
+html[data-theme="dark"] .dialog { border: 1px solid #514f44; }
+html[data-theme="dark"] .dialog::backdrop { background: #c6ced477; }
+html[data-theme="dark"] .dialog-head { background: #1b1b1b; }
+html[data-theme="dark"] .dialog-foot { background: #24241b; }
+html[data-theme="dark"] .matrix-table th { background: #2b2921; color: #a7a499; }
+html[data-theme="dark"] .matrix-table td { border: solid #2c2a21; }
+html[data-theme="dark"] .matrix-cell { --c: #999689; --soft: #26241c; color: #aaa9a2; }
+html[data-theme="dark"] .matrix-cell.fam-cc { color: #90e9c3; }
+html[data-theme="dark"] .matrix-cell[aria-pressed="true"] { color: #1b1b1b; }
+html[data-theme="dark"] .matrix-table td.block-start, html[data-theme="dark"] .matrix-table th.block-start { border-left: 2px solid #636055; }
+html[data-theme="dark"] .matrix-table tr.block-start > * { border-top: 2px solid #636055; }
+html[data-theme="dark"] .methods p { color: #a9a79f; }
+html[data-theme="dark"] .methods code { color: #c2c1bb; }
+html[data-theme="dark"] .export-item { background: #22221a; }
+html[data-theme="dark"] .toast { background: #a8cee2; color: #1b1b1b; }
+html[data-theme="dark"] .bar-button { color: #bdbdb9; }
+html[data-theme="dark"] .bar-button:hover { background: #312f25; }
+html[data-theme="dark"] .export-button:hover { background: #bdbdb9; color: #1b1b1b; }
+html[data-theme="dark"] .tab { color: #a3a29e; }
+html[data-theme="dark"] .tab:hover { background: #312f25; }
+html[data-theme="dark"] .segment { background: #312f25; }
+html[data-theme="dark"] .segment button { color: #a3a29e; }
+html[data-theme="dark"] .segment button:hover:not(:disabled):not([aria-pressed="true"]) { background: #38362d; }
+html[data-theme="dark"] .button:hover:not(:disabled), html[data-theme="dark"] .icon-button:hover:not(:disabled) { background: #2a2921; border-color: #5b574a; }
+html[data-theme="dark"] .dialog::backdrop { background: #d5d3d266; }
+@media (max-width: 850px) {
+html[data-theme="dark"] .file-chip { background: #1b1b1b; }
+}
+html[data-theme="dark"] .session-files h4 { color: #a4a297; }
+html[data-theme="dark"] .session-open { background: #1b1b1b; }
+html[data-theme="dark"] .session-compare { background: #1b1b1b; }
+html[data-theme="dark"] .session-compare[aria-pressed="true"] { color: #1b1b1b; }
+html[data-theme="dark"] .compare-chip .button[aria-pressed="true"] { color: #1b1b1b; }
+html[data-theme="dark"] .template-list summary { color: #adaba3; }
+html[data-theme="dark"] .profile-badge { background: #232c23; }
+html[data-theme="dark"][data-theme="dark"] .export-button, html[data-theme="dark"][data-theme="dark"] .export-button * { color: #d8d6d3 !important; }
+html[data-theme="dark"][data-theme="dark"] .theme-button { color: #36342c !important; }
+html[data-theme="dark"][data-theme="dark"] .marker-name { color: #1b1b1b !important; }
+html[data-theme="dark"] .shelf-confirm { color: #1b1b1b; }
+/* dark:end */
 </style>
 <script>
 'use strict';
@@ -720,6 +932,26 @@ window.I18N = (() => {
   let lang = 'de';
   try { lang = localStorage.getItem('spa-lang') || ((navigator.language || 'de').toLowerCase().startsWith('de') ? 'de' : 'en'); } catch { /* default */ }
   const EXACT = new Map(Object.entries({
+    'Hell / Dunkel': 'Light / dark', 'Darstellung hell oder dunkel': 'Light or dark appearance', 'Für Modell speichern': 'Save for model',
+    'Startfrequenz': 'Start frequency', 'Stoppfrequenz': 'Stop frequency', 'Rechnen': 'Compute', 'Gib einen positiven, aufsteigenden Frequenzbereich ein.': 'Enter a positive, ascending frequency range.',
+    'Als SPICE-Modell öffnen': 'Open as SPICE model', 'SPICE .lib speichern': 'Save SPICE .lib', 'Bibliothek': 'Library', 'Ablegen': 'Store', 'Ordner': 'Folder', 'Umfang': 'Scope',
+    'Nur die geöffnete Datei': 'Only the open file', 'Alle Dateien nach Bauteiltyp einsortieren': 'Sort all files by component type', 'z. B. LAN-Übertrager': 'e.g. LAN transformer',
+    'Geöffnete Dateien dauerhaft in der App ablegen': 'Store the open files permanently in the app', 'Ordner öffnen und durchblättern': 'Open the folder and step through it',
+    'Wirklich löschen': 'Really delete', 'Ordner löschen': 'Delete folder', 'Dateien und Bibliothek': 'Files and library',
+    'Noch leer. „Ablegen“ speichert geöffnete Dateien dauerhaft in der App, nach Bauteiltyp sortiert und offline verfügbar.': 'Still empty. "Store" keeps the open files permanently in the app, sorted by component type and available offline.',
+    'Ansicht: normal · reduziert · Vollbild (Esc beendet)': 'View: normal · reduced · full screen (Esc exits)', 'Ansicht umschalten: normal, reduziert, Vollbild': 'Switch view: normal, reduced, full screen',
+    'Interaktives Diagramm. Pfeiltasten blättern durch die Dateien, Umschalt und Pfeiltasten verschieben den Marker.': 'Interactive plot. Arrow keys step through the files, Shift and arrow keys move the marker.',
+    'Kein Marker gesetzt. Tippe ins Diagramm oder auf „Marker“.': 'No marker set. Tap the plot or "Marker".',
+    'Parallelkapazität C_p(f)': 'Parallel capacitance C_p(f)', '|Z| · R · Modell': '|Z| · R · model', 'Impedanz · Modell bis 2. Resonanz': 'Impedance · model up to the 2nd resonance',
+    'Modell |Z|': 'Model |Z|', 'Modell CM': 'Model CM', 'Modell DM': 'Model DM', 'CMC · Ersatzschaltbild bis zur 2. Resonanz': 'CMC · equivalent circuit up to the 2nd resonance',
+    'Z CM und Z DM nach CISPR 17 · Modell gepunktet': 'Z CM and Z DM per CISPR 17 · model dotted', 'Gleichtakt · Z CM': 'Common mode · Z CM', 'Gegentakt · Z DM': 'Differential mode · Z DM',
+    'Ersatzschaltbild bis zur 2. Resonanz': 'Equivalent circuit up to the 2nd resonance', 'R₀ · Serienwiderstand': 'R₀ · series resistance', 'L₁ · Hauptinduktivität': 'L₁ · main inductance',
+    'C₁ · Parallelkapazität': 'C₁ · parallel capacitance', 'R₁ · Dämpfung der 1. Resonanz': 'R₁ · damping of the 1st resonance', 'f₁ · 1. Resonanz (parallel)': 'f₁ · 1st resonance (parallel)',
+    'L₂ · zweiter Kreis': 'L₂ · second tank', 'L₂ · Serieninduktivität': 'L₂ · series inductance', 'C₂ · zweiter Kreis': 'C₂ · second tank', 'R₂ · Dämpfung der 2. Resonanz': 'R₂ · damping of the 2nd resonance',
+    'f₂ · 2. Resonanz (Serie)': 'f₂ · 2nd resonance (series)', 'f₂ · 2. Resonanz (parallel)': 'f₂ · 2nd resonance (parallel)',
+    'Im Messbereich liegt keine Resonanz. Das Modell besteht nur aus R₀ und L₁.': 'There is no resonance in the measured range. The model consists of R₀ and L₁ only.',
+    'Für das Modell fehlt ein induktiver Bereich bei tiefen Frequenzen.': 'The model needs an inductive range at low frequencies.',
+    'Jede Mode wird als Reihenschaltung aus R₀ und bis zu zwei Parallelschwingkreisen beschrieben. Startwerte: L₁ aus dem LC-Fit, C₁ über die Thomson-Gleichung aus der 1. Resonanz, L₂ aus der Serienresonanz. Danach passt ein Simplex-Verfahren Betrag und Phase an. ': 'Each mode is described as R₀ in series with up to two parallel resonant tanks. Start values: L₁ from the LC fit, C₁ from the first resonance via Thomson, L₂ from the series resonance. A simplex search then fits magnitude and phase. ',
     'Dateien öffnen': 'Open files', 'Touchstone · ZIP · auch mehrere': 'Touchstone · ZIP · several at once', 'Ordner öffnen': 'Open folder',
     'Dateien': 'Files', 'Einzelne Dateien': 'Single files', 'Filtern …': 'Filter …', 'Dateien filtern': 'Filter files', 'Kein Treffer.': 'No match.',
     'Im Diagramm vergleichen': 'Compare in the plot', 'Vorherige Datei (Bild↑)': 'Previous file (PgUp)', 'Nächste Datei (Bild↓)': 'Next file (PgDn)',
@@ -880,13 +1112,16 @@ window.I18N = (() => {
     'S-Parameter Analyzer · von': 'S-Parameter Analyzer · by', 'S-Analyzer': 'S-Analyzer', 'S-Parameter Analyzer': 'S-Parameter Analyzer'
   }));
   const PATTERNS = [
+    [/^Konfiguration für (.+) gespeichert\. Vorlage „(.+)“ gelernt\.$/, 'Configuration for $1 saved. Template "$2" learned.'], [/^Konfiguration für (.+) gespeichert\.$/, 'Configuration for $1 saved.'],
+    [/^Alle (\d+) Dateien in diesen Ordner$/, 'All $1 files into this folder'], [/^Ordner (.+) wirklich löschen$/, 'Really delete folder $1'], [/^Ordner (.+) löschen$/, 'Delete folder $1'],
+    [/^(\d+) Dateien? in der Bibliothek abgelegt\.(?: (\d+) fehlgeschlagen\.)?$/, '$1 file(s) stored in the library.'],
     [/^Vorlage „(.+)“ erkannt · (\d+) % · Ports automatisch zugeordnet$/, 'Template "$1" recognized · $2 % · ports assigned automatically'],
     [/^Vorlage „(.+)“ angewendet · (\d+) %$/, 'Template "$1" applied · $2 %'],
     [/^Vorlage „(.+)“ gelernt\. Ähnliche (\d+)-Port-Dateien werden künftig automatisch zugeordnet\.$/, 'Template "$1" learned. Similar $2-port files will be assigned automatically from now on.'],
     [/^Vorlage (.+) löschen$/, 'Delete template $1'], [/^Vorlage (.+)$/, 'Template $1'],
     [/^Profil in (.+) gespeichert\. Vorlage „(.+)“ gelernt\.$/, 'Profile saved to $1. Template "$2" learned.'], [/^Profil in (.+) gespeichert\.$/, 'Profile saved to $1.'],
     [/^Kopie mit Profil heruntergeladen: (.+) Vorlage „(.+)“ gelernt\.$/, 'Copy with profile downloaded: $1 Template "$2" learned.'], [/^Kopie mit Profil heruntergeladen: (.+)$/, 'Copy with profile downloaded: $1'],
-    [/^(\d+) Dateien geladen · Bild↑\/Bild↓ blättert$/, '$1 files loaded · PgUp/PgDn steps through'], [/^(\d+) Dateien im Ordner · Bild↑\/Bild↓ blättert$/, '$1 files in the folder · PgUp/PgDn steps through'],
+    [/^(\d+) Dateien geladen · ← \/ → blättert$/, '$1 files loaded · ← / → steps through'], [/^(\d+) Dateien im Ordner · ← \/ → blättert$/, '$1 files in the folder · ← / → steps through'],
     [/^Vergleich · (\d+) Dateien$/, 'Comparison · $1 files'], [/^(.+) vergleichen$/, 'Compare $1'],
     [/^Es lassen sich höchstens (\d+) Dateien vergleichen\.$/, 'At most $1 files can be compared.'], [/^\+(\d+) weitere · Filter nutzen$/, '+$1 more · use the filter'],
     [/^Paar (\d+) bearbeiten$/, 'Edit pair $1'], [/^Polarität von Paar (\d+) tauschen$/, 'Swap polarity of pair $1'], [/^Paar (\d+) auflösen$/, 'Remove pair $1'],
@@ -911,6 +1146,12 @@ window.I18N = (() => {
   ];
   const PHRASES = Object.entries({
     'Zeile = Antwort · Spalte = Anregung': 'Row = response · column = stimulus',
+    ' in der Bibliothek abgelegt.': ' stored in the library.', ' fehlgeschlagen.': ' failed.',
+    ' · Fit bis ': ' · fit up to ', ' · Abweichung ': ' · deviation ', 'Verbinden mit ': 'Tie to ', 'Kurzgeschlossen mit ': 'Shorted with ', ' · gemeinsamer Knoten': ' · common node',
+    'Keine .subckt-Definition gefunden.': 'No .subckt definition found.', 'Keine eigenständigen Subcircuits gefunden.': 'No stand-alone subcircuits found.',
+    'Die Bibliothek überschreitet 20 MiB.': 'The library exceeds 20 MiB.', 'Das Netzwerk ist singulär und lässt sich nicht lösen.': 'The network is singular and cannot be solved.',
+    'Nicht unterstützte Elemente in ': 'Unsupported elements in ', ' (nur R, L, C, K, X).': ' (only R, L, C, K, X).', 'Ignorierte SPICE-Anweisungen: ': 'Ignored SPICE statements: ',
+    'Verbundene Ports müssen auf einen vorhandenen Port zeigen und dürfen keine Schleife bilden.': 'Tied ports must point to an existing port and must not form a loop.',
     'Noch kein Profil': 'No profile yet', 'In der Datei gespeichert': 'Stored in the file', 'Auf diesem Gerät gemerkt': 'Remembered on this device',
     'Von der vorherigen Datei übernommen': 'Carried over from the previous file', 'Bekanntes Bauteil': 'Known component', 'Vorlage erkannt': 'Template recognized',
     ' % Übereinstimmung': ' % match', ' · geändert': ' · modified', ' Beispiele': ' examples', ' Beispiel': ' example', ' · Differenz zu ⟨A⟩': ' · difference to ⟨A⟩',
@@ -1068,6 +1309,7 @@ window.I18N = (() => {
   <button type="button" class="file-chip" id="file-chip" data-action="toggle-sidebar" aria-label="Datei und Portschema"><svg class="icon" aria-hidden="true"><use href="#i-file"/></svg><span id="file-chip-name">—</span><svg class="icon chip-caret" aria-hidden="true"><use href="#i-down"/></svg></button>
   <div class="file-nav" id="file-nav" hidden><button type="button" class="icon-button" data-action="session-step" data-value="-1" data-flip title="Vorherige Datei (Bild↑)" aria-label="Vorherige Datei"><svg class="icon" aria-hidden="true"><use href="#i-chevron"/></svg></button><span id="file-nav-count" class="mono"></span><button type="button" class="icon-button" data-action="session-step" data-value="1" title="Nächste Datei (Bild↓)" aria-label="Nächste Datei"><svg class="icon" aria-hidden="true"><use href="#i-chevron"/></svg></button></div>
   <div class="bar-actions">
+    <button class="bar-button theme-button" type="button" id="theme-button" data-action="theme" title="Hell / Dunkel" aria-label="Darstellung hell oder dunkel"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18z" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="9" fill="none"/></svg></button>
     <button class="bar-button lang-button" type="button" id="lang-button" data-action="lang" data-no-i18n title="Sprache: Deutsch / English" aria-label="Sprache wechseln"><span class="lang-code">EN</span></button>
     <button class="bar-button" id="pwa-install" type="button" title="App installieren" aria-label="App installieren" hidden><svg class="icon" aria-hidden="true"><use href="#i-install"/></svg><span>Installieren</span></button>
     <span class="offline-status" title="Die Messdaten bleiben im Browser"><span></span><strong id="pwa-status">Offline-Cache wird vorbereitet</strong></span>
@@ -1091,7 +1333,7 @@ window.I18N = (() => {
         <input type="file" id="folder-input" webkitdirectory multiple hidden>
         <button id="dropzone" class="dropzone" type="button">
           <span class="drop-icon"><svg class="icon" aria-hidden="true"><use href="#i-upload"/></svg></span>
-          <span><strong>Dateien öffnen</strong><small>Touchstone · ZIP · auch mehrere</small></span>
+          <span><strong>Dateien öffnen</strong><small>Touchstone · SPICE .lib · ZIP</small></span>
         </button>
         <div id="dataset-summary" class="dataset-summary"></div>
         <div class="source-actions">
@@ -1100,6 +1342,7 @@ window.I18N = (() => {
           <button type="button" class="quiet-button" data-action="demo" data-value="8">8-Port-Beispiel</button>
         </div>
         <div id="session-files" class="session-files" hidden></div>
+        <div id="shelf" class="session-files shelf" hidden></div>
         <div id="recent-files" class="recent-files" hidden></div>
         <p id="import-notice" class="inline-notice" role="alert" hidden></p>
       </div>
@@ -1131,6 +1374,7 @@ window.I18N = (() => {
 
     <section id="panel" class="main-body" role="tabpanel" aria-labelledby="tab-s">
       <div class="page-head">
+        <button type="button" class="icon-button drawer-button" data-action="toggle-sidebar" title="Dateien und Bibliothek" aria-label="Dateien und Bibliothek"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5h4.2l2 2.2h8.8A1.5 1.5 0 0 1 21 8.7v8.8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.500z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
         <div class="page-titles">
           <h1 id="page-title">S-Parameter</h1>
           <p id="page-context"></p>
@@ -1160,12 +1404,13 @@ window.I18N = (() => {
                 <button type="button" data-action="y-scale" data-value="linear" aria-pressed="true">Lin</button>
               </div>
               <button class="icon-button" id="axes-button" type="button" data-action="axes" title="Achsen einstellen" aria-label="Achsen einstellen"><svg class="icon" aria-hidden="true"><use href="#i-sliders"/></svg></button>
+              <button class="icon-button" type="button" data-action="view-mode" aria-pressed="false" title="Ansicht: normal · reduziert · Vollbild (Esc beendet)" aria-label="Ansicht umschalten: normal, reduziert, Vollbild"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
               <button class="icon-button" type="button" data-action="reset-plot" title="Ansicht zurücksetzen" aria-label="Ansicht zurücksetzen"><svg class="icon" aria-hidden="true"><use href="#i-reset"/></svg></button>
             </div>
           </div>
           <div class="plot-layout">
             <div class="plot-surface">
-              <canvas id="plot" tabindex="0" aria-label="Interaktives Diagramm. Mit den Pfeiltasten den Marker verschieben.">
+              <canvas id="plot" tabindex="0" aria-label="Interaktives Diagramm. Pfeiltasten blättern durch die Dateien, Umschalt und Pfeiltasten verschieben den Marker.">
                 Die Diagrammwerte am Marker stehen in der Tabelle.
               </canvas>
               <span id="plot-hint" class="plot-hint"></span>
@@ -1888,6 +2133,7 @@ const RF = (() => {
   }
 
   function loadGamma(load, ref, f) {
+    if (load.type === 'join') return [1, 0];
     if (load.type === 'open') return [1, 0];
     if (load.type === 'short') return [-1, 0];
     if (load.type === 'match') return [0, 0];
@@ -1937,7 +2183,188 @@ const RF = (() => {
     return out;
   }
 
+  // ---- Ports tied together form one node. Solved with sources behind the reference impedance, so ideal throughs stay well-posed. ----
+  function joinInfo(loads, n) {
+    if (!loads.some(load => load.type === 'join')) return null;
+    const rep = indices(n).map(i => {
+      let at = i;
+      for (let hop = 0; loads[at].type === 'join'; hop++) {
+        at = loads[at].to;
+        if (!Number.isInteger(at) || at < 0 || at >= n || hop > n) throw new Error('Verbundene Ports müssen auf einen vorhandenen Port zeigen und dürfen keine Schleife bilden.');
+      }
+      return at;
+    });
+    const nodes = [...new Set(rep)].sort((a, b) => a - b);
+    return { rep, nodes, node: rep.map(r => nodes.indexOf(r)) };
+  }
+
+  function joinPorts(s, n, join, refs, retry = true) {
+    const m = join.nodes.length, size = n + m;
+    const left = matrix(size), right = new Float64Array(2 * size * m);
+    for (let i = 0; i < n; i++) {
+      for (let j = 0; j < n; j++) {
+        const sij = get(s, n, i, j), d = Number(i === j), root = Math.sqrt(refs[j]);
+        put(left, size, i, j, [(d + sij[0]) * root, sij[1] * root]);
+        const at = n + join.node[j], old = get(left, size, i, at);
+        put(left, size, i, at, [old[0] - (d - sij[0]) / root, old[1] + sij[1] / root]);
+      }
+    }
+    for (let g = 0; g < m; g++) {
+      const z = refs[join.nodes[g]];
+      put(left, size, n + g, n + g, [1, 0]);
+      for (let j = 0; j < n; j++) if (join.node[j] === g) put(left, size, n + g, j, [z, 0]);
+      put(right, m, n + g, g, [2 * Math.sqrt(z), 0]);
+    }
+    const x = solve(left, right, size, m);
+    // A lossless loop (ideal through tied to itself) leaves the circulating current undetermined: retry with a trace of loss.
+    if (!x) return retry ? joinPorts(s.map(value => value * (1 - 1e-9)), n, join, refs, false) : null;
+    const out = matrix(n);
+    // Absorbed ports stay as isolated, matched placeholders and drop out in the termination step.
+    for (let g = 0; g < m; g++) {
+      const root = Math.sqrt(refs[join.nodes[g]]);
+      for (let k = 0; k < m; k++) {
+        const v = get(x, m, n + g, k);
+        put(out, n, join.nodes[g], join.nodes[k], [v[0] / root - Number(g === k), v[1] / root]);
+      }
+    }
+    return out;
+  }
+
+  // ---- Equivalent circuit up to the second resonance: Z = R0 + (L1 ∥ C1 ∥ R1) + (L2 ∥ C2 ∥ R2). ----
+  function tankImpedance(model, f) {
+    const w = TAU * f;
+    let re = model.r0, im = 0;
+    for (const tank of model.tanks) {
+      const g = Number.isFinite(tank.r) && tank.r > 0 ? 1 / tank.r : 0, b = w * (tank.c || 0) - 1 / (w * tank.l);
+      const d = g * g + b * b;
+      re += g / d; im -= b / d;
+    }
+    return [re, im];
+  }
+
+  function nelderMead(cost, start, steps) {
+    const n = start.length, point = x => ({ x, f: cost(x) });
+    let simplex = [start, ...start.map((_, i) => start.map((v, j) => v + (i === j ? 0.2 : 0)))].map(point);
+    for (let it = 0; it < steps; it++) {
+      simplex.sort((a, b) => a.f - b.f);
+      const worst = simplex[n];
+      const centroid = start.map((_, j) => { let sum = 0; for (let i = 0; i < n; i++) sum += simplex[i].x[j]; return sum / n; });
+      const along = t => centroid.map((c, j) => c + t * (worst.x[j] - c));
+      const reflected = point(along(-1));
+      if (reflected.f < simplex[0].f) {
+        const expanded = point(along(-2));
+        simplex[n] = expanded.f < reflected.f ? expanded : reflected;
+      } else if (reflected.f < simplex[n - 1].f) simplex[n] = reflected;
+      else {
+        const contracted = point(along(reflected.f < worst.f ? -0.5 : 0.5));
+        if (contracted.f < Math.min(worst.f, reflected.f)) simplex[n] = contracted;
+        else simplex = simplex.map((p, i) => i ? point(p.x.map((v, j) => simplex[0].x[j] + 0.5 * (v - simplex[0].x[j]))) : p);
+      }
+    }
+    simplex.sort((a, b) => a.f - b.f);
+    return simplex[0];
+  }
+
+  function fitResonant(freq, z) {
+    const idx = [];
+    for (let i = 0; i < freq.length; i++) if (z[i] && freq[i] > 0 && Number.isFinite(z[i][0]) && Number.isFinite(z[i][1]) && (z[i][0] || z[i][1])) idx.push(i);
+    if (idx.length < 12) return null;
+    const lm = idx.map(i => Math.log(Math.hypot(z[i][0], z[i][1])));
+    const extrema = sign => {
+      const out = [];
+      for (let k = 3; k < idx.length - 3; k++) {
+        let top = true;
+        for (let d = 1; d <= 3 && top; d++) if (sign * lm[k] < sign * lm[k - d] || sign * lm[k] <= sign * lm[k + d]) top = false;
+        if (!top) continue;
+        let left = sign * lm[k], right = left;
+        for (let j = 0; j < idx.length; j++) {
+          const ratio = freq[idx[j]] / freq[idx[k]];
+          if (ratio > 0.5 && ratio < 1) left = Math.min(left, sign * lm[j]);
+          if (ratio > 1 && ratio < 2) right = Math.min(right, sign * lm[j]);
+        }
+        if (sign * lm[k] - Math.max(left, right) > 0.05) out.push(k);
+      }
+      return out;
+    };
+    const peaks = extrema(1), dips = extrema(-1);
+    const re = Float64Array.from(freq, (_, i) => z[i]?.[0] ?? NaN), im = Float64Array.from(freq, (_, i) => z[i]?.[1] ?? NaN);
+    const low = lowMedian(freq, re);
+    const r0 = Number.isFinite(low) && low > 1e-4 ? low : 1e-3;
+    const p1 = peaks[0], f1 = p1 === undefined ? NaN : freq[idx[p1]];
+    let l1 = lcFit(freq, im, Number.isFinite(f1) ? f1 / 2 : freq.at(-1)).l;
+    if (!(l1 > 0)) l1 = median(idx.slice(0, Math.max(6, idx.length >> 3)).map(i => im[i] / (TAU * freq[i])).filter(v => v > 0));
+    if (!(l1 > 0)) return null;
+    const tanks = [];
+    let second = null, f2 = NaN, fMax = freq[idx.at(-1)];
+    if (p1 === undefined) tanks.push({ l: l1, c: 0, r: Infinity });
+    else {
+      const w1 = TAU * f1;
+      tanks.push({ l: l1, c: 1 / (w1 * w1 * l1), r: Math.max(re[idx[p1]], 1) });
+      const p2 = peaks[1], dip = dips.find(k => k > p1 && (p2 === undefined || k < p2));
+      const x1 = k => tankImpedance({ r0: 0, tanks: [tanks[0]] }, freq[idx[k]])[1];
+      if (p2 !== undefined) {
+        const w2 = TAU * freq[idx[p2]];
+        let l2 = l1 / 50;
+        if (dip !== undefined) {
+          const ws = TAU * freq[idx[dip]], guess = -x1(dip) * (1 - (ws / w2) ** 2) / ws;
+          if (guess > 0) l2 = guess;
+        }
+        tanks.push({ l: l2, c: 1 / (w2 * w2 * l2), r: Math.max(re[idx[p2]], 1) });
+        second = 'parallel'; f2 = freq[idx[p2]]; fMax = Math.min(fMax, 1.3 * f2);
+      } else if (dip !== undefined && -x1(dip) > 0) {
+        tanks.push({ l: -x1(dip) / (TAU * freq[idx[dip]]), c: 0, r: Infinity });
+        second = 'series'; f2 = freq[idx[dip]]; fMax = Math.min(fMax, 2.5 * f2);
+      } else fMax = Math.min(fMax, 5 * f1);
+    }
+    const used = idx.filter(i => freq[i] <= fMax), stride = Math.max(1, Math.floor(used.length / 160));
+    const sample = used.filter((_, k) => k % stride === 0);
+    const slots = [];
+    tanks.forEach((tank, t) => { for (const key of ['l', 'c', 'r']) if (Number.isFinite(tank[key]) && tank[key] > 0) slots.push([t, key]); });
+    const start = [Math.log(r0), ...slots.map(([t, key]) => Math.log(tanks[t][key]))];
+    // Parameters stay within a factor of about 4 of the analytic start values, so a resonance cannot drift out of the band.
+    const bounded = (x, s) => start[s] + Math.max(-1.4, Math.min(1.4, x[s] - start[s]));
+    const build = x => ({ r0: Math.exp(start[0] + Math.max(-4, Math.min(4, x[0] - start[0]))), tanks: tanks.map((tank, t) => { const next = { ...tank }; slots.forEach(([tt, key], s) => { if (tt === t) next[key] = Math.exp(bounded(x, s + 1)); }); return next; }) });
+    const cost = x => {
+      const model = build(x);
+      let sum = 0;
+      for (const i of sample) {
+        const zm = tankImpedance(model, freq[i]);
+        const dm = Math.log(Math.hypot(zm[0], zm[1]) / Math.hypot(re[i], im[i]));
+        let dp = Math.atan2(zm[1], zm[0]) - Math.atan2(im[i], re[i]);
+        dp -= TAU * Math.round(dp / TAU);
+        sum += dm * dm + 0.5 * dp * dp;
+      }
+      return Number.isFinite(sum) ? sum / sample.length : Infinity;
+    };
+    const best = sample.length > slots.length + 2 ? nelderMead(cost, start, 220 * start.length) : { x: start };
+    const model = build(Number.isFinite(best.f) && best.f <= cost(start) ? best.x : start);
+    let sq = 0;
+    for (const i of sample) {
+      const zm = tankImpedance(model, freq[i]);
+      sq += (20 * Math.log10(Math.hypot(zm[0], zm[1]) / Math.hypot(re[i], im[i]))) ** 2;
+    }
+    const resonance = tank => tank.c > 0 ? 1 / (TAU * Math.sqrt(tank.l * tank.c)) : NaN;
+    return {
+      ...model, second, fMax, err: Math.sqrt(sq / sample.length), points: sample.length,
+      f1: p1 === undefined ? NaN : resonance(model.tanks[0]), f2: second === 'parallel' ? resonance(model.tanks[1]) : f2
+    };
+  }
+
+  function resonantNetlist(model, name) {
+    const v = value => value.toExponential(5);
+    const lines = ['* S-Parameter Analyzer - equivalent circuit up to the second resonance', '.subckt ' + name + ' 1 2', 'R0 1 n1 ' + v(model.r0)];
+    model.tanks.forEach((tank, i) => {
+      const a = 'n' + (i + 1), b = i === model.tanks.length - 1 ? '2' : 'n' + (i + 2), k = i + 1;
+      lines.push('L' + k + ' ' + a + ' ' + b + ' ' + v(tank.l));
+      if (tank.c > 0) lines.push('C' + k + ' ' + a + ' ' + b + ' ' + v(tank.c));
+      if (Number.isFinite(tank.r)) lines.push('R' + k + ' ' + a + ' ' + b + ' ' + v(tank.r));
+    });
+    lines.push('.ends ' + name);
+    return lines.join('\n') + '\n';
+  }
+
   function prepareNetwork(dataset, config) {
+    const join = joinInfo(config.loads, dataset.n);
     const active = indices(dataset.n).filter(i => config.loads[i].type === 'active');
     const reducedLoads = indices(dataset.n).filter(i => !['active', 'match'].includes(config.loads[i].type));
     const nativeRefs = active.map(i => dataset.refs[i]);
@@ -1977,14 +2404,16 @@ const RF = (() => {
     });
     const mmNatRefs = mmModes.map(mode => mode.natRef), mmRefs = mmModes.map(mode => mode.ref);
     const mmRenorm = mmRefs.some((ref, i) => ref !== mmNatRefs[i]);
-    return { active, reducedLoads, nativeRefs, seRefs, seModes, mmModes, rows, notices, mmNatRefs, mmRefs, mmRenorm, hasMixed: !!config.pairs.length };
+    return { active, reducedLoads, nativeRefs, seRefs, seModes, mmModes, rows, notices, mmNatRefs, mmRefs, mmRenorm, join, hasMixed: !!config.pairs.length };
   }
 
   function processPoint(dataset, config, layout, index) {
     const { active, reducedLoads, nativeRefs, seRefs, rows, hasMixed } = layout;
     const gamma = reducedLoads.map(i => loadGamma(config.loads[i], dataset.refs[i], dataset.freq[index]));
     if (gamma.some(v => !v)) return [null, null];
-    const raw = terminate(dataset.samples[index], dataset.n, active, reducedLoads, gamma);
+    const source = layout.join ? joinPorts(dataset.samples[index], dataset.n, layout.join, dataset.refs) : dataset.samples[index];
+    if (!source) return [null, null];
+    const raw = terminate(source, dataset.n, active, reducedLoads, gamma);
     const se = raw && changeRef(raw, nativeRefs, seRefs);
     let mm = hasMixed && se ? project(se, active.length, rows) : se;
     if (hasMixed && mm && layout.mmRenorm) mm = changeRef(mm, layout.mmNatRefs, layout.mmRefs);
@@ -2277,12 +2706,16 @@ const RF = (() => {
     const leak = plateau(freq, lsc, freq.find(f => f > 0) ?? 0, Number.isFinite(fres) ? fres / 2 : freq.at(-1), 0.15);
     const cap = plateau(freq, cww, 0, Number.isFinite(fres) ? fres : freq.at(-1), 0.2);
     const fit = lcFit(freq, x11, Number.isFinite(fres) ? fres / 2 : freq.at(-1));
+    // Thomson: the main inductance and the open-circuit resonance give the winding capacitance; C(f) checks it over frequency.
+    const lRef = fit.l > 0 ? fit.l : ocl;
+    const cres = Number.isFinite(fres) && lRef > 0 ? 1 / ((TAU * fres) ** 2 * lRef) : NaN;
+    const cparCurve = Float64Array.from(freq, (f, i) => f > 0 && lRef > 0 && x11[i] ? 1 / ((TAU * f) ** 2 * lRef) - 1 / (TAU * f * x11[i]) : NaN);
     return {
-      fEval: freq[iEval], ocl, ocl0: fit.l, l22: ls, m: mm, k, n: Math.sqrt(ls / ocl),
+      cres, fEval: freq[iEval], ocl, ocl0: fit.l, l22: ls, m: mm, k, n: Math.sqrt(ls / ocl),
       leak: leak.value, leakConf: leak.conf, leakBand: leak.band,
       rdc: lowMedian(freq, rsc), cww: cap.value, cwwConf: cap.conf, cwwBand: cap.band,
       fres, cpar: fit.c > 0 ? fit.c : NaN,
-      series: { l11, l22, m, lsc, rsc, cww, z11 }
+      series: { l11, l22, m, lsc, rsc, cww, z11, cpar: cparCurve }
     };
   }
 
@@ -2295,7 +2728,7 @@ const RF = (() => {
     if (kind === 'series') {
       const mag = Float64Array.from(freq, (_, i) => Math.hypot(re[i], im[i]));
       const fsrf = peakFreq(freq, mag);
-      const lCurve = Float64Array.from(freq, (f, i) => f > 0 && im[i] > 0 ? im[i] / w(f) : NaN);
+      const lCurve = Float64Array.from(freq, (f, i) => f > 0 && Number.isFinite(im[i]) ? im[i] / w(f) : NaN);
       const fit = lcFit(freq, im, Number.isFinite(fsrf) ? fsrf / 2 : freq.at(-1));
       const flat = plateau(freq, lCurve, first, Number.isFinite(fsrf) ? fsrf / 3 : freq.at(-1), 0.12);
       const l = Number.isFinite(fit.l) ? { value: fit.l, conf: flat.conf, band: flat.band } : flat;
@@ -2307,8 +2740,8 @@ const RF = (() => {
       }
       return {
         kind, l: l.value, lConf: l.conf, lBand: l.band, rdc: lowMedian(freq, re), fsrf,
-        cp: Number.isFinite(fsrf) && l.value > 0 ? 1 / ((TAU * fsrf) ** 2 * l.value) : NaN, rp: rPeak, lFlat: flat.value,
-        series: { l: lCurve, r: re }
+        cp: Number.isFinite(fsrf) && l.value > 0 ? 1 / ((TAU * fsrf) ** 2 * l.value) : NaN, rp: rPeak, lFlat: flat.value, model: fitResonant(freq, z),
+        series: { l: lCurve, r: re, c: Float64Array.from(freq, (f, i) => f > 0 && l.value > 0 && im[i] ? 1 / (w(f) ** 2 * l.value) - 1 / (w(f) * im[i]) : NaN) }
       };
     }
     const fsrf = crossing(freq, im, 1);
@@ -2354,6 +2787,7 @@ const RF = (() => {
     } else if (key === 'load') {
       const kv = keyValues(tokens), load = { type: (tokens[0] || '').toLowerCase() };
       for (const k of ['r', 'x', 'l', 'c']) if (k in kv) load[k] = parseNum(kv[k]);
+      if ('to' in kv) load.to = Number(kv.to) - 1;
       spa.loads.push({ port: Number(arg) - 1, load });
     } else if (key === 'ref') spa.ref = parseNum(value);
     else if (key === 'view') spa.view = keyValues(tokens);
@@ -2372,6 +2806,7 @@ const RF = (() => {
     profile.loads.forEach((load, port) => {
       if (load.type === 'active') return;
       lines.push('SPA load ' + (port + 1) + ': ' + load.type +
+        (load.type === 'join' ? ' to=' + (load.to + 1) : '') +
         ['r', 'x', 'l', 'c'].filter(k => Number.isFinite(load[k]) && load[k] !== 0).map(k => ' ' + k + '=' + n(load[k])).join(''));
     });
     if (profile.ref > 0) lines.push('SPA ref: ' + n(profile.ref));
@@ -2454,8 +2889,203 @@ const RF = (() => {
     MAX_PORTS, TAU, RAD, abs, add, sub, mul, scale, div, get, put, matrix, indices, solve, submatrix,
     changeRef, toZY, fromZY, project, parseTouchstone, loadGamma, terminate, prepareNetwork, processPoint,
     reflection, twoPort, transmission, cispr, cmcNatural, fitCMC, demoNetwork, exportTouchstone,
-    plateau, crossing, peakFreq, lcFit, transformerPoint, analyzeTransformer, analyzeElement, classify4, median, profileLines, annotate
+    plateau, crossing, peakFreq, lcFit, transformerPoint, analyzeTransformer, analyzeElement, classify4, median, profileLines, annotate, fitResonant, tankImpedance, resonantNetlist, joinPorts, joinInfo
   };
+})();
+</script>
+<script id="spice-core">
+'use strict';
+// SPICE subset for passive models: R, L, C, K, X, .subckt with parameters. AC analysis → S-parameters of the subcircuit pins.
+const Spice = (() => {
+  const SUFFIX = { t: 1e12, g: 1e9, meg: 1e6, k: 1e3, m: 1e-3, u: 1e-6, 'µ': 1e-6, n: 1e-9, p: 1e-12, f: 1e-15 };
+  const NUMBER = /^[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?/i;
+
+  function number(text) {
+    const match = String(text).trim().match(/^([+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?)(meg|mil|[tgkmuµnpf])?[a-zµΩ]*$/i);
+    if (!match) return NaN;
+    const suffix = (match[2] || '').toLowerCase();
+    return Number(match[1]) * (suffix === 'mil' ? 25.4e-6 : SUFFIX[suffix] ?? 1);
+  }
+
+  const FUNCTIONS = { sqrt: Math.sqrt, abs: Math.abs, exp: Math.exp, ln: Math.log, log: Math.log, log10: Math.log10, pow: Math.pow, pwr: Math.pow, min: Math.min, max: Math.max };
+
+  function evaluate(text, scope) {
+    const src = String(text).trim().replace(/^[{']|[}']$/g, '');
+    let at = 0;
+    const ws = () => { while (at < src.length && /\s/.test(src[at])) at++; };
+    function primary() {
+      ws();
+      if (src[at] === '(') { at++; const value = sum(); ws(); if (src[at] === ')') at++; return value; }
+      if (src[at] === '-') { at++; return -primary(); }
+      if (src[at] === '+') { at++; return primary(); }
+      const rest = src.slice(at), id = /^[A-Za-z_][\w.]*/.exec(rest);
+      if (id) {
+        at += id[0].length; ws();
+        const name = id[0].toLowerCase();
+        if (src[at] === '(') {
+          at++;
+          const args = [sum()]; ws();
+          while (src[at] === ',') { at++; args.push(sum()); ws(); }
+          if (src[at] === ')') at++;
+          return FUNCTIONS[name] ? FUNCTIONS[name](...args) : NaN;
+        }
+        return name === 'pi' ? Math.PI : scope.has(name) ? scope.get(name) : NaN;
+      }
+      const num = /^(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?(?:meg|mil|[tgkmuµnpf])?[a-zµΩ]*/i.exec(rest);
+      if (num) { at += num[0].length; return number(num[0]); }
+      at = src.length + 1;
+      return NaN;
+    }
+    function power() { let v = primary(); ws(); while (src[at] === '^' || src.startsWith('**', at)) { at += src[at] === '^' ? 1 : 2; v = Math.pow(v, primary()); ws(); } return v; }
+    function product() { let v = power(); ws(); while (src[at] === '*' || src[at] === '/') { const op = src[at++], r = power(); v = op === '*' ? v * r : v / r; ws(); } return v; }
+    function sum() { let v = product(); ws(); while (src[at] === '+' || src[at] === '-') { const op = src[at++], r = product(); v = op === '+' ? v + r : v - r; ws(); } return v; }
+    const value = sum(); ws();
+    return at === src.length ? value : NaN;
+  }
+
+  function parse(text, fileName) {
+    const lines = [];
+    for (const raw of text.replace(/^﻿/, '').split(/\r\n|\n|\r/)) {
+      const line = raw.replace(/;.*$/, '');
+      if (!line.trim() || /^\s*\*/.test(line)) continue;
+      if (/^\s*\+/.test(line) && lines.length) lines[lines.length - 1] += ' ' + line.replace(/^\s*\+/, '');
+      else lines.push(line.trim());
+    }
+    const subs = new Map(), globals = [], warnings = new Set();
+    let cur = null;
+    const pairs = (tokens, into) => tokens.forEach(token => { const at = token.indexOf('='); if (at > 0) into.push([token.slice(0, at).toLowerCase(), token.slice(at + 1)]); });
+    for (const full of lines) {
+      const tokens = full.replace(/\{[^}]*\}/g, m => m.replace(/\s+/g, '')).replace(/\s*=\s*/g, '=').split(/[\s,]+/).filter(token => token && !/^params:?$/i.test(token));
+      const head = tokens[0].toLowerCase();
+      if (head === '.subckt') {
+        const plain = tokens.slice(2).filter(token => !token.includes('='));
+        cur = { name: tokens[1].toLowerCase(), label: tokens[1], pins: plain.map(p => p.toLowerCase()), params: [], elements: [], calls: new Set(), unsupported: new Set() };
+        pairs(tokens.slice(2), cur.params);
+        subs.set(cur.name, cur);
+      } else if (head === '.ends') cur = null;
+      else if (head === '.param') pairs(tokens.slice(1), cur ? cur.params : globals);
+      else if (head[0] === '.') { if (!['.end', '.backanno', '.lib', '.inc', '.include'].includes(head)) warnings.add(head); }
+      else if (cur) {
+        const type = head[0].toUpperCase(), name = head;
+        if (type === 'R' || type === 'L' || type === 'C') {
+          const extra = [];
+          pairs(tokens.slice(3), extra);
+          const value = tokens[3] && !/^(rser|rpar|cpar|ic|temp|tc\d?)=/i.test(tokens[3]) ? tokens[3].replace(/^[rlc]=/i, '') : '';
+          cur.elements.push({ type, name, nodes: [tokens[1], tokens[2]], value, extra: new Map(extra) });
+        } else if (type === 'K') cur.elements.push({ type, name, inductors: tokens.slice(1, -1).map(t => t.toLowerCase()), value: tokens.at(-1) });
+        else if (type === 'X') {
+          const plain = tokens.slice(1).filter(token => !token.includes('=')), params = [];
+          pairs(tokens.slice(1), params);
+          const sub = plain.at(-1).toLowerCase();
+          cur.calls.add(sub);
+          cur.elements.push({ type, name, nodes: plain.slice(0, -1), sub, params });
+        } else cur.unsupported.add(type);
+      }
+    }
+    const called = new Set([...subs.values()].flatMap(sub => [...sub.calls]));
+    const tops = [...subs.values()].filter(sub => !called.has(sub.name) && sub.pins.length >= 1 && sub.pins.length <= 32);
+    if (!subs.size) throw new Error('Keine .subckt-Definition gefunden.');
+    return { fileName, subs, globals, tops, warnings: [...warnings] };
+  }
+
+  function flatten(lib, top) {
+    const nodes = new Map(), R = [], L = [], C = [], K = [];
+    const node = key => { if (!nodes.has(key)) nodes.set(key, nodes.size); return nodes.get(key); };
+    const ground = name => name === '0' || name === 'gnd';
+    const globals = new Map();
+    for (const [key, raw] of lib.globals) globals.set(key, evaluate(raw, globals));
+    function instance(sub, path, pinNodes, overrides, depth) {
+      if (depth > 12) throw new Error('Subcircuits sind zu tief verschachtelt.');
+      if (sub.unsupported.size) throw new Error('Nicht unterstützte Elemente in ' + sub.label + ': ' + [...sub.unsupported].join(', ') + ' (nur R, L, C, K, X).');
+      const scope = new Map([...globals, ...overrides]);
+      for (const [key, raw] of sub.params) if (!overrides.has(key)) scope.set(key, evaluate(raw, scope));
+      const local = raw => {
+        const name = raw.toLowerCase(), pin = sub.pins.indexOf(name);
+        return pin >= 0 ? pinNodes[pin] : ground(name) ? -1 : node(path + name);
+      };
+      const read = (element, raw) => {
+        const value = evaluate(raw, scope);
+        if (!Number.isFinite(value)) throw new Error('Wert von ' + element.name + ' in ' + sub.label + ' nicht lesbar: ' + raw);
+        return value;
+      };
+      for (const element of sub.elements) {
+        if (element.type === 'X') {
+          const child = lib.subs.get(element.sub);
+          if (!child) throw new Error('Subcircuit ' + element.sub + ' fehlt in der Bibliothek.');
+          if (child.pins.length !== element.nodes.length) throw new Error('Pinzahl von ' + element.name + ' passt nicht zu ' + child.label + '.');
+          const next = new Map();
+          for (const [key, raw] of element.params) next.set(key, read(element, raw));
+          instance(child, path + element.name + '.', element.nodes.map(local), next, depth + 1);
+        } else if (element.type === 'K') K.push({ names: element.inductors.map(name => path + name), k: read(element, element.value) });
+        else {
+          let a = local(element.nodes[0]);
+          const b = local(element.nodes[1]), value = read(element, element.value), extra = key => element.extra.has(key) ? read(element, element.extra.get(key)) : 0;
+          const name = path + element.name, rser = extra('rser');
+          if (element.type !== 'R') {
+            if (extra('rpar') > 0) R.push({ a, b, v: extra('rpar') });
+            if (element.type === 'L' && extra('cpar') > 0) C.push({ a, b, v: extra('cpar') });
+            if (rser > 0) { const mid = node(name + '#rser'); R.push({ a, b: mid, v: rser }); a = mid; }
+          }
+          ({ R, L, C })[element.type].push({ name, a, b, v: value });
+        }
+      }
+    }
+    const pins = top.pins.map(pin => ground(pin) ? -1 : node('pin:' + pin));
+    instance(top, '', pins, new Map(), 0);
+    const index = new Map(L.map((l, i) => [l.name, i])), M = L.length, mutual = new Float64Array(M * M);
+    L.forEach((l, i) => { mutual[i * M + i] = l.v; });
+    for (const { names, k } of K) {
+      const ids = names.map(name => index.get(name));
+      if (ids.some(id => id === undefined)) throw new Error('Kopplung verweist auf eine unbekannte Induktivität: ' + names.join(' '));
+      for (let i = 0; i < ids.length; i++) for (let j = i + 1; j < ids.length; j++) {
+        const m = k * Math.sqrt(L[ids[i]].v * L[ids[j]].v);
+        mutual[ids[i] * M + ids[j]] = m; mutual[ids[j] * M + ids[i]] = m;
+      }
+    }
+    return { pins, nodeCount: nodes.size, R, L, C, mutual, elements: R.length + L.length + C.length };
+  }
+
+  function sparams(net, freq, z0 = 50) {
+    const N = net.nodeCount, M = net.L.length, size = N + M, P = net.pins.length, root = Math.sqrt(z0);
+    return Array.from(freq, f => {
+      const w = 2 * Math.PI * f, A = new Float64Array(2 * size * size), B = new Float64Array(2 * size * P);
+      const add = (r, c, re, im) => { if (r < 0 || c < 0) return; const at = 2 * (r * size + c); A[at] += re; A[at + 1] += im; };
+      const stamp = (a, b, re, im) => { add(a, a, re, im); add(b, b, re, im); add(a, b, -re, -im); add(b, a, -re, -im); };
+      for (let i = 0; i < N; i++) add(i, i, 1e-12, 0);
+      for (const r of net.R) stamp(r.a, r.b, 1 / Math.max(Math.abs(r.v), 1e-9), 0);
+      for (const c of net.C) stamp(c.a, c.b, 0, w * c.v);
+      net.L.forEach((l, m) => {
+        add(l.a, N + m, 1, 0); add(l.b, N + m, -1, 0); add(N + m, l.a, 1, 0); add(N + m, l.b, -1, 0);
+        for (let k = 0; k < M; k++) if (net.mutual[m * M + k]) add(N + m, N + k, 0, -w * net.mutual[m * M + k]);
+      });
+      net.pins.forEach((pin, k) => { add(pin, pin, 1 / z0, 0); if (pin >= 0) B[2 * (pin * P + k)] += 2 / root; });
+      const x = RF.solve(A, B, size, P);
+      if (!x) return null;
+      const s = new Float64Array(2 * P * P);
+      for (let i = 0; i < P; i++) for (let k = 0; k < P; k++) {
+        const pin = net.pins[i], at = 2 * (i * P + k);
+        s[at] = (pin >= 0 ? x[2 * (pin * P + k)] / root : 0) - Number(i === k);
+        s[at + 1] = pin >= 0 ? x[2 * (pin * P + k) + 1] / root : 0;
+      }
+      return s;
+    });
+  }
+
+  function dataset(lib, sub, sweep) {
+    const net = flatten(lib, sub), count = Math.max(11, sweep.n | 0);
+    const freq = Float64Array.from({ length: count }, (_, i) => sweep.f1 * (sweep.f2 / sweep.f1) ** (i / (count - 1)));
+    const samples = sparams(net, freq);
+    if (!samples.some(Boolean)) throw new Error('Das Netzwerk ist singulär und lässt sich nicht lösen.');
+    const n = sub.pins.length;
+    return {
+      name: sub.label, n, refs: Array(n).fill(50), freq, samples, version: 'SPICE', format: 'AC', sourceKind: 'Modell',
+      portNames: sub.pins.map(pin => 'Pin ' + pin), sourcePairs: [], profile: null, embedded: null,
+      warnings: lib.warnings.length ? ['Ignorierte SPICE-Anweisungen: ' + lib.warnings.join(' ')] : [], noiseCount: 0, demo: false,
+      spice: { lib: lib.fileName, sub: sub.name, elements: net.elements, nodes: net.nodeCount }
+    };
+  }
+
+  return { parse, flatten, sparams, dataset, number, evaluate };
 })();
 </script>
 <script>
@@ -2463,7 +3093,20 @@ const RF = (() => {
 
 const Plot = (() => {
   const canvas = document.getElementById('plot');
-  const ctx = canvas.getContext('2d');
+  const bound = new Map();
+  // In the dark theme neutral canvas colours are mapped, curve colours stay as they are.
+  const ctx = new Proxy(canvas.getContext('2d'), {
+    get(target, key) {
+      const value = target[key];
+      if (typeof value !== 'function') return value;
+      if (!bound.has(key)) bound.set(key, value.bind(target));
+      return bound.get(key);
+    },
+    set(target, key, value) {
+      target[key] = (key === 'fillStyle' || key === 'strokeStyle') && typeof value === 'string' ? Theme.map(value) : value;
+      return true;
+    }
+  });
   const uiFont = 'Inter, "Noto Sans", system-ui, sans-serif';
   const monoFont = '"IBM Plex Mono", "DejaVu Sans Mono", monospace';
   const ink = '#2b2a27', axisInk = '#6b6a64', grid = '#e8e5dc', minorGrid = '#f3f1eb';
@@ -3341,7 +3984,7 @@ const Plot = (() => {
     esb: { model: 'auto', tFormat: 'ocl', eFormat: 'z', input: '', output: '', evalFreq: 100e3 },
     axes: {}, markers: [0, null, null, null], activeMarker: 0,
     compare: { ids: [], delta: false }, profile: { name: '', source: 'default', score: null, matches: [], key: '' },
-    hiddenTraces: new Set(), collapsed: mobile.matches, job: 0, importJob: 0,
+    viewMode: 0, hiddenTraces: new Set(), collapsed: mobile.matches, job: 0, importJob: 0,
     busy: false, error: '', memo: new Map(), recordId: null, view: null, dialogLoad: null, pairDraft: null, toastTimer: null
   };
   const axis = () => state.axes[state.tab] ??= defaultAxes(state.tab);
@@ -3613,6 +4256,9 @@ const Plot = (() => {
     const dB = value => Math.max(-70, Math.min(5, 20 * Math.log10(RF.abs(value))));
     const similarity = score => Math.max(0, Math.round(100 * (1 - score / 20)));
 
+    const rolePort = (role, a) => role[0] === 'p' ? a.pairs[Number(role.slice(1, -1))]?.[Number(role.slice(-1))] : role[0] === 'l' ? a.loaded[Number(role.slice(1))] : a.singles[Number(role.slice(1))];
+    const resolveLoad = (load, a) => load.type === 'join' ? { type: 'join', to: rolePort(load.role, a) } : { ...load };
+
     function featureKeys(k, m) {
       const keys = [];
       for (let i = 1; i <= k; i++) {
@@ -3630,7 +4276,7 @@ const Plot = (() => {
     // Evaluates the feature curves of a dataset for one assignment of ports to the roles of a template.
     function evaluate(dataset, shape, a, points, keys) {
       const loads = RF.indices(dataset.n).map(() => ({ type: 'active' }));
-      a.loaded.forEach((port, i) => { loads[port] = shape.loads[i]; });
+      a.loaded.forEach((port, i) => { loads[port] = resolveLoad(shape.loads[i], a); });
       const config = { loads, ref: shape.ref ?? null, pairs: a.pairs.map(([p, q], i) => ({ id: i + 1, p, q, zd: shape.z[i]?.[0], zc: shape.z[i]?.[1] })) };
       let layout;
       try { layout = RF.prepareNetwork(dataset, config); } catch { return null; }
@@ -3728,7 +4374,7 @@ const Plot = (() => {
         }
         if (!best || !Number.isFinite(best.score)) continue;
         polarity(best.result, tpl.shape.z.length).forEach((sign, i) => {
-          if (sign && tpl.pol[i] && sign !== tpl.pol[i]) best.a.pairs[i + 1].reverse();
+          if (sign && tpl.pol[i] && sign !== tpl.pol[i]) (best.a.flip ??= {})[i + 1] = true;
         });
         out.push({ tpl, score: best.score, a: best.a, capped });
       }
@@ -3743,10 +4389,16 @@ const Plot = (() => {
       for (let i = 0; i < dataset.n; i++) {
         if (paired.has(i)) continue;
         if (config.loads[i].type === 'active') singles.push(i);
-        else loaded.push({ port: i, load: config.loads[i], key: JSON.stringify(config.loads[i]) });
+        else loaded.push({ port: i, load: config.loads[i], key: config.loads[i].type === 'join' ? 'join' : JSON.stringify(config.loads[i]) });
       }
       loaded.sort((x, y) => x.key < y.key ? -1 : x.key > y.key ? 1 : x.port - y.port);
-      const shape = { z: config.pairs.map(pair => [pair.zd ?? null, pair.zc ?? null]), loads: loaded.map(item => item.load), singles: singles.length, ref: config.ref ?? null };
+      const roleOf = port => {
+        const pi = config.pairs.findIndex(pair => pair.p === port || pair.q === port);
+        if (pi >= 0) return 'p' + pi + (config.pairs[pi].p === port ? 0 : 1);
+        const li = loaded.findIndex(item => item.port === port);
+        return li >= 0 ? 'l' + li : 's' + singles.indexOf(port);
+      };
+      const shape = { z: config.pairs.map(pair => [pair.zd ?? null, pair.zc ?? null]), loads: loaded.map(item => item.load.type === 'join' ? { type: 'join', role: roleOf(item.load.to) } : item.load), singles: singles.length, ref: config.ref ?? null };
       const map = { pairs: config.pairs.map(pair => [pair.p, pair.q]), loaded: loaded.map(item => item.port), singles };
       const g = GRID.map((_, i) => i).filter(i => GRID[i] >= dataset.freq[0] && GRID[i] <= dataset.freq.at(-1));
       if (g.length < 5) throw new Error('Der Frequenzbereich ist für einen Fingerabdruck zu schmal.');
@@ -3771,9 +4423,9 @@ const Plot = (() => {
 
     function settings({ tpl, a }, n) {
       const loads = RF.indices(n).map(() => ({ type: 'active' }));
-      a.loaded.forEach((port, i) => { loads[port] = { ...tpl.shape.loads[i] }; });
-      const pairs = a.pairs.map(([p, q], i) => {
-        const [zd, zc] = tpl.shape.z[i];
+      a.loaded.forEach((port, i) => { loads[port] = resolveLoad(tpl.shape.loads[i], a); });
+      const pairs = a.pairs.map((pair, i) => {
+        const [zd, zc] = tpl.shape.z[i], [p, q] = a.flip?.[i] ? [pair[1], pair[0]] : pair;
         return { id: i + 1, p, q, ...(zd ? { zd } : {}), ...(zc ? { zc } : {}) };
       });
       const fromRole = key => key.split(':').map(k => k[0] === 'S' ? 'P' + (a.singles[Number(k.slice(1)) - 1] + 1) : k).join(':');
@@ -3804,7 +4456,8 @@ const Plot = (() => {
   })();
 
   // ---- Session: several files at once, folders and ZIP archives, quick stepping and comparison. ----
-  const TOUCHSTONE_NAME = /\.(?:s\d+p|ts|snp)$/i, ZIP_NAME = /\.zip$/i;
+  const SPICE_NAME = /\.(?:lib|sub|cir|mod|spi|sp)$/i;
+  const TOUCHSTONE_NAME = /\.(?:s\d+p|ts|snp|lib|sub|cir|mod|spi|sp)$/i, ZIP_NAME = /\.zip$/i;
   const MAX_SESSION = 1000, MAX_COMPARE = 6, KEEP_PARSED = 6;
   const FILE_COLORS = ['#c4622d', '#3266ce', '#008879', '#8a55b6', '#a26016', '#ca5260'];
   const FILE_DASH = [[7, 3], [2, 3], [9, 3, 2, 3], [12, 4], [4, 2], [1, 2]];
@@ -3848,6 +4501,12 @@ const Plot = (() => {
   }
 
   async function loadDataset(item) {
+    if (!item.dataset && item.make) {
+      item.dataset = item.make();
+      item.dataset.name = item.name;
+      item.ports = item.dataset.n;
+      item.error = '';
+    }
     if (!item.dataset) {
       const file = await item.getFile();
       if (file.size > 100 * 1024 * 1024) throw new Error('Die Datei überschreitet 100 MiB.');
@@ -3876,6 +4535,11 @@ const Plot = (() => {
     const positive = value => Number.isFinite(value) && value > 0;
     const loads = RF.indices(n).map(() => ({ type: 'active' }));
     for (const { port, load } of e.loads) {
+      if (load.type === 'join') {
+        if (!valid(port) || !valid(load.to) || load.to === port) return null;
+        loads[port] = { type: 'join', to: load.to };
+        continue;
+      }
       if (!valid(port) || !LOADS.some(([type]) => type === load.type)) return null;
       const value = k => Number.isFinite(load[k]) ? load[k] : 0;
       loads[port] = EDITABLE_LOADS.includes(load.type)
@@ -3891,7 +4555,7 @@ const Plot = (() => {
         loads[pair.p].type !== 'active' || loads[pair.q].type !== 'active') return null;
       used.add(pair.p); used.add(pair.q);
     }
-    if (!loads.some(load => load.type === 'active')) return null;
+    if (!loads.some(load => load.type === 'active') || loads.some(load => load.type === 'join' && loads[load.to].type === 'join')) return null;
     return {
       config: { loads, pairs, ref: positive(e.ref) ? e.ref : null }, tab: e.view.tab, basis: e.view.basis, sFormat: e.view.format,
       sKeys: { mm: e.traces.mm ?? null, se: e.traces.se ?? null }, markers: e.markers.length ? e.markers : undefined, profileName: e.name
@@ -3905,6 +4569,8 @@ const Plot = (() => {
     if (record?.settings) {
       return { settings: record.settings, profile: { ...base, source: 'local', name: record.settings.profileName || dataset.embedded?.name || '' } };
     }
+    const stored = dataset.spice && spiceStore()[dataset.spice.lib + '|' + dataset.spice.sub];
+    if (stored) return { settings: stored, profile: { ...base, source: 'local', name: stored.profileName || '' } };
     const embedded = settingsFromEmbedded(dataset);
     if (embedded) return { settings: embedded, profile: { ...base, source: 'file', name: dataset.embedded.name } };
     const matches = await Templates.match(dataset, alive);
@@ -3919,9 +4585,10 @@ const Plot = (() => {
     return { settings: null, profile: { ...base, source: dataset.profile ? 'builtin' : 'default', matches } };
   }
 
-  async function openItem(id, { remember = false } = {}) {
+  async function openItem(id, { remember = false, keepTab = false } = {}) {
     const item = sessionItem(id);
     if (!item) return;
+    const tabBefore = keepTab && state.dataset && !state.dataset.demo ? state.tab : null;
     const job = ++state.importJob;
     const previous = sessionItem(session.current);
     if (previous && previous.dataset === state.dataset && state.dataset) {
@@ -3938,7 +4605,7 @@ const Plot = (() => {
       const dataset = await loadDataset(item);
       if (job !== state.importJob) return;
       let record = null;
-      if (remember) {
+      if (remember && !item.make) {
         try { record = await Library.remember(await item.getFile()); } catch { record = null; }
         if (record) item.recordId = record.id;
       }
@@ -3951,11 +4618,14 @@ const Plot = (() => {
       state.profile = { ...resolved.profile };
       initDataset(dataset, resolved.settings);
       state.profile.key = configKey();
+      // Stepping through files keeps the view the user is looking at instead of the tab stored with the file.
+      if (tabBefore && state.tab !== tabBefore) setTab(tabBefore);
       if (state.profile.source === 'template') {
         toast('Vorlage „' + state.profile.name + '“ erkannt · ' + Templates.similarity(state.profile.score) + ' % · Ports automatisch zugeordnet');
       } else if (dataset.warnings.length && mobile.matches) toast(dataset.warnings[0]);
       renderRecent();
       renderSession();
+      renderShelf();
     } catch (error) {
       if (job !== state.importJob) return;
       item.error = error.message;
@@ -3967,7 +4637,59 @@ const Plot = (() => {
     }
   }
 
-  async function openSources(sources, { remember = false } = {}) {
+  // ---- SPICE libraries: every top-level subcircuit becomes an entry that is simulated on demand. ----
+  const spiceSweep = () => {
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem('spa-sweep')) || {}; } catch { saved = {}; }
+    return { f1: saved.f1 > 0 ? saved.f1 : 1e4, f2: saved.f2 > saved.f1 ? saved.f2 : 6e9, n: 401 };
+  };
+  const spiceStore = () => { try { return JSON.parse(localStorage.getItem('spa-spice')) || {}; } catch { return {}; } };
+
+  async function expandModels(sources) {
+    const out = [];
+    for (const source of sources) {
+      if (!SPICE_NAME.test(source.name)) { out.push(source); continue; }
+      try {
+        const file = await source.getFile();
+        if (file.size > 20 * 1024 * 1024) throw new Error('Die Bibliothek überschreitet 20 MiB.');
+        const lib = Spice.parse(decodeText(await file.arrayBuffer()), source.name);
+        const folder = (source.path ? source.path + '/' : '') + source.name;
+        for (const sub of lib.tops) {
+          out.push({ name: sub.label, path: folder, size: null, handle: null, ports: sub.pins.length, getFile: source.getFile, make: () => Spice.dataset(lib, sub, spiceSweep()) });
+        }
+        if (!lib.tops.length) throw new Error('Keine eigenständigen Subcircuits gefunden.');
+      } catch (error) {
+        toast(source.name + ' · ' + error.message);
+      }
+    }
+    return out;
+  }
+
+  function applySweep(form) {
+    const data = new FormData(form), f1 = parseHz(data.get('start')), f2 = parseHz(data.get('stop'));
+    if (!(f1 > 0 && f2 > f1)) {
+      toast('Gib einen positiven, aufsteigenden Frequenzbereich ein.');
+      return;
+    }
+    try { localStorage.setItem('spa-sweep', JSON.stringify({ f1, f2 })); } catch { /* not persisted */ }
+    const current = sessionItem(session.current);
+    if (current && current.dataset === state.dataset) { current.settings = snapshotSettings(); current.profile = state.profile; }
+    for (const item of session.items) if (item.make) item.dataset = null;
+    compareCache.clear();
+    if (current) openItem(current.id);
+  }
+
+  function exportModel(mode) {
+    const model = elementData('series')?.result.model;
+    if (!model) return;
+    const name = state.dataset.name.replace(/\.[^.]+$/, '').replace(/[^\w]+/g, '_').replace(/^_+|_+$/g, '') + '_ESB';
+    const file = new File([RF.resonantNetlist(model, name)], name + '.lib', { type: 'text/plain' });
+    if (mode === 'save') saveBlob(file, file.name);
+    else openSources([fileSource(file)]);
+  }
+
+  async function openSources(list, { remember = false } = {}) {
+    const sources = await expandModels(list);
     if (!sources.length) {
       toast('Keine Touchstone-Dateien gefunden.');
       return;
@@ -3976,15 +4698,15 @@ const Plot = (() => {
     if (!added.length) return;
     renderSession();
     await openItem(added[0].id, { remember: remember && added.length === 1 });
-    if (added.length > 1 && state.profile.source !== 'template') toast(added.length + ' Dateien geladen · Bild↑/Bild↓ blättert');
+    if (added.length > 1 && state.profile.source !== 'template') toast(added.length + ' Dateien geladen · ← / → blättert');
   }
 
-  const importFile = (file, { remember = true } = {}) => file ? openSources([fileSource(file)], { remember }) : undefined;
+  const importFile = async (file, { remember = true } = {}) => file ? openSources(await expandFiles([file]), { remember }) : undefined;
 
   function stepSession(delta) {
     const index = session.items.findIndex(item => item.id === session.current);
     const next = session.items[index + Number(delta)];
-    if (next) openItem(next.id);
+    if (next) openItem(next.id, { keepTab: true });
   }
 
   function clearSession() {
@@ -4124,7 +4846,7 @@ const Plot = (() => {
       break;
     }
     renderSession();
-    toast(added.length + ' Dateien im Ordner · Bild↑/Bild↓ blättert');
+    toast(added.length + ' Dateien im Ordner · ← / → blättert');
   }
 
   function compareLetter(id) {
@@ -4174,6 +4896,114 @@ const Plot = (() => {
       (shown.length > 300 ? '<p class="note">+' + (shown.length - 300) + ' weitere · Filter nutzen</p>' : '') +
       (!shown.length ? '<p class="note">Kein Treffer.</p>' : ''));
     box.querySelector('.is-current')?.scrollIntoView({ block: 'nearest' });
+  }
+
+  // ---- Library: files kept inside the app (origin private file system), sorted into folders by component type. ----
+  const Shelf = (() => {
+    const supported = !!navigator.storage?.getDirectory;
+    const ui = { form: false, confirm: '' };
+    let root = null;
+    const base = async () => root ??= await (await navigator.storage.getDirectory()).getDirectoryHandle('bibliothek', { create: true });
+    const clean = (name, fallback) => String(name ?? '').replace(/[\\/:*?"<>|\u0000-\u001f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 80) || fallback;
+
+    // Names are stored ASCII-encoded: some browsers lose folders with non-ASCII names in the private file system.
+    const enc = name => encodeURIComponent(name).replace(/%20/g, ' '), dec = name => { try { return decodeURIComponent(name); } catch { return name; } };
+
+    async function folders() {
+      const out = [];
+      for await (const [raw, handle] of (await base()).entries()) {
+        const name = dec(raw);
+        if (handle.kind !== 'directory') continue;
+        let count = 0;
+        for await (const [, child] of handle.entries()) if (child.kind === 'file') count++;
+        out.push({ name, count, handle });
+      }
+      return out.sort((a, b) => collator.compare(a.name, b.name));
+    }
+
+    async function put(folder, file) {
+      const dir = await (await base()).getDirectoryHandle(enc(clean(folder, 'Unsortiert')), { create: true });
+      const handle = await dir.getFileHandle(enc(clean(file.name, 'datei')), { create: true });
+      const writer = await handle.createWritable();
+      await writer.write(file);
+      await writer.close();
+    }
+
+    const remove = async name => (await base()).removeEntry(enc(name), { recursive: true });
+    return { supported, ui, folders, put, remove, dec };
+  })();
+
+  async function renderShelf() {
+    const box = $('shelf');
+    if (!Shelf.supported) { box.hidden = true; return; }
+    let folders = [];
+    try { folders = await Shelf.folders(); } catch { box.hidden = true; return; }
+    box.hidden = false;
+    const real = !!state.dataset && !state.dataset.demo && !!sessionItem(session.current);
+    const many = session.items.length > 1;
+    const form = Shelf.ui.form && real ? '<form id="shelf-form" class="shelf-form">' +
+      '<label class="control"><span class="field-label">Ordner</span><input class="field-input" name="folder" list="shelf-folders" value="' + esc(state.profile.name || 'Unsortiert') +
+      '" placeholder="z. B. LAN-Übertrager"></label><datalist id="shelf-folders">' + folders.map(folder => '<option value="' + esc(folder.name) + '">').join('') + '</datalist>' +
+      (many ? selectField('Umfang', 'scope', [['one', 'Nur die geöffnete Datei'], ['all', 'Alle ' + session.items.length + ' Dateien in diesen Ordner'], ['type', 'Alle Dateien nach Bauteiltyp einsortieren']], 'one') : '') +
+      '<div class="shelf-form-actions"><button class="button primary" type="submit">Ablegen</button>' + actionButton('Abbrechen', 'shelf-cancel', '', 'quiet-button') + '</div></form>' : '';
+    insertHtml(box, '<h4>Bibliothek <small>' + folders.reduce((sum, folder) => sum + folder.count, 0) + '</small><span class="session-tools">' +
+      actionButton('Ablegen', 'shelf-add', '', 'quiet-button', 'plus', disabled(!real) + ' title="Geöffnete Dateien dauerhaft in der App ablegen"') + '</span></h4>' + form +
+      (folders.length ? '<div class="shelf-list">' + folders.map(folder => '<div class="session-row">' +
+        '<button type="button" class="session-open" data-action="shelf-open" data-value="' + esc(folder.name) + '" title="Ordner öffnen und durchblättern"><span>' + esc(folder.name) + '</span><small>' + folder.count + '</small></button>' +
+        (Shelf.ui.confirm === folder.name
+          ? '<button type="button" class="session-compare shelf-confirm" data-action="shelf-delete" data-value="' + esc(folder.name) + '" title="Wirklich löschen" aria-label="Ordner ' + esc(folder.name) + ' wirklich löschen">!</button>'
+          : '<button type="button" class="session-compare" data-action="shelf-ask" data-value="' + esc(folder.name) + '" title="Ordner löschen" aria-label="Ordner ' + esc(folder.name) + ' löschen">×</button>') +
+        '</div>').join('') + '</div>'
+        : '<p class="note">Noch leer. „Ablegen“ speichert geöffnete Dateien dauerhaft in der App, nach Bauteiltyp sortiert und offline verfügbar.</p>'));
+  }
+
+  async function shelfStore(form) {
+    const data = new FormData(form), scope = data.get('scope') || 'one', folder = String(data.get('folder') || '').trim();
+    const items = scope === 'one' ? [sessionItem(session.current)] : session.items;
+    const current = sessionItem(session.current);
+    if (current && current.dataset === state.dataset) current.profile = state.profile;
+    const seen = new Set();
+    let stored = 0, failed = 0;
+    try { await navigator.storage.persist?.(); } catch { /* best effort */ }
+    for (const item of items) {
+      try {
+        const file = await item.getFile();
+        const target = scope === 'type' ? item.profile?.name || item.dataset?.embedded?.name || folder || 'Unsortiert' : folder || 'Unsortiert';
+        // All subcircuits of one SPICE library share a file: store it once per folder.
+        const key = target + '/' + file.name;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        await Shelf.put(target, file.name === item.name || item.make ? file : new File([file], item.name));
+        stored++;
+      } catch { failed++; }
+    }
+    Shelf.ui.form = false;
+    toast(stored + (stored === 1 ? ' Datei' : ' Dateien') + ' in der Bibliothek abgelegt.' + (failed ? ' ' + failed + ' fehlgeschlagen.' : ''));
+    renderShelf();
+  }
+
+  async function shelfOpen(name) {
+    const folder = (await Shelf.folders()).find(item => item.name === name);
+    if (!folder) return;
+    const out = [];
+    await walkDirectory(folder.handle, 'Bibliothek/' + name, out);
+    for (const source of out) source.name = Shelf.dec(source.name);
+    session.items = [];
+    session.current = null;
+    state.compare.ids = [];
+    compareCache.clear();
+    openSources(out);
+  }
+
+  // ---- View modes: normal, reduced (plot, curves, markers) and full screen (plot with marker values). ----
+  function setViewMode(mode) {
+    state.viewMode = mode;
+    document.body.classList.toggle('view-focus', mode > 0);
+    document.body.classList.toggle('view-full', mode > 1);
+    document.querySelectorAll('[data-action="view-mode"]').forEach(button => button.setAttribute('aria-pressed', String(mode > 0)));
+    if (mode > 1) document.documentElement.requestFullscreen?.().catch(() => {});
+    else if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
+    if (state.dataset) requestAnimationFrame(() => render());
   }
 
   // ---- Comparison: the same curves of other files, resampled onto the frequency grid of the open file. ----
@@ -4302,7 +5132,7 @@ const Plot = (() => {
     if (!extra.length) return view;
     if (state.compare.delta) {
       return {
-        ...view, format: 'delta', floor: null, zeroBaseline: false, positive: false, refLines: null, smith: false,
+        ...view, format: 'delta', floor: null, zeroBaseline: false, positive: false, refLines: null, smith: false, focus: null,
         yLabel: 'Δ ' + view.yLabel, caption: view.caption + ' · Differenz zu ⟨A⟩',
         traces: extra.map(trace => ({ ...trace, label: 'Δ ' + trace.label, complex: null, values: trace.values.map((value, i) => value - trace.base.values[i]) }))
       };
@@ -4368,6 +5198,20 @@ const Plot = (() => {
       return;
     }
     state.profile.name = String(new FormData(form).get('name') || '').trim().slice(0, 60);
+    if (state.dataset.spice) {
+      // A model has no measurement file to annotate: the configuration is kept on this device and learned as a template.
+      const store = spiceStore(), key = state.dataset.spice.lib + '|' + state.dataset.spice.sub;
+      delete store[key];
+      store[key] = snapshotSettings();
+      for (const old of Object.keys(store).slice(0, -300)) delete store[old];
+      try { localStorage.setItem('spa-spice', JSON.stringify(store)); } catch { /* storage full */ }
+      const learned = !!state.profile.name && learnTemplate(true);
+      state.profile.source = 'local';
+      state.profile.key = configKey();
+      toast('Konfiguration für ' + state.dataset.name + ' gespeichert.' + (learned ? ' Vorlage „' + state.profile.name + '“ gelernt.' : ''));
+      render();
+      return;
+    }
     try {
       const source = await item.getFile();
       const text = RF.annotate(decodeText(await source.arrayBuffer()), RF.profileLines(currentProfile()));
@@ -4376,7 +5220,7 @@ const Plot = (() => {
       let inPlace = false;
       if (item.handle?.createWritable) {
         try {
-          if (await item.handle.requestPermission({ mode: 'readwrite' }) === 'granted') {
+          if (!item.handle.requestPermission || await item.handle.requestPermission({ mode: 'readwrite' }) === 'granted') {
             const writer = await item.handle.createWritable();
             await writer.write(text);
             await writer.close();
@@ -4421,7 +5265,7 @@ const Plot = (() => {
     return '<section class="config-card profile-card"><div class="config-head"><h2>Port-Profil</h2><p class="profile-status" id="profile-status">' + esc(status) + '</p></div>' +
       '<div class="config-content"><form id="profile-form" class="profile-form">' +
       textField('Bauteiltyp', 'name', p.name, 'z. B. CMC, LAN-Übertrager', 'profile-name') +
-      '<button class="button primary" type="submit"' + disabled(state.dataset.demo) + '>' + icon('file') + 'In Datei speichern</button>' +
+      '<button class="button primary" type="submit"' + disabled(state.dataset.demo) + '>' + icon('file') + (state.dataset.spice ? 'Für Modell speichern' : 'In Datei speichern') + '</button>' +
       actionButton('Als Vorlage lernen', 'learn-template', '', 'button', 'plus') +
       actionButton('Vorlagen prüfen', 'match-templates', '', 'button', 'reset', disabled(!Templates.size)) + '</form>' +
       (chips ? '<div class="preset-row"><span>Passende Vorlagen</span>' + chips + '</div>' : '') +
@@ -4473,6 +5317,7 @@ const Plot = (() => {
     if (!config || !Array.isArray(config.loads) || config.loads.length !== n) return;
     if (!config.pairs.every(pair => validPort(pair.p) && validPort(pair.q) && pair.p !== pair.q)) return;
     if (!config.loads.some(load => load.type === 'active')) return;
+    if (!config.loads.every(load => load.type !== 'join' || (validPort(load.to) && config.loads[load.to].type !== 'join'))) return;
     state.config = { loads: config.loads, pairs: config.pairs, ref: Number.isFinite(config.ref) && config.ref > 0 ? config.ref : null };
     if (Object.hasOwn(TABS, saved.tab)) state.tab = saved.tab;
     if (['se', 'mm'].includes(saved.basis)) state.basis = saved.basis;
@@ -4485,7 +5330,7 @@ const Plot = (() => {
     if (Number.isInteger(saved.pairIn)) state.pairIn = saved.pairIn;
     if (Number.isInteger(saved.pairOut)) state.pairOut = saved.pairOut;
     if (Array.isArray(saved.markers)) {
-      state.markers = [0, 1, 2, 3].map(i => Number.isFinite(saved.markers[i]) ? Plot.nearest(dataset.freq, saved.markers[i], true) : (i ? null : state.markers[0]));
+      state.markers = [0, 1, 2, 3].map(i => Number.isFinite(saved.markers[i]) ? Plot.nearest(dataset.freq, saved.markers[i], true) : (i || saved.markers.every(m => m === null) ? null : state.markers[0]));
     }
   }
 
@@ -4500,6 +5345,7 @@ const Plot = (() => {
     state.profile.key = configKey();
     renderRecent();
     renderSession();
+    renderShelf();
   }
 
   // Start order: a file shared from Android, a file opened from the OS, the last file, otherwise the demo.
@@ -4549,10 +5395,12 @@ const Plot = (() => {
   }
 
   function loadName(load) {
+    if (load.type === 'join') return '= ' + portName(load.to);
     return LOADS.find(item => item[0] === load.type)?.[1] || '—';
   }
 
   function loadDescription(load, ref) {
+    if (load.type === 'join') return 'Kurzgeschlossen mit ' + portName(load.to) + ' · gemeinsamer Knoten';
     if (load.type === 'match') return display(ref) + ' Ω · Z₀ Datei';
     if (load.type === 'open') return 'Γ = +1';
     if (load.type === 'short') return 'Γ = −1';
@@ -4618,9 +5466,10 @@ const Plot = (() => {
       '<div><dt>Frequenz</dt><dd class="mono">' + esc(hz(d.freq[0])) + ' – ' + esc(hz(d.freq.at(-1))) + '</dd></div>' +
       '<div><dt>Punkte</dt><dd class="mono">' + d.freq.length.toLocaleString(LOCALE) + '</dd></div>' +
       '<div><dt>Dateireferenz</dt><dd class="mono">' + esc(refsSummary(d.refs)) + '</dd></div>' +
-      '<div><dt>Format</dt><dd class="mono">TS ' + esc(d.version) + ' · ' + esc(d.sourceKind + '/' + d.format) + '</dd></div>' +
+      '<div><dt>Format</dt><dd class="mono">' + (d.spice ? 'SPICE · ' + d.spice.elements + ' R/L/C' : 'TS ' + esc(d.version) + ' · ' + esc(d.sourceKind + '/' + d.format)) + '</dd></div>' +
       (d.noiseCount ? '<div><dt>Rauschpunkte</dt><dd class="mono">' + d.noiseCount + '</dd></div>' : '') +
-      '</dl>';
+      '</dl>' + (d.spice ? '<form id="sweep-form" class="sweep-form"><span>AC-Sweep</span><input class="field-input" name="start" aria-label="Startfrequenz" value="' + esc(freqInput(d.freq[0])) +
+        '"><input class="field-input" name="stop" aria-label="Stoppfrequenz" value="' + esc(freqInput(d.freq.at(-1))) + '"><button type="submit" class="quiet-button">Rechnen</button></form>' : '');
     $('topology').innerHTML = topoHtml();
     const active = state.layout?.active.length ?? d.n, loaded = d.n - active;
     $('network-summary').innerHTML = '<span class="badge active">' + active + ' aktiv</span>' +
@@ -4834,7 +5683,8 @@ const Plot = (() => {
         (label ? '<small title="' + esc(label) + '">' + esc(label) + '</small>' : '') +
         '</td><td>' + (pair ? '<span class="badge pair-badge" style="--pc:' + pairColor(pair.id) + '">Paar ' + pair.id + ' ' + (pair.p === port ? '+' : '−') + '</span>' :
           '<div class="load-cell"><select id="port-load-' + port + '" aria-label="Abschluss ' + portName(port) +
-          '" data-change="load-type" data-port="' + port + '">' + options(LOADS, load.type) + '</select>' +
+          '" data-change="load-type" data-port="' + port + '">' + options([...LOADS, ...RF.indices(dataset.n).filter(other => other !== port && config.loads[other].type !== 'join')
+            .map(other => ['join:' + other, 'Verbinden mit ' + portName(other)])], load.type === 'join' ? 'join:' + load.to : load.type) + '</select>' +
           (EDITABLE_LOADS.includes(load.type) ? iconButton('Last an ' + portName(port) + ' bearbeiten', 'edit-load', port, 'edit') : '') +
           '</div>' + (load.type !== 'active' ? '<small title="' + esc(loadDescription(load, physicalRef)) + '">' +
             esc(loadDescription(load, physicalRef)) + '</small>' : '')) + '</td>' +
@@ -4942,7 +5792,7 @@ const Plot = (() => {
         html += selectField('Eingang', 'esb-input', modeOptions(), state.esb.input) + selectField('Ausgang', 'esb-output', modeOptions(), state.esb.output) +
           selectField('Darstellung', 'esb-eformat', model === 'series' ? SERIES_FORMATS : SHUNT_FORMATS, state.esb.eFormat);
       } else {
-        html += controlsPairs() + selectField('Darstellung', 'cmc-format', [['cap', 'Kapazitäten'], ['ind', 'Induktivitäten']], state.cmc.format);
+        html += controlsPairs() + selectField('Darstellung', 'cmc-format', [['cap', 'Kapazitäten'], ['ind', 'Induktivitäten'], ['zfit', 'Impedanz · Modell bis 2. Resonanz']], state.cmc.format);
       }
       if (model === 'cmc' && state.config.pairs.length >= 2) {
         html += '<form class="fit-fields" id="fit-form">' + textField('Fit ab', 'start', freqInput(state.cmc.band[0])) +
@@ -5357,9 +6207,53 @@ const Plot = (() => {
     </figure>`;
   }
 
+  const si = (value, unit) => {
+    if (!Number.isFinite(value)) return '—';
+    if (value === 0) return '0 ' + unit;
+    const e = Math.max(-5, Math.min(4, Math.floor(Math.log10(Math.abs(value)) / 3)));
+    return display(value / 10 ** (3 * e)) + ' ' + ['f', 'p', 'n', 'µ', 'm', '', 'k', 'M', 'G', 'T'][e + 5] + unit;
+  };
+  const metricText = (label, text) => '<div class="metric"><strong>' + esc(text) + '</strong><span>' + esc(label) + '</span></div>';
+  const focusAround = (values, lo, hi) => {
+    const list = values.filter(value => Number.isFinite(value) && value > 0);
+    return list.length ? [lo * Math.min(...list), hi * Math.max(...list)] : null;
+  };
+  const modelTrace = (key, label, color, model) => ({
+    key, label, color, dash: [2, 3], visible: !state.hiddenTraces.has(key),
+    values: Float64Array.from(state.dataset.freq, f => model && f > 0 && f <= model.fMax ? Math.hypot(...RF.tankImpedance(model, f)) : NaN)
+  });
+
+  function resonantCard(model, title, exportable = false) {
+    if (!model) return '<section class="detail-card"><div class="fit-summary"><h3>' + esc(title) + '</h3><small>Für das Modell fehlt ein induktiver Bereich bei tiefen Frequenzen.</small></div></section>';
+    const [a, b] = model.tanks;
+    return '<section class="detail-card"><div class="fit-summary"><h3>' + esc(title) + '</h3><small>' +
+      esc('R₀ + (L₁ ∥ C₁ ∥ R₁)' + (b ? b.c > 0 ? ' + (L₂ ∥ C₂ ∥ R₂)' : ' + L₂' : '') + ' · Fit bis ' + hz(model.fMax) + ' · Abweichung ' + display(model.err) + ' dB RMS') +
+      '</small></div><div class="metric-grid">' + metricText('R₀ · Serienwiderstand', si(model.r0, 'Ω')) + metricText('L₁ · Hauptinduktivität', si(a.l, 'H')) +
+      (a.c > 0 ? metricText('C₁ · Parallelkapazität', si(a.c, 'F')) + metricText('R₁ · Dämpfung der 1. Resonanz', si(a.r, 'Ω')) + metricText('f₁ · 1. Resonanz (parallel)', hz(model.f1)) : '') +
+      (b ? metricText('L₂ · ' + (b.c > 0 ? 'zweiter Kreis' : 'Serieninduktivität'), si(b.l, 'H')) +
+        (b.c > 0 ? metricText('C₂ · zweiter Kreis', si(b.c, 'F')) + metricText('R₂ · Dämpfung der 2. Resonanz', si(b.r, 'Ω')) : '') +
+        metricText('f₂ · 2. Resonanz (' + (model.second === 'series' ? 'Serie' : 'parallel') + ')', hz(model.f2)) : '') + '</div>' +
+      (a.c > 0 ? '' : '<p class="note">Im Messbereich liegt keine Resonanz. Das Modell besteht nur aus R₀ und L₁.</p>') +
+      (exportable ? '<div class="preset-row">' + actionButton('Als SPICE-Modell öffnen', 'esb-spice', 'open', 'button', 'plus') + actionButton('SPICE .lib speichern', 'esb-spice', 'save', 'button', 'file') + '</div>' : '') +
+      '</section>';
+  }
+
+  function cmcResonantView(pairs) {
+    const [cm, dm] = modalCispr(pairs).blocks, fs = state.dataset.freq;
+    const fits = cache('zfit:' + pairs.map(p => p.id).join(':'), () => [cm, dm].map(block => RF.fitResonant(fs, Array.from(fs, (_, i) => block[i]?.z ?? null))));
+    const measured = (key, label, color, block) => ({ key, label, color, visible: !state.hiddenTraces.has(key), values: Float64Array.from(fs, (_, i) => block[i]?.z ? Math.hypot(...block[i].z) : NaN) });
+    return {
+      traces: [measured('zf:cm', '|Z CM|', COLORS[1], cm), modelTrace('zf:cmm', 'Modell CM', COLORS[1], fits[0]), measured('zf:dm', '|Z DM|', COLORS[0], dm), modelTrace('zf:dmm', 'Modell DM', COLORS[0], fits[1])],
+      unit: 'Ω', yLabel: 'Impedanz [Ω]', positive: true, title: 'CMC · Ersatzschaltbild bis zur 2. Resonanz', caption: 'Z CM und Z DM nach CISPR 17 · Modell gepunktet', native: '',
+      details: () => resonantCard(fits[0], 'Gleichtakt · Z CM') + resonantCard(fits[1], 'Gegentakt · Z DM') +
+        '<p class="note">Jede Mode wird als Reihenschaltung aus R₀ und bis zu zwei Parallelschwingkreisen beschrieben. Startwerte: L₁ aus dem LC-Fit, C₁ über die Thomson-Gleichung aus der 1. Resonanz, L₂ aus der Serienresonanz. Danach passt ein Simplex-Verfahren Betrag und Phase an. ' + help + '</p>'
+    };
+  }
+
   function cmcView() {
     const pairs = selectedPairs();
     if (!pairs) return { empty: 'Definiere zwei Portpaare und ordne Plus und Minus an beiden Seiten entlang derselben Wicklungen zu.', needsPairs: true };
+    if (state.cmc.format === 'zfit') return cmcResonantView(pairs);
     const dataset = state.dataset, natural = naturalData(pairs), band = state.cmc.band;
     const key = pairs.map(p => p.id).join(':');
     const fit = cache('fit:' + key + ':' + band.join(':'), () => RF.fitCMC(dataset.freq, natural, ...band));
@@ -5389,6 +6283,7 @@ const Plot = (() => {
     }));
     return {
       traces, unit, yLabel: (isCap ? 'Kapazität' : 'Induktivität') + ' [' + unit + ']', zeroBaseline: true,
+      focus: isCap ? focusAround([fit.cw * 1e12, fit.cg * 1e12], 0.5, 1.5) : null,
       title: isCap ? 'Parasitärkapazitäten' : 'Wirksame Induktivitäten',
       caption: isCap ? 'Projektion der Vierport-Y-Matrix auf die natürlichen CMC-Moden' : 'Aus dem Imaginärteil von Z CM und Z DM · je Wicklung',
       native: '', fitBand: band,
@@ -5407,7 +6302,7 @@ const Plot = (() => {
     ['ocl', 'Hauptinduktivität L₁₁ · L₂₂'], ['leak', 'Streuinduktivität Lσ'], ['cap', 'Kapazität Cww · Cg'],
     ['r', 'Wicklungswiderstand'], ['z', '|Z₁₁| Leerlauf']
   ];
-  const SERIES_FORMATS = [['z', '|Z| · R'], ['l', 'Induktivität L(f)']];
+  const SERIES_FORMATS = [['z', '|Z| · R · Modell'], ['l', 'Induktivität L(f)'], ['c', 'Parallelkapazität C_p(f)']];
   const SHUNT_FORMATS = [['z', '|Z| · ESR'], ['c', 'Kapazität C(f)'], ['l', 'ESL L(f)']];
   const modelName = model => ESB_MODELS.find(([key]) => key === model)?.[1] ?? model;
 
@@ -5462,19 +6357,23 @@ const Plot = (() => {
     const mk = (key, label, color, values, dash = null) => ({
       key: 'tr:' + key, label, color, values, dash, visible: !state.hiddenTraces.has('tr:' + key)
     });
-    let traces, unit, yLabel, refLines = [];
+    let traces, unit, yLabel, refLines = [], focus = null;
     if (fmt === 'ocl') {
       traces = [mk('l11', 'L₁₁ · Sek. offen', MODE_PALETTE.dd[0], scaled(sr.l11, 1e-6)), mk('l22', 'L₂₂ · Prim. offen', MODE_PALETTE.dd[1], scaled(sr.l22, 1e-6), REFLECTION_DASH)];
       unit = 'µH'; yLabel = 'Induktivität [µH]';
       refLines = [{ value: t.ocl0 / 1e-6, color: '#c4622d', label: 'OCL₀ ' + display(t.ocl0 / 1e-6) + ' µH' }];
+      focus = t.ocl0 > 0 ? [-t.ocl0 / 1e-6, 2 * t.ocl0 / 1e-6] : null;
     } else if (fmt === 'leak') {
       traces = [mk('lsc', 'Lσ · Sek. kurzgeschl.', MODE_PALETTE.dc[0], scaled(sr.lsc, 1e-9))];
       unit = 'nH'; yLabel = 'Streuinduktivität [nH]';
       refLines = [{ value: t.leak / 1e-9, color: '#c4622d', label: 'Lσ ' + display(t.leak / 1e-9) + ' nH' }];
+      focus = t.leak > 0 ? [-t.leak / 1e-9, 3 * t.leak / 1e-9] : null;
     } else if (fmt === 'cap') {
-      traces = [mk('cww', 'Cww · Prim.↔Sek.', MODE_PALETTE.cc[0], scaled(sr.cww, 1e-12))];
+      traces = [mk('cww', 'Cww · Prim.↔Sek.', MODE_PALETTE.cc[0], scaled(sr.cww, 1e-12)), mk('cpar', 'C_par(f) = 1/(ω²L) − 1/(ωX₁₁)', MODE_PALETTE.dd[0], scaled(sr.cpar, 1e-12))];
       unit = 'pF'; yLabel = 'Kapazität [pF]';
-      refLines = [{ value: t.cww / 1e-12, color: '#c4622d', label: 'Cww ' + display(t.cww / 1e-12) + ' pF' }];
+      refLines = [{ value: t.cww / 1e-12, color: '#c4622d', label: 'Cww ' + display(t.cww / 1e-12) + ' pF' },
+        { value: t.cres / 1e-12, color: '#3266ce', label: 'C_res ' + display(t.cres / 1e-12) + ' pF' }];
+      focus = focusAround([t.cww / 1e-12, t.cres / 1e-12], 0.5, 1.5);
     } else if (fmt === 'r') {
       traces = [mk('rsc', 'R · Sek. kurzgeschl.', MODE_PALETTE.cd[0], scaled(sr.rsc, 1))];
       unit = 'Ω'; yLabel = 'Widerstand [Ω]';
@@ -5491,13 +6390,13 @@ const Plot = (() => {
       metric('Lσ · Streuung, Sek. kurzgeschl.', t.leak * 1e9, 'nH') + metric('Cww · Wicklung↔Wicklung', t.cww * 1e12, 'pF') +
       metric('R · Prim.+Sek. bei tiefer f', t.rdc, 'Ω') +
       '<div class="metric"><strong>' + esc(Number.isFinite(t.fres) ? hz(t.fres) : '—') + '</strong><span>f_res · Leerlauf-Eigenresonanz</span></div>' +
-      metric('C_par · Wicklungskapazität (Fit)', t.cpar * 1e12, 'pF') + '</div>' +
+      metric('C_par · Wicklungskapazität (Fit)', t.cpar * 1e12, 'pF') + metric('C_res · Thomson 1/((2π·f_res)²·L)', t.cres * 1e12, 'pF') + '</div>' +
       '<p class="diagnostics">' + esc('Lσ-Plateau ' + (t.leakBand ? hz(t.leakBand[0]) + ' – ' + hz(t.leakBand[1]) : '—') +
         ' · Vertrauen ' + Math.round(100 * t.leakConf) + ' % · Cww-Band ' + (t.cwwBand ? hz(t.cwwBand[0]) + ' – ' + hz(t.cwwBand[1]) : '—')) + '</p>' +
       '<p class="note">Kleinsignalwerte aus S-Parametern ohne DC-Bias. Datenblätter messen OCL oft mit Gleichstrom-Vormagnetisierung (z. B. 100 kHz, 100 mV, 8–18 mA), Abweichungen sind deshalb normal. ' +
       'Formeln: OCL = Im Z₁₁/ω · Lσ = Im(Z₁₁ − Z₁₂Z₂₁/Z₂₂)/ω · Cww = −Im Y₁₂(CC)/ω · ω/X = 1/L − ω²C. ' + help + '</p></section>' +
       transformerSchematic(pairs);
-    return { traces, unit, yLabel, title: 'Übertrager', caption: 'Paar ' + pairs[0].id + ' → Paar ' + pairs[1].id + ' · T-Ersatzschaltbild', native: '', positive: true, refLines, details };
+    return { traces, unit, yLabel, title: 'Übertrager', caption: 'Paar ' + pairs[0].id + ' → Paar ' + pairs[1].id + ' · T-Ersatzschaltbild', native: '', positive: ['r', 'z'].includes(fmt), refLines, focus, details };
   }
 
   function elementData(kind) {
@@ -5520,7 +6419,7 @@ const Plot = (() => {
     if (!data) return { empty: 'Wähle zwei verschiedene aktive Ports oder Moden als Eingang und Ausgang der Serien- bzw. Shunt-Fixture.' };
     const { z, result: r, from, to } = data, fmt = state.esb.eFormat;
     const mk = (key, label, color, values, dash = null) => ({ key: 'el:' + key, label, color, values, dash, visible: !state.hiddenTraces.has('el:' + key) });
-    let traces, unit, yLabel, refLines = [];
+    let traces, unit, yLabel, refLines = [], focus = null;
     if (fmt === 'l') {
       const lu = kind === 'series' ? 1e-6 : 1e-9;
       unit = kind === 'series' ? 'µH' : 'nH';
@@ -5528,6 +6427,14 @@ const Plot = (() => {
       yLabel = 'Induktivität [' + unit + ']';
       const value = kind === 'series' ? r.l : r.esl;
       refLines = [{ value: value / lu, color: '#c4622d', label: (kind === 'series' ? 'L ' : 'ESL ') + display(value / lu) + ' ' + unit }];
+      focus = kind === 'series' && value > 0 ? [-value / lu, 2 * value / lu] : null;
+    } else if (fmt === 'c' && kind === 'series') {
+      const e = Number.isFinite(r.cp) && r.cp > 0 ? Math.max(-5, Math.min(0, Math.floor(Math.log10(r.cp) / 3))) : -4, factor = 10 ** (3 * e);
+      unit = ['f', 'p', 'n', 'µ', 'm', ''][e + 5] + 'F';
+      traces = [mk('cp', 'C_p(f) = 1/(ω²L) − 1/(ωX)', MODE_PALETTE.cc[0], scaled(r.series.c, factor))];
+      yLabel = 'Kapazität [' + unit + ']';
+      refLines = [{ value: r.cp / factor, color: '#c4622d', label: 'C_p (Thomson) ' + display(r.cp / factor) + ' ' + unit }];
+      focus = focusAround([r.cp / factor], 0.5, 1.5);
     } else if (fmt === 'c' && kind === 'shunt') {
       const [factor, cu] = engineeringScale([{ values: r.series.c }], 'F');
       unit = cu;
@@ -5540,6 +6447,7 @@ const Plot = (() => {
         mk('zabs', '|Z|', MODE_PALETTE.dd[0], Float64Array.from(z, v => v ? Math.hypot(v[0], v[1]) : NaN)),
         mk('zre', kind === 'series' ? 'R = Re Z' : 'ESR = Re Z', MODE_PALETTE.dc[0], Float64Array.from(z, v => v ? v[0] : NaN), REFLECTION_DASH)
       ];
+      if (kind === 'series' && r.model) traces.push(modelTrace('el:zfit', 'Modell |Z|', '#c4622d', r.model));
     }
     const details = () => '<section class="detail-card"><div class="fit-summary"><h3>' + (kind === 'series' ? 'Serienbauteil' : 'Shuntbauteil') +
       ' · Ersatzschaltbild</h3><small>' + esc(from.key + ' → ' + to.key + ' · ' + (kind === 'series' ? 'Z = 2Z₀(1/S₂₁ − 1)' : 'Z = (Z₀/2)·S₂₁/(1 − S₂₁)')) + '</small></div>' +
@@ -5551,10 +6459,11 @@ const Plot = (() => {
           '<div class="metric"><strong>' + esc(Number.isFinite(r.fsrf) ? hz(r.fsrf) : '—') + '</strong><span>SRF · Im Z = 0</span></div>' +
           metric('ESL · oberhalb SRF', r.esl * 1e9, 'nH') + metric('ESR · Re Z bei SRF', r.esr * 1e3, 'mΩ')) +
       '</div><p class="note">Die Formel gilt für eine reine ' + (kind === 'series' ? 'Serien' : 'Shunt') +
-      '-Fixture zwischen den gewählten Ports. Für kleine Impedanzen (Serie) bzw. große Impedanzen (Shunt) sinkt die Messgenauigkeit eines VNA deutlich. ' + help + '</p></section>';
+      '-Fixture zwischen den gewählten Ports. Für kleine Impedanzen (Serie) bzw. große Impedanzen (Shunt) sinkt die Messgenauigkeit eines VNA deutlich. ' + help + '</p></section>' +
+      (kind === 'series' ? resonantCard(r.model, 'Ersatzschaltbild bis zur 2. Resonanz', true) : '');
     return {
       traces, unit, yLabel, title: kind === 'series' ? 'Serienbauteil' : 'Shuntbauteil', caption: from.key + ' → ' + to.key,
-      native: '', positive: true, refLines, details
+      native: '', positive: !['l', 'c'].includes(fmt) || kind === 'shunt', refLines, focus, details
     };
   }
 
@@ -5655,7 +6564,7 @@ const Plot = (() => {
     if (!state.view) return;
     const a = axis();
     Plot.set({
-      ...state.view, f: state.dataset.freq, xScale: a.x, xRange: a.xRange, yScale: effectiveY(), yRange: effectiveY() === a.y ? a.yRange : null,
+      ...state.view, f: state.dataset.freq, xScale: a.x, xRange: a.xRange, yScale: effectiveY(), yRange: (effectiveY() === a.y ? a.yRange : null) ?? (effectiveY() === 'linear' && state.view.focus?.every(Number.isFinite) && state.view.focus[0] < state.view.focus[1] ? state.view.focus : null),
       markers: state.markers, activeMarker: state.activeMarker, onMarker: index => setMarker(state.activeMarker, index),
       onMarkerDrag: (i, index) => setMarker(i, index), onMarkerSelect: i => { if (i !== state.activeMarker) switchMarker(i); },
       onZoom: range => { axis().xRange = range; updatePlot(true); }
@@ -5704,7 +6613,7 @@ const Plot = (() => {
       actionButton('M' + (i + 1), 'active-marker', i, 'marker-name', '', pressed(state.activeMarker === i) + ' aria-label="Marker ' + (i + 1) + ' wählen"') +
       '<input id="marker-' + i + '" type="text" inputmode="decimal" aria-label="Frequenz M' + (i + 1) + '" title="Frequenz, z. B. 10 MHz oder 10M" autocomplete="off" value="' +
       esc(freqInput(state.dataset.freq[state.markers[i]])) + '">' +
-      (count > 1 ? actionButton('', 'remove-marker', i, 'marker-remove', 'close', ' title="Marker ' + (i + 1) + ' entfernen" aria-label="Marker ' + (i + 1) + ' entfernen"') : '') + '</div>';
+      (count > 0 ? actionButton('', 'remove-marker', i, 'marker-remove', 'close', ' title="Marker ' + (i + 1) + ' entfernen" aria-label="Marker ' + (i + 1) + ' entfernen"') : '') + '</div>';
   }
 
   function renderMarker(rebuild = false) {
@@ -5728,7 +6637,6 @@ const Plot = (() => {
     }
     const visible = view.traces.filter(t => t.visible);
     const activeIndex = state.markers[state.activeMarker];
-    const anyComplex = visible.some(t => t.complex);
     const reference = state.markers[0];
     const showDelta = state.activeMarker !== 0 && reference !== null && activeIndex !== null;
     const rows = visible.map(t => {
@@ -5738,18 +6646,20 @@ const Plot = (() => {
       return '<tr><td><span class="table-name"><span class="trace-dot' + (t.dash ? ' is-dashed' : '') + '" style="--trace:' + t.color + '"></span>' + esc(t.label) +
         '</span></td>' + used.map(i => '<td' + (i === state.activeMarker ? ' class="is-active-col"' : '') + '>' + esc(valueWith(traceValue(t, state.markers[i]), view.unit)) + '</td>').join('') +
         (showDelta ? '<td>' + esc(valueWith(delta, view.unit)) + '</td>' : '') +
-        (anyComplex ? '<td>' + esc(complexText(raw, view.native)) + '</td>' : '') +
         (view.smith ? '<td>' + esc(complexText(raw?.every(Number.isFinite) ? RF.reflection(raw, view.smithRef) : null, 'Ω')) + '</td>' : '') + '</tr>';
     }).join('');
     if (!rows) {
       $('marker-data').innerHTML = '<p class="marker-notice">Für die Markerwerte muss mindestens eine Kurve sichtbar sein.</p>';
       return;
     }
+    if (!used.length) {
+      $('marker-data').innerHTML = '<p class="marker-notice">Kein Marker gesetzt. Tippe ins Diagramm oder auf „Marker“.</p>';
+      return;
+    }
     const k = state.activeMarker + 1;
     $('marker-data').innerHTML = '<div class="table-scroll"><table class="data-table marker-table"><thead><tr><th scope="col">Kurve</th>' +
       used.map(i => '<th scope="col"' + (i === state.activeMarker ? ' class="is-active-col"' : '') + '><span class="mk-dot" style="--mk:' + MARKER_COLORS[i] + '"></span>M' + (i + 1) + ' · ' + esc(hz(fs[state.markers[i]])) + '</th>').join('') +
       (showDelta ? '<th scope="col">Δ M' + k + '−M1 · ' + esc(hz(fs[activeIndex] - fs[reference])) + '</th>' : '') +
-      (anyComplex ? '<th scope="col">Komplex · M' + k + '</th>' : '') +
       (view.smith ? '<th scope="col">Zᵢₙ · M' + k + '</th>' : '') +
       '</tr></thead><tbody>' + rows + '</tbody></table></div>';
   }
@@ -5814,9 +6724,8 @@ const Plot = (() => {
 
   function removeMarker(value) {
     const i = Number(value);
-    if (state.markers.filter(m => m !== null).length <= 1) return;
     state.markers[i] = null;
-    if (state.activeMarker === i) state.activeMarker = state.markers.findIndex(m => m !== null);
+    if (state.activeMarker === i) state.activeMarker = Math.max(0, state.markers.findIndex(m => m !== null));
     updatePlot();
     renderTraces();
     renderMarker(true);
@@ -6140,6 +7049,19 @@ const Plot = (() => {
 
   function setLoadType(select) {
     const port = Number(select.dataset.port), type = select.value;
+    if (type.startsWith('join:')) {
+      const to = Number(type.slice(5)), now = state.config.loads[port];
+      if (!mayTerminate(port)) {
+        select.value = now.type === 'join' ? 'join:' + now.to : now.type;
+        toast('Mindestens ein physischer Port muss aktiv bleiben.');
+        return;
+      }
+      // Ports that were tied to this one follow to the common node.
+      state.config.loads.forEach(load => { if (load.type === 'join' && load.to === port) load.to = to; });
+      state.config.loads[port] = { type: 'join', to };
+      refreshNetwork();
+      return;
+    }
     if (type !== 'active' && !mayTerminate(port)) {
       select.value = state.config.loads[port].type;
       toast('Mindestens ein physischer Port muss aktiv bleiben.');
@@ -6372,13 +7294,21 @@ const Plot = (() => {
     recent: openRecent,
     'open-folder': () => openFolder(),
     'open-siblings': () => openFolder(sessionItem(session.current)?.handle),
-    'session-open': value => openItem(value),
+    'session-open': value => openItem(value, { keepTab: true }),
     'session-step': stepSession,
     'session-compare': toggleCompare,
     'session-clear': clearSession,
     'compare-delta': () => { state.compare.delta = !state.compare.delta; renderMain(); },
     'compare-clear': () => { state.compare.ids = []; state.compare.delta = false; renderSession(); syncCompare(true); },
     'learn-template': () => learnTemplate(),
+    'view-mode': () => setViewMode((state.viewMode + 1) % 3),
+    'shelf-add': () => { Shelf.ui.form = true; if (state.collapsed) { state.collapsed = false; renderSidebar(); } renderShelf(); },
+    'shelf-cancel': () => { Shelf.ui.form = false; renderShelf(); },
+    'shelf-open': shelfOpen,
+    'shelf-ask': value => { Shelf.ui.confirm = value; renderShelf(); },
+    'shelf-delete': async value => { Shelf.ui.confirm = ''; try { await Shelf.remove(value); } catch (error) { toast(error.message); } renderShelf(); },
+    'esb-spice': exportModel,
+    theme: () => { Theme.toggle(); render(); },
     'match-templates': findTemplates,
     'apply-template': applyTemplate,
     'delete-template': value => { Templates.remove(value); state.profile.matches = state.profile.matches.filter(m => m.tpl.n + '|' + m.tpl.name !== value); renderConfig(); },
@@ -6404,7 +7334,7 @@ const Plot = (() => {
 
   document.addEventListener('submit', event => {
     const handler = {
-      'pair-form': savePair, 'profile-form': saveProfile, 'pairz-form': applyPairImpedance, 'reference-form': applyReference, 'fit-form': applyFit, 'axes-form': applyAxes, 'load-form': applyLoad
+      'pair-form': savePair, 'profile-form': saveProfile, 'sweep-form': applySweep, 'shelf-form': shelfStore, 'pairz-form': applyPairImpedance, 'reference-form': applyReference, 'fit-form': applyFit, 'axes-form': applyAxes, 'load-form': applyLoad
     }[event.target.id];
     if (!handler) return;
     event.preventDefault();
@@ -6419,6 +7349,12 @@ const Plot = (() => {
     if (['PageDown', 'PageUp'].includes(event.key) && session.items.length > 1 && !event.target.closest('input, select, textarea, dialog') && !document.querySelector('dialog[open]')) {
       event.preventDefault();
       stepSession(event.key === 'PageDown' ? 1 : -1);
+      return;
+    }
+    if (['ArrowLeft', 'ArrowRight'].includes(event.key) && session.items.length > 1 && !event.altKey && !event.ctrlKey && !event.metaKey &&
+      !event.target.closest('input, select, textarea, dialog, [role="tab"], summary') && !document.querySelector('dialog[open]')) {
+      event.preventDefault();
+      stepSession(event.key === 'ArrowRight' ? 1 : -1);
       return;
     }
     if (!event.target.matches('[role="tab"]') || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
@@ -6444,6 +7380,15 @@ const Plot = (() => {
     event.target.value = '';
     if (files.length) openSources(await expandFiles(files, true));
   });
+  // In the plot the arrow keys step through the files; Shift + arrow moves the marker.
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && state.viewMode && !document.querySelector('dialog[open]')) { setViewMode(0); return; }
+    if (event.target.id !== 'plot' || !['ArrowLeft', 'ArrowRight'].includes(event.key) || event.shiftKey || session.items.length < 2) return;
+    event.stopImmediatePropagation();
+    event.preventDefault();
+    stepSession(event.key === 'ArrowRight' ? 1 : -1);
+  }, true);
+  document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && state.viewMode > 1) setViewMode(1); });
   document.addEventListener('input', event => {
     if (event.target.id !== 'session-filter') return;
     session.filter = event.target.value;
