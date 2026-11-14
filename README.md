@@ -68,6 +68,12 @@ Alle Berechnungen laufen lokal auf dem Gerät. Messdateien werden nicht hochgela
 - **ESB:** L(f) mit Vorzeichen, C über die Thomson-Gleichung mit Kontrolle über der Frequenz, Skala auf den Nennwert begrenzt. Für Induktivitäten und CMCs ein Modell bis zur 2. Resonanz, als SPICE-`.lib` exportierbar.
 - **Design:** hell/dunkel, folgt dem System oder dem Knopf oben.
 
+## Version 6: Handy-Kopfzeile und Dark-Mode-Korrektur
+
+- Am Handy zeigt die Kopfzeile nur Logo, Hell/Dunkel und ein Zahnrad. Dateien & Bibliothek, Sprache, Methodik, Export und Installation liegen im Zahnrad-Menü.
+- Die Blätterpfeile für mehrere Dateien sitzen am Handy direkt unter dem Diagramm (mit Dateiname und Zähler); am Desktop bleiben sie oben.
+- Im dunklen Design waren Akzent- und ausgewählte Buttons (Anwenden, Paar anlegen, Plus wählen, Export, Hell/Dunkel) unleserlich; alle sichtbaren Schaltflächen werden jetzt automatisch auf Kontrast geprüft.
+
 ## Lizenz
 
 © 2026 Simon Mark · info.simonlation@gmail.com. Alle Rechte vorbehalten. Kein Open Source: Kopieren, Verändern oder Weiterverwenden des Quelltexts, auch in Teilen, nur mit schriftlicher Zustimmung des Autors.

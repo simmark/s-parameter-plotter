@@ -772,7 +772,6 @@ html[data-theme="dark"] .export-button, html[data-theme="dark"] .export-button *
 html[data-theme="dark"] .theme-button { color: #e9e7df !important; }
 html[data-theme="dark"] .marker-name, html[data-theme="dark"] .mk-dot { filter: invert(1) hue-rotate(180deg); }
 html[data-theme="dark"] .marker-name { color: #ffffff !important; }
-@media (max-width: 760px) { .theme-button { display: none; } }
 
 /* v5: library, drawer button, view modes */
 .shelf-form { display: grid; gap: 6px; margin: 4px 0 8px; padding: 8px; border: 1px solid var(--accent-line); border-radius: 7px; background: var(--accent-soft); }
@@ -924,6 +923,57 @@ html[data-theme="dark"][data-theme="dark"] .theme-button { color: #36342c !impor
 html[data-theme="dark"][data-theme="dark"] .marker-name { color: #1b1b1b !important; }
 html[data-theme="dark"] .shelf-confirm { color: #1b1b1b; }
 /* dark:end */
+
+/* ---------- v6: dark-mode contrast fixes, compact phone header, settings menu, file pager ---------- */
+html[data-theme="dark"] { --accent-dark: #e39274; }
+html[data-theme="dark"] .button.primary { background: var(--accent); border-color: var(--accent); color: #1b1b1b; }
+html[data-theme="dark"] .button.primary:hover:not(:disabled) { background: #e08a69; border-color: #e08a69; color: #1b1b1b; }
+html[data-theme="dark"] .button.primary:disabled { background: #3a2c26; border-color: #4d403a; color: #8c7a71; }
+html[data-theme="dark"] .button[aria-pressed="true"], html[data-theme="dark"] .icon-button[aria-pressed="true"],
+html[data-theme="dark"] .pair-target[aria-pressed="true"], html[data-theme="dark"] .compare-chip .button[aria-pressed="true"] { background: var(--select); border-color: var(--select); color: #1b1b1b; }
+html[data-theme="dark"] .session-compare[aria-pressed="true"] { background: var(--fc, var(--select)); border-color: var(--fc, var(--select)); color: #1b1b1b; }
+html[data-theme="dark"] .quiet-button { color: var(--accent-dark); }
+html[data-theme="dark"] .quiet-button:hover { background: #3a2c26; }
+html[data-theme="dark"] a { color: var(--accent-dark); }
+html[data-theme="dark"][data-theme="dark"][data-theme="dark"] .export-button, html[data-theme="dark"][data-theme="dark"][data-theme="dark"] .export-button * { color: #1b1b1b !important; }
+html[data-theme="dark"][data-theme="dark"][data-theme="dark"] .export-button { background: #d5d3d2; border-color: #d5d3d2; }
+html[data-theme="dark"][data-theme="dark"][data-theme="dark"] .export-button:hover { background: #ffffff; }
+html[data-theme="dark"][data-theme="dark"][data-theme="dark"] .theme-button, html[data-theme="dark"][data-theme="dark"][data-theme="dark"] .settings-button { color: #d5d3d2 !important; }
+html[data-theme="dark"] .app-bar .bar-button:hover { background: #3a382f; color: #ffffff; }
+
+.settings-button { display: none; }
+.settings-menu { position: absolute; top: calc(100% + 6px); right: 10px; z-index: 30; width: min(330px, calc(100vw - 20px)); padding: 6px; display: grid; gap: 2px; background: var(--surface); color: var(--ink); border: 1px solid var(--line-dark); border-radius: 12px; box-shadow: 0 10px 30px #00000038; }
+.settings-menu[hidden] { display: none; }
+.menu-item { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 50px; padding: 8px 10px; border: 0; border-radius: 8px; background: transparent; color: var(--ink); text-align: left; font: inherit; }
+.menu-item:hover, .menu-item:focus-visible { background: var(--accent-soft); }
+.menu-item[hidden] { display: none; }
+.menu-item .icon { width: 20px; height: 20px; color: var(--accent-dark); }
+.menu-text { display: grid; gap: 1px; min-width: 0; flex: 1; }
+.menu-text strong { font-size: 14px; font-weight: 650; }
+.menu-text small { font-size: 11.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.menu-badge { font-size: 11px; font-weight: 700; padding: 3px 8px; border: 1px solid var(--line-dark); border-radius: 6px; color: var(--ink); }
+
+.file-pager { display: none; }
+@media (max-width: 850px) {
+  .app-bar { position: relative; }
+  .file-chip, .file-nav, .app-bar .lang-button, .app-bar #method-button, .app-bar #export-button, .app-bar #pwa-install, .app-bar .offline-status { display: none !important; }
+  .app-bar .theme-button, .app-bar .settings-button { display: inline-flex !important; width: 40px; height: 40px; padding: 0; justify-content: center; align-items: center; border: 1px solid var(--line-dark); border-radius: 10px; }
+  .app-bar .bar-actions { gap: 8px; margin-left: auto; }
+  .app-bar .bar-button .icon { width: 20px; height: 20px; }
+  .app-bar .brand-short { display: inline; }
+  .app-bar .brand-long { display: none; }
+  body.view-focus .app-bar { display: none !important; }
+  .file-pager { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 8px 8px; }
+  .file-pager[hidden] { display: none; }
+  .pager-button { width: 52px; height: 40px; display: inline-grid; place-items: center; border: 1px solid var(--line-dark); border-radius: 10px; background: var(--surface); color: var(--ink); }
+  .pager-button[data-flip] .icon { transform: scaleX(-1); }
+  .pager-button .icon { width: 22px; height: 22px; }
+  .pager-button:disabled { opacity: .35; }
+  .pager-button:active:not(:disabled) { background: var(--accent-soft); }
+  .pager-label { display: flex; flex-direction: column; align-items: center; min-width: 0; flex: 1; line-height: 1.25; }
+  .pager-name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11.5px; color: var(--muted); }
+  .pager-count { font-size: 12px; font-weight: 650; color: var(--ink); }
+}
 </style>
 <script>
 'use strict';
@@ -1284,6 +1334,7 @@ window.I18N = (() => {
   <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
   <symbol id="i-install" viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M12 7v7m-3-3 3 3 3-3M10 18.5h4"/></symbol>
   <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.2 10.8 7.6-4.4m-7.6 6.8 7.6 4.4"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
   <symbol id="i-edit" viewBox="0 0 24 24"><path d="m14 5 5 5M5 15 16 4l4 4L9 19l-5 1Z"/></symbol>
 </svg>
 
@@ -1315,6 +1366,14 @@ window.I18N = (() => {
     <span class="offline-status" title="Die Messdaten bleiben im Browser"><span></span><strong id="pwa-status">Offline-Cache wird vorbereitet</strong></span>
     <button class="bar-button" type="button" id="method-button" aria-label="Methodik"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg><span>Methodik</span></button>
     <button class="bar-button export-button" type="button" id="export-button" aria-label="Export"><svg class="icon" aria-hidden="true"><use href="#i-export"/></svg><span>Export</span></button>
+    <button class="bar-button settings-button" type="button" id="settings-button" data-action="menu-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="settings-menu" title="Einstellungen" aria-label="Einstellungen"><svg class="icon" aria-hidden="true"><use href="#i-gear"/></svg></button>
+  </div>
+  <div class="settings-menu" id="settings-menu" role="menu" aria-label="Einstellungen" hidden>
+    <button type="button" role="menuitem" class="menu-item" data-action="menu-go" data-value="files"><svg class="icon" aria-hidden="true"><use href="#i-file"/></svg><span class="menu-text"><strong>Dateien &amp; Bibliothek</strong><small id="menu-file-name">—</small></span></button>
+    <button type="button" role="menuitem" class="menu-item" data-action="menu-go" data-value="lang"><svg class="icon" aria-hidden="true"><use href="#i-swap"/></svg><span class="menu-text"><strong>Sprache</strong><small>Deutsch / English</small></span><span class="menu-badge mono" id="menu-lang-code" data-no-i18n>EN</span></button>
+    <button type="button" role="menuitem" class="menu-item" data-action="menu-go" data-value="method"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg><span class="menu-text"><strong>Methodik &amp; Info</strong><small>Rechenwege, Formeln, Autor</small></span></button>
+    <button type="button" role="menuitem" class="menu-item" data-action="menu-go" data-value="export"><svg class="icon" aria-hidden="true"><use href="#i-export"/></svg><span class="menu-text"><strong>Export</strong><small>Bild, CSV, Touchstone, SPICE</small></span></button>
+    <button type="button" role="menuitem" class="menu-item" id="menu-install" data-action="menu-go" data-value="install" hidden><svg class="icon" aria-hidden="true"><use href="#i-install"/></svg><span class="menu-text"><strong>App installieren</strong><small>Offline am Startbildschirm</small></span></button>
   </div>
 </header>
 
@@ -1414,6 +1473,11 @@ window.I18N = (() => {
                 Die Diagrammwerte am Marker stehen in der Tabelle.
               </canvas>
               <span id="plot-hint" class="plot-hint"></span>
+              <div class="file-pager" id="file-pager" hidden>
+                <button type="button" class="pager-button" data-action="session-step" data-value="-1" data-flip title="Vorherige Datei" aria-label="Vorherige Datei"><svg class="icon" aria-hidden="true"><use href="#i-chevron"/></svg></button>
+                <span class="pager-label"><span id="file-pager-name" class="pager-name"></span><span id="file-pager-count" class="pager-count mono"></span></span>
+                <button type="button" class="pager-button" data-action="session-step" data-value="1" title="Nächste Datei" aria-label="Nächste Datei"><svg class="icon" aria-hidden="true"><use href="#i-chevron"/></svg></button>
+              </div>
             </div>
             <aside class="trace-panel" id="trace-panel" aria-label="Kurven"></aside>
           </div>
@@ -3909,6 +3973,7 @@ const Plot = (() => {
   window.I18N.start();
   const $ = id => document.getElementById(id);
   document.querySelector('#lang-button .lang-code').textContent = window.I18N.lang === 'de' ? 'EN' : 'DE';
+  document.getElementById('menu-lang-code').textContent = window.I18N.lang === 'de' ? 'EN' : 'DE';
   const LOCALE = window.I18N.locale;
   const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
   const icon = name => '<svg class="icon" aria-hidden="true"><use href="#i-' + name + '"/></svg>';
@@ -4862,6 +4927,9 @@ const Plot = (() => {
     const index = items.findIndex(item => item.id === session.current);
     $('file-nav').hidden = items.length < 2;
     $('file-nav-count').textContent = (index + 1) + '/' + items.length;
+    $('file-pager').hidden = items.length < 2;
+    $('file-pager-count').textContent = (index + 1) + ' / ' + items.length;
+    $('file-pager-name').textContent = items[index]?.name || '';
     document.querySelectorAll('[data-action="session-step"]').forEach(button => {
       button.disabled = button.dataset.value === '-1' ? index <= 0 : index < 0 || index >= items.length - 1;
     });
@@ -5458,6 +5526,7 @@ const Plot = (() => {
     if (!d) return;
     $('heading-file').textContent = d.name;
     $('file-chip-name').textContent = d.name;
+    $('menu-file-name').textContent = d.name;
     $('file-chip').setAttribute('aria-expanded', String(!state.collapsed));
     $('dataset-summary').innerHTML =
       '<div class="file-title" title="' + esc(d.name) + '">' + icon('file') + '<strong>' + esc(d.name) + '</strong>' +
@@ -7309,6 +7378,15 @@ const Plot = (() => {
     'shelf-delete': async value => { Shelf.ui.confirm = ''; try { await Shelf.remove(value); } catch (error) { toast(error.message); } renderShelf(); },
     'esb-spice': exportModel,
     theme: () => { Theme.toggle(); render(); },
+    'menu-toggle': () => toggleMenu(),
+    'menu-go': value => {
+      toggleMenu(false);
+      if (value === 'files') actions['toggle-sidebar']();
+      else if (value === 'lang') actions.lang();
+      else if (value === 'method') $('method-button').click();
+      else if (value === 'export') $('export-button').click();
+      else if (value === 'install') $('pwa-install').click();
+    },
     'match-templates': findTemplates,
     'apply-template': applyTemplate,
     'delete-template': value => { Templates.remove(value); state.profile.matches = state.profile.matches.filter(m => m.tpl.n + '|' + m.tpl.name !== value); renderConfig(); },
@@ -7322,6 +7400,20 @@ const Plot = (() => {
     download
   };
 
+  function toggleMenu(force) {
+    const menu = $('settings-menu'), button = $('settings-button');
+    const open = typeof force === 'boolean' ? force : menu.hidden;
+    if (open) $('menu-install').hidden = $('pwa-install').hidden;
+    menu.hidden = !open;
+    button.setAttribute('aria-expanded', String(open));
+    if (open) menu.querySelector('.menu-item:not([hidden])')?.focus({ preventScroll: true });
+  }
+  document.addEventListener('pointerdown', event => {
+    if (!$('settings-menu').hidden && !event.target.closest('#settings-menu, #settings-button')) toggleMenu(false);
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && !$('settings-menu').hidden) { toggleMenu(false); $('settings-button').focus(); }
+  });
   document.addEventListener('click', event => {
     const target = event.target.closest('button[data-action]');
     if (target && !target.disabled) actions[target.dataset.action]?.(target.dataset.value, target);
