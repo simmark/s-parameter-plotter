@@ -956,7 +956,7 @@ html[data-theme="dark"] .app-bar .bar-button:hover { background: #3a382f; color:
 .file-pager { display: none; }
 @media (max-width: 850px) {
   .app-bar { position: relative; }
-  .file-chip, .file-nav, .app-bar .lang-button, .app-bar #method-button, .app-bar #export-button, .app-bar #pwa-install, .app-bar .offline-status { display: none !important; }
+  .file-chip, .file-nav, .app-bar .packs-button, .app-bar .lang-button, .app-bar #method-button, .app-bar #export-button, .app-bar #pwa-install, .app-bar .offline-status { display: none !important; }
   .app-bar .theme-button, .app-bar .settings-button { display: inline-flex !important; width: 40px; height: 40px; padding: 0; justify-content: center; align-items: center; border: 1px solid var(--line-dark); border-radius: 10px; }
   .app-bar .bar-actions { gap: 8px; margin-left: auto; }
   .app-bar .bar-button .icon { width: 20px; height: 20px; }
@@ -974,6 +974,16 @@ html[data-theme="dark"] .app-bar .bar-button:hover { background: #3a382f; color:
   .pager-name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11.5px; color: var(--muted); }
   .pager-count { font-size: 12px; font-weight: 650; color: var(--ink); }
 }
+
+/* ---------- v7: packs dialog ---------- */
+.pack-section { display: grid; gap: 8px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.pack-section:last-child { border-bottom: 0; }
+.pack-section h3 { font-size: 14px; }
+.pack-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.pack-url { display: flex; gap: 8px; }
+.pack-url .field-input { flex: 1; min-width: 0; }
+.pack-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.pack-list li { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; font-size: 12.5px; }
 </style>
 <script>
 'use strict';
@@ -1020,6 +1030,21 @@ window.I18N = (() => {
     'Format': 'Format', 'Rauschpunkte': 'Noise points', 'Demo': 'Demo', 'je Port': 'per port',
     'S-Parameter': 'S-parameters', 'Ports & Lasten': 'Ports & loads', 'Smith-Chart': 'Smith chart', 'Impedanz': 'Impedance',
     'CISPR 17': 'CISPR 17', 'ESB-Modell': 'Equivalent circuit', 'ESB': 'ECM', 'Smith': 'Smith', 'Z': 'Z', 'CISPR': 'CISPR', 'Ports': 'Ports', 'S': 'S',
+    'Einstellungen': 'Settings', 'Dateien & Bibliothek': 'Files & library', 'Sprache': 'Language', 'Deutsch / English': 'German / English',
+    'Methodik & Info': 'Methods & info', 'Rechenwege, Formeln, Autor': 'Calculations, formulas, author', 'Bild, CSV, Touchstone, SPICE': 'Image, CSV, Touchstone, SPICE',
+    'Offline am Startbildschirm': 'Offline on the home screen',
+    'Vorlagen & Einstellungen': 'Templates & settings', 'Fingerabdrücke und Kurvenwahl sichern, teilen und laden': 'Save, share and load fingerprints and curve selection',
+    'Fingerabdrücke und Kurvenwahl laden, sichern': 'Load and save fingerprints and curve selection', 'Fingerabdrücke und Kurvenwahl sichern, laden, teilen': 'Save, load and share fingerprints and curve selection',
+    'Vorlagen und Einstellungen sichern, laden, teilen': 'Save, load and share templates and settings', 'Vorlagen und Einstellungen': 'Templates and settings',
+    'Auf diesem Gerät': 'On this device', 'Aus dem Netz laden': 'Load from the web', 'Kurvenwahl pro Bauteiltyp': 'Curve selection per device type',
+    'Gelernte Fingerabdrücke': 'Learned fingerprints', 'Paket exportieren': 'Export pack', 'Datei laden …': 'Load file …', 'Kurvenwahl zurücksetzen': 'Reset curve selection',
+    'Standardpaket laden': 'Load default pack', 'Laden': 'Load', 'Adresse des Pakets': 'Address of the pack', 'Erweitert': 'Extended', 'Pakete …': 'Packs …', 'Ein Paar': 'One pair',
+    'Zusätzliche Kurven für CMC: Sdc21': 'Additional curves for CMC: Sdc21', 'Zusätzliche Kurven für LAN-Übertrager: Scc11, Sdd22, Scd21': 'Additional curves for LAN transformer: Scc11, Sdd22, Scd21',
+    'Adresse eines Pakets, z. B. aus deinem GitHub-Repository (github.com/…/blob/… oder raw.githubusercontent.com/…).': 'Address of a pack, e.g. from your GitHub repository (github.com/…/blob/… or raw.githubusercontent.com/…).',
+    'Gemerkte Kurvenwahl gelöscht.': 'Stored curve selection deleted.', 'Das ist keine gültige JSON-Datei.': 'This is not a valid JSON file.', 'Das ist kein Vorlagenpaket dieser App.': 'This is not a template pack of this app.',
+    'Das Paket ist größer als 4 MB.': 'The pack is larger than 4 MB.', 'Nur https-Adressen sind erlaubt.': 'Only https addresses are allowed.', 'Das ist keine gültige Adresse.': 'This is not a valid address.',
+    'Das Paket konnte nicht geladen werden.': 'The pack could not be loaded.',
+    'Noch kein Standardpaket veröffentlicht. Lege fingerprints/default.json ins Repository oder lade eine Adresse.': 'No default pack published yet. Put fingerprints/default.json into the repository or load an address.',
     'Installieren': 'Install', 'App installieren': 'Install app', 'Methodik': 'Methods', 'Export': 'Export',
     'Offline bereit': 'Offline ready', 'Offline-Cache wird vorbereitet': 'Preparing offline cache', 'Offline-Cache fehlt': 'Offline cache missing', 'Lokale Datei': 'Local file',
     'Die Messdaten bleiben im Browser': 'Measurement data stays in the browser', 'Datei und Portschema': 'File and port diagram',
@@ -1162,6 +1187,10 @@ window.I18N = (() => {
     'S-Parameter Analyzer · von': 'S-Parameter Analyzer · by', 'S-Analyzer': 'S-Analyzer', 'S-Parameter Analyzer': 'S-Parameter Analyzer'
   }));
   const PATTERNS = [
+    [/^(\d+) Fingerabdrücke · (\d+) gemerkte Kurvenwahlen \(pro Bauteiltyp\)\. Die Kurvenwahl und ausgeblendete Kurven bleiben beim Blättern durch Dateien und nach einem Neustart erhalten\.$/, '$1 fingerprints · $2 stored curve selections (per device type). The curve selection and hidden curves are kept while stepping through files and after a restart.'],
+    [/^(.+): (\d+) Fingerabdrücke neu(?: · (\d+) Kurvenwahlen übernommen)?(?: · (\d+) ungültige übersprungen)?$/, '$1: $2 new fingerprints · $3 curve selections adopted · $4 invalid skipped'],
+    [/^(\d+) Kurven(?: · (\d+) ausgeblendet)?$/, '$1 curves · $2 hidden'],
+    [/^Der Download ist fehlgeschlagen \((\d+)\)\.$/, 'The download failed ($1).'],
     [/^Konfiguration für (.+) gespeichert\. Vorlage „(.+)“ gelernt\.$/, 'Configuration for $1 saved. Template "$2" learned.'], [/^Konfiguration für (.+) gespeichert\.$/, 'Configuration for $1 saved.'],
     [/^Alle (\d+) Dateien in diesen Ordner$/, 'All $1 files into this folder'], [/^Ordner (.+) wirklich löschen$/, 'Really delete folder $1'], [/^Ordner (.+) löschen$/, 'Delete folder $1'],
     [/^(\d+) Dateien? in der Bibliothek abgelegt\.(?: (\d+) fehlgeschlagen\.)?$/, '$1 file(s) stored in the library.'],
@@ -1364,12 +1393,14 @@ window.I18N = (() => {
     <button class="bar-button lang-button" type="button" id="lang-button" data-action="lang" data-no-i18n title="Sprache: Deutsch / English" aria-label="Sprache wechseln"><span class="lang-code">EN</span></button>
     <button class="bar-button" id="pwa-install" type="button" title="App installieren" aria-label="App installieren" hidden><svg class="icon" aria-hidden="true"><use href="#i-install"/></svg><span>Installieren</span></button>
     <span class="offline-status" title="Die Messdaten bleiben im Browser"><span></span><strong id="pwa-status">Offline-Cache wird vorbereitet</strong></span>
+    <button class="bar-button packs-button" type="button" id="packs-button" data-action="packs" title="Vorlagen und Einstellungen sichern, laden, teilen" aria-label="Vorlagen und Einstellungen"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg><span>Vorlagen</span></button>
     <button class="bar-button" type="button" id="method-button" aria-label="Methodik"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg><span>Methodik</span></button>
     <button class="bar-button export-button" type="button" id="export-button" aria-label="Export"><svg class="icon" aria-hidden="true"><use href="#i-export"/></svg><span>Export</span></button>
     <button class="bar-button settings-button" type="button" id="settings-button" data-action="menu-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="settings-menu" title="Einstellungen" aria-label="Einstellungen"><svg class="icon" aria-hidden="true"><use href="#i-gear"/></svg></button>
   </div>
   <div class="settings-menu" id="settings-menu" role="menu" aria-label="Einstellungen" hidden>
     <button type="button" role="menuitem" class="menu-item" data-action="menu-go" data-value="files"><svg class="icon" aria-hidden="true"><use href="#i-file"/></svg><span class="menu-text"><strong>Dateien &amp; Bibliothek</strong><small id="menu-file-name">—</small></span></button>
+    <button type="button" role="menuitem" class="menu-item" data-action="menu-go" data-value="packs"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg><span class="menu-text"><strong>Vorlagen &amp; Einstellungen</strong><small>Fingerabdrücke und Kurvenwahl laden, sichern</small></span></button>
     <button type="button" role="menuitem" class="menu-item" data-action="menu-go" data-value="lang"><svg class="icon" aria-hidden="true"><use href="#i-swap"/></svg><span class="menu-text"><strong>Sprache</strong><small>Deutsch / English</small></span><span class="menu-badge mono" id="menu-lang-code" data-no-i18n>EN</span></button>
     <button type="button" role="menuitem" class="menu-item" data-action="menu-go" data-value="method"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg><span class="menu-text"><strong>Methodik &amp; Info</strong><small>Rechenwege, Formeln, Autor</small></span></button>
     <button type="button" role="menuitem" class="menu-item" data-action="menu-go" data-value="export"><svg class="icon" aria-hidden="true"><use href="#i-export"/></svg><span class="menu-text"><strong>Export</strong><small>Bild, CSV, Touchstone, SPICE</small></span></button>
@@ -1496,6 +1527,15 @@ window.I18N = (() => {
     <button class="icon-button" type="button" data-action="close-dialog" aria-label="Schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
   </div>
   <div id="matrix-content" class="dialog-body"></div>
+  <div class="dialog-foot"><button class="button primary" type="button" data-action="close-dialog">Fertig</button></div>
+</dialog>
+
+<dialog id="pack-dialog" class="dialog wide-dialog" aria-labelledby="pack-title">
+  <div class="dialog-head">
+    <div><h2 id="pack-title">Vorlagen &amp; Einstellungen</h2><p>Fingerabdrücke und Kurvenwahl sichern, teilen und laden</p></div>
+    <button class="icon-button" type="button" data-action="close-dialog" aria-label="Schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+  </div>
+  <div id="pack-content" class="dialog-body"></div>
   <div class="dialog-foot"><button class="button primary" type="button" data-action="close-dialog">Fertig</button></div>
 </dialog>
 
@@ -4177,6 +4217,7 @@ const Plot = (() => {
     state.markers = [Plot.nearest(fs, target, true), null, null, null];
     state.activeMarker = 0;
     state.tab = 's';
+    state.curveApply = true;
     if (saved) {
       try { applySettings(dataset, saved); } catch { /* ignore outdated settings */ }
     }
@@ -4480,8 +4521,8 @@ const Plot = (() => {
       list = list.filter(item => !(item.name === name && item.n === tpl.n && item.file === tpl.file));
       list.unshift(tpl);
       const group = list.filter(item => item.name === name && item.n === tpl.n);
-      if (group.length > 4) list = list.filter(item => item !== group.at(-1));
-      list = list.slice(0, 60);
+      if (group.length > 8) list = list.filter(item => item !== group.at(-1));
+      list = list.slice(0, 200);
       save();
       return tpl;
     }
@@ -4517,7 +4558,57 @@ const Plot = (() => {
       save();
     }
 
-    return { AUTO, match, learn, settings, groups, remove, similarity, get size() { return list.length; } };
+    // Packs from other people or devices: validate the shape of every template before it is trusted.
+    const finite = v => Array.isArray(v) && v.every(x => typeof x === 'number' && Number.isFinite(x));
+    function valid(t) {
+      try {
+        return t && typeof t.id === 'string' && t.id.length <= 40 && typeof t.name === 'string' && t.name.length >= 1 && t.name.length <= 60 &&
+          Number.isInteger(t.n) && t.n >= 2 && t.n <= 64 && Array.isArray(t.shape?.z) && t.shape.z.length <= 16 && Array.isArray(t.shape?.loads) &&
+          Array.isArray(t.map?.pairs) && Array.isArray(t.map?.singles) && Array.isArray(t.map?.loaded) &&
+          finite(t.fp?.g) && Array.isArray(t.fp?.keys) && t.fp.keys.every(k => typeof k === 'string') && Array.isArray(t.fp?.v) && t.fp.v.every(finite) &&
+          t.fp.v.length === t.fp.keys.length && Array.isArray(t.view?.traces) && t.view.traces.every(k => typeof k === 'string') && JSON.stringify(t).length < 60000;
+      } catch { return false; }
+    }
+    function merge(items) {
+      let added = 0, skipped = 0;
+      for (const t of Array.isArray(items) ? items : []) {
+        if (!valid(t)) { skipped++; continue; }
+        if (list.some(x => x.id === t.id)) continue;
+        list.push({ ...t, name: String(t.name).replace(/[\r\n!]/g, ' ') });
+        added++;
+      }
+      list = list.slice(0, 300);
+      if (added) save();
+      return { added, skipped };
+    }
+    return { AUTO, match, learn, settings, groups, remove, similarity, merge, all: () => list.slice(), get size() { return list.length; } };
+  })();
+
+  // ---- Curve preferences per device type: kept on this device and part of the exchangeable pack. ----
+  const Prefs = (() => {
+    const KEY = 'spa-prefs';
+    let curves = {};
+    try { const v = JSON.parse(localStorage.getItem(KEY)); if (v && typeof v.curves === 'object' && v.curves) curves = v.curves; } catch { curves = {}; }
+    const save = () => { try { localStorage.setItem(KEY, JSON.stringify({ curves })); } catch { /* storage full or blocked */ } };
+    const keys = v => Array.isArray(v) && v.length <= 32 && v.every(k => typeof k === 'string' && k.length < 40);
+    const clean = v => v && typeof v === 'object' ? { ...(keys(v.mm) ? { mm: v.mm } : {}), ...(keys(v.se) ? { se: v.se } : {}), ...(keys(v.hidden) ? { hidden: v.hidden.slice(0, 80) } : {}) } : null;
+    return {
+      get: type => curves[type] ?? null,
+      set(type, value) { curves[type] = value; save(); },
+      clear() { curves = {}; save(); },
+      all: () => JSON.parse(JSON.stringify(curves)),
+      merge(incoming) {
+        let n = 0;
+        for (const [type, value] of Object.entries(incoming && typeof incoming === 'object' ? incoming : {})) {
+          if (!/^[a-z]{2,12}$/.test(type)) continue;
+          const c = clean(value);
+          if (c && Object.keys(c).length) { curves[type] = c; n++; }
+        }
+        if (n) save();
+        return n;
+      },
+      get size() { return Object.keys(curves).length; }
+    };
   })();
 
   // ---- Session: several files at once, folders and ZIP archives, quick stepping and comparison. ----
@@ -4762,7 +4853,7 @@ const Plot = (() => {
     const added = addItems(sources);
     if (!added.length) return;
     renderSession();
-    await openItem(added[0].id, { remember: remember && added.length === 1 });
+    await openItem(added[0].id, { remember });
     if (added.length > 1 && state.profile.source !== 'template') toast(added.length + ' Dateien geladen · ← / → blättert');
   }
 
@@ -4771,7 +4862,7 @@ const Plot = (() => {
   function stepSession(delta) {
     const index = session.items.findIndex(item => item.id === session.current);
     const next = session.items[index + Number(delta)];
-    if (next) openItem(next.id, { keepTab: true });
+    if (next) openItem(next.id, { keepTab: true, remember: true });
   }
 
   function clearSession() {
@@ -5335,7 +5426,7 @@ const Plot = (() => {
       textField('Bauteiltyp', 'name', p.name, 'z. B. CMC, LAN-Übertrager', 'profile-name') +
       '<button class="button primary" type="submit"' + disabled(state.dataset.demo) + '>' + icon('file') + (state.dataset.spice ? 'Für Modell speichern' : 'In Datei speichern') + '</button>' +
       actionButton('Als Vorlage lernen', 'learn-template', '', 'button', 'plus') +
-      actionButton('Vorlagen prüfen', 'match-templates', '', 'button', 'reset', disabled(!Templates.size)) + '</form>' +
+      actionButton('Vorlagen prüfen', 'match-templates', '', 'button', 'reset', disabled(!Templates.size)) + actionButton('Pakete …', 'packs', '', 'button', 'grid', ' title="Fingerabdrücke und Kurvenwahl sichern, laden, teilen"') + '</form>' +
       (chips ? '<div class="preset-row"><span>Passende Vorlagen</span>' + chips + '</div>' : '') +
       '<p class="note">Paare, Abschlüsse, Bezugsimpedanzen und Kurvenauswahl stehen als lesbarer Kommentarblock in der Touchstone-Datei (TS 2.x: im Block [Begin Information]) und werden beim nächsten Öffnen übernommen. Eine gelernte Vorlage erkennt ähnliche Bauteile am Verhalten, auch bei anderer Portreihenfolge.</p>' +
       (stored ? '<details class="template-list"><summary>Gelernte Vorlagen</summary><ul>' + stored + '</ul></details>' : '') +
@@ -5628,11 +5719,19 @@ const Plot = (() => {
         settings.output = keys.find(key => key !== settings.input);
       }
     }
+    if (state.curveApply) {
+      state.curveApply = false;
+      const pref = Prefs.get(deviceType());
+      if (pref) {
+        for (const basis of ['mm', 'se']) if (pref[basis]) state.sKeys[basis] = pref[basis].slice();
+        if (pref.hidden) { state.hiddenTraces.clear(); pref.hidden.forEach(key => state.hiddenTraces.add(key)); }
+      }
+    }
     const existing = state.sKeys[state.basis];
-    if (!existing) state.sKeys[state.basis] = defaultTraces(modes);
+    if (!existing) state.sKeys[state.basis] = typeTraces(modes, false);
     else {
       const retained = existing.filter(key => key.split(':').every(valid));
-      state.sKeys[state.basis] = existing.length && !retained.length ? defaultTraces(modes) : retained;
+      state.sKeys[state.basis] = existing.length && !retained.length ? typeTraces(modes, false) : retained;
     }
     const pairs = state.config.pairs.map(p => p.id);
     if (!pairs.includes(state.pairIn)) state.pairIn = pairs[0] ?? 1;
@@ -5648,6 +5747,40 @@ const Plot = (() => {
     if (row.type === 'P' || col.type === 'P') return parameter + '(' + row.key + '←' + col.key + ')';
     if (parameter !== 'S') return parameter + '(' + row.key + '←' + col.key + ')';
     return 'S' + (row.type + col.type).toLowerCase() + row.id + (Math.max(row.id, col.id) > 9 ? ',' : '') + col.id;
+  }
+
+  // Device type for curve defaults: a name the user gave wins, otherwise the structure and physics decide.
+  function deviceType() {
+    const name = (state.profile?.name || '').toLowerCase();
+    if (/\blan\b|lan-|übertrager|uebertrager|transformer|trafo|magnetics|ethernet|phy/.test(name)) return 'lan';
+    if (/cmc|cmb|common|gleichtakt|drossel|choke|rfi/.test(name)) return 'cmc';
+    if (state.config.pairs.length >= 2) {
+      try { if (state.network) return detectModel().type === 'transformer' ? 'lan' : 'cmc'; } catch { /* fall through */ }
+      return state.dataset.n >= 6 ? 'lan' : 'cmc';
+    }
+    return state.config.pairs.length ? 'pair' : 'se';
+  }
+
+  // Standard curves: CMC Sdd21 + Scc21 (extended + Sdc21); LAN transformer Sdd21, Scc21, Sdd11, Sdc21 (extended + Scc11, Sdd22).
+  function typeTraces(modes, extended) {
+    const diff = modes.filter(m => m.type === 'D'), common = modes.filter(m => m.type === 'C');
+    const type = deviceType();
+    if (diff.length >= 2 && common.length >= 2 && (type === 'cmc' || type === 'lan')) {
+      const [d1, d2] = diff, [c1, c2] = common;
+      const keys = type === 'cmc'
+        ? [traceKey(d2, d1), traceKey(c2, c1)].concat(extended ? [traceKey(d2, c1)] : [])
+        : [traceKey(d2, d1), traceKey(c2, c1), traceKey(d1, d1), traceKey(d2, c1)].concat(extended ? [traceKey(c1, c1), traceKey(d2, d2), traceKey(c2, d1)] : []);
+      return keys;
+    }
+    return defaultTraces(modes);
+  }
+
+  const sameSet = (a, b) => a.length === b.length && a.every(k => b.includes(k));
+
+  function rememberCurves() {
+    if (!state.dataset || state.dataset.demo) return;
+    const type = deviceType();
+    Prefs.set(type, { ...(Prefs.get(type) || {}), [state.basis]: state.sKeys[state.basis].slice(), hidden: [...state.hiddenTraces].slice(0, 80) });
   }
 
   function defaultTraces(modes) {
@@ -6647,7 +6780,10 @@ const Plot = (() => {
   function renderTraces() {
     const view = state.view;
     const marker = state.markers[state.activeMarker];
-    const pick = state.tab === 's' ? actionButton('Wählen', 'matrix', '', 'button', 'grid', ' aria-label="Kurven wählen"') : '';
+const typed = state.tab === 's' && state.basis === 'mm' && ['cmc', 'lan'].includes(deviceType());
+    const isExt = typed && sameSet(state.sKeys.mm || [], typeTraces(currentModes(), true));
+    const pick = (typed ? actionButton('Erweitert', 'curve-preset', isExt ? 'basic' : 'ext', 'button', '', pressed(isExt) + ' title="Zusätzliche Kurven für ' + (deviceType() === 'cmc' ? 'CMC: Sdc21' : 'LAN-Übertrager: Scc11, Sdd22, Scd21') + '"') : '') +
+      (state.tab === 's' ? actionButton('Wählen', 'matrix', '', 'button', 'grid', ' aria-label="Kurven wählen"') : '');
     const list = view.traces.map(trace =>
       '<button type="button" class="trace-row" data-action="toggle-trace" data-value="' + esc(trace.key) + '"' + pressed(trace.visible) +
       ' style="--trace:' + trace.color + '" title="' + esc(trace.label + (trace.visible ? ' ausblenden' : ' einblenden')) + '">' +
@@ -6829,7 +6965,7 @@ const Plot = (() => {
     const previous = content.querySelector('.matrix-scroll');
     const position = previous ? [previous.scrollLeft, previous.scrollTop] : [0, 0];
     insertHtml(content, '<div class="matrix-actions">' +
-      actionButton('Standard', 'curve-preset', 'default') + actionButton('Übertragung', 'curve-preset', 'through') +
+      actionButton('Standard', 'curve-preset', 'default') + (['cmc', 'lan'].includes(deviceType()) && state.basis === 'mm' ? actionButton('Erweitert', 'curve-preset', 'ext') : '') + actionButton('Übertragung', 'curve-preset', 'through') +
       actionButton('Reflexion', 'curve-preset', 'reflect') +
       (state.basis === 'mm' ? actionButton('Modenkonversion', 'curve-preset', 'convert') : '') +
       (modes.length ** 2 <= MAX_TRACES ? actionButton('Alle ' + modes.length ** 2, 'curve-preset', 'all') : '') +
@@ -6857,14 +6993,101 @@ const Plot = (() => {
       toast('Es sind bereits ' + MAX_TRACES + ' Kurven ausgewählt.');
       return;
     }
+    rememberCurves();
     renderMatrix();
     renderAnalysis();
+  }
+
+  // ---- Packs: fingerprints (templates) and curve preferences as one JSON file, from disk, GitHub or the app itself. ----
+  const PACK_LIMIT = 4 * 1024 * 1024;
+
+  function packData() {
+    return { app: 'spa-pack', version: 1, created: new Date().toISOString(), templates: Templates.all(), curves: Prefs.all() };
+  }
+
+  function applyPack(text, origin) {
+    if (text.length > PACK_LIMIT) throw new Error('Das Paket ist größer als 4 MB.');
+    let pack;
+    try { pack = JSON.parse(text); } catch { throw new Error('Das ist keine gültige JSON-Datei.'); }
+    if (!pack || pack.app !== 'spa-pack' || pack.version !== 1) throw new Error('Das ist kein Vorlagenpaket dieser App.');
+    const t = Templates.merge(pack.templates), c = Prefs.merge(pack.curves);
+    const parts = [t.added + ' Fingerabdrücke neu'];
+    if (c) parts.push(c + ' Kurvenwahlen übernommen');
+    if (t.skipped) parts.push(t.skipped + ' ungültige übersprungen');
+    toast(origin + ': ' + parts.join(' · '));
+    renderPacks();
+    if (state.dataset) renderConfig();
+  }
+
+  const rawUrl = value => {
+    const url = new URL(value.trim());
+    if (url.protocol !== 'https:') throw new Error('Nur https-Adressen sind erlaubt.');
+    const blob = url.hostname === 'github.com' && url.pathname.match(/^\/([^/]+)\/([^/]+)\/blob\/(.+)$/);
+    return blob ? 'https://raw.githubusercontent.com/' + blob[1] + '/' + blob[2] + '/' + blob[3] : url.href;
+  };
+
+  async function packFromUrl(value) {
+    let address;
+    try { address = rawUrl(value); } catch (error) { throw new Error(error.message.startsWith('Nur') ? error.message : 'Das ist keine gültige Adresse.'); }
+    const response = await fetch(address, { cache: 'no-cache' });
+    if (!response.ok) throw new Error('Der Download ist fehlgeschlagen (' + response.status + ').');
+    applyPack(await response.text(), 'Paket geladen');
+  }
+
+  function renderPacks() {
+    const box = $('pack-content');
+    if (!box) return;
+    const prefs = Prefs.all();
+    const names = { cmc: 'CMC', lan: 'LAN-Übertrager', pair: 'Ein Paar', se: 'Single-Ended' };
+    const curveRows = Object.keys(prefs).map(type => '<li><span><strong>' + esc(names[type] || type) + '</strong> · ' + ((prefs[type].mm || prefs[type].se || []).length) + ' Kurven' +
+      ((prefs[type].hidden || []).length ? ' · ' + prefs[type].hidden.length + ' ausgeblendet' : '') + '</span></li>').join('');
+    const stored = Templates.groups().map(group => '<li><span><strong>' + esc(group.name) + '</strong> · ' + group.n + ' Ports · ' + group.pairs + ' Paare · ' +
+      group.count + (group.count === 1 ? ' Beispiel' : ' Beispiele') + '</span>' + iconButton('Vorlage ' + group.name + ' löschen', 'delete-template', group.key, 'close') + '</li>').join('');
+    insertHtml(box,
+      '<section class="pack-section"><h3>Auf diesem Gerät</h3><p class="note">' + Templates.size + ' Fingerabdrücke · ' + Prefs.size + ' gemerkte Kurvenwahlen (pro Bauteiltyp). ' +
+      'Die Kurvenwahl und ausgeblendete Kurven bleiben beim Blättern durch Dateien und nach einem Neustart erhalten.</p>' +
+      '<div class="pack-actions">' + actionButton('Paket exportieren', 'pack-export', '', 'button primary', 'export', disabled(!Templates.size && !Prefs.size)) +
+      actionButton('Datei laden …', 'pack-import', '', 'button', 'upload') +
+      actionButton('Kurvenwahl zurücksetzen', 'pack-reset', '', 'button', 'reset', disabled(!Prefs.size)) + '</div></section>' +
+      '<section class="pack-section"><h3>Aus dem Netz laden</h3><p class="note">Adresse eines Pakets, z. B. aus deinem GitHub-Repository (github.com/…/blob/… oder raw.githubusercontent.com/…).</p>' +
+      '<form id="pack-url-form" class="pack-url"><input class="field-input mono" id="pack-url" type="url" inputmode="url" placeholder="https://raw.githubusercontent.com/…/default.json" aria-label="Adresse des Pakets" autocomplete="off">' +
+      '<button class="button" type="submit">Laden</button></form>' +
+      '<div class="pack-actions">' + actionButton('Standardpaket laden', 'pack-default', '', 'button', 'install') + '</div></section>' +
+      (curveRows ? '<section class="pack-section"><h3>Kurvenwahl pro Bauteiltyp</h3><ul class="pack-list">' + curveRows + '</ul></section>' : '') +
+      (stored ? '<section class="pack-section"><h3>Gelernte Fingerabdrücke</h3><ul class="pack-list">' + stored + '</ul></section>' : ''));
+  }
+
+  function openPacks() { renderPacks(); openDialog('pack-dialog'); }
+
+  async function packAction(kind) {
+    try {
+      if (kind === 'export') {
+        saveBlob(new Blob([JSON.stringify(packData(), null, 1)], { type: 'application/json' }), 'S-Analyzer-Vorlagen-' + new Date().toISOString().slice(0, 10) + '.json');
+      } else if (kind === 'import') {
+        const input = document.createElement('input');
+        input.type = 'file'; input.accept = '.json,application/json';
+        input.addEventListener('change', async () => {
+          const file = input.files[0];
+          if (!file) return;
+          try { applyPack(await file.text(), file.name); } catch (error) { toast(error.message); }
+        });
+        input.click();
+      } else if (kind === 'reset') {
+        Prefs.clear(); renderPacks(); renderTraces?.();
+        toast('Gemerkte Kurvenwahl gelöscht.');
+      } else if (kind === 'default') {
+        const response = await fetch(new URL('fingerprints/default.json', location.href), { cache: 'no-cache' });
+        if (!response.ok) throw new Error('Noch kein Standardpaket veröffentlicht. Lege fingerprints/default.json ins Repository oder lade eine Adresse.');
+        applyPack(await response.text(), 'Standardpaket');
+      }
+    } catch (error) { toast(error.message || 'Das Paket konnte nicht geladen werden.'); }
   }
 
   function curvePreset(preset) {
     const modes = currentModes().filter(mode => preset !== 'modal-all' || mode.type !== 'P');
     let next = [];
-    if (preset === 'default') next = defaultTraces(modes);
+    if (preset === 'default' || preset === 'basic') next = typeTraces(modes, false);
+    if (preset === 'ext') next = typeTraces(modes, true);
     if (preset === 'reflect') next = modes.map(mode => traceKey(mode, mode));
     if (preset === 'all' || preset === 'modal-all') next = modes.flatMap(row => modes.map(col => traceKey(row, col)));
     if (preset === 'through' || preset === 'convert') {
@@ -6879,7 +7102,8 @@ const Plot = (() => {
     if (next.length > MAX_TRACES) toast('Die ersten ' + MAX_TRACES + ' passenden Matrixelemente wurden gewählt.');
     state.sKeys[state.basis] = next.slice(0, MAX_TRACES);
     state.sKeys[state.basis].forEach(key => state.hiddenTraces.delete('s:' + state.basis + ':' + key));
-    renderMatrix();
+    rememberCurves();
+    if ($('matrix-dialog').open) renderMatrix();
     renderAnalysis();
   }
 
@@ -6889,6 +7113,7 @@ const Plot = (() => {
     trace.visible = !trace.visible;
     if (trace.visible) state.hiddenTraces.delete(key);
     else state.hiddenTraces.add(key);
+    rememberCurves();
     updatePlot();
     renderTraces();
     renderMarker(false);
@@ -7332,6 +7557,11 @@ const Plot = (() => {
     matrix: pickCurves,
     'select-curve': selectCurve,
     'curve-preset': curvePreset,
+    packs: openPacks,
+    'pack-export': () => packAction('export'),
+    'pack-import': () => packAction('import'),
+    'pack-reset': () => packAction('reset'),
+    'pack-default': () => packAction('default'),
     'toggle-trace': toggleTrace,
     'active-marker': value => switchMarker(Number(value)),
     'add-marker': addMarker,
@@ -7363,7 +7593,7 @@ const Plot = (() => {
     recent: openRecent,
     'open-folder': () => openFolder(),
     'open-siblings': () => openFolder(sessionItem(session.current)?.handle),
-    'session-open': value => openItem(value, { keepTab: true }),
+    'session-open': value => openItem(value, { keepTab: true, remember: true }),
     'session-step': stepSession,
     'session-compare': toggleCompare,
     'session-clear': clearSession,
@@ -7383,6 +7613,7 @@ const Plot = (() => {
       toggleMenu(false);
       if (value === 'files') actions['toggle-sidebar']();
       else if (value === 'lang') actions.lang();
+      else if (value === 'packs') openPacks();
       else if (value === 'method') $('method-button').click();
       else if (value === 'export') $('export-button').click();
       else if (value === 'install') $('pwa-install').click();
@@ -7408,6 +7639,13 @@ const Plot = (() => {
     button.setAttribute('aria-expanded', String(open));
     if (open) menu.querySelector('.menu-item:not([hidden])')?.focus({ preventScroll: true });
   }
+  document.addEventListener('submit', async event => {
+    if (event.target.id !== 'pack-url-form') return;
+    event.preventDefault();
+    const value = $('pack-url').value.trim();
+    if (!value) return;
+    try { await packFromUrl(value); } catch (error) { toast(error.message || 'Das Paket konnte nicht geladen werden.'); }
+  });
   document.addEventListener('pointerdown', event => {
     if (!$('settings-menu').hidden && !event.target.closest('#settings-menu, #settings-button')) toggleMenu(false);
   });

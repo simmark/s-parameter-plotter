@@ -74,6 +74,12 @@ Alle Berechnungen laufen lokal auf dem Gerät. Messdateien werden nicht hochgela
 - Die Blätterpfeile für mehrere Dateien sitzen am Handy direkt unter dem Diagramm (mit Dateiname und Zähler); am Desktop bleiben sie oben.
 - Im dunklen Design waren Akzent- und ausgewählte Buttons (Anwenden, Paar anlegen, Plus wählen, Export, Hell/Dunkel) unleserlich; alle sichtbaren Schaltflächen werden jetzt automatisch auf Kontrast geprüft.
 
+## Version 7: Standardkurven, Kurvenwahl merken, Vorlagenpakete
+
+- Standardkurven je Bauteiltyp: CMC zeigt Sdd21 und Scc21 (Erweitert: + Sdc21), LAN-Übertrager Sdd21, Scc21, Sdd11 und Sdc21 (Erweitert: + Scc11, Sdd22, Scd21). Der Typ kommt aus dem Bauteiltyp-Namen, sonst aus Struktur und Physik.
+- Deine Kurvenauswahl und ausgeblendete Kurven gelten pro Bauteiltyp für alle Dateien (auch beim Durchblättern) und bleiben nach einem Neustart erhalten. Die zuletzt angesehene Datei wird beim Start wieder geöffnet.
+- „Vorlagen & Einstellungen": Fingerabdrücke und Kurvenwahl als JSON-Paket exportieren, aus Datei oder per https-Adresse (GitHub) laden. Siehe `fingerprints/README.md`.
+
 ## Lizenz
 
 © 2026 Simon Mark · info.simonlation@gmail.com. Alle Rechte vorbehalten. Kein Open Source: Kopieren, Verändern oder Weiterverwenden des Quelltexts, auch in Teilen, nur mit schriftlicher Zustimmung des Autors.
