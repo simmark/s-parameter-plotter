@@ -5,6 +5,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { load } from './load.mjs';
+import { lanHeader, zeroData } from './lan-fixture.mjs';
 
 const { RF, Spice, Magnetic } = load();
 let pass = 0, fail = 0;
@@ -306,6 +307,21 @@ console.log('Vergleich mit dem Rechenkern der veröffentlichten Fassung (Branch 
     check('SPICE-Simulation bitgleich', sa.samples.every((s, i) => same(s, sb.samples[i])));
     check('Physik-Erkennung bitgleich', JSON.stringify(Magnetic.analyze(sa)) === JSON.stringify(old.Magnetic.analyze(sb)));
   }
+}
+
+console.log('LAN-Übertrager mit Mittelanzapfung (6 Ports): Profil aus dem Dateikopf');
+{
+  const parse = (head, n = 6) => RF.parseTouchstone(head + zeroData(n), 'lan.s' + n + 'p');
+  const mirrored = parse(lanHeader({ part: '7490140122B' }));
+  check('WE-LAN, Skizze gespiegelt (Port 1 gegenüber Port 6): Primär P1/P3, Sekundär P6 (+) / P4 (−), Anzapfungen P2, P5 offen',
+    JSON.stringify(mirrored.profile?.pairs) === JSON.stringify([{ p: 0, q: 2 }, { p: 5, q: 3 }]) && JSON.stringify(mirrored.profile?.taps) === '[1,4]' && mirrored.profile.part === '7490140122B', JSON.stringify(mirrored.profile));
+  check('WE-LAN: Portnamen mit Pins (1+, CT1, 1−, 2−, CT2, 2+)', mirrored.portNames.join('|') === '1+ · Pin 1|CT1 · Pin 2|1− · Pin 3|2− · Pin 10|CT2 · Pin 11|2+ · Pin 12', mirrored.portNames.join('|'));
+  const straight = parse(lanHeader({ part: '7490888888', mirrored: false }));
+  check('WE-LAN, Skizze gerade (Port 1 gegenüber Port 4): Sekundär P4 (+) / P6 (−)', JSON.stringify(straight.profile?.pairs) === JSON.stringify([{ p: 0, q: 2 }, { p: 3, q: 5 }]), JSON.stringify(straight.profile?.pairs));
+  const old = parse(lanHeader({ part: '7490220115', pins: [1, 2, 3, 22, 23, 24] }));
+  check('7490220115 behält die bisherige Zuordnung (P4 +, P6 −, Namen D1+ … X1−)', old.profile?.part === '7490220115' && JSON.stringify(old.profile.pairs) === JSON.stringify([{ p: 0, q: 2 }, { p: 3, q: 5 }]) && old.portNames[0] === 'D1+ · Pin 1', JSON.stringify(old.profile) + ' ' + old.portNames[0]);
+  check('Kein LAN-Profil für andere Familien, nicht aufeinanderfolgende Pins oder andere Portzahlen',
+    parse(lanHeader({ family: 'WE-CMB' })).profile === null && parse(lanHeader({ pins: [1, 3, 5, 10, 11, 12] })).profile === null && parse(lanHeader(), 4).profile === null);
 }
 
 console.log('Vierpol-Modelle: CMC und Übertrager (Formel, Netzliste und Fit beschreiben dieselbe Schaltung)');
