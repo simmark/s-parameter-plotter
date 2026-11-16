@@ -325,19 +325,34 @@ console.log('Vierpol-Modelle: CMC und Übertrager (Formel, Netzliste und Fit bes
   // low-frequency limits of the CISPR impedances: Z CM → (Rw + jω(Lσ + 2M))/2, Z DM → 2(Rw + jωLσ)
   const zl = RF.cmcModelZ(cmc, 2e4), wl = 2 * Math.PI * 2e4;
   check('CMC: Z CM und Z DM bei tiefer Frequenz = (R_w + jω(Lσ+2M))/2 und 2(R_w + jωLσ)', close(zl.cm[1], wl * (cmc.ls + 2 * cmc.m) / 2, 2e-3) && close(zl.dm[1], 2 * wl * cmc.ls, 2e-3) && close(zl.dm[0], 2 * cmc.rw, 2e-3));
-  // the fit recovers the parameters from a deliberately wrong start
-  const meas = { cm: [], dm: [], refCm: 25, refDm: 100 };
-  for (const f of freq) { const z = RF.cmcModelZ(cmc, f); meas.cm.push(z.cm); meas.dm.push(z.dm); }
-  const start = { ...cmc, m: 0.6e-3, ls: 16e-6, rw: 0.09, rfe: 25e3, ct: 6e-12, cw: 1.2e-12, cg: 0.5e-12 };
-  const before = RF.multiQuality(freq, meas, start), fit = RF.fitMulti(freq, meas, start, { prior: { cw: 2e-12, cg: 0.5e-12 } });
-  const rel = key => Math.abs(fit.model[key] / cmc[key] - 1);
-  check('CMC: Optimierung findet aus verstellten Startwerten zurück', fit.err < 0.05 && fit.err < before.err / 20 && ['m', 'ls', 'rw', 'rfe', 'ct'].every(key => rel(key) < 0.03),
+  // the fit works on the four natural modes and recovers every element the measurement resolves
+  const meas = { y: Array.from(freq, f => RF.cmcModal(cmc, f)), ref: 50 };
+  const start = { ...cmc, m: 0.6e-3, ls: 16e-6, rw: 0.09, rfe: 25e3, ct: 6e-12, cw: 1.2e-12, cg: 0.8e-12 };
+  const before = RF.multiQuality(freq, meas, start), fit = RF.fitMulti(freq, meas, start), rel = key => Math.abs(fit.model[key] / cmc[key] - 1);
+  check('CMC: Optimierung auf den natürlichen Moden findet aus verstellten Startwerten zurück (auch Cw und Cg)', fit.err < 0.05 && fit.err < before.err / 20 && ['m', 'ls', 'ct', 'cw', 'cg'].every(key => rel(key) < 0.03) && rel('rfe') < 0.1,
     'vorher ' + before.err.toFixed(2) + ' dB, nachher ' + fit.err.toFixed(4) + ' dB · ' + ['m', 'ls', 'rw', 'rfe', 'ct', 'cw', 'cg'].map(key => key + ' ' + (100 * rel(key)).toFixed(2) + ' %').join(', '));
-  check('CMC: Güte je Kurve wird getrennt ausgewiesen', Number.isFinite(fit.parts.cm.err) && Number.isFinite(fit.parts.dm.err) && Number.isFinite(fit.parts.cm.phase));
-  const held = RF.fitMulti(freq, meas, start, { fixed: ['m', 'cg'], prior: { cw: 2e-12 } });
+  check('CMC: Güte je Mode G, V, H, D wird getrennt ausgewiesen', ['g', 'v', 'h', 'd'].every(k => Number.isFinite(fit.parts[k].err)));
+  const spread = RF.multiSpread(freq, meas, cmc);
+  check('CMC: Bestimmtheit – M, Lσ, Ct, Cw gut bestimmt, R_w (50 mΩ gegen 50 Ω) deutlich schlechter', ['m', 'ls', 'ct', 'cw'].every(k => spread[k] < 0.05) && spread.rw > 0.15,
+    Object.entries(spread).map(([k, v]) => k + ' ±' + (100 * v).toFixed(1) + ' %').join(', '));
+  // Z CM / Z DM after CISPR 17 are the series impedance B: shunt elements have no influence on them at all
+  const zA = RF.cmcModelZ(cmc, 1e7), zB = RF.cmcModelZ({ ...cmc, cg: 5e-12, cw: 9e-12 }, 1e7);
+  check('CMC: Cg und Cw ändern Z CM und Z DM nach CISPR 17 nicht (reine Reihenimpedanz)', cclose(zA.cm, zB.cm, 1e-9) && cclose(zA.dm, zB.dm, 1e-9));
+  const unresolved = RF.zError([0.02, 0.1], 100, 200), resolved = RF.zError([200, 0], 100, 200);
+  check('Messbarkeit: 0,1 Ω gegen 100 Ω ist nicht auflösbar, 200 Ω gut', unresolved > 1 && resolved < 0.01, unresolved.toFixed(2) + ' / ' + resolved.toFixed(4));
+  const held = RF.fitMulti(freq, meas, start, { fixed: ['m', 'cg'] });
   check('CMC: festgehaltene Parameter bleiben exakt stehen', held.model.m === start.m && held.model.cg === start.cg && held.model.ls !== start.ls);
   check('CMC: alle Parameter bleiben positiv', RF.modelParams(fit.model).every(p => p.value > 0) && RF.modelParams(fit.model).length === 7);
   check('CMC: zu wenige Punkte im Fenster → kein Ergebnis statt eines erfundenen', RF.fitMulti(freq, meas, start, { band: [1e4, 1.5e4] }) === null);
+  // diagonal capacitance and core sections: formula = SPICE simulation of the exported netlist
+  for (const [label, model] of [['mit Cx', { ...cmc, cx: 1.5e-12 }], ['mit Cx und zwei Kerngliedern', RF.cmcSections({ ...cmc, cx: 1.5e-12 }, 2)]]) {
+    const sim = netlist(RF.modelNetlist(model, 'CMC'))({ f1: 1e4, f2: 3e8, n: 61 });
+    let err = 0;
+    sim.freq.forEach((f, i) => { const s = RF.fromZY(RF.cmcModelY(model, f), refs, 'Y'); for (let k = 0; k < s.length; k++) err = Math.max(err, Math.abs(s[k] - sim.samples[i][k])); });
+    check('CMC ' + label + ': Formel = SPICE-Simulation der Netzliste', err < 1e-7, err.toExponential(2));
+  }
+  const two = RF.cmcSections(cmc, 2);
+  check('Kernglieder: Aufteilen erhält die Gesamtinduktivität', Math.abs(two.m + two.m2 - cmc.m) < 1e-12 && two.rfe2 > two.rfe);
 
   for (const flip of [false, true]) {
     const tr = { type: 'trafo', lm: 350e-6, lst: 1.2e-6, n: 2, rpri: 0.4, rsec: 1.5, rfe: 20e3, cp: 15e-12, cwa: NaN, cwx: NaN, flip };
@@ -374,7 +389,7 @@ console.log('Vierpol-Modelle: CMC und Übertrager (Formel, Netzliste und Fit bes
     const freq2 = logf(2e3, 3e7, 101), meas2 = { z: Array.from(freq2, f2 => RF.trafoModelZ(tr, f2)) };
     const start = { ...tr, lm: 500e-6, lst: 2e-6, n: 1.7, rpri: 0.7, rsec: 1, rfe: 12e3, cp: 25e-12, cwa: 6e-12, cwx: 6e-12 };
     const fit = RF.fitMulti(freq2, meas2, start, { priorSum: { keys: ['cwa', 'cwx'], value: 12e-12 } }), rel = key => Math.abs(fit.model[key] / tr[key] - 1);
-    check('Übertrager: Optimierung findet aus verstellten Startwerten zurück, auch die Aufteilung der Wicklungskapazität', fit.err < 0.05 && ['lm', 'lst', 'n', 'rpri', 'rsec', 'rfe'].every(key => rel(key) < 0.03) && ['cp', 'cwa', 'cwx'].every(key => rel(key) < 0.1),
+    check('Übertrager: Optimierung findet aus verstellten Startwerten zurück, auch die Aufteilung der Wicklungskapazität (R₁, R₂ gegen 100 Ω nur grob)', fit.err < 0.05 && ['lm', 'lst', 'n'].every(key => rel(key) < 0.03) && ['rfe', 'cp', 'cwa', 'cwx'].every(key => rel(key) < 0.1) && ['rpri', 'rsec'].every(key => rel(key) < 0.5),
       fit.err.toFixed(4) + ' dB · ' + ['lm', 'lst', 'n', 'rpri', 'rsec', 'rfe', 'cp', 'cwa', 'cwx'].map(key => key + ' ' + (100 * rel(key)).toFixed(2) + ' %').join(', '));
     check('Übertrager: Polarität ist kein Fitparameter und bleibt erhalten', fit.model.flip === false && RF.modelParams(fit.model).every(p => p.key !== 'flip'));
   }

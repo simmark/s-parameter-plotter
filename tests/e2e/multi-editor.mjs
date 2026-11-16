@@ -51,14 +51,14 @@ try {
   await open('cmc.s4p');
   await page.waitForSelector('#model-editor');
   const hash0 = await fileHash('cmc.s4p');
-  const CK = ['m', 'ls', 'rw', 'rfe', 'ct', 'cw', 'cg'];
+  const CK = ['m', 'rfe', 'ls', 'rw', 'ct', 'cw', 'cg'];
   report.equal('CMC: Editor zeigt alle sieben Elemente des Schaltbilds', await page.$$eval('.model-row', n => n.map(r => r.dataset.key)), CK);
   let v = await values(CK), s = await summary();
   report.check('CMC: Startwerte sind die der Auswertung (M 990 µH, Lσ 10 µH, Cw 2 pF, Cg 0,5 pF, Ct 4 pF)', near(v.m, 990e-6, 0.01) && near(v.ls, 10e-6, 0.03) && near(v.cw, 2e-12, 0.03) && near(v.cg, 0.5e-12, 0.05) && near(v.ct, 4e-12, 0.08),
     CK.map(k => k + ' ' + v[k].toExponential(3)).join(' · '));
-  report.check('CMC: Abweichung des Startmodells wird je Kurve genannt', !s.edited && Number.isFinite(s.err) && /Z CM .* dB · Z DM .* dB/.test(s.text) && /Werte aus der Auswertung/.test(s.text), s.text);
+  report.check('CMC: Abweichung des Startmodells wird je natürlicher Mode genannt', !s.edited && Number.isFinite(s.err) && /Mode G .* dB · Mode V .* dB · Mode H .* dB · Mode D .* dB/.test(s.text) && /Startwerte aus Plateaus und Resonanzen/.test(s.text), s.text);
   const startErr = s.err;
-  report.check('CMC: abgeleitete Größen L, k und L+M stehen beim Editor', /L = M \+ Lσ = 1 mH · k = M\/L = 0[.,]99/.test(await page.textContent('#model-derived')), await page.textContent('#model-derived'));
+  report.check('CMC: abgeleitete Größen L, k und L+M stehen beim Editor', /L = M \+ Lσ = 1[.,]?\d* mH · k = M\/L = 0[.,]99/.test(await page.textContent('#model-derived')), await page.textContent('#model-derived'));
   report.equal('CMC: kein Marker-Knopf (Startwerte kommen aus der Modenauswertung)', await page.locator('#model-form [data-action="model-marker"]').count(), 0);
 
   // model curves next to the measurement
@@ -162,8 +162,8 @@ try {
   await page.click('button[data-action="model-fit"]'); await page.waitForTimeout(900);
   v = await values(TK); s = await summary();
   report.check('Übertrager: „Optimieren“ verkleinert die Abweichung', s.edited && s.err <= tStart + 1e-9, tStart.toFixed(3) + ' → ' + s.err.toFixed(3) + ' dB · ' + s.phase.toFixed(2) + '°');
-  report.check('Übertrager: Optimieren findet die Lage der Wicklungskapazität: im Referenzbauteil liegt sie ganz zwischen gleichnamigen Anschlüssen (Cwa 12 pF, Cwx ≈ 0)', near(v.cwa, 12e-12, 0.1) && v.cwx < 0.6e-12, 'Cwa ' + (v.cwa * 1e12).toFixed(2) + ' pF · Cwx ' + (v.cwx * 1e12).toFixed(3) + ' pF');
-  report.check('Übertrager: optimierte Werte treffen das Referenzbauteil (L_m, Lσ, n auf 3 %; R₁, R₂ auf 5 %; R_Fe auf 10 %)', near(v.lm + v.lst / 2, 350e-6, 0.03) && near(v.lst, lsRef, 0.03) && near(v.n, 2, 0.03) && near(v.rpri, 0.4, 0.05) && near(v.rsec, 1.5, 0.05) && near(v.rfe, 20e3, 0.1),
+  report.check('Übertrager: Optimieren findet die Lage der Wicklungskapazität: im Referenzbauteil liegt sie zwischen gleichnamigen Anschlüssen (Summe 12 pF, Cwa überwiegt)', near(v.cwa + v.cwx, 12e-12, 0.1) && v.cwa > 2 * v.cwx, 'Cwa ' + (v.cwa * 1e12).toFixed(2) + ' pF · Cwx ' + (v.cwx * 1e12).toFixed(3) + ' pF');
+  report.check('Übertrager: optimierte Werte treffen das Referenzbauteil (L_m, Lσ, n auf 3 %; R₁, R₂, R_Fe auf 10 %)', near(v.lm + v.lst / 2, 350e-6, 0.03) && near(v.lst, lsRef, 0.03) && near(v.n, 2, 0.03) && near(v.rpri, 0.4, 0.1) && near(v.rsec, 1.5, 0.1) && near(v.rfe, 20e3, 0.1),
     'L₁₁ ' + pct(v.lm + v.lst / 2, 350e-6) + ' · Lσ ' + pct(v.lst, lsRef) + ' · n ' + pct(v.n, 2) + ' · R₁ ' + pct(v.rpri, 0.4) + ' (Start ' + pct(r1Start, 0.4) + ') · R₂ ' + pct(v.rsec, 1.5) + ' · R_Fe ' + pct(v.rfe, 20e3) + ' · C_p ' + pct(v.cp, 15e-12));
   await setValue('n', '3');
   l = await labels('transformer-schematic');
