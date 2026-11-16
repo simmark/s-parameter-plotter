@@ -113,6 +113,13 @@ Alle Berechnungen laufen lokal auf dem Gerät. Messdateien werden nicht hochgela
 **ESB**
 
 - Bei 1- und 2-Port-Dateien wählt die Physik-Erkennung das Modell (induktiv oder kapazitiv) und die Fixture (Serie, Shunt, Eintor). Ein Kondensator in einer Serien-Fixture wird nicht mehr als Induktivität behandelt. Das Ergebnis ist als sicher, wahrscheinlich oder nicht eindeutig gekennzeichnet und lässt sich übersteuern.
+- **Modell-Editor für Zweipole:** Die Werte des automatischen Fits lassen sich eintippen (10 µH, 4,7n, 1e-6), per Regler um eine Dekade verstellen, einzeln festhalten und im Fitfenster neu optimieren. Optimiert werden Betrag und Phase der komplexen Impedanz; alle Werte bleiben positiv. Gültigkeitsbereich und Abweichung (dB und Grad RMS) stehen dabei.
+- **Marker und Fit:** „M“ neben einem Parameter übernimmt den Startwert vom aktiven Marker (L = X/ω, C = −1/(ωX), R = Re Z, C der Resonanz). „Fenster = M1 … M2“ begrenzt den Fit auf den Bereich zwischen zwei Markern. Beim Übertrager setzt „= Marker“ die Auswertefrequenz für OCL, n und k.
+- Messkurve und Modellkurve liegen gleichzeitig im Diagramm. Die Messdaten werden nie verändert.
+- **Modelle:** induktiv R₀ + (L₁ ∥ C₁ ∥ R₁) + zweiter Kreis; kapazitiv ESR + ESL + C. Beide lassen sich als SPICE-`.lib` speichern oder direkt als Modell öffnen.
+- **CMC-Schaltbild mit Werten:** je Wicklung R_w, Streuinduktivität Lσ = L − M und gekoppelter Teil M mit k, dazu R_Fe, Ct, Cw, Cg. Ein Fitwert, den das gewählte Band nicht bestimmt (negativ), erscheint als „n. b.“ mit Hinweis.
+- **Übertrager-Schaltbild mit Werten:** R₁, Lσ₁, L_m ∥ R_Fe, idealer Übertrager 1 : n, Lσ₂, R₂, C_p, Cww. Die Aufteilung der Streuung auf Primär- und Sekundärseite ist von den Klemmen aus nicht messbar und als Annahme gekennzeichnet.
+- Schaltbilder lassen sich vergrößern und verschieben, auch am Handy.
 
 ## Tests
 
@@ -120,7 +127,9 @@ Alle Berechnungen laufen lokal auf dem Gerät. Messdateien werden nicht hochgela
 node tests/static.mjs            # Lizenz, Cache-Version, Syntax
 node tests/magnetic.unit.mjs     # Bauteil-Erkennung
 node tests/rf.reference.mjs      # RF-Mathematik gegen Referenznetzwerke und gegen main
-node tests/e2e/run.mjs           # Browser-Abläufe A–D, ZIP, Speicher, Achsen, ESB (braucht Playwright und Chrome)
+node tests/e2e/run.mjs           # alles: dazu Browser-Abläufe A–D, ZIP, Speicher, Achsen, ESB, Englisch (braucht Playwright und Chrome)
+node tests/e2e/run.mjs --fast    # nur die drei Gruppen ohne Browser
+node tests/e2e/perf.mjs          # Zeitmessung mit 100 und 1000 Dateien
 ```
 
 Die Browser-Tests brauchen einmalig `npm install playwright` (oder `CHROME_PATH=/pfad/zu/chrome`). Alle Testdaten sind synthetisch und werden zur Laufzeit erzeugt. Was nur am echten Gerät geprüft werden kann, steht in [docs/geraetetests.md](docs/geraetetests.md). Aufbau des Speichers: [docs/speicher.md](docs/speicher.md).
@@ -201,7 +210,7 @@ SPICE library viewer (R, L, C, K, X, parameterised subcircuits → S-parameters)
 
 ### Version 8
 
-Durable storage: every imported file, folder and ZIP is written to browser storage (OPFS, IndexedDB as fallback), read back and verified, so the session survives reloads, restarts and updates. Libraries with folders, search and filters; adding the open file, a whole ZIP or a selection with progress and a verified result. Robust ZIP reader (ZIP64, CRC, size limits, path checks). Storage diagnosis, self test, backup export and import. On phones the file manager is a drawer from the left. Signed L(f)/C(f), symmetric log Y axis, Y axis by mouse, one tab "Z" for impedance and CISPR 17. Equivalent-circuit model and fixture for one- and two-port files follow the physics detection.
+Durable storage: every imported file, folder and ZIP is written to browser storage (OPFS, IndexedDB as fallback), read back and verified, so the session survives reloads, restarts and updates. Libraries with folders, search and filters; adding the open file, a whole ZIP or a selection with progress and a verified result. Robust ZIP reader (ZIP64, CRC, size limits, path checks). Storage diagnosis, self test, backup export and import. On phones the file manager is a drawer from the left. Signed L(f)/C(f), symmetric log Y axis, Y axis by mouse, one tab "Z" for impedance and CISPR 17. Equivalent-circuit model and fixture for one- and two-port files follow the physics detection. Model editor for two-poles: type, drag, fix and re-optimise parameters on magnitude and phase inside a fit window set by markers; SPICE export of the edited model. CMC and transformer drawings carry the fitted values, including leakage inductance per winding and the ideal 1 : n transformer.
 
 ### License
 

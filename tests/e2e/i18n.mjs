@@ -1,7 +1,7 @@
 // Englische Oberfläche: Alle neuen Texte (Sitzung, Bibliothek, Import, Speicher, Achsen, Z-Tab, ESB) müssen übersetzt sein.
 import fs from 'node:fs';
 import path from 'node:path';
-import { serve, launch, tempDir, makeZip, touchstone, Report, logFreqs, capacitorZ, fixtureS2P } from './lib.mjs';
+import { serve, launch, tempDir, makeZip, touchstone, Report, logFreqs, capacitorZ, fixtureS2P, spiceTouchstone, REF_CMC, refTransformer } from './lib.mjs';
 
 const report = new Report('Englische Oberfläche');
 const srv = await serve(), work = tempDir('spa-en-files-');
@@ -94,6 +94,26 @@ try {
   await german('ESB: Auswahlfelder', '#view-controls');
   await german('ESB: Erkennung und Kennwerte', '#analysis-details');
   report.check('ESB erkennt den Kondensator auch in der englischen Oberfläche', /capacitive/.test(await page.evaluate(() => document.getElementById('control-esb-model').selectedOptions[0].textContent)));
+  // model editor actions and the CMC / transformer drawings
+  await page.fill('#model-c', '-1'); await page.click('#model-form button[type=submit]'); await page.waitForTimeout(150);
+  await german('Editor: Meldung bei ungültigem Wert', '#toast');
+  await page.fill('#model-c', '1 nF'); await page.click('button[data-action="model-fit"]'); await page.waitForTimeout(300);
+  await german('Editor: Meldung nach dem Optimieren', '#toast');
+  await page.click('button[data-action="model-marker"][data-value="c"]'); await page.waitForTimeout(200);
+  await german('Editor: Meldung zur Marker-Übernahme', '#toast');
+  await page.setInputFiles('#file-input', [{ name: 'cmc.s4p', mimeType: 'text/plain', buffer: Buffer.from(await spiceTouchstone(REF_CMC, { f1: 1e4, f2: 1e8, n: 201 })) }, { name: 'trafo.s4p', mimeType: 'text/plain', buffer: Buffer.from(await spiceTouchstone(refTransformer(), { f1: 1e4, f2: 3e7, n: 201 })) }]);
+  await page.waitForFunction(() => document.getElementById('store-dialog').dataset.state !== 'running' && Number(document.getElementById('session-files').dataset.count) >= 15, null, { timeout: 60000 });
+  for (const [name, id] of [['cmc.s4p', 'cmc-schematic'], ['trafo.s4p', 'transformer-schematic']]) {
+    await page.fill('#session-filter', name); await page.click('.session-open[data-key="' + name + '"]');
+    await page.waitForFunction(k => document.getElementById('session-files').dataset.current === k, name); await ready();
+    await page.click('#tab-ports'); await page.click('button[data-action="pair-preset"][data-value="adjacent"]'); await ready();
+    await page.click('#tab-cmc'); await ready(); await page.waitForSelector('#' + id + ' svg');
+    if (name === 'cmc.s4p') { await page.fill('#fit-form input[name=start]', '20 kHz'); await page.fill('#fit-form input[name=stop]', '300 kHz'); await page.click('#fit-form button[type=submit]'); await ready(); await page.waitForSelector('#cmc-unphysical'); }
+    await german('Schaltbild ' + name + ': Bild, Tabelle und Hinweise', '#' + id);
+    await german('Auswahlfelder ' + name, '#view-controls');
+  }
+  await page.click('button[data-action="eval-marker"]'); await page.waitForTimeout(200);
+  await german('Meldung zur Auswertefrequenz', '#toast');
   // interrupted import notice after a reload
   await page.evaluate(() => { Store.hooks.afterWrite = () => (location.reload(), new Promise(() => {})); });
   fs.writeFileSync(zip, makeZip([{ name: 'late.s2p', data: touchstone(2, 5) }]));

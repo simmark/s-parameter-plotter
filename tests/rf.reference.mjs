@@ -208,6 +208,40 @@ console.log('Zweipolmodelle');
   check('Physik-Erkennung: Kondensator bleibt auch in der Serien-Fixture ein Kondensator', capD.topology === 'series' && capD.verdict.category === 'capacitor', capD.verdict.category);
 }
 
+console.log('Bearbeitbare Modelle: Parameter, feste Werte, Fitfenster');
+{
+  const freq = logf(1e4, 3e9, 301), w = f => 2 * Math.PI * f;
+  const zl = Array.from(freq, f => C.add([0.2, 0], C.div([1, 0], C.add(C.add(C.div([1, 0], [0, w(f) * 1e-5]), [0, w(f) * 5e-12]), [1 / 3e4, 0]))));
+  const auto = { type: 'tanks', ...RF.fitResonant(freq, zl) };
+  check('Parameterliste des Drosselmodells: R₀, L₁, C₁, R₁', RF.modelParams(auto).map(p => p.key).join(' ') === 'r0 l1 c1 r1');
+  const wrong = RF.modelWith(auto, { l1: 2e-5 }), q = RF.modelQuality(freq, zl, wrong, [1e4, 1e8]);
+  check('Verstellter Wert: Abweichung in Betrag und Phase wird beziffert', q.err > 3 && q.phase > 5 && q.points > 100, q.err.toFixed(2) + ' dB · ' + q.phase.toFixed(1) + '°');
+  const held = RF.fitModel(freq, zl, wrong, { fixed: ['l1'], band: [1e4, 1e8] });
+  check('Fester Parameter bleibt exakt stehen, die freien passen sich an', held.model.tanks[0].l === 2e-5 && held.err < q.err && close(held.model.tanks[0].c, 2.5e-12, 0.2), 'C₁ ' + (held.model.tanks[0].c * 1e12).toFixed(3) + ' pF · ' + held.err.toFixed(2) + ' dB');
+  const free = RF.fitModel(freq, zl, wrong, { band: [1e4, 1e8] });
+  check('Alle frei: komplexer Fit findet 10 µH, 5 pF, 0,2 Ω, 30 kΩ', close(free.model.tanks[0].l, 1e-5, 1e-3) && close(free.model.tanks[0].c, 5e-12, 1e-3) && close(free.model.r0, 0.2, 1e-2) && close(free.model.tanks[0].r, 3e4, 1e-2) && free.err < 1e-3 && free.phase < 1e-2);
+  const windowed = RF.fitModel(freq, zl, RF.modelWith(auto, { l1: 1.4e-5 }), { fixed: ['c1', 'r1'], band: [1e5, 5e6] });
+  check('Fitfenster: nur Punkte im Fenster zählen', windowed.points === Array.from(freq).filter(f => f >= 1e5 && f <= 5e6).length && close(windowed.model.tanks[0].l, 1e-5, 1e-2), windowed.points + ' Punkte');
+  check('Zu wenige Punkte im Fenster: kein Scheinergebnis', RF.fitModel(freq, zl, auto, { band: [1e6, 1.05e6] }) === null);
+  let negative = 0;
+  for (let t = 0; t < 40; t++) {
+    const start = RF.modelWith(auto, Object.fromEntries(RF.modelParams(auto).map(p => [p.key, p.value * 10 ** (2 * rnd())])));
+    const r = RF.fitModel(freq, zl, start, { fixed: t % 3 ? [] : ['r0'], band: [1e4, 10 ** (6 + 3 * (rnd() + 0.5))] });
+    if (r && RF.modelParams(r.model).some(p => !(p.value > 0) || !Number.isFinite(p.value))) negative++;
+  }
+  check('40 Fits aus zufälligen Startwerten: nie ein negativer oder nicht endlicher Parameter', negative === 0);
+  check('Ungültige Eingaben (negativ, null, NaN) werden nicht ins Modell übernommen', RF.modelWith(auto, { l1: -1, c1: 0, r0: NaN }).tanks[0].l === auto.tanks[0].l && RF.modelWith(auto, { r0: NaN }).r0 === auto.r0);
+  const zc = Array.from(freq, f => [0.02, w(f) * 0.8e-9 - 1 / (w(f) * 1e-7)]), cap = RF.fitCapacitor(freq, zc);
+  check('Kondensatormodell ESR + ESL + C: 20 mΩ, 0,8 nH, 100 nF', close(cap.c, 1e-7, 1e-4) && close(cap.esr, 0.02, 1e-4) && close(cap.esl, 0.8e-9, 1e-4) && RF.modelQuality(freq, zc, cap).err < 1e-6);
+  const noisy = zc.map((z, i) => [z[0] * (1 + 0.02 * Math.sin(i * 1.7)), z[1] * (1 + 0.02 * Math.cos(i * 2.3))]), capN = RF.fitCapacitor(freq, noisy);
+  check('…auch mit 2 % Messabweichung innerhalb 3 %', close(capN.c, 1e-7, 0.03) && close(capN.esl, 0.8e-9, 0.03) && close(capN.esr, 0.02, 0.05), [capN.c * 1e9, capN.esl * 1e9, capN.esr * 1e3].map(v => v.toFixed(3)).join(' · '));
+  const lib = Spice.parse(RF.modelNetlist(cap, 'CAP'), 'c.lib'), back = Spice.dataset(lib, lib.tops[0], { f1: 1e4, f2: 3e9, n: 61 });
+  let worst = 0;
+  back.freq.forEach((f, i) => { const z = RF.transmission(RF.get(back.samples[i], 2, 1, 0), 50, 'series'), m = RF.modelImpedance(cap, f); worst = Math.max(worst, Math.hypot(z[0] - m[0], z[1] - m[1]) / Math.hypot(...m)); });
+  check('Kondensator: SPICE-Export und Reimport erhalten die komplexe Impedanz', worst < 1e-5, 'größte relative Abweichung ' + worst.toExponential(1));
+  check('Kein Modell ohne kapazitiven Bereich', RF.fitCapacitor(freq, zl.map(z => [z[0], Math.abs(z[1])])) === null);
+}
+
 console.log('Touchstone-Export und Wiedereinlesen');
 {
   const freq = logf(1e5, 1e9, 31), ds = dataset(4, freq, () => randomS(4));

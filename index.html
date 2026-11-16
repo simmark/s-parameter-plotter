@@ -1029,6 +1029,7 @@ html[data-theme="dark"] .ev-score.pro { color: #5cc9bf; border-color: #2c5f5a; }
 .lib-bar { display: flex; gap: 4px; align-items: center; margin: 0 0 5px; }
 .lib-bar select { flex: 1; min-width: 0; min-height: 28px; font-size: 11.5px; }
 .lib-filters { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 4px; margin: 0 0 5px; }
+.lib-filters #lib-sort { grid-column: 1 / -1; }
 .lib-filters .field-input, .lib-filters select { min-height: 28px; font-size: 11.5px; min-width: 0; }
 .lib-tree { display: grid; gap: 2px; max-height: 320px; overflow: auto; padding-right: 2px; }
 .lib-row { display: grid; grid-template-columns: minmax(0, 1fr) 26px 26px; gap: 2px; padding-left: calc(var(--depth, 0) * 12px); }
@@ -1052,6 +1053,13 @@ html[data-theme="dark"] .ev-score.pro { color: #5cc9bf; border-color: #2c5f5a; }
 .model-schematic { display: block; height: auto; max-width: 100%; }
 .model-schematic .value { font-weight: 500; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 9.5px; }
 .schematic-box.is-zoomed svg { width: 200%; max-width: none; }
+.value-schematic { display: block; width: 100%; max-width: 760px; height: auto; color: var(--ink); }
+.value-schematic .value, .model-schematic .value { font-weight: 500; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 10px; }
+.value-schematic .sch-dot { fill: currentColor; stroke: none; }
+.cmc-schematic .fit-summary { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.cmc-schematic .metric-grid { margin-top: 10px; }
+html[data-theme="dark"] .cmc-schematic svg.value-schematic { filter: none; }
+@media (pointer: coarse) { .schematic-box { touch-action: pan-x pan-y pinch-zoom; } .cmc-schematic .quiet-button { min-height: 36px; } }
 @media (max-width: 620px) {
   .model-row { grid-template-columns: minmax(0, 1fr) auto auto; row-gap: 3px; }
   .model-row > label:first-child { grid-column: 1 / -1; }
@@ -1333,14 +1341,23 @@ window.I18N = (() => {
     "Auswertung": "Evaluation", "Impedanz und CISPR 17": "Impedance and CISPR 17", "Eingangsimpedanz · Reflexion Zᵢₙ": "Input impedance · reflection Zᵢₙ", "Serienimpedanz · Transmission": "Series impedance · transmission", "Shuntimpedanz · Transmission": "Shunt impedance · transmission", "CISPR 17 · Eintor · Reflexion": "CISPR 17 · one-port · reflection", "CISPR 17 · Zweitor · Serie": "CISPR 17 · two-port · series", "CISPR 17 · Zweitor · Shunt": "CISPR 17 · two-port · shunt", "CISPR 17 · Vierport · CM / DM": "CISPR 17 · four-port · CM / DM", "Betrag |Z|": "Magnitude |Z|", "Realteil · R / ESR": "Real part · R / ESR", "Imaginärteil · X": "Imaginary part · X", "L · Serie / ESL": "L · series / ESL", "Güte Q = |X|/R": "Quality factor Q = |X|/R", "Güte Q": "Quality factor Q", "Symmetrisch logarithmisch: zeigt positive und negative Werte samt Resonanzspitzen": "Symmetric logarithmic: shows positive and negative values including resonance peaks", "Symmetrisch logarithmisch · mit Vorzeichen": "Symmetric logarithmic · signed", "Werte ≤ 0 sind auf der Log-Achse nicht darstellbar": "Values ≤ 0 cannot be shown on the log axis", "Leere Grenzwerte verwenden die automatische Skalierung. Frequenzen akzeptieren z. B. 20 MHz. Mit der Maus: Mausrad oder Ziehen auf der Y-Skala zoomt und verschiebt die vertikale Achse, Doppelklick dort setzt sie zurück.": "Empty limits use automatic scaling. Frequencies accept e.g. 20 MHz. With the mouse: wheel or drag on the Y scale zooms and moves the vertical axis, a double click there resets it.", "ZIP importieren": "Import ZIP", "Dateien und Bibliothek schließen": "Close files and library",
     "Bauteil · induktiv (L, Ferrit, Perle)": "Component · inductive (L, ferrite, bead)", "Bauteil · kapazitiv (C, ESR, ESL)": "Component · capacitive (C, ESR, ESL)", "Serie · 2Z₀(1/S₂₁ − 1)": "Series · 2Z₀(1/S₂₁ − 1)", "Eintor · Z₀(1 + S₁₁)/(1 − S₁₁)": "One-port · Z₀(1 + S₁₁)/(1 − S₁₁)", "Fixture": "Fixture", "Die automatische Erkennung ist für diese Datei nicht eindeutig. Wähle das Modell oben selbst: induktiv (L) oder kapazitiv (C).": "Automatic detection is not conclusive for this file. Choose the model above yourself: inductive (L) or capacitive (C).", "Induktives Bauteil": "Inductive component", "Kapazitives Bauteil": "Capacitive component", "Induktives Bauteil · Ersatzschaltbild": "Inductive component · equivalent circuit", "Kapazitives Bauteil · Ersatzschaltbild": "Capacitive component · equivalent circuit", "Für CMC- und Übertragermodell werden zwei Portpaare benötigt. Für ein Einzelbauteil wähle „Bauteil · induktiv“ oder „Bauteil · kapazitiv“.": "The CMC and transformer models need two port pairs. For a single component choose \"Component · inductive\" or \"Component · capacitive\".",
     "Automatisch · Serie": "Automatic · series", "Automatisch · Shunt": "Automatic · shunt", "Automatisch · Eintor": "Automatic · one-port",
-    "Modell-Editor": "Model editor", "fest": "fixed", "Beim Optimieren festhalten": "Keep fixed while optimising", "Eine Dekade nach unten und oben um den automatischen Wert": "One decade down and up around the automatic value", "Startwert am aktiven Marker aus der Messkurve übernehmen": "Take a start value from the measured curve at the active marker", "Fitfenster von": "Fit window from", "bis": "to", "Fenster = M1 … M2": "Window = M1 … M2", "Die Marker M1 und M2 begrenzen das Fitfenster": "Markers M1 and M2 bound the fit window", "Ganzer Bereich": "Whole range", "Werte übernehmen": "Apply values", "Optimieren": "Optimise", "Automatik": "Automatic", "Zurück zum automatischen Fit": "Back to the automatic fit", "Freie Parameter im Fitfenster an Betrag und Phase anpassen; „fest“ markierte bleiben stehen": "Fit the free parameters to magnitude and phase inside the fit window; those marked \"fixed\" stay", "Eingaben wie 10 µH, 4,7n oder 1e-6. Der Regler verstellt um eine Dekade nach unten und oben. Optimiert werden Betrag und Phase der komplexen Impedanz, nur mit den Messpunkten im Fitfenster (im Diagramm grün hinterlegt). Alle Werte bleiben positiv. Die Messdaten werden dabei nie verändert.": "Entries like 10 µH, 4.7n or 1e-6. The slider moves one decade down and up. Magnitude and phase of the complex impedance are optimised, using only the measured points inside the fit window (shaded green in the diagram). All values stay positive. The measured data is never changed.", "R₁ · Verluste der 1. Resonanz": "R₁ · losses of the 1st resonance", "R₂ · Verluste der 2. Resonanz": "R₂ · losses of the 2nd resonance", "L₂ · zweiter Kreis": "L₂ · second tank", "C₂ · zweiter Kreis": "C₂ · second tank", "R₀ · Serienwiderstand": "R₀ · series resistance", "L₁ · Hauptinduktivität": "L₁ · main inductance", "C₁ · Parallelkapazität": "C₁ · parallel capacitance", "C · Kapazität": "C · capacitance", "ESR · Serienwiderstand": "ESR · series resistance", "ESL · Serieninduktivität": "ESL · series inductance", "R_p · Isolationswiderstand": "R_p · insulation resistance", "Modell R": "Model R", "Modell ESR": "Model ESR", "Für das Modell fehlt ein kapazitiver Bereich bei tiefen Frequenzen.": "The model needs a capacitive range at low frequencies.", "Gib ein positives, aufsteigendes Fitfenster ein.": "Enter a positive, ascending fit window.", "Im Fitfenster liegen zu wenige Messpunkte für die freien Parameter.": "The fit window holds too few measured points for the free parameters.", "Setze zwei Marker auf verschiedene Frequenzen. Sie begrenzen dann das Fitfenster.": "Place two markers on different frequencies. They then bound the fit window.", "Setze zuerst einen Marker auf die Messkurve.": "Place a marker on the measured curve first.", "Am Marker gibt es keinen Messwert.": "There is no measured value at the marker.", "Am Marker ist der Realteil nicht positiv.": "The real part is not positive at the marker.", "Am Marker ist das Bauteil nicht induktiv (X ≤ 0). Setze den Marker unterhalb der Eigenresonanz.": "The part is not inductive at the marker (X ≤ 0). Place the marker below the self-resonance.", "Am Marker ist das Bauteil nicht induktiv (X ≤ 0). Setze den Marker oberhalb der Eigenresonanz.": "The part is not inductive at the marker (X ≤ 0). Place the marker above the self-resonance.", "Am Marker ist das Bauteil nicht kapazitiv (X ≥ 0). Setze den Marker unterhalb der Eigenresonanz.": "The part is not capacitive at the marker (X ≥ 0). Place the marker below the self-resonance.", "Aus diesem Marker lässt sich kein positiver Wert ableiten.": "No positive value can be derived from this marker."
+    "Modell-Editor": "Model editor", "fest": "fixed", "Beim Optimieren festhalten": "Keep fixed while optimising", "Eine Dekade nach unten und oben um den automatischen Wert": "One decade down and up around the automatic value", "Startwert am aktiven Marker aus der Messkurve übernehmen": "Take a start value from the measured curve at the active marker", "Fitfenster von": "Fit window from", "bis": "to", "Fenster = M1 … M2": "Window = M1 … M2", "Die Marker M1 und M2 begrenzen das Fitfenster": "Markers M1 and M2 bound the fit window", "Ganzer Bereich": "Whole range", "Werte übernehmen": "Apply values", "Optimieren": "Optimise", "Automatik": "Automatic", "Zurück zum automatischen Fit": "Back to the automatic fit", "Freie Parameter im Fitfenster an Betrag und Phase anpassen; „fest“ markierte bleiben stehen": "Fit the free parameters to magnitude and phase inside the fit window; those marked \"fixed\" stay", "Eingaben wie 10 µH, 4,7n oder 1e-6. Der Regler verstellt um eine Dekade nach unten und oben. Optimiert werden Betrag und Phase der komplexen Impedanz, nur mit den Messpunkten im Fitfenster (im Diagramm grün hinterlegt). Alle Werte bleiben positiv. Die Messdaten werden dabei nie verändert.": "Entries like 10 µH, 4.7n or 1e-6. The slider moves one decade down and up. Magnitude and phase of the complex impedance are optimised, using only the measured points inside the fit window (shaded green in the diagram). All values stay positive. The measured data is never changed.", "R₁ · Verluste der 1. Resonanz": "R₁ · losses of the 1st resonance", "R₂ · Verluste der 2. Resonanz": "R₂ · losses of the 2nd resonance", "L₂ · zweiter Kreis": "L₂ · second tank", "C₂ · zweiter Kreis": "C₂ · second tank", "R₀ · Serienwiderstand": "R₀ · series resistance", "L₁ · Hauptinduktivität": "L₁ · main inductance", "C₁ · Parallelkapazität": "C₁ · parallel capacitance", "C · Kapazität": "C · capacitance", "ESR · Serienwiderstand": "ESR · series resistance", "ESL · Serieninduktivität": "ESL · series inductance", "R_p · Isolationswiderstand": "R_p · insulation resistance", "Modell R": "Model R", "Modell ESR": "Model ESR", "Für das Modell fehlt ein kapazitiver Bereich bei tiefen Frequenzen.": "The model needs a capacitive range at low frequencies.", "Gib ein positives, aufsteigendes Fitfenster ein.": "Enter a positive, ascending fit window.", "Im Fitfenster liegen zu wenige Messpunkte für die freien Parameter.": "The fit window holds too few measured points for the free parameters.", "Setze zwei Marker auf verschiedene Frequenzen. Sie begrenzen dann das Fitfenster.": "Place two markers on different frequencies. They then bound the fit window.", "Setze zuerst einen Marker auf die Messkurve.": "Place a marker on the measured curve first.", "Am Marker gibt es keinen Messwert.": "There is no measured value at the marker.", "Am Marker ist der Realteil nicht positiv.": "The real part is not positive at the marker.", "Am Marker ist das Bauteil nicht induktiv (X ≤ 0). Setze den Marker unterhalb der Eigenresonanz.": "The part is not inductive at the marker (X ≤ 0). Place the marker below the self-resonance.", "Am Marker ist das Bauteil nicht induktiv (X ≤ 0). Setze den Marker oberhalb der Eigenresonanz.": "The part is not inductive at the marker (X ≤ 0). Place the marker above the self-resonance.", "Am Marker ist das Bauteil nicht kapazitiv (X ≥ 0). Setze den Marker unterhalb der Eigenresonanz.": "The part is not capacitive at the marker (X ≥ 0). Place the marker below the self-resonance.", "Aus diesem Marker lässt sich kein positiver Wert ableiten.": "No positive value can be derived from this marker.",
+    "Ersatzschaltbild mit Werten": "Equivalent circuit with values", "T-Ersatzschaltbild mit Werten": "T equivalent circuit with values", "Vergrößern": "Enlarge", "Schaltbild vergrößern oder wieder einpassen; vergrößert lässt es sich verschieben": "Enlarge the drawing or fit it again; enlarged it can be moved", "Je Wicklung: R_w und Streuung Lσ in Reihe mit dem gekoppelten Teil M · R_Fe parallel zum gekoppelten Teil · Ct parallel je Wicklung · Cw je Seite zwischen den Wicklungen · Cg je Anschluss gegen Masse": "Per winding: R_w and leakage Lσ in series with the coupled part M · R_Fe across the coupled part · Ct across each winding · Cw between the windings on each side · Cg from each terminal to ground", "L · Induktivität je Wicklung": "L · inductance per winding", "M · Gegeninduktivität": "M · mutual inductance", "Lσ = L − M · Streuung je Wicklung": "Lσ = L − M · leakage per winding", "R_w · je Wicklung, aus R₀ von Z DM / 2": "R_w · per winding, from R₀ of Z DM / 2", "R_Fe · je Wicklung, aus der CM-Resonanz × 2": "R_Fe · per winding, from the CM resonance × 2", "Normierung: Im Gleichtakt liegen beide Wicklungen parallel, Z CM = jω(L + M)/2 an 25 Ω. Im Gegentakt liegen sie in Reihe, Z DM = j2ω(L − M) = j2ωLσ an 100 Ω. L, M, Cw, Cg und Ct stammen aus dem Fit im gewählten Band. R_w und R_Fe stammen aus dem Modell bis zur 2. Resonanz und sind Näherungen: R_Fe gilt nur nahe der Gleichtakt-Resonanz, Kernverluste sind frequenzabhängig.": "Normalisation: in common mode both windings are in parallel, Z CM = jω(L + M)/2 at 25 Ω. In differential mode they are in series, Z DM = j2ω(L − M) = j2ωLσ at 100 Ω. L, M, Cw, Cg and Ct come from the fit in the chosen band. R_w and R_Fe come from the model up to the 2nd resonance and are approximations: R_Fe only holds near the common-mode resonance, core losses depend on frequency.", "Primärbezogen: R₁ und Lσ₁ in Reihe · L_m parallel R_Fe · idealer Übertrager 1 : n · Lσ₂ und R₂ auf der Sekundärseite · C_p über der Primärwicklung · Cww zwischen den Wicklungen": "Referred to the primary: R₁ and Lσ₁ in series · L_m in parallel with R_Fe · ideal transformer 1 : n · Lσ₂ and R₂ on the secondary side · C_p across the primary winding · Cww between the windings", "L_m · Hauptinduktivität = OCL − Lσ₁": "L_m · magnetising inductance = OCL − Lσ₁", "Lσ₁ · primär (Annahme: hälftig)": "Lσ₁ · primary (assumption: half each)", "Lσ₂ · sekundär = Lσ₁·n²": "Lσ₂ · secondary = Lσ₁·n²", "n · Übersetzung 1 : n": "n · turns ratio 1 : n", "R₁ · Re Z₁₁ bei tiefer Frequenz": "R₁ · Re Z₁₁ at low frequency", "R₂ · Re Z₂₂ bei tiefer Frequenz": "R₂ · Re Z₂₂ at low frequency", "R_Fe · Re Z₁₁ in der Leerlaufresonanz": "R_Fe · Re Z₁₁ at the open-circuit resonance", "Lσ aus k · L₁₁(1 − k²)": "Lσ from k · L₁₁(1 − k²)", "Was die Messung festlegt: OCL, n, Cww, C_p, R₁, R₂ und die gesamte Streuinduktivität bei kurzgeschlossener Sekundärseite,": "What the measurement determines: OCL, n, Cww, C_p, R₁, R₂ and the total leakage inductance with the secondary shorted,", "Was sie nicht festlegt: wie sich die Streuung auf Primär- und Sekundärseite verteilt. Von den Klemmen aus ist nur die Summe messbar; das Bild teilt sie je zur Hälfte auf (Lσ₁ = Lσ₂/n²). Wer die Aufteilung braucht, muss sie aus dem Wickelaufbau oder einer Feldrechnung nehmen.": "What it does not determine: how the leakage splits between primary and secondary. From the terminals only the sum can be measured; the drawing splits it half and half (Lσ₁ = Lσ₂/n²). If you need the split, take it from the winding build-up or a field calculation.", "R₁ und R₂ enthalten den Anteil der Kernverluste, der bei der tiefsten Messfrequenz schon wirkt; eine Gleichstrommessung ist genauer. R_Fe ist eine Näherung aus einer einzigen Frequenz; Kernverluste hängen von Frequenz und Aussteuerung ab.": "R₁ and R₂ include the share of core loss already present at the lowest measured frequency; a DC measurement is more accurate. R_Fe is an approximation from a single frequency; core losses depend on frequency and drive level.", "Auswertung bei": "Evaluate at", "= Marker": "= marker", "Die Frequenz des aktiven Markers als Auswertefrequenz für OCL, n und k übernehmen": "Use the frequency of the active marker as the evaluation frequency for OCL, n and k", "Anwenden": "Apply", "Cg je Anschluss": "Cg per terminal",
+    "n. b.": "n/d", "Ct (aus dem Gleichtakt)": "Ct (from common mode)", "Ct (aus dem Gegentakt)": "Ct (from differential mode)",
+    "T-Ersatzschaltbild eines Übertragers mit idealem Übertrager 1 : n": "T equivalent circuit of a transformer with an ideal transformer 1 : n",
+    "Sortierung der Dateien": "Sort order of the files", "Sortiert nach Name": "Sorted by name", "Neueste zuerst": "Newest first", "Nach Portzahl": "By port count", "Größte zuerst": "Largest first"
   }));
   const PATTERNS = [
+    [/^Im gewählten Fit-Band nicht bestimmbar \(der Fit liefert einen negativen Wert\): (.+)\. Wähle ein Band, in dem dieses Element die Kurve prägt – für Kapazitäten reicht es meist, das Band zu höheren Frequenzen zu erweitern\.$/, (m, a) => 'Not determinable in the chosen fit band (the fit returns a negative value): ' + a.split(', ').map(t).join(', ') + '. Choose a band in which this element shapes the curve – for capacitances it usually helps to extend the band to higher frequencies.'],
+    [/^Die Streuung aus dem Kopplungsfaktor weicht um (\d+) % von der Kurzschlussmessung ab\. Bei hoher Kopplung ist k sehr empfindlich; die Kurzschlussmessung ist verlässlicher und steht im Bild\.$/, 'The leakage from the coupling factor differs by $1 % from the short-circuit measurement. At high coupling k is very sensitive; the short-circuit measurement is more reliable and is the one shown.'],
+    [/^Die Streuung aus dem Kopplungsfaktor stimmt mit der Kurzschlussmessung auf (\d+) % überein\.$/, 'The leakage from the coupling factor agrees with the short-circuit measurement to within $1 %.'],
+    [/^Auswertefrequenz (.+) · OCL, n und k werden dort bestimmt$/, 'Evaluation frequency $1 · OCL, n and k are determined there'],
+    [/^CMC zwischen (.+) und (.+)$/, 'CMC between $1 and $2'],
     [/^Gültig von (.+) bis (.+) · Abweichung (.+) dB und (.+)° RMS · (\d+) Punkte · (von Hand geändert|automatischer Fit)$/, (m, a, b, c, d, e, f) => 'Valid from ' + a + ' to ' + b + ' · deviation ' + c + ' dB and ' + d + '° RMS · ' + e + ' points · ' + (f === 'automatischer Fit' ? 'automatic fit' : 'changed by hand')],
     [/^(.+) am aktiven Marker übernehmen$/, (m, a) => 'Take ' + t(a) + ' from the active marker'], [/^(.+ · .+) verstellen$/, (m, a) => 'Adjust ' + t(a)],
     [/^(.+): Gib einen positiven Wert ein, z\. B\. (.+)\.$/, (m, a, b) => t(a) + ': enter a positive value, e.g. ' + b + '.'],
     [/^Optimiert: (.+) dB und (.+)° RMS über (\d+) Punkte(?: · (\d+) fest)?$/, (m, a, b, c, d) => 'Optimised: ' + a + ' dB and ' + b + '° RMS over ' + c + ' points' + (d ? ' · ' + d + ' fixed' : '')],
-    [/^(\S+) = (.+) aus dem Marker bei (.+? Hz)(?: \(Resonanz mit (.+)\))?$/, (m, a, b, c, d) => a + ' = ' + b + ' from the marker at ' + c + (d ? ' (resonance with ' + d + ')' : '')],
+    [/^(\S+) = (.+) aus dem Marker bei (.+?Hz)(?: \(Resonanz mit (.+)\))?$/, (m, a, b, c, d) => a + ' = ' + b + ' from the marker at ' + c + (d ? ' (resonance with ' + d + ')' : '')],
     [/^Ersatzschaltbild: (.+)$/, 'Equivalent circuit: $1'],
     [/^(\d+) Datei(?:en)? dauerhaft gespeichert(?: · ← \/ → blättert)?(?: · (\d+) bereits vorhanden)?(?: · (\d+) nicht unterstützte Datei(?:en)? ausgelassen)?$/, (m, a, b, c) => a + ' file(s) saved permanently' + (/blättert/.test(m) ? ' · ← / → steps through' : '') + (b ? ' · ' + b + ' already present' : '') + (c ? ' · ' + c + ' unsupported file(s) left out' : '')],
     [/^(\d+) von (\d+) Dateien dauerhaft gespeichert und geprüft$/, '$1 of $2 files saved permanently and verified'],
@@ -7050,7 +7067,7 @@ const Plot = (() => {
   }
 
   // ---- Library: files the user keeps on purpose. Several libraries, folders and subfolders, search and filters. ----
-  const shelf = { libId: Store.MAIN_LIBRARY, form: false, naming: false, confirm: '', query: '', ports: '', type: '', open: new Set(), entries: [], libs: [], job: 0 };
+  const shelf = { libId: Store.MAIN_LIBRARY, form: false, naming: false, confirm: '', query: '', ports: '', type: '', sort: 'name', open: new Set(), entries: [], libs: [], job: 0 };
   const libLabel = lib => lib && lib.id === Store.MAIN_LIBRARY && lib.name === 'Bibliothek' ? window.I18N.t('Bibliothek') : lib?.name ?? '';
   const cleanFolder = text => String(text ?? '').split(/[\\/]/).map(part => part.replace(/[:*?"<>|\u0000-\u001f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 80)).filter(part => part && part !== '.' && part !== '..').join('/');
   const sessionFiles = items => new Set(items.map(item => item.entryId ?? item.id)).size;
@@ -7097,7 +7114,9 @@ const Plot = (() => {
     }
     if (job !== shelf.job) return;
     shelf.libs = libs; shelf.entries = entries;
-    entries.sort((a, b) => collator.compare(a.path, b.path) || collator.compare(a.name, b.name));
+    const order = { name: (a, b) => collator.compare(a.name, b.name), new: (a, b) => b.addedAt - a.addedAt || collator.compare(a.name, b.name),
+      ports: (a, b) => (a.ports || 0) - (b.ports || 0) || collator.compare(a.name, b.name), size: (a, b) => b.size - a.size || collator.compare(a.name, b.name) }[shelf.sort] ?? ((a, b) => collator.compare(a.name, b.name));
+    entries.sort((a, b) => collator.compare(a.path, b.path) || order(a, b));
     box.hidden = false;
     box.dataset.count = String(entries.length);
     const lib = libs.find(item => item.id === shelf.libId);
@@ -7129,7 +7148,8 @@ const Plot = (() => {
     const filters = entries.length > 6 || filtering ? '<div class="lib-filters">' +
       '<input id="lib-query" class="field-input" type="search" placeholder="Bibliothek durchsuchen …" aria-label="Bibliothek durchsuchen" value="' + esc(shelf.query) + '">' +
       '<select id="lib-ports" aria-label="Nach Portzahl filtern">' + options([['', 'Ports'], ...portOptions.map(n => [n, n + 'P'])], shelf.ports) + '</select>' +
-      '<select id="lib-type" aria-label="Nach Bauteiltyp filtern">' + options([['', 'Typ'], ...typeOptions.map(name => [name, name])], shelf.type) + '</select></div>' : '';
+      '<select id="lib-type" aria-label="Nach Bauteiltyp filtern">' + options([['', 'Typ'], ...typeOptions.map(name => [name, name])], shelf.type) + '</select>' +
+      '<select id="lib-sort" aria-label="Sortierung der Dateien">' + options([['name', 'Sortiert nach Name'], ['new', 'Neueste zuerst'], ['ports', 'Nach Portzahl'], ['size', 'Größte zuerst']], shelf.sort) + '</select></div>' : '';
     const top = box.querySelector('.lib-tree')?.scrollTop ?? null;
     insertHtml(box, '<h4>Bibliothek <small>' + entries.length + '</small><span class="session-tools">' +
       actionButton('In Bibliothek', 'shelf-add', '', 'quiet-button', 'plus', disabled(!real) + ' title="Dateien der Sitzung dauerhaft in die Bibliothek übernehmen"') + '</span></h4>' +
@@ -8409,7 +8429,9 @@ const Plot = (() => {
       const autoLabel = 'Automatisch · ' + (model === 'transformer' ? 'Übertrager' : model === 'cmc' ? 'CMC' : model === 'shunt' ? 'kapazitiv' : 'induktiv') + (level ? ' · ' + LEVEL_NAME[level] : '');
       html = selectField('Modell', 'esb-model', ESB_MODELS.map(([key, label]) => [key, key === 'auto' ? autoLabel : label]), state.esb.model);
       if (model === 'transformer') {
-        html += controlsPairs() + selectField('Darstellung', 'esb-tformat', TRANSFORMER_FORMATS, state.esb.tFormat);
+        html += controlsPairs() + selectField('Darstellung', 'esb-tformat', TRANSFORMER_FORMATS, state.esb.tFormat) +
+          '<form class="fit-fields" id="eval-form">' + textField('Auswertung bei', 'eval', freqInput(state.esb.evalFreq)) + '<button class="button" type="submit">Anwenden</button>' +
+          actionButton('= Marker', 'eval-marker', '', 'button', '', ' title="Die Frequenz des aktiven Markers als Auswertefrequenz für OCL, n und k übernehmen"') + '</form>';
       } else if (model === 'series' || model === 'shunt') {
         const fixture = esbFixture(model);
         html += selectField('Fixture', 'esb-fixture', ESB_FIXTURES.map(([key, label]) => [key, key === 'auto' ? 'Automatisch · ' + FIXTURE_NAME[fixture] : label]), state.esb.fixture || 'auto') +
@@ -8789,53 +8811,6 @@ const Plot = (() => {
       '</section>';
   }
 
-  function cmcSchematic([input, output]) {
-    const title = 'CMC zwischen ' + portName(input.p) + '/' + portName(input.q) + ' und ' +
-      portName(output.p) + '/' + portName(output.q);
-    const winding = 'M54 77H210a12 12 0 0 1 24 0a12 12 0 0 1 24 0a12 12 0 0 1 24 0a12 12 0 0 1 24 0a12 12 0 0 1 24 0H486';
-    const windingCoupling = 'M130 77v60m0 8v60m-12-68h24m-24 8h24';
-    const groundCap = 'M80 77v24m0 8v18m-10-26h20m-20 8h20m-21 18h22m-18 4h14m-10 4h6';
-    const junctions = [77, 205].flatMap(y => [80, 130, 168, 372, 410, 460]
-      .map(x => '<circle cx="' + x + '" cy="' + y + '" r="2.8"/>')).join('');
-    return `<figure class="detail-card cmc-schematic">
-      <h3>Reaktives Ersatzschaltbild</h3>
-      <svg viewBox="0 0 540 286" role="img" aria-label="${esc(title)}">
-        <g fill="none" stroke="#2b2a27" stroke-width="1.8" stroke-linejoin="round">
-          <path d="${winding}"/><path d="${winding}" transform="translate(0 128)"/>
-          <path d="M238 130h64m-64 8h64"/>
-          <circle cx="50" cy="77" r="4"/><circle cx="490" cy="77" r="4"/>
-          <circle cx="50" cy="205" r="4"/><circle cx="490" cy="205" r="4"/>
-          <path stroke="#93601f" d="M168 77V35H265M275 35H372V77M265 25v20m10-20v20M168 205v45h97m10 0h97v-45m-107 35v20m10-20v20"/>
-          <g stroke="#007766">
-            <path d="${windingCoupling}"/><path d="${windingCoupling}" transform="translate(280 0)"/>
-          </g>
-          <g stroke="#2b59ac">
-            <path d="${groundCap}"/><path d="${groundCap}" transform="translate(380 0)"/>
-            <path d="${groundCap}" transform="translate(0 128)"/><path d="${groundCap}" transform="translate(380 128)"/>
-          </g>
-        </g>
-        <g fill="#2b2a27">
-          ${junctions}
-          <circle cx="202" cy="68" r="3"/><circle cx="202" cy="196" r="3"/>
-        </g>
-        <g fill="#2b2a27" text-anchor="middle" font-family="monospace" font-size="16" font-weight="600">
-          <text x="270" y="60">L</text><text x="270" y="188">L</text><text x="270" y="159">M</text>
-          <g fill="#93601f"><text x="270" y="19">Ct</text><text x="270" y="279">Ct</text></g>
-          <g fill="#007766"><text x="163" y="147">Cw</text><text x="377" y="147">Cw</text></g>
-          <g fill="#2b59ac">
-            <text x="57" y="111">Cg</text><text x="483" y="111">Cg</text>
-            <text x="57" y="239">Cg</text><text x="483" y="239">Cg</text>
-          </g>
-          <text x="50" y="63">${portName(input.p)} +</text>
-          <text x="490" y="63">${portName(output.p)} +</text>
-          <text x="50" y="191">${portName(input.q)} −</text>
-          <text x="490" y="191">${portName(output.q)} −</text>
-        </g>
-      </svg>
-      <figcaption>Cw je Seite zwischen den Wicklungen · Ct parallel je Wicklung · Cg je Anschluss gegen Masse</figcaption>
-    </figure>`;
-  }
-
   const si = (value, unit) => {
     if (!Number.isFinite(value)) return '—';
     if (value === 0) return '0 ' + unit;
@@ -8843,6 +8818,121 @@ const Plot = (() => {
     return display(value / 10 ** (3 * e)) + ' ' + ['f', 'p', 'n', 'µ', 'm', '', 'k', 'M', 'G', 'T'][e + 5] + unit;
   };
   const metricText = (label, text) => '<div class="metric"><strong>' + esc(text) + '</strong><span>' + esc(label) + '</span></div>';
+  // ---- Circuit drawings whose labels carry the values of the fit. Strokes use the text colour, so they work in both themes. ----
+  const Sch = {
+    h: (x1, x2, y) => '<path d="M' + x1 + ' ' + y + 'H' + x2 + '"/>',
+    v: (x, y1, y2) => '<path d="M' + x + ' ' + y1 + 'V' + y2 + '"/>',
+    res: (x, y) => '<rect x="' + x + '" y="' + (y - 7) + '" width="34" height="14" rx="2"/>',
+    coil: (x, y, turns = 3) => '<path d="M' + x + ' ' + y + 'a6 6 0 0 1 12 0'.repeat(turns) + '"/>',
+    cap: (x, y) => '<path d="M' + (x + 14) + ' ' + (y - 9) + 'v18m6-18v18M' + x + ' ' + y + 'h14m6 0h14"/>',
+    vres: (x, y) => '<rect x="' + (x - 7) + '" y="' + y + '" width="14" height="34" rx="2"/>',
+    vcoil: (x, y, turns = 3, side = 1) => '<path d="M' + x + ' ' + y + ('a6 6 0 0 ' + (side ? 1 : 0) + ' 0 12').repeat(turns) + '"/>',
+    vcap: (x, y) => '<path d="M' + (x - 9) + ' ' + (y + 14) + 'h18m-18 6h18M' + x + ' ' + y + 'v14m0 6v14"/>',
+    gnd: (x, y) => '<path d="M' + (x - 9) + ' ' + y + 'h18m-14 4h10m-7 4h4"/>',
+    term: (x, y) => '<circle cx="' + x + '" cy="' + y + '" r="3.2"/>',
+    dot: (x, y) => '<circle class="sch-dot" cx="' + x + '" cy="' + y + '" r="2.4"/>',
+    // two lines: name on top, value below; anchor 'middle', 'start' or 'end'
+    label: (x, y, name, value, anchor = 'middle') => '<text x="' + x + '" y="' + y + '" text-anchor="' + anchor + '">' + esc(name) + '</text>' +
+      (value === null ? '' : '<text class="value" x="' + x + '" y="' + (y + 12) + '" text-anchor="' + anchor + '">' + esc(value) + '</text>')
+  };
+  const schematicFigure = (id, title, label, width, height, strokes, texts, caption, extra = '') =>
+    '<figure class="detail-card cmc-schematic" id="' + id + '"><div class="fit-summary"><h3>' + esc(title) + '</h3>' +
+    actionButton('Vergrößern', 'schematic-zoom', id, 'quiet-button', '', ' title="Schaltbild vergrößern oder wieder einpassen; vergrößert lässt es sich verschieben"') + '</div>' +
+    '<div class="schematic-box"><svg class="value-schematic" viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="' + esc(label) + '">' +
+    '<g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">' + strokes + '</g>' +
+    '<g fill="currentColor" font-size="11" font-weight="650">' + texts + '</g></svg></div>' +
+    '<figcaption>' + esc(caption) + '</figcaption>' + extra + '</figure>';
+
+  // Losses of the CMC from the modal impedances: Z_DM = 2·Z_winding (leakage path), Z_CM = Z_winding/2 (coupled path).
+  function cmcLoss(pairs) {
+    try {
+      const [cm, dm] = modalCispr(pairs).blocks, fs = state.dataset.freq;
+      const fits = cache('zfit:' + pairs.map(p => p.id).join(':'), () => [cm, dm].map(block => RF.fitResonant(fs, Array.from(fs, (_, i) => block[i]?.z ?? null))));
+      const peak = fits[0]?.tanks[0]?.r;
+      return { rw: fits[1] ? fits[1].r0 / 2 : NaN, rfe: Number.isFinite(peak) ? 2 * peak : NaN };
+    } catch { return { rw: NaN, rfe: NaN }; }
+  }
+
+  // CMC: per winding R_w and the leakage L_σ = L − M in series with the coupled part M; C_t across each winding,
+  // C_w between the windings on each side, C_g from every terminal to ground. This is the circuit the fit assumes.
+  function cmcSchematic([input, output], fit = {}, loss = {}) {
+    const S = Sch, strokes = [], texts = [], rows = [104, 258];
+    // A model element cannot be negative. A fit band that does not determine an element yields such a value: it is shown as
+    // "not determinable" and named below, instead of presenting an unphysical number as a result.
+    const bad = [];
+    const val = (v, unit, name = '') => { if (Number.isFinite(v) && v > 0) return si(v, unit); if (name && Number.isFinite(v)) bad.push(name); return 'n. b.'; };
+    const leak = fit.l - fit.m;
+    rows.forEach((y, r) => {
+      const up = r === 0, side = up ? -1 : 1, yt = y + side * 62, yr = y + side * 30;
+      strokes.push(S.term(26, y), S.h(29, 136, y), S.res(136, y), S.h(170, 196, y), S.coil(196, y), S.h(232, 282, y), S.coil(282, y, 4), S.h(330, 591, y), S.term(594, y));
+      // core loss across the coupled part, turn capacitance across the whole winding
+      strokes.push(S.v(270, y, yr), S.v(342, y, yr), S.h(270, 289, yr), S.res(289, yr), S.h(323, 342, yr));
+      strokes.push(S.v(120, y, yt), S.v(500, y, yt), S.h(120, 293, yt), S.cap(293, yt), S.h(327, 500, yt));
+      strokes.push(S.dot(120, y), S.dot(500, y), S.dot(270, y), S.dot(342, y), S.dot(60, y), S.dot(560, y), S.dot(92, y), S.dot(528, y));
+      texts.push(S.label(153, y + (up ? 24 : -30), 'R_w', val(loss.rw, 'Ω')), S.label(214, y + (up ? 24 : -30), 'Lσ', val(leak, 'H', up ? 'Lσ' : '')));
+      texts.push(S.label(352, yr + 4, 'R_Fe', val(loss.rfe, 'Ω'), 'start'), S.label(310, yt + (up ? -26 : 22), 'Ct', val(up ? fit.ctH : fit.ctD, 'F', up ? 'Ct (aus dem Gleichtakt)' : 'Ct (aus dem Gegentakt)')));
+      // capacitance to ground at both terminals
+      for (const x of [60, 560]) {
+        strokes.push(S.vcap(x, y), S.gnd(x, y + 34));
+        texts.push(S.label(x + (x < 300 ? -13 : 13), y + 24, 'Cg', val(fit.cg, 'F', up && x < 300 ? 'Cg' : ''), x < 300 ? 'end' : 'start'));
+      }
+      strokes.push(S.dot(288, y - 12 * 1 - 2));
+    });
+    // winding-to-winding capacitance on both sides, magnetic coupling between the two coupled inductors
+    for (const x of [92, 528]) {
+      strokes.push(S.v(x, rows[0], 164), S.vcap(x, 164), S.v(x, 198, rows[1]));
+      texts.push(S.label(x + (x < 300 ? 14 : -14), 178, 'Cw', val(fit.cw, 'F', x < 300 ? 'Cw' : ''), x < 300 ? 'start' : 'end'));
+    }
+    strokes.push('<path d="M284 174h44m-44 8h44"/>');
+    texts.push(S.label(306, 158, 'M', val(fit.m, 'H', 'M')), S.label(306, 200, 'k', Number.isFinite(fit.k) ? display(fit.k) : '—'));
+    texts.push(S.label(26, rows[0] - 12, portName(input.p) + ' +', null), S.label(594, rows[0] - 12, portName(output.p) + ' +', null),
+      S.label(26, rows[1] - 12, portName(input.q) + ' −', null), S.label(594, rows[1] - 12, portName(output.q) + ' −', null));
+    const warn = bad.length ? '<p class="inline-notice" id="cmc-unphysical">Im gewählten Fit-Band nicht bestimmbar (der Fit liefert einen negativen Wert): ' + esc(bad.join(', ')) +
+      '. Wähle ein Band, in dem dieses Element die Kurve prägt – für Kapazitäten reicht es meist, das Band zu höheren Frequenzen zu erweitern.</p>' : '';
+    const table = warn + '<div class="metric-grid">' + metricText('L · Induktivität je Wicklung', val(fit.l, 'H')) + metricText('M · Gegeninduktivität', val(fit.m, 'H')) +
+      metricText('k = M/L', Number.isFinite(fit.k) ? display(fit.k) : '—') + metricText('Lσ = L − M · Streuung je Wicklung', val(leak, 'H')) +
+      metricText('R_w · je Wicklung, aus R₀ von Z DM / 2', val(loss.rw, 'Ω')) + metricText('R_Fe · je Wicklung, aus der CM-Resonanz × 2', val(loss.rfe, 'Ω')) + '</div>' +
+      '<p class="note">Normierung: Im Gleichtakt liegen beide Wicklungen parallel, Z CM = jω(L + M)/2 an 25 Ω. Im Gegentakt liegen sie in Reihe, Z DM = j2ω(L − M) = j2ωLσ an 100 Ω. ' +
+      'L, M, Cw, Cg und Ct stammen aus dem Fit im gewählten Band. R_w und R_Fe stammen aus dem Modell bis zur 2. Resonanz und sind Näherungen: R_Fe gilt nur nahe der Gleichtakt-Resonanz, Kernverluste sind frequenzabhängig.</p>';
+    return schematicFigure('cmc-schematic', 'Ersatzschaltbild mit Werten', 'CMC zwischen ' + portName(input.p) + '/' + portName(input.q) + ' und ' + portName(output.p) + '/' + portName(output.q),
+      620, 362, strokes.join(''), texts.join(''), 'Je Wicklung: R_w und Streuung Lσ in Reihe mit dem gekoppelten Teil M · R_Fe parallel zum gekoppelten Teil · Ct parallel je Wicklung · Cw je Seite zwischen den Wicklungen · Cg je Anschluss gegen Masse', table);
+  }
+
+  // Transformer, referred to the primary: R₁ – Lσ₁ – (L_m ∥ R_Fe) – ideal 1:n – Lσ₂ – R₂, C_p across the primary, C_ww between the windings.
+  function transformerSchematic([a, b], t) {
+    const S = Sch, strokes = [], texts = [], top = 86, bot = 206;
+    const val = (v, unit) => Number.isFinite(v) && v > 0 ? si(v, unit) : '—';
+    const half = t.leak > 0 ? t.leak / 2 : NaN, lm = t.ocl > 0 ? t.ocl - (half > 0 ? half : 0) : NaN, n = t.n;
+    const ls2 = half > 0 && n > 0 ? half * n * n : NaN, fromK = t.ocl * (1 - t.k * t.k);
+    strokes.push(S.term(22, top), S.term(22, bot), S.term(638, top), S.term(638, bot));
+    strokes.push(S.h(25, 70, top), S.res(70, top), S.h(104, 130, top), S.coil(130, top), S.h(166, 336, top), S.h(25, 336, bot));
+    strokes.push(S.v(48, top, 129), S.vcap(48, 129), S.v(48, 163, bot), S.dot(48, top), S.dot(48, bot));
+    strokes.push(S.v(204, top, 128), S.vcoil(204, 128), S.v(204, 164, bot), S.dot(204, top), S.dot(204, bot));
+    strokes.push(S.v(250, top, 129), S.vres(250, 129), S.v(250, 163, bot), S.dot(250, top), S.dot(250, bot));
+    // ideal transformer: two windings, core lines between them, dots mark the polarity found in the measurement
+    strokes.push(S.v(336, top, 122), S.vcoil(336, 122, 4, 1), S.v(336, 170, bot), '<path d="M348 118v56m6-56v56"/>', S.v(366, top, 122), S.vcoil(366, 122, 4, 0), S.v(366, 170, bot));
+    strokes.push(S.dot(328, 116), S.dot(374, t.k < 0 ? 176 : 116));
+    strokes.push(S.h(366, 412, top), S.coil(412, top), S.h(448, 480, top), S.res(480, top), S.h(514, 635, top), S.h(366, 635, bot));
+    // winding-to-winding capacitance
+    strokes.push(S.v(48, 40, top), S.h(48, 334, 40), S.cap(334, 40), S.h(368, 612, 40), S.v(612, 40, top), S.dot(612, top));
+    texts.push(S.label(87, top - 26, 'R₁', val(t.r1, 'Ω')), S.label(148, top - 26, 'Lσ₁', val(half, 'H')), S.label(430, top - 26, 'Lσ₂', val(ls2, 'H')), S.label(497, top - 26, 'R₂', val(t.r2, 'Ω')));
+    texts.push(S.label(60, 142, 'C_p', val(t.cpar > 0 ? t.cpar : t.cres, 'F'), 'start'), S.label(190, 142, 'L_m', val(lm, 'H'), 'end'), S.label(262, 142, 'R_Fe', val(t.rfe, 'Ω'), 'start'));
+    texts.push(S.label(351, bot + 18, '1 : n', Number.isFinite(n) ? '1 : ' + display(n) : '—'), S.label(351, 14, 'Cww', val(t.cww, 'F')));
+    texts.push(S.label(22, bot + 22, 'Paar ' + a.id, null, 'start'), S.label(638, bot + 22, 'Paar ' + b.id, null, 'end'));
+    const agree = Number.isFinite(fromK) && t.leak > 0 ? Math.abs(fromK / t.leak - 1) : NaN;
+    const table = '<div class="metric-grid">' + metricText('L_m · Hauptinduktivität = OCL − Lσ₁', val(lm, 'H')) + metricText('Lσ₁ · primär (Annahme: hälftig)', val(half, 'H')) +
+      metricText('Lσ₂ · sekundär = Lσ₁·n²', val(ls2, 'H')) + metricText('n · Übersetzung 1 : n', Number.isFinite(n) ? display(n) : '—') +
+      metricText('R₁ · Re Z₁₁ bei tiefer Frequenz', val(t.r1, 'Ω')) + metricText('R₂ · Re Z₂₂ bei tiefer Frequenz', val(t.r2, 'Ω')) +
+      metricText('R_Fe · Re Z₁₁ in der Leerlaufresonanz', val(t.rfe, 'Ω')) + metricText('Lσ aus k · L₁₁(1 − k²)', val(fromK, 'H')) + '</div>' +
+      '<p class="note" id="transformer-limits"><span>Was die Messung festlegt: OCL, n, Cww, C_p, R₁, R₂ und die gesamte Streuinduktivität bei kurzgeschlossener Sekundärseite,</span> <b data-no-i18n>Lσ = ' + esc(val(t.leak, 'H')) + '</b>. ' +
+      '<span>Was sie nicht festlegt: wie sich die Streuung auf Primär- und Sekundärseite verteilt. Von den Klemmen aus ist nur die Summe messbar; das Bild teilt sie je zur Hälfte auf (Lσ₁ = Lσ₂/n²). Wer die Aufteilung braucht, muss sie aus dem Wickelaufbau oder einer Feldrechnung nehmen.</span> ' +
+      '<span>R₁ und R₂ enthalten den Anteil der Kernverluste, der bei der tiefsten Messfrequenz schon wirkt; eine Gleichstrommessung ist genauer. R_Fe ist eine Näherung aus einer einzigen Frequenz; Kernverluste hängen von Frequenz und Aussteuerung ab.</span> ' +
+      (Number.isFinite(agree) ? '<span id="transformer-agree" data-agree="' + agree + '">' + (agree > 0.3 ? 'Die Streuung aus dem Kopplungsfaktor weicht um ' + Math.round(100 * agree) + ' % von der Kurzschlussmessung ab. Bei hoher Kopplung ist k sehr empfindlich; die Kurzschlussmessung ist verlässlicher und steht im Bild.'
+        : 'Die Streuung aus dem Kopplungsfaktor stimmt mit der Kurzschlussmessung auf ' + Math.round(100 * agree) + ' % überein.') + '</span>' : '') + '</p>';
+    return schematicFigure('transformer-schematic', 'T-Ersatzschaltbild mit Werten', 'T-Ersatzschaltbild eines Übertragers mit idealem Übertrager 1 : n', 660, 246, strokes.join(''), texts.join(''),
+      'Primärbezogen: R₁ und Lσ₁ in Reihe · L_m parallel R_Fe · idealer Übertrager 1 : n · Lσ₂ und R₂ auf der Sekundärseite · C_p über der Primärwicklung · Cww zwischen den Wicklungen', table);
+  }
+
   const focusAround = (values, lo, hi) => {
     const list = values.filter(value => Number.isFinite(value) && value > 0);
     return list.length ? [lo * Math.min(...list), hi * Math.max(...list)] : null;
@@ -8916,7 +9006,7 @@ const Plot = (() => {
       title: isCap ? 'Parasitärkapazitäten' : 'Wirksame Induktivitäten',
       caption: isCap ? 'Projektion der Vierport-Y-Matrix auf die natürlichen CMC-Moden' : 'Aus dem Imaginärteil von Z CM und Z DM · je Wicklung',
       native: '', fitBand: band,
-      details: () => fitDetails(fit, band, resonance) + cmcSchematic(pairs) +
+      details: () => fitDetails(fit, band, resonance) + cmcSchematic(pairs, fit, cmcLoss(pairs)) +
         '<p class="note">Cw und Cg sind Modellwerte für eine möglichst symmetrische CMC. Übrige aktive Ports sind mit Z₀ abgeschlossen. ' +
         help + '</p>'
     };
@@ -9002,7 +9092,15 @@ const Plot = (() => {
         const s = view.samples[i];
         return s ? RF.transformerPoint(RF.submatrix(s, n, d), refs(d), RF.submatrix(s, n, c), refs(c), f) : null;
       });
-      return RF.analyzeTransformer(state.dataset.freq, points, state.esb.evalFreq);
+      const result = RF.analyzeTransformer(state.dataset.freq, points, state.esb.evalFreq);
+      // Winding resistances and core loss from the differential Z matrix: Re Z11 and Re Z22 at the lowest frequencies,
+      // Re Z11 at the open-circuit resonance (there the reactances cancel and the loss resistance remains).
+      const fs = state.dataset.freq, zs = Array.from(fs, (f, i) => view.samples[i] ? RF.toZY(RF.submatrix(view.samples[i], n, d), refs(d), 'Z') : null);
+      const valid = zs.map((z, i) => z && fs[i] > 0 ? i : -1).filter(i => i >= 0), head = valid.slice(0, Math.max(4, Math.ceil(valid.length * 0.03)));
+      const low = k => RF.median(head.map(i => RF.get(zs[i], 2, k, k)[0]));
+      let rfe = NaN;
+      if (Number.isFinite(result.fres) && valid.length) { const at = valid.reduce((best, i) => Math.abs(fs[i] - result.fres) < Math.abs(fs[best] - result.fres) ? i : best, valid[0]); rfe = RF.get(zs[at], 2, 0, 0)[0]; }
+      return { ...result, r1: low(0), r2: low(1), rfe };
     });
   }
 
@@ -9049,7 +9147,7 @@ const Plot = (() => {
         ' · Vertrauen ' + Math.round(100 * t.leakConf) + ' % · Cww-Band ' + (t.cwwBand ? hz(t.cwwBand[0]) + ' – ' + hz(t.cwwBand[1]) : '—')) + '</p>' +
       '<p class="note">Kleinsignalwerte aus S-Parametern ohne DC-Bias. Datenblätter messen OCL oft mit Gleichstrom-Vormagnetisierung (z. B. 100 kHz, 100 mV, 8–18 mA), Abweichungen sind deshalb normal. ' +
       'Formeln: OCL = Im Z₁₁/ω · Lσ = Im(Z₁₁ − Z₁₂Z₂₁/Z₂₂)/ω · Cww = −Im Y₁₂(CC)/ω · ω/X = 1/L − ω²C. ' + help + '</p></section>' +
-      transformerSchematic(pairs);
+      transformerSchematic(pairs, t);
     return { traces, unit, yLabel, title: 'Übertrager', caption: 'Paar ' + pairs[0].id + ' → Paar ' + pairs[1].id + ' · T-Ersatzschaltbild', native: '', positive: fmt === 'z', signed: fmt !== 'z' && fmt !== 'r', refLines, focus, details };
   }
 
@@ -9350,30 +9448,6 @@ const Plot = (() => {
         ' · |Scc₂₁| = ' + display(detected.scc) + ' bei ' + hz(detected.f) + (detected.type === 'transformer' ? ' (galvanisch getrennt)' : ' (Gleichtakt galvanisch verbunden)')) + '</p>' + base();
     }
     return view;
-  }
-
-  function transformerSchematic([a, b]) {
-    const coil = x => 'M' + x + ' 60a9 9 0 0 1 18 0a9 9 0 0 1 18 0a9 9 0 0 1 18 0';
-    return `<figure class="detail-card cmc-schematic">
-      <h3>T-Ersatzschaltbild</h3>
-      <svg viewBox="0 0 540 200" role="img" aria-label="T-Ersatzschaltbild eines Übertragers">
-        <g fill="none" stroke="#2b2a27" stroke-width="1.8" stroke-linejoin="round">
-          <path d="M40 60H70m30 0h20"/><rect x="70" y="52" width="30" height="16" rx="2"/>
-          <path d="${coil(120)}"/><path d="M174 60H270"/>
-          <path d="${coil(330)}"/><path d="M270 60H330m54 0h20"/><rect x="404" y="52" width="30" height="16" rx="2"/><path d="M434 60H500"/>
-          <path d="M270 60v22"/><path d="M270 82a9 9 0 0 1 0 18a9 9 0 0 1 0 18a9 9 0 0 1 0 18" transform="rotate(0)"/><path d="M270 136v24"/>
-          <path d="M40 160H500"/>
-          <path stroke="#08875a" d="M60 60V22h200m20 0h200V60M260 12v20m20-20v20"/>
-          <path stroke="#c4622d" d="M150 60v20m0 22v18m-12-38h24m-24 6h24"/>
-        </g>
-        <g fill="#2b2a27" font-family="monospace" font-size="14" font-weight="600" text-anchor="middle">
-          <text x="85" y="88">R₁</text><text x="147" y="44">Lσ₁</text><text x="357" y="44">Lσ₂</text><text x="419" y="88">R₂</text>
-          <text x="298" y="113">L_h</text><text x="270" y="12" fill="#08875a">Cww</text><text x="180" y="100" fill="#c4622d">C_p</text>
-          <text x="40" y="52">Paar ${a.id}</text><text x="500" y="52">Paar ${b.id}</text>
-        </g>
-      </svg>
-      <figcaption>Lσ = Streuung je Seite · L_h = Hauptinduktivität (≈ OCL) · Cww = Koppelkapazität · C_p = Wicklungskapazität · ideales Übersetzungsverhältnis n</figcaption>
-    </figure>`;
   }
 
   function empty(title, content, canConfigure = false) {
@@ -10128,6 +10202,15 @@ const typed = state.tab === 's' && state.basis === 'mm' && ['cmc', 'lan'].includ
     renderAnalysis();
   }
 
+  function setEvalFreq(f) {
+    const fs = state.dataset.freq;
+    if (!(f > 0) || f < fs[0] || f > fs.at(-1)) { toast('Wähle eine Frequenz innerhalb des Messbereichs.'); return; }
+    state.esb.evalFreq = f;
+    renderControls();
+    renderAnalysis();
+    toast('Auswertefrequenz ' + hz(f) + ' · OCL, n und k werden dort bestimmt');
+  }
+
   function choosePair(which, id) {
     const other = which === 'pairIn' ? 'pairOut' : 'pairIn';
     if (state[other] === id) state[other] = state[which];
@@ -10387,6 +10470,8 @@ const typed = state.tab === 's' && state.basis === 'mm' && ['cmc', 'lan'].includ
     'lib-delete': libraryDelete,
     'lib-new': () => { shelf.naming = !shelf.naming; renderShelf(); },
     'esb-spice': exportModel,
+    'eval-marker': () => { const i = state.markers[state.activeMarker]; if (i === null || i === undefined) { toast('Setze zuerst einen Marker auf die Messkurve.'); return; } setEvalFreq(state.dataset.freq[i]); },
+    'schematic-zoom': value => { $(value)?.querySelector('.schematic-box')?.classList.toggle('is-zoomed'); },
     'model-fit': modelFit,
     'model-reset': modelReset,
     'model-window': modelWindow,
@@ -10445,7 +10530,7 @@ const typed = state.tab === 's' && state.basis === 'mm' && ['cmc', 'lan'].includ
 
   document.addEventListener('submit', event => {
     const handler = {
-      'pair-form': savePair, 'profile-form': saveProfile, 'sweep-form': applySweep, 'shelf-form': shelfStore, 'lib-new-form': libraryCreate, 'model-form': modelApply, 'pairz-form': applyPairImpedance, 'reference-form': applyReference, 'fit-form': applyFit, 'axes-form': applyAxes, 'load-form': applyLoad
+      'pair-form': savePair, 'profile-form': saveProfile, 'sweep-form': applySweep, 'shelf-form': shelfStore, 'lib-new-form': libraryCreate, 'model-form': modelApply, 'eval-form': form => setEvalFreq(parseHz(new FormData(form).get('eval'))), 'pairz-form': applyPairImpedance, 'reference-form': applyReference, 'fit-form': applyFit, 'axes-form': applyAxes, 'load-form': applyLoad
     }[event.target.id];
     if (!handler) return;
     event.preventDefault();
@@ -10551,6 +10636,7 @@ const typed = state.tab === 's' && state.basis === 'mm' && ['cmc', 'lan'].includ
     } else if (el.id === 'lib-select') { shelf.libId = el.value; shelf.confirm = ''; shelf.open.clear(); renderShelf(); }
     else if (el.id === 'lib-ports') { shelf.ports = el.value; renderShelf(); }
     else if (el.id === 'lib-type') { shelf.type = el.value; renderShelf(); }
+    else if (el.id === 'lib-sort') { shelf.sort = el.value; renderShelf(); }
     else if (el.id === 'shelf-scope') shelfSuggest(el.form);
   });
   document.addEventListener('input', event => { if (event.target.name === 'folder' && event.target.form?.id === 'shelf-form') event.target.dataset.touched = '1'; });

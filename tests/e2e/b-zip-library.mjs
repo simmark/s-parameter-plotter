@@ -118,6 +118,29 @@ try {
   await page.waitForFunction(() => [...document.querySelectorAll('.lib-row.is-file small')].every(n => n.textContent === '4P') && document.querySelectorAll('.lib-row.is-file').length > 10);
   report.check('Filter nach Portzahl', true);
   await page.selectOption('#lib-ports', '');
+  // sort order inside a folder: three files with different port counts, added under names that sort the other way round
+  await page.evaluate(async () => {
+    const mk = (name, ports, body) => ({ path: 'Sortierung', name, read: async () => new TextEncoder().encode(body), extra: { ports } });
+    await Store.importBatch({ name: 'Sortiertest', scope: 'library', libId: 'lib-main', files: [mk('a_vier.s4p', 4, '# Hz S RI R 50\n! a\n'), mk('b_zwei.s2p', 2, '# Hz S RI R 50\n! bb\n'), mk('c_eins.s1p', 1, '# Hz S RI R 50\n! cccccc\n')] });
+  });
+  await page.fill('#lib-query', 'Sortierung/');
+  const order = () => page.$$eval('.lib-row.is-file .session-open', n => n.map(b => b.dataset.key.split('/').pop()));
+  await page.waitForFunction(() => document.querySelectorAll('.lib-row.is-file').length === 3);
+  const byName = await order();
+  await page.selectOption('#lib-sort', 'ports');
+  await page.waitForFunction(() => document.querySelector('.lib-row.is-file .session-open')?.dataset.key.endsWith('c_eins.s1p'));
+  const byPorts = await order();
+  await page.selectOption('#lib-sort', 'size');
+  await page.waitForFunction(() => document.querySelector('.lib-row.is-file .session-open')?.dataset.key.endsWith('c_eins.s1p'));
+  report.equal('Sortierung nach Name, Portzahl und Größe', [byName, byPorts, await order()], [['a_vier.s4p', 'b_zwei.s2p', 'c_eins.s1p'], ['c_eins.s1p', 'b_zwei.s2p', 'a_vier.s4p'], ['c_eins.s1p', 'b_zwei.s2p', 'a_vier.s4p']]);
+  await page.selectOption('#lib-sort', 'name');
+  await page.click('button[data-action="lib-ask"][data-value="folder:Sortierung"]');
+  await page.click('button[data-action="lib-delete"][data-value="folder:Sortierung"]');
+  await page.waitForFunction(() => document.getElementById('shelf').dataset.count === '104');
+  await page.fill('#lib-query', '');
+  await page.waitForFunction(() => document.querySelector('button[data-action="lib-open-folder"][data-value="Messpaket/Kondensatoren"]') || document.querySelector('.lib-folder[data-value="Messpaket"]'));
+  if (!(await page.locator('button[data-action="lib-open-folder"][data-value="Messpaket/Kondensatoren"]').count())) await page.click('.lib-folder[data-value="Messpaket"]');
+  await page.waitForSelector('button[data-action="lib-open-folder"][data-value="Messpaket/Kondensatoren"]');
   await page.click('button[data-action="lib-open-folder"][data-value="Messpaket/Kondensatoren"]');
   await page.waitForFunction(() => Number(document.getElementById('session-files').dataset.count) === 21, null, { timeout: 60000 });
   report.check('Bibliotheksordner lässt sich in die Sitzung laden', true);
