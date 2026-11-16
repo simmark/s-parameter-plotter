@@ -123,6 +123,44 @@ try {
   report.check('Zwei-Finger-Zoom ändert den Frequenzbereich', Array.isArray(zoomed) && zoomed[1] > zoomed[0], JSON.stringify(zoomed));
   report.equal('Zoom verändert den Marker nicht', await marker(), m2);
 
+  // ---- vertical axis by touch: drag on the scale, two fingers above each other, double tap resets ----
+  const yRange = () => page.evaluate(async key => (await Store.entries('session')).find(e => Store.keyOf(e) === key)?.settings?.axes?.s?.yRange ?? null, key);
+  report.equal('Y-Achse steht zu Beginn auf Automatik', await yRange(), null);
+  const sx = plot.x + 14, scrollBefore = await page.evaluate(() => window.scrollY);
+  await swipe(client, [sx, plot.y + plot.height * 0.35], [sx, plot.y + plot.height * 0.35 + 70], 10);
+  await page.waitForTimeout(700);
+  const yr1 = await yRange();
+  report.check('Ziehen auf der Y-Skala verschiebt den Wertebereich', Array.isArray(yr1) && yr1[1] > yr1[0], JSON.stringify(yr1));
+  report.equal('… und scrollt dabei die Seite nicht', await page.evaluate(() => window.scrollY), scrollBefore);
+  report.equal('… und lässt Marker und Frequenzbereich unberührt', [await marker(), await axes()], [m2, zoomed]);
+  // finger moved down → the curve follows the finger, so the visible values move up
+  await swipe(client, [sx, plot.y + plot.height * 0.35], [sx, plot.y + plot.height * 0.35 + 40], 8);
+  await page.waitForTimeout(700);
+  const yr2 = await yRange();
+  report.check('Spanne bleibt beim Verschieben gleich, Bereich wandert in dieselbe Richtung', Math.abs((yr2[1] - yr2[0]) - (yr1[1] - yr1[0])) < 1e-6 * Math.abs(yr1[1] - yr1[0]) + 1e-9 && yr2[0] > yr1[0], JSON.stringify([yr1, yr2]));
+  // two fingers above each other inside the plot: spread → smaller span
+  const px = plot.x + plot.width * 0.5, py = plot.y + plot.height * 0.5;
+  await touch(client, 'touchStart', [[px, py - 25], [px + 4, py + 25]]);
+  for (let i = 1; i <= 8; i++) { await touch(client, 'touchMove', [[px, py - 25 - i * 6], [px + 4, py + 25 + i * 6]]); await page.waitForTimeout(16); }
+  await touch(client, 'touchEnd', []);
+  await page.waitForTimeout(700);
+  const yr3 = await yRange();
+  report.check('Zwei Finger übereinander auseinanderziehen: Y-Bereich wird kleiner', yr3[1] - yr3[0] < 0.6 * (yr2[1] - yr2[0]), JSON.stringify([yr2, yr3]));
+  report.equal('Senkrechter Zwei-Finger-Zoom ändert die Frequenzachse nicht und scrollt nicht', [await axes(), await page.evaluate(() => window.scrollY)], [zoomed, scrollBefore]);
+  await touch(client, 'touchStart', [[px, py - 80], [px + 4, py + 80]]);
+  for (let i = 1; i <= 8; i++) { await touch(client, 'touchMove', [[px, py - 80 + i * 6], [px + 4, py + 80 - i * 6]]); await page.waitForTimeout(16); }
+  await touch(client, 'touchEnd', []);
+  await page.waitForTimeout(700);
+  const yr4 = await yRange();
+  report.check('Zusammenschieben: Y-Bereich wird größer', yr4[1] - yr4[0] > 1.5 * (yr3[1] - yr3[0]), JSON.stringify([yr3, yr4]));
+  // single tap on the scale changes nothing, double tap resets
+  await page.touchscreen.tap(sx, plot.y + plot.height * 0.5); await page.waitForTimeout(600);
+  report.equal('Einfaches Tippen auf die Skala ändert nichts', [await yRange(), await marker()], [yr4, m2]);
+  await page.touchscreen.tap(sx, plot.y + plot.height * 0.5); await page.waitForTimeout(80);
+  await page.touchscreen.tap(sx, plot.y + plot.height * 0.5); await page.waitForTimeout(700);
+  report.equal('Doppeltippen auf die Y-Skala stellt die Automatik wieder her', await yRange(), null);
+  report.check('Hinweis unter dem Diagramm nennt die Y-Skala', /Y-Skala links/.test(await page.textContent('#plot-hint')), await page.textContent('#plot-hint'));
+
   await page.setViewportSize({ width: 390, height: 844 });
   // full screen view and back without losing settings
   await page.tap('button[data-action="view-mode"]'); await settle();
