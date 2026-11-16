@@ -148,3 +148,30 @@ export async function until(page, check, arg = undefined, timeout = 120000) {
     await page.waitForTimeout(100);
   }
 }
+
+// ---- Reference networks with known answers (complex arithmetic kept explicit and small) ----
+const cx = { add: (a, b) => [a[0] + b[0], a[1] + b[1]], sub: (a, b) => [a[0] - b[0], a[1] - b[1]], mul: (a, b) => [a[0] * b[0] - a[1] * b[1], a[0] * b[1] + a[1] * b[0]],
+  div: (a, b) => { const d = b[0] * b[0] + b[1] * b[1]; return [(a[0] * b[0] + a[1] * b[1]) / d, (a[1] * b[0] - a[0] * b[1]) / d]; }, inv: a => cx.div([1, 0], a) };
+export const logFreqs = (f1, f2, n) => Array.from({ length: n }, (_, k) => f1 * (f2 / f1) ** (k / (n - 1)));
+// Inductor with winding capacitance: R + (jωL ∥ 1/(jωC) ∥ Rp)
+export const inductorZ = ({ L, C, R, Rp }) => f => { const w = 2 * Math.PI * f; return cx.add([R, 0], cx.inv(cx.add(cx.add(cx.inv([0, w * L]), [0, w * C]), [1 / Rp, 0]))); };
+// Capacitor with ESR and ESL: ESR + jωESL + 1/(jωC)
+export const capacitorZ = ({ C, ESR, ESL }) => f => { const w = 2 * Math.PI * f; return [ESR, w * ESL - 1 / (w * C)]; };
+// Two-port Touchstone of an impedance in series between the ports, or in shunt to ground.
+export function fixtureS2P(z, freqs, kind = 'series', z0 = 50) {
+  const lines = ['! synthetic reference: ' + kind + ' fixture', '# Hz S RI R ' + z0];
+  for (const f of freqs) {
+    const Z = z(f);
+    let s11, s21;
+    if (kind === 'series') { const d = cx.add(Z, [2 * z0, 0]); s11 = cx.div(Z, d); s21 = cx.div([2 * z0, 0], d); }
+    else { const d = cx.add([z0, 0], cx.mul([2, 0], Z)); s11 = cx.div([-z0, 0], d); s21 = cx.div(cx.mul([2, 0], Z), d); }
+    lines.push([f, ...s11, ...s21, ...s21, ...s11].map(v => Number(v).toPrecision(12)).join(' '));
+  }
+  return lines.join('\n') + '\n';
+}
+// One-port Touchstone of an impedance to ground.
+export function reflectionS1P(z, freqs, z0 = 50) {
+  const lines = ['! synthetic reference: one-port', '# Hz S RI R ' + z0];
+  for (const f of freqs) { const Z = z(f), g = cx.div(cx.sub(Z, [z0, 0]), cx.add(Z, [z0, 0])); lines.push([f, ...g].map(v => Number(v).toPrecision(12)).join(' ')); }
+  return lines.join('\n') + '\n';
+}
