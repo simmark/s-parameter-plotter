@@ -51,8 +51,11 @@ try {
   await open('cmc.s4p');
   await page.waitForSelector('#model-editor');
   const hash0 = await fileHash('cmc.s4p');
-  const CK = ['m', 'rfe', 'ls', 'rw', 'ct', 'cw', 'cg'];
-  report.equal('CMC: Editor zeigt alle sieben Elemente des Schaltbilds', await page.$$eval('.model-row', n => n.map(r => r.dataset.key)), CK);
+  const CK = ['m', 'rfe', 'ls', 'rls', 'rw', 'ct', 'cw', 'cg'];
+  report.equal('CMC: Editor zeigt alle Elemente des Schaltbilds, dazu R_σ parallel zu Lσ', await page.$$eval('.model-row', n => n.map(r => r.dataset.key)), CK);
+  const badges = await page.$$eval('.model-row', n => n.map(r => r.querySelector('.model-spread')?.dataset.spread));
+  report.check('CMC: jede Zeile zeigt die Bestimmtheit (gut / schwach / nicht bestimmt)', badges.length === CK.length && badges.every(b => ['good', 'weak', 'none'].includes(b)) && await page.locator('#model-spread-note').count() === 1, badges.join(' '));
+  report.check('CMC: „Nicht bestimmbare Werte automatisch festhalten“ ist voreingestellt', await page.isChecked('input[name="auto-hold"]'));
   let v = await values(CK), s = await summary();
   report.check('CMC: Startwerte sind die der Auswertung (M 990 µH, Lσ 10 µH, Cw 2 pF, Cg 0,5 pF, Ct 4 pF)', near(v.m, 990e-6, 0.01) && near(v.ls, 10e-6, 0.03) && near(v.cw, 2e-12, 0.03) && near(v.cg, 0.5e-12, 0.05) && near(v.ct, 4e-12, 0.08),
     CK.map(k => k + ' ' + v[k].toExponential(3)).join(' · '));

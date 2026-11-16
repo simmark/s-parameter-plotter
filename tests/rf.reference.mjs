@@ -345,11 +345,36 @@ console.log('Vierpol-Modelle: CMC und Übertrager (Formel, Netzliste und Fit bes
   check('CMC: alle Parameter bleiben positiv', RF.modelParams(fit.model).every(p => p.value > 0) && RF.modelParams(fit.model).length === 7);
   check('CMC: zu wenige Punkte im Fenster → kein Ergebnis statt eines erfundenen', RF.fitMulti(freq, meas, start, { band: [1e4, 1.5e4] }) === null);
   // diagonal capacitance and core sections: formula = SPICE simulation of the exported netlist
-  for (const [label, model] of [['mit Cx', { ...cmc, cx: 1.5e-12 }], ['mit Cx und zwei Kerngliedern', RF.cmcSections({ ...cmc, cx: 1.5e-12 }, 2)]]) {
+  for (const [label, model] of [['mit Cx', { ...cmc, cx: 1.5e-12 }], ['mit Cx und zwei Kerngliedern', RF.cmcSections({ ...cmc, cx: 1.5e-12 }, 2)], ['mit R_σ parallel zu Lσ', { ...cmc, cx: 1.5e-12, rls: 3e3 }]]) {
     const sim = netlist(RF.modelNetlist(model, 'CMC'))({ f1: 1e4, f2: 3e8, n: 61 });
     let err = 0;
     sim.freq.forEach((f, i) => { const s = RF.fromZY(RF.cmcModelY(model, f), refs, 'Y'); for (let k = 0; k < s.length; k++) err = Math.max(err, Math.abs(s[k] - sim.samples[i][k])); });
     check('CMC ' + label + ': Formel = SPICE-Simulation der Netzliste', err < 1e-7, err.toExponential(2));
+  }
+  // R_σ across the leakage: differential mode Z = R_w + (jωLσ ∥ R_σ), common mode unchanged apart from the same series part
+  {
+    const lossy = { ...cmc, rls: 3e3 }, f1 = 5e6, w1 = 2 * Math.PI * f1, yl = RF.cmcModal(lossy, f1);
+    const zs = C.add([cmc.rw, 0], C.div(C.mul([0, w1 * cmc.ls], [3e3, 0]), C.add([0, w1 * cmc.ls], [3e3, 0])));
+    const ydl = C.add(C.s(C.div([1, 0], zs), 2), [0, w1 * (2 * cmc.ct + 2 * cmc.cw + cmc.cg)]);
+    check('CMC mit R_σ: Gegentakt-Admittanz wie von Hand gerechnet, R_D steigt mit (ωLσ)²/R_σ', cclose(yl[3], ydl, 1e-12) && RF.modelParams(lossy).some(p => p.key === 'rls'));
+    // a measurement with R_σ is matched by the model with R_σ, and its R_w stays the small series value
+    const measL = { y: Array.from(freq, f => RF.cmcModal(lossy, f)), ref: 50 };
+    const without = RF.fitMulti(freq, measL, start), withR = RF.fitMulti(freq, measL, { ...start, rls: 10e3 });
+    check('CMC mit R_σ: Modell mit R_σ trifft die Messung deutlich besser als ohne', withR.err < 0.05 && withR.err < without.err / 5 && Math.abs(withR.model.rls / 3e3 - 1) < 0.1,
+      'ohne ' + without.err.toFixed(3) + ' dB, mit ' + withR.err.toFixed(4) + ' dB, R_σ ' + withR.model.rls.toFixed(0) + ' Ω');
+    // undetermined parameters: none in the full band
+    const full = RF.multiUndetermined(freq, meas, cmc), narrow = RF.multiUndetermined(freq, meas, cmc, { band: [1e4, 2e5] });
+    // noise-free data: only C_g (seen alone in mode G, far below its resonance only as a tiny susceptance) drops out below 200 kHz
+    check('Bestimmtheit: im vollen Band nichts festzuhalten, im schmalen Band unterhalb der Resonanzen Cg', full.length === 0 && narrow.includes('cg') && !['m', 'ls'].some(k => narrow.includes(k)),
+      'voll [' + full + '] · schmal [' + narrow + ']');
+    const classes = ['good', 'weak', 'none', 'fixed'], got = [0.05, 0.5, 5, undefined].map(RF.spreadClass);
+    check('Bestimmtheit: Stufen gut ≤ 10 %, schwach ≤ 100 %, darüber nicht bestimmt', JSON.stringify(got) === JSON.stringify(classes) && RF.spreadClass(Infinity) === 'none');
+    // optimisation with automatic holding: in the narrow band the capacitances keep their start values exactly
+    const heldFit = RF.fitMultiHeld(freq, meas, start, { band: [1e4, 2e5] });
+    check('Automatisches Festhalten: im schmalen Band bleiben nicht bestimmbare Werte auf dem Startwert', heldFit && heldFit.held.length > 0 && heldFit.held.every(k => heldFit.model[k] === start[k]),
+      heldFit ? 'festgehalten [' + heldFit.held + ']' : 'kein Ergebnis');
+    const freeFit = RF.fitMultiHeld(freq, meas, start);
+    check('Automatisches Festhalten: im vollen Band greift es nicht ein (gleiches Ergebnis wie der freie Fit)', freeFit.held.length === 0 && Math.abs(freeFit.err - fit.err) < 1e-9);
   }
   const two = RF.cmcSections(cmc, 2);
   check('Kernglieder: Aufteilen erhält die Gesamtinduktivität', Math.abs(two.m + two.m2 - cmc.m) < 1e-12 && two.rfe2 > two.rfe);
