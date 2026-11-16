@@ -1039,6 +1039,26 @@ html[data-theme="dark"] .ev-score.pro { color: #5cc9bf; border-color: #2c5f5a; }
 .lib-folder[aria-expanded="true"] .icon { transform: rotate(90deg); }
 .lib-folder span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .lib-folder small { color: var(--muted); font-size: 10px; font-weight: 600; }
+.model-form { display: grid; gap: 7px; margin-top: 10px; }
+.model-row { display: grid; grid-template-columns: minmax(150px, 1.1fr) minmax(96px, 0.7fr) minmax(90px, 1fr) auto auto; gap: 8px; align-items: center; font-size: 12px; }
+.model-row > label:first-child { font-weight: 600; }
+.model-row .field-input { min-height: 30px; min-width: 0; }
+.model-slider { width: 100%; min-width: 0; accent-color: var(--accent); }
+.model-fix { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: var(--muted); white-space: nowrap; }
+.model-fix input { width: 15px; height: 15px; margin: 0; accent-color: var(--accent); }
+.model-window { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-end; margin-top: 4px; }
+.model-window .control { width: 120px; min-width: 0; }
+.schematic-box { overflow: auto; margin: 8px 0 2px; color: var(--ink); -webkit-overflow-scrolling: touch; }
+.model-schematic { display: block; height: auto; max-width: 100%; }
+.model-schematic .value { font-weight: 500; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 9.5px; }
+.schematic-box.is-zoomed svg { width: 200%; max-width: none; }
+@media (max-width: 620px) {
+  .model-row { grid-template-columns: minmax(0, 1fr) auto auto; row-gap: 3px; }
+  .model-row > label:first-child { grid-column: 1 / -1; }
+  .model-row .model-slider { grid-column: 1 / -1; grid-row: 3; min-height: 32px; }
+  .model-row .field-input { min-height: 38px; font-size: 14px; }
+  .model-row .quiet-button { min-height: 38px; min-width: 40px; }
+}
 .store-content { display: grid; gap: 10px; font-size: 12.5px; }
 .store-bar { height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; }
 .store-bar > span { display: block; height: 100%; width: 0; background: var(--accent); transition: width .15s; }
@@ -1312,9 +1332,16 @@ window.I18N = (() => {
     "Aktuelle Sitzung": "Current session", "Auswählen": "Select", "Mehrere Dateien für die Bibliothek auswählen": "Select several files for the library", "Alle anderen Dateien aus der Sitzung entfernen. Die Bibliothek bleibt unverändert.": "Remove all other files from the session. The library stays unchanged.", "Dauerhaft gespeichert · bleibt nach dem Neuladen erhalten": "Saved permanently · survives a reload", "Nur im Arbeitsspeicher · geht beim Neuladen verloren": "In memory only · lost on reload", "In Bibliothek": "To library", "In Bibliothek übernehmen": "Add to library", "Dateien der Sitzung dauerhaft in die Bibliothek übernehmen": "Add session files to the library permanently", "Noch leer. „In Bibliothek“ legt Dateien der Sitzung dauerhaft hier ab: einzeln, als ganzes ZIP oder als Auswahl.": "Still empty. \"To library\" keeps session files here permanently: one file, a whole ZIP or a selection.", "Unterordner mit „/“. Bei mehreren Dateien bleibt die Ordnerstruktur des Imports erhalten.": "Sub folders with \"/\". For several files the folder structure of the import is kept.", "z. B. LAN-Übertrager oder CMC/0805": "e.g. LAN transformer or CMC/0805", "Name der neuen Bibliothek": "Name of the new library", "z. B. CMC Automotive": "e.g. CMC automotive", "Anlegen": "Create", "Neu": "New", "Neue Bibliothek erstellen": "Create a new library", "Bibliothek wählen": "Choose library", "Bibliothek leeren oder löschen": "Empty or delete the library", "Bibliothek durchsuchen …": "Search the library …", "Bibliothek durchsuchen": "Search the library", "Nach Portzahl filtern": "Filter by port count", "Nach Bauteiltyp filtern": "Filter by component type", "Typ": "Type", "In die Sitzung laden und öffnen": "Load into the session and open", "Ordner in die Sitzung laden und durchblättern": "Load the folder into the session and step through it", "Aus der Bibliothek löschen": "Delete from the library", "Mehr als 600 Zeilen · Suche oder Filter nutzen": "More than 600 rows · use search or filters", "Die Bibliothek braucht dauerhaften Browserspeicher. Er ist hier nicht verfügbar; Einzelheiten stehen unter „Speicher & Sicherung“.": "The library needs permanent browser storage. It is not available here; see \"Storage & backup\" for details.", "Bibliothek geleert.": "Library emptied.", "Bibliothek gelöscht.": "Library deleted.", "Verstanden": "Got it", "Die Datenbank wird von einem anderen Tab mit einer älteren Version blockiert. Schließe die anderen Tabs der App und lade neu. Bis dahin wird nichts dauerhaft gespeichert.": "The database is blocked by another tab running an older version. Close the other tabs of the app and reload. Until then nothing is saved permanently.", "Dieser Browser erlaubt hier keinen dauerhaften Speicher (z. B. privater Modus). Geladene Dateien gehen beim Neuladen verloren.": "This browser does not allow permanent storage here (e.g. private mode). Loaded files are lost on reload.", "Ein Teil der Dateien ist nicht dauerhaft gespeichert und geht beim Neuladen verloren.": "Some of the files are not saved permanently and will be lost on reload.", "Import": "Import", "Zu speichern": "To save", "Gespeichert": "Saved", "Fehlgeschlagen": "Failed", "Fortschritt": "Progress", "Datenmenge": "Data volume", "Speicher belegt": "Storage used", "Gespeicherte Dateien werden geprüft …": "Verifying the saved files …", "Dateien werden gelesen und gespeichert …": "Reading and saving files …", "Überspringen": "Skip", "Ersetzen": "Replace", "Umbenennen": "Rename", "Erneut versuchen": "Retry", "Nicht gespeichert:": "Not saved:", "Überspringen behält die vorhandenen Dateien. Ersetzen tauscht sie aus. Umbenennen legt die neuen Dateien zusätzlich unter neuem Namen ab.": "Skip keeps the existing files. Replace swaps them. Rename stores the new files additionally under a new name.", "Import nicht möglich": "Import not possible", "Import fehlgeschlagen": "Import failed", "Es wurde nichts übernommen. Bereits gespeicherte Dateien sind unverändert.": "Nothing was imported. Files saved earlier are unchanged.", "Import abgebrochen. Es wurde nichts übernommen.": "Import cancelled. Nothing was imported.", "Nicht dauerhaft gespeichert: Dieser Browser erlaubt hier keinen dauerhaften Speicher.": "Not saved permanently: this browser does not allow permanent storage here.", "In die Bibliothek übernehmen": "Add to library", "Übernahme fehlgeschlagen": "Adding failed", "Die Bibliothek ist unverändert.": "The library is unchanged.", "Übernahme abgebrochen. Die Bibliothek ist unverändert.": "Cancelled. The library is unchanged.", "Speicher & Sicherung": "Storage & backup", "Speicher": "Storage", "Speicher und Sicherung": "Storage and backup", "Speicher prüfen, Bibliothek sichern und wiederherstellen": "Check the storage, back up and restore the library", "Wo die Dateien liegen, ob der Speicher funktioniert und wie du ihn sicherst": "Where the files are kept, whether storage works and how to back it up", "Diagnose, Funktionstest, Sicherung der Bibliothek": "Diagnosis, self test, library backup", "Speicher wird geprüft …": "Checking storage …", "Browser unterstützt OPFS": "Browser supports OPFS", "Dateiablage": "File storage", "OPFS (privates Dateisystem der App)": "OPFS (private file system of the app)", "Nur Arbeitsspeicher": "Memory only", "Verwendeter Speicher": "Storage used", "Geschätzter verfügbarer Speicher": "Estimated storage available", "Persistente Speicherung": "Persistent storage", "gewährt": "granted", "nicht gewährt": "not granted", "unbekannt": "unknown", "Gespeicherte Dateien": "Stored files", "Bibliotheken": "Libraries", "Aktive Sitzung": "Active session", "Letzte erfolgreiche Sicherung im Browserspeicher": "Last successful save to browser storage", "Ja": "Yes", "Nein": "No", "Ja · Schreiben nur über IndexedDB": "Yes · writing via IndexedDB only", "Funktionstest": "Self test", "Dauerhafte Speicherung anfordern": "Request persistent storage", "Sicherung exportieren": "Export backup", "Sicherung importieren": "Import backup", "Dauerhafter Speicher ist hier nicht verfügbar.": "Permanent storage is not available here.", "Importierte Dateien liegen im Speicher dieses Browsers auf diesem Gerät. Sie überstehen Neuladen, Neustart und App-Updates. Sie sind aber nicht unzerstörbar: Wer die Browserdaten oder Websitedaten löscht, die App deinstalliert oder im privaten Modus arbeitet, entfernt sie. Ohne gewährte persistente Speicherung darf der Browser sie bei Platzmangel auch selbst bereinigen.": "Imported files are kept in the storage of this browser on this device. They survive reloads, restarts and app updates. They are not indestructible though: clearing browser or site data, uninstalling the app or working in private mode removes them. Without granted persistent storage the browser may also evict them itself when space runs low.", "Die Sicherung ist eine ZIP-Datei mit allen Dateien der Bibliotheken und der Sitzung, ihren Ordnern, Portzuordnungen, Vorlagen und Einstellungen. Bewahre sie außerhalb des Browsers auf. Beim Einspielen wird nichts Vorhandenes überschrieben.": "The backup is a ZIP file with all files of the libraries and the session, their folders, port assignments, templates and settings. Keep it outside the browser. Restoring never overwrites anything that exists.", "Test läuft …": "Test running …", "Funktionstest bestanden: Schreiben, Lesen, Vergleichen und Entfernen funktionieren.": "Self test passed: writing, reading, comparing and removing work.", "Funktionstest fehlgeschlagen.": "Self test failed.", "IndexedDB öffnen": "Open IndexedDB", "Testdatei schreiben": "Write test file", "Testdatei lesen und vergleichen": "Read and compare test file", "Metadaten schreiben": "Write metadata", "Testdatei entfernen": "Remove test file", "Der Browser hat die dauerhafte Speicherung gewährt.": "The browser granted persistent storage.", "Der Browser hat die dauerhafte Speicherung nicht gewährt. Die Daten bleiben trotzdem gespeichert, solange der Browser sie nicht bereinigt.": "The browser did not grant persistent storage. The data stays saved as long as the browser does not evict it.", "Sicherung wird erstellt …": "Creating backup …", "Sicherung einspielen": "Restore backup", "Sicherung nicht eingespielt": "Backup not restored", "Einspielen abgebrochen": "Restore cancelled", "Die Sicherung lässt sich nicht einspielen: Dauerhafter Speicher ist hier nicht verfügbar.": "The backup cannot be restored: permanent storage is not available here.", "Lizenz": "License", "© 2026 Simon Mark · proprietäre Software": "© 2026 Simon Mark · proprietary software", "Dateien & Bibliothek": "Files & library",
     "Auswertung": "Evaluation", "Impedanz und CISPR 17": "Impedance and CISPR 17", "Eingangsimpedanz · Reflexion Zᵢₙ": "Input impedance · reflection Zᵢₙ", "Serienimpedanz · Transmission": "Series impedance · transmission", "Shuntimpedanz · Transmission": "Shunt impedance · transmission", "CISPR 17 · Eintor · Reflexion": "CISPR 17 · one-port · reflection", "CISPR 17 · Zweitor · Serie": "CISPR 17 · two-port · series", "CISPR 17 · Zweitor · Shunt": "CISPR 17 · two-port · shunt", "CISPR 17 · Vierport · CM / DM": "CISPR 17 · four-port · CM / DM", "Betrag |Z|": "Magnitude |Z|", "Realteil · R / ESR": "Real part · R / ESR", "Imaginärteil · X": "Imaginary part · X", "L · Serie / ESL": "L · series / ESL", "Güte Q = |X|/R": "Quality factor Q = |X|/R", "Güte Q": "Quality factor Q", "Symmetrisch logarithmisch: zeigt positive und negative Werte samt Resonanzspitzen": "Symmetric logarithmic: shows positive and negative values including resonance peaks", "Symmetrisch logarithmisch · mit Vorzeichen": "Symmetric logarithmic · signed", "Werte ≤ 0 sind auf der Log-Achse nicht darstellbar": "Values ≤ 0 cannot be shown on the log axis", "Leere Grenzwerte verwenden die automatische Skalierung. Frequenzen akzeptieren z. B. 20 MHz. Mit der Maus: Mausrad oder Ziehen auf der Y-Skala zoomt und verschiebt die vertikale Achse, Doppelklick dort setzt sie zurück.": "Empty limits use automatic scaling. Frequencies accept e.g. 20 MHz. With the mouse: wheel or drag on the Y scale zooms and moves the vertical axis, a double click there resets it.", "ZIP importieren": "Import ZIP", "Dateien und Bibliothek schließen": "Close files and library",
     "Bauteil · induktiv (L, Ferrit, Perle)": "Component · inductive (L, ferrite, bead)", "Bauteil · kapazitiv (C, ESR, ESL)": "Component · capacitive (C, ESR, ESL)", "Serie · 2Z₀(1/S₂₁ − 1)": "Series · 2Z₀(1/S₂₁ − 1)", "Eintor · Z₀(1 + S₁₁)/(1 − S₁₁)": "One-port · Z₀(1 + S₁₁)/(1 − S₁₁)", "Fixture": "Fixture", "Die automatische Erkennung ist für diese Datei nicht eindeutig. Wähle das Modell oben selbst: induktiv (L) oder kapazitiv (C).": "Automatic detection is not conclusive for this file. Choose the model above yourself: inductive (L) or capacitive (C).", "Induktives Bauteil": "Inductive component", "Kapazitives Bauteil": "Capacitive component", "Induktives Bauteil · Ersatzschaltbild": "Inductive component · equivalent circuit", "Kapazitives Bauteil · Ersatzschaltbild": "Capacitive component · equivalent circuit", "Für CMC- und Übertragermodell werden zwei Portpaare benötigt. Für ein Einzelbauteil wähle „Bauteil · induktiv“ oder „Bauteil · kapazitiv“.": "The CMC and transformer models need two port pairs. For a single component choose \"Component · inductive\" or \"Component · capacitive\".",
-    "Automatisch · Serie": "Automatic · series", "Automatisch · Shunt": "Automatic · shunt", "Automatisch · Eintor": "Automatic · one-port"
+    "Automatisch · Serie": "Automatic · series", "Automatisch · Shunt": "Automatic · shunt", "Automatisch · Eintor": "Automatic · one-port",
+    "Modell-Editor": "Model editor", "fest": "fixed", "Beim Optimieren festhalten": "Keep fixed while optimising", "Eine Dekade nach unten und oben um den automatischen Wert": "One decade down and up around the automatic value", "Startwert am aktiven Marker aus der Messkurve übernehmen": "Take a start value from the measured curve at the active marker", "Fitfenster von": "Fit window from", "bis": "to", "Fenster = M1 … M2": "Window = M1 … M2", "Die Marker M1 und M2 begrenzen das Fitfenster": "Markers M1 and M2 bound the fit window", "Ganzer Bereich": "Whole range", "Werte übernehmen": "Apply values", "Optimieren": "Optimise", "Automatik": "Automatic", "Zurück zum automatischen Fit": "Back to the automatic fit", "Freie Parameter im Fitfenster an Betrag und Phase anpassen; „fest“ markierte bleiben stehen": "Fit the free parameters to magnitude and phase inside the fit window; those marked \"fixed\" stay", "Eingaben wie 10 µH, 4,7n oder 1e-6. Der Regler verstellt um eine Dekade nach unten und oben. Optimiert werden Betrag und Phase der komplexen Impedanz, nur mit den Messpunkten im Fitfenster (im Diagramm grün hinterlegt). Alle Werte bleiben positiv. Die Messdaten werden dabei nie verändert.": "Entries like 10 µH, 4.7n or 1e-6. The slider moves one decade down and up. Magnitude and phase of the complex impedance are optimised, using only the measured points inside the fit window (shaded green in the diagram). All values stay positive. The measured data is never changed.", "R₁ · Verluste der 1. Resonanz": "R₁ · losses of the 1st resonance", "R₂ · Verluste der 2. Resonanz": "R₂ · losses of the 2nd resonance", "L₂ · zweiter Kreis": "L₂ · second tank", "C₂ · zweiter Kreis": "C₂ · second tank", "R₀ · Serienwiderstand": "R₀ · series resistance", "L₁ · Hauptinduktivität": "L₁ · main inductance", "C₁ · Parallelkapazität": "C₁ · parallel capacitance", "C · Kapazität": "C · capacitance", "ESR · Serienwiderstand": "ESR · series resistance", "ESL · Serieninduktivität": "ESL · series inductance", "R_p · Isolationswiderstand": "R_p · insulation resistance", "Modell R": "Model R", "Modell ESR": "Model ESR", "Für das Modell fehlt ein kapazitiver Bereich bei tiefen Frequenzen.": "The model needs a capacitive range at low frequencies.", "Gib ein positives, aufsteigendes Fitfenster ein.": "Enter a positive, ascending fit window.", "Im Fitfenster liegen zu wenige Messpunkte für die freien Parameter.": "The fit window holds too few measured points for the free parameters.", "Setze zwei Marker auf verschiedene Frequenzen. Sie begrenzen dann das Fitfenster.": "Place two markers on different frequencies. They then bound the fit window.", "Setze zuerst einen Marker auf die Messkurve.": "Place a marker on the measured curve first.", "Am Marker gibt es keinen Messwert.": "There is no measured value at the marker.", "Am Marker ist der Realteil nicht positiv.": "The real part is not positive at the marker.", "Am Marker ist das Bauteil nicht induktiv (X ≤ 0). Setze den Marker unterhalb der Eigenresonanz.": "The part is not inductive at the marker (X ≤ 0). Place the marker below the self-resonance.", "Am Marker ist das Bauteil nicht induktiv (X ≤ 0). Setze den Marker oberhalb der Eigenresonanz.": "The part is not inductive at the marker (X ≤ 0). Place the marker above the self-resonance.", "Am Marker ist das Bauteil nicht kapazitiv (X ≥ 0). Setze den Marker unterhalb der Eigenresonanz.": "The part is not capacitive at the marker (X ≥ 0). Place the marker below the self-resonance.", "Aus diesem Marker lässt sich kein positiver Wert ableiten.": "No positive value can be derived from this marker."
   }));
   const PATTERNS = [
+    [/^Gültig von (.+) bis (.+) · Abweichung (.+) dB und (.+)° RMS · (\d+) Punkte · (von Hand geändert|automatischer Fit)$/, (m, a, b, c, d, e, f) => 'Valid from ' + a + ' to ' + b + ' · deviation ' + c + ' dB and ' + d + '° RMS · ' + e + ' points · ' + (f === 'automatischer Fit' ? 'automatic fit' : 'changed by hand')],
+    [/^(.+) am aktiven Marker übernehmen$/, (m, a) => 'Take ' + t(a) + ' from the active marker'], [/^(.+ · .+) verstellen$/, (m, a) => 'Adjust ' + t(a)],
+    [/^(.+): Gib einen positiven Wert ein, z\. B\. (.+)\.$/, (m, a, b) => t(a) + ': enter a positive value, e.g. ' + b + '.'],
+    [/^Optimiert: (.+) dB und (.+)° RMS über (\d+) Punkte(?: · (\d+) fest)?$/, (m, a, b, c, d) => 'Optimised: ' + a + ' dB and ' + b + '° RMS over ' + c + ' points' + (d ? ' · ' + d + ' fixed' : '')],
+    [/^(\S+) = (.+) aus dem Marker bei (.+? Hz)(?: \(Resonanz mit (.+)\))?$/, (m, a, b, c, d) => a + ' = ' + b + ' from the marker at ' + c + (d ? ' (resonance with ' + d + ')' : '')],
+    [/^Ersatzschaltbild: (.+)$/, 'Equivalent circuit: $1'],
     [/^(\d+) Datei(?:en)? dauerhaft gespeichert(?: · ← \/ → blättert)?(?: · (\d+) bereits vorhanden)?(?: · (\d+) nicht unterstützte Datei(?:en)? ausgelassen)?$/, (m, a, b, c) => a + ' file(s) saved permanently' + (/blättert/.test(m) ? ' · ← / → steps through' : '') + (b ? ' · ' + b + ' already present' : '') + (c ? ' · ' + c + ' unsupported file(s) left out' : '')],
     [/^(\d+) von (\d+) Dateien dauerhaft gespeichert und geprüft$/, '$1 of $2 files saved permanently and verified'],
     [/^(\d+) (?:Datei war|Dateien waren) bereits unverändert vorhanden\.$/, '$1 file(s) already present, unchanged.'],
@@ -3318,11 +3345,119 @@ const RF = (() => {
     return lines.join('\n');
   }
 
+  // ---- Editable two-pole models: named parameters the interface can show, change, fix and re-optimise. ----
+  // 'tanks': R0 in series with up to two parallel tanks (inductor, ferrite, bead) – the model of fitResonant.
+  // 'rlc':   ESR + ESL + C in series, optionally a leakage resistance Rp across C (capacitor).
+  // All parameters are positive by construction (the optimiser works on their logarithms), so no fit can return
+  // a negative inductance, capacitance or resistance.
+  function modelImpedance(model, f) {
+    if (model.type !== 'rlc') return tankImpedance(model, f);
+    const w = TAU * f, g = model.rp > 0 && Number.isFinite(model.rp) ? 1 / model.rp : 0, b = w * model.c, d = g * g + b * b;
+    return [model.esr + g / d, w * (model.esl || 0) - b / d];
+  }
+  function modelParams(model) {
+    const ok = v => Number.isFinite(v) && v > 0;
+    if (model.type === 'rlc') return [['c', model.c], ['esr', model.esr], ...(ok(model.esl) ? [['esl', model.esl]] : []), ...(ok(model.rp) ? [['rp', model.rp]] : [])].map(([key, value]) => ({ key, value }));
+    const out = [{ key: 'r0', value: model.r0 }];
+    model.tanks.forEach((tank, t) => { for (const key of ['l', 'c', 'r']) if (ok(tank[key])) out.push({ key: key + (t + 1), value: tank[key] }); });
+    return out;
+  }
+  function modelWith(model, values) {
+    const ok = v => Number.isFinite(v) && v > 0, next = { ...model };
+    if (model.type === 'rlc') {
+      for (const key of ['c', 'esr', 'esl', 'rp']) if (ok(values?.[key])) next[key] = values[key];
+      return next;
+    }
+    if (ok(values?.r0)) next.r0 = values.r0;
+    next.tanks = model.tanks.map((tank, t) => { const copy = { ...tank }; for (const key of ['l', 'c', 'r']) if (ok(values?.[key + (t + 1)]) && ok(tank[key])) copy[key] = values[key + (t + 1)]; return copy; });
+    const resonance = tank => tank && tank.c > 0 ? 1 / (TAU * Math.sqrt(tank.l * tank.c)) : NaN;
+    if (Number.isFinite(model.f1)) next.f1 = resonance(next.tanks[0]);
+    if (model.second === 'parallel') next.f2 = resonance(next.tanks[1]);
+    return next;
+  }
+  function modelPoints(freq, z, band) {
+    const idx = [];
+    for (let i = 0; i < freq.length; i++) {
+      if (!z[i] || !(freq[i] > 0) || !Number.isFinite(z[i][0]) || !Number.isFinite(z[i][1]) || !(z[i][0] || z[i][1])) continue;
+      if (band && (freq[i] < band[0] || freq[i] > band[1])) continue;
+      idx.push(i);
+    }
+    return idx;
+  }
+  // Deviation of a model from the measurement inside a band: magnitude in dB RMS, phase in degrees RMS.
+  function modelQuality(freq, z, model, band = null) {
+    const idx = modelPoints(freq, z, band);
+    if (!idx.length) return { err: NaN, phase: NaN, points: 0, band: band ?? [NaN, NaN] };
+    let sq = 0, ph = 0;
+    for (const i of idx) {
+      const zm = modelImpedance(model, freq[i]);
+      sq += (20 * Math.log10(Math.hypot(zm[0], zm[1]) / Math.hypot(z[i][0], z[i][1]))) ** 2;
+      let dp = Math.atan2(zm[1], zm[0]) - Math.atan2(z[i][1], z[i][0]);
+      dp -= TAU * Math.round(dp / TAU);
+      ph += dp * dp;
+    }
+    return { err: Math.sqrt(sq / idx.length), phase: Math.sqrt(ph / idx.length) / RAD, points: idx.length, band: [freq[idx[0]], freq[idx.at(-1)]] };
+  }
+  // Re-optimises the free parameters of a model on the complex impedance (magnitude and phase) inside a band.
+  // Fixed parameters keep their value. Returns null when the band holds too few points for the free parameters.
+  function fitModel(freq, z, model, { fixed = [], band = null } = {}) {
+    const hold = new Set(fixed), free = modelParams(model).filter(p => !hold.has(p.key));
+    const idx = modelPoints(freq, z, band);
+    if (idx.length < Math.max(8, free.length + 3)) return null;
+    const stride = Math.max(1, Math.floor(idx.length / 200)), sample = idx.filter((_, k) => k % stride === 0);
+    if (!free.length) return { model, ...modelQuality(freq, z, model, band), free: 0 };
+    const start = free.map(p => Math.log(p.value));
+    const build = x => modelWith(model, Object.fromEntries(free.map((p, k) => [p.key, Math.exp(start[k] + Math.max(-7, Math.min(7, x[k] - start[k])))])));
+    const cost = x => {
+      const m = build(x);
+      let sum = 0;
+      for (const i of sample) {
+        const zm = modelImpedance(m, freq[i]);
+        const dm = Math.log(Math.hypot(zm[0], zm[1]) / Math.hypot(z[i][0], z[i][1]));
+        let dp = Math.atan2(zm[1], zm[0]) - Math.atan2(z[i][1], z[i][0]);
+        dp -= TAU * Math.round(dp / TAU);
+        sum += dm * dm + 0.5 * dp * dp;
+      }
+      return Number.isFinite(sum) ? sum / sample.length : Infinity;
+    };
+    // Two passes: the simplex is restarted around its first result, which gets it out of a collapsed simplex.
+    let best = nelderMead(cost, start, 260 * start.length);
+    const again = nelderMead(cost, best.x, 160 * start.length);
+    if (again.f < best.f) best = again;
+    const fitted = Number.isFinite(best.f) && best.f <= cost(start) ? build(best.x) : model;
+    return { model: fitted, ...modelQuality(freq, z, fitted, band), free: free.length };
+  }
+  // Capacitor: start values from the plateau analysis (C below the self-resonance, ESL above it, ESR at it), then a complex fit.
+  function fitCapacitor(freq, z) {
+    const r = analyzeElement(freq, z, 'shunt');
+    if (!(r.c > 0)) return null;
+    const idx = modelPoints(freq, z, null);
+    if (idx.length < 12) return null;
+    const re = idx.map(i => z[i][0]).filter(v => v > 0).sort((a, b) => a - b);
+    const esr = r.esr > 0 ? r.esr : re.length ? re[0] : 1e-3;
+    const esl = r.esl > 0 ? r.esl : Number.isFinite(r.fsrf) ? 1 / ((TAU * r.fsrf) ** 2 * r.c) : NaN;
+    const start = { type: 'rlc', c: r.c, esr, esl: esl > 0 ? esl : 0, rp: Infinity, fsrf: r.fsrf };
+    const fit = fitModel(freq, z, start, {});
+    const model = fit ? fit.model : start;
+    return { ...model, fsrf: model.esl > 0 ? 1 / (TAU * Math.sqrt(model.esl * model.c)) : NaN, fMax: freq[idx.at(-1)] };
+  }
+  function modelNetlist(model, name) {
+    if (model.type !== 'rlc') return resonantNetlist(model, name);
+    const v = value => value.toExponential(5), coil = model.esl > 0;
+    const lines = ['* S-Parameter Analyzer - capacitor equivalent circuit: ESR + ESL + C', '.subckt ' + name + ' 1 2', 'R1 1 n1 ' + v(model.esr)];
+    if (coil) lines.push('L1 n1 n2 ' + v(model.esl));
+    lines.push('C1 ' + (coil ? 'n2' : 'n1') + ' 2 ' + v(model.c));
+    if (model.rp > 0 && Number.isFinite(model.rp)) lines.push('R2 ' + (coil ? 'n2' : 'n1') + ' 2 ' + v(model.rp));
+    lines.push('.ends ' + name);
+    return lines.join('\n') + '\n';
+  }
+
   return {
     MAX_PORTS, TAU, RAD, abs, add, sub, mul, scale, div, get, put, matrix, indices, solve, submatrix,
     changeRef, toZY, fromZY, project, parseTouchstone, loadGamma, terminate, prepareNetwork, processPoint,
     reflection, twoPort, transmission, cispr, cmcNatural, fitCMC, demoNetwork, exportTouchstone,
-    plateau, crossing, peakFreq, lcFit, transformerPoint, analyzeTransformer, analyzeElement, classify4, median, profileLines, annotate, fitResonant, tankImpedance, resonantNetlist, joinPorts, joinInfo
+    plateau, crossing, peakFreq, lcFit, transformerPoint, analyzeTransformer, analyzeElement, classify4, median, profileLines, annotate, fitResonant, tankImpedance, resonantNetlist, joinPorts, joinInfo,
+    modelImpedance, modelParams, modelWith, modelQuality, fitModel, fitCapacitor, modelNetlist
   };
 })();
 </script>
@@ -6478,10 +6613,12 @@ const Plot = (() => {
   }
 
   function exportModel(mode) {
-    const model = elementData('series')?.result.model;
+    const form = $('model-form');
+    if (form) modelApply(form);
+    const model = currentElement()?.model;
     if (!model) return;
     const name = state.dataset.name.replace(/\.[^.]+$/, '').replace(/[^\w]+/g, '_').replace(/^_+|_+$/g, '') + '_ESB';
-    const file = new File([RF.resonantNetlist(model, name)], name + '.lib', { type: 'text/plain' });
+    const file = new File([RF.modelNetlist(model, name)], name + '.lib', { type: 'text/plain' });
     if (mode === 'save') saveBlob(file, file.name);
     else ingest({ ...newBag(), files: [fileDesc(file)] });
   }
@@ -8937,6 +9074,205 @@ const Plot = (() => {
     });
   }
 
+  // ---- Model editor: the automatic fit is the start. Values can be typed, dragged, fixed, taken from a marker and
+  // re-optimised inside a fit window. The measurement itself is never changed; only the model moves. ----
+  const MODEL_LABELS = {
+    r0: ['R₀ · Serienwiderstand', 'Ω'], l1: ['L₁ · Hauptinduktivität', 'H'], c1: ['C₁ · Parallelkapazität', 'F'], r1: ['R₁ · Verluste der 1. Resonanz', 'Ω'],
+    l2: ['L₂ · zweiter Kreis', 'H'], c2: ['C₂ · zweiter Kreis', 'F'], r2: ['R₂ · Verluste der 2. Resonanz', 'Ω'],
+    c: ['C · Kapazität', 'F'], esr: ['ESR · Serienwiderstand', 'Ω'], esl: ['ESL · Serieninduktivität', 'H'], rp: ['R_p · Isolationswiderstand', 'Ω']
+  };
+  function parseSI(text) {
+    const m = String(text ?? '').trim().replace(',', '.').replace(/\s+/g, '').match(/^([+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?)(f|p|n|µ|μ|u|m|k|K|M|G)?(?:H|F|Ω|Ohm|ohm|R)?$/);
+    if (!m) return NaN;
+    return Number(m[1]) * ({ f: 1e-15, p: 1e-12, n: 1e-9, 'µ': 1e-6, 'μ': 1e-6, u: 1e-6, m: 1e-3, k: 1e3, K: 1e3, M: 1e6, G: 1e9 }[m[2]] ?? 1);
+  }
+  const blankEdit = () => ({ values: null, fixed: [], band: null });
+  function esbEdit(kind) {
+    if (!state.esb.edit || typeof state.esb.edit !== 'object') state.esb.edit = {};
+    const edit = state.esb.edit[kind];
+    if (!edit || typeof edit !== 'object' || !Array.isArray(edit.fixed)) state.esb.edit[kind] = blankEdit();
+    return state.esb.edit[kind];
+  }
+  const modelStructure = model => model.type === 'rlc' ? 'ESR + ESL + C' + (Number.isFinite(model.rp) && model.rp > 0 ? ' ∥ R_p' : '')
+    : 'R₀ + (L₁ ∥ C₁ ∥ R₁)' + (model.tanks[1] ? model.tanks[1].c > 0 ? ' + (L₂ ∥ C₂ ∥ R₂)' : ' + L₂' : '');
+
+  function elementModel(kind, data) {
+    const freq = state.dataset.freq;
+    if (!('auto' in data)) {
+      data.auto = kind === 'series' ? (data.result.model ? { type: 'tanks', ...data.result.model } : null) : RF.fitCapacitor(freq, data.z);
+      const valid = Array.from(freq, (f, i) => f > 0 && data.z[i] && Number.isFinite(data.z[i][0]) && Number.isFinite(data.z[i][1]) ? f : NaN).filter(Number.isFinite);
+      data.span = [valid[0], valid.at(-1)];
+    }
+    const auto = data.auto;
+    if (!auto) return null;
+    const edit = esbEdit(kind);
+    const model = edit.values ? RF.modelWith(auto, edit.values) : auto;
+    const natural = [data.span[0], Math.min(data.span[1], auto.fMax ?? data.span[1])];
+    const band = Array.isArray(edit.band) && edit.band[1] > edit.band[0] ? edit.band : natural;
+    return { kind, auto, model, band, natural, quality: RF.modelQuality(freq, data.z, model, band), edit, edited: !!edit.values, data };
+  }
+  const currentElement = () => {
+    const kind = esbModel();
+    if (kind !== 'series' && kind !== 'shunt') return null;
+    const data = elementData(kind);
+    return data ? elementModel(kind, data) : null;
+  };
+  const modelSummary = em => 'Gültig von ' + hz(em.quality.band[0]) + ' bis ' + hz(em.quality.band[1]) + ' · Abweichung ' + display(em.quality.err) + ' dB und ' + display(em.quality.phase) + '° RMS · ' +
+    em.quality.points + ' Punkte' + (em.edited ? ' · von Hand geändert' : ' · automatischer Fit');
+
+  function modelEditor(em) {
+    const base = Object.fromEntries(RF.modelParams(em.auto).map(p => [p.key, p.value]));
+    const rows = RF.modelParams(em.model).map(({ key, value }) => {
+      const [label, unit] = MODEL_LABELS[key];
+      const pos = Math.max(-100, Math.min(100, Math.round(100 * Math.log10(value / (base[key] ?? value)))));
+      return '<div class="model-row" data-key="' + key + '"><label for="model-' + key + '">' + esc(label) + '</label>' +
+        '<input class="field-input mono" id="model-' + key + '" name="' + key + '" value="' + esc(si(value, unit)) + '" autocomplete="off" spellcheck="false" data-unit="' + unit + '">' +
+        '<input type="range" class="model-slider" min="-100" max="100" step="1" value="' + pos + '" data-key="' + key + '" data-base="' + (base[key] ?? value) + '" aria-label="' + esc(label) + ' verstellen" title="Eine Dekade nach unten und oben um den automatischen Wert">' +
+        '<label class="model-fix" title="Beim Optimieren festhalten"><input type="checkbox" name="fix-' + key + '"' + checked(em.edit.fixed.includes(key)) + '><span>fest</span></label>' +
+        actionButton('M', 'model-marker', key, 'quiet-button', '', ' title="Startwert am aktiven Marker aus der Messkurve übernehmen" aria-label="' + esc(label) + ' am aktiven Marker übernehmen"') + '</div>';
+    }).join('');
+    return '<section class="detail-card model-editor" id="model-editor"><div class="fit-summary"><h3>Modell-Editor</h3><small>' + esc(modelStructure(em.model)) + '</small></div>' +
+      '<p class="diagnostics" id="model-summary" data-err="' + em.quality.err + '" data-phase="' + em.quality.phase + '" data-edited="' + (em.edited ? '1' : '0') + '">' + esc(modelSummary(em)) + '</p>' +
+      elementSchematic(em.model) +
+      '<form id="model-form" class="model-form">' + rows +
+      '<div class="model-window"><label class="control"><span class="field-label">Fitfenster von</span><input class="field-input mono" name="from" value="' + esc(freqInput(em.band[0])) + '" autocomplete="off"></label>' +
+      '<label class="control"><span class="field-label">bis</span><input class="field-input mono" name="to" value="' + esc(freqInput(em.band[1])) + '" autocomplete="off"></label>' +
+      actionButton('Fenster = M1 … M2', 'model-window', 'markers', 'quiet-button', '', ' title="Die Marker M1 und M2 begrenzen das Fitfenster"') +
+      actionButton('Ganzer Bereich', 'model-window', 'all', 'quiet-button') + '</div>' +
+      '<div class="preset-row"><button class="button" type="submit">Werte übernehmen</button>' +
+      actionButton('Optimieren', 'model-fit', '', 'button primary', '', ' title="Freie Parameter im Fitfenster an Betrag und Phase anpassen; „fest“ markierte bleiben stehen"') +
+      actionButton('Automatik', 'model-reset', '', 'button', '', ' title="Zurück zum automatischen Fit"' + disabled(!em.edited && !em.edit.band && !em.edit.fixed.length)) +
+      actionButton('Als SPICE-Modell öffnen', 'esb-spice', 'open', 'button', 'plus') + actionButton('SPICE .lib speichern', 'esb-spice', 'save', 'button', 'file') + '</div></form>' +
+      '<p class="note">Eingaben wie 10 µH, 4,7n oder 1e-6. Der Regler verstellt um eine Dekade nach unten und oben. Optimiert werden Betrag und Phase der komplexen Impedanz, nur mit den Messpunkten im Fitfenster (im Diagramm grün hinterlegt). Alle Werte bleiben positiv. Die Messdaten werden dabei nie verändert.</p></section>';
+  }
+
+  // Small circuit drawing that follows the model: every element of the formula is one symbol, with its value.
+  function elementSchematic(model) {
+    const parts = [];
+    let x = 34;
+    const wire = (a, b, y = 46) => '<path d="M' + a + ' ' + y + 'H' + b + '"/>';
+    const resistor = (at, y = 46) => '<rect x="' + at + '" y="' + (y - 7) + '" width="34" height="14" rx="2"/>';
+    const coil = (at, y = 46) => '<path d="M' + at + ' ' + y + 'a6 6 0 0 1 12 0a6 6 0 0 1 12 0a6 6 0 0 1 12 0"/>';
+    const cap = (at, y = 46) => '<path d="M' + (at + 14) + ' ' + (y - 9) + 'v18m6-18v18M' + at + ' ' + y + 'h14m6 0h14"/>';
+    const text = (at, y, label, value, unit) => '<text x="' + at + '" y="' + y + '">' + esc(label) + '</text><text class="value" x="' + at + '" y="' + (y + 13) + '">' + esc(si(value, unit)) + '</text>';
+    const labels = [];
+    const series = (draw, width, label, value, unit) => { parts.push(wire(x, x + 10), draw(x + 10), wire(x + 10 + width, x + 20 + width)); labels.push(text(x + 10 + width / 2, 16, label, value, unit)); x += 20 + width; };
+    if (model.type === 'rlc') {
+      series(resistor, 34, 'ESR', model.esr, 'Ω');
+      if (model.esl > 0) series(coil, 36, 'ESL', model.esl, 'H');
+      const leak = Number.isFinite(model.rp) && model.rp > 0;
+      parts.push(wire(x, x + 10), cap(x + 10), wire(x + 44, x + 54));
+      labels.push(text(x + 27, 16, 'C', model.c, 'F'));
+      if (leak) { parts.push('<path d="M' + (x + 4) + ' 46v40h6m34 0h6V46"/>', resistor(x + 10, 86)); labels.push(text(x + 27, 108, 'R_p', model.rp, 'Ω')); }
+      x += 54;
+    } else {
+      series(resistor, 34, 'R₀', model.r0, 'Ω');
+      model.tanks.forEach((tank, t) => {
+        const n = t + 1, sub = '₁₂'[t], hasC = tank.c > 0, hasR = Number.isFinite(tank.r) && tank.r > 0;
+        if (!hasC && !hasR) { series(coil, 36, 'L' + sub, tank.l, 'H'); return; }
+        const a = x + 6, b = x + 62;
+        parts.push(wire(x, a), wire(b, b + 6), wire(a, a + 10), coil(a + 10), wire(a + 46, b));
+        labels.push(text(a + 28, 16, 'L' + sub, tank.l, 'H'));
+        // every branch of the tank sits on its own row, its name and value directly above the symbol
+        let y = 46;
+        for (const [draw, label, value, unit] of [...(hasC ? [[cap, 'C' + sub, tank.c, 'F']] : []), ...(hasR ? [[resistor, 'R' + sub, tank.r, 'Ω']] : [])]) {
+          const top = y;
+          y += 52;
+          parts.push('<path d="M' + a + ' ' + top + 'V' + y + 'h11m34 0h11V' + top + '"/>', draw(a + 11, y));
+          labels.push(text(a + 28, y - 30, label, value, unit));
+        }
+        void n;
+        x = b + 6;
+      });
+    }
+    const rows = model.type === 'rlc' ? 0 : Math.max(0, ...model.tanks.map(tank => (tank.c > 0 ? 1 : 0) + (Number.isFinite(tank.r) && tank.r > 0 ? 1 : 0)));
+    const width = x + 34, height = model.type === 'rlc' ? (Number.isFinite(model.rp) && model.rp > 0 ? 128 : 70) : 66 + 52 * rows;
+    return '<div class="schematic-box"><svg class="model-schematic" style="width:' + Math.round(width * 1.55) + 'px" viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="' + esc('Ersatzschaltbild: ' + modelStructure(model)) + '">' +
+      '<g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round">' + wire(14, 34) + parts.join('') + wire(x, x + 20) +
+      '<circle cx="11" cy="46" r="3"/><circle cx="' + (x + 23) + '" cy="46" r="3"/></g>' +
+      '<g fill="currentColor" text-anchor="middle" font-size="10.5" font-weight="650">' + labels.join('') + '</g></svg></div>';
+  }
+
+  function modelApply(form) {
+    const em = currentElement();
+    if (!em) return;
+    const data = new FormData(form), values = {};
+    for (const { key } of RF.modelParams(em.model)) {
+      const value = parseSI(data.get(key));
+      if (!(value > 0)) { toast(MODEL_LABELS[key][0] + ': Gib einen positiven Wert ein, z. B. ' + si(RF.modelParams(em.auto).find(p => p.key === key)?.value ?? 1, MODEL_LABELS[key][1]) + '.'); form.elements[key].focus(); return; }
+      values[key] = value;
+    }
+    const from = parseHz(data.get('from')), to = parseHz(data.get('to'));
+    if (!(from > 0) || !(to > from)) { toast('Gib ein positives, aufsteigendes Fitfenster ein.'); return; }
+    const changed = RF.modelParams(em.model).some(p => Math.abs(values[p.key] / p.value - 1) > 2e-3);
+    if (changed || em.edited) em.edit.values = values;
+    em.edit.fixed = RF.modelParams(em.model).map(p => p.key).filter(key => data.get('fix-' + key));
+    em.edit.band = Math.abs(from / em.natural[0] - 1) < 1e-3 && Math.abs(to / em.natural[1] - 1) < 1e-3 ? null : [from, to];
+    renderAnalysis();
+  }
+  const modelValues = model => Object.fromEntries(RF.modelParams(model).map(p => [p.key, p.value]));
+  function modelFit() {
+    const form = $('model-form');
+    if (form) modelApply(form); // typed values and fixed flags count, even without "Werte übernehmen"
+    const em = currentElement();
+    if (!em) return;
+    const fit = RF.fitModel(state.dataset.freq, em.data.z, em.model, { fixed: em.edit.fixed, band: em.band });
+    if (!fit) { toast('Im Fitfenster liegen zu wenige Messpunkte für die freien Parameter.'); return; }
+    em.edit.values = modelValues(fit.model);
+    toast('Optimiert: ' + display(fit.err) + ' dB und ' + display(fit.phase) + '° RMS über ' + fit.points + ' Punkte' + (em.edit.fixed.length ? ' · ' + em.edit.fixed.length + ' fest' : ''));
+    renderAnalysis();
+  }
+  function modelReset() {
+    const kind = esbModel();
+    if (state.esb.edit) state.esb.edit[kind] = blankEdit();
+    renderAnalysis();
+  }
+  function modelWindow(mode) {
+    const em = currentElement();
+    if (!em) return;
+    if (mode === 'all') em.edit.band = [em.data.span[0], em.data.span[1]];
+    else {
+      const fs = state.dataset.freq, picks = state.markers.filter(i => i !== null).map(i => fs[i]).filter(f => f > 0).sort((a, b) => a - b);
+      if (picks.length < 2 || !(picks.at(-1) > picks[0])) { toast('Setze zwei Marker auf verschiedene Frequenzen. Sie begrenzen dann das Fitfenster.'); return; }
+      em.edit.band = [picks[0], picks.at(-1)];
+    }
+    renderAnalysis();
+  }
+  // Start value from the measured curve at the active marker.
+  function modelFromMarker(key) {
+    const em = currentElement(), i = state.markers[state.activeMarker];
+    if (!em || i === null || i === undefined) { toast('Setze zuerst einen Marker auf die Messkurve.'); return; }
+    const z = em.data.z[i], f = state.dataset.freq[i], w = omega(f);
+    if (!z || !(f > 0)) { toast('Am Marker gibt es keinen Messwert.'); return; }
+    const now = modelValues(em.model), mag = Math.hypot(z[0], z[1]);
+    let value = NaN, why = '';
+    if (key === 'r0' || key === 'esr') { value = z[0]; why = 'Am Marker ist der Realteil nicht positiv.'; }
+    else if (key === 'l1' || key === 'esl') { value = z[1] / w; why = 'Am Marker ist das Bauteil nicht induktiv (X ≤ 0). Setze den Marker ' + (key === 'esl' ? 'oberhalb' : 'unterhalb') + ' der Eigenresonanz.'; }
+    else if (key === 'c') { value = -1 / (w * z[1]); why = 'Am Marker ist das Bauteil nicht kapazitiv (X ≥ 0). Setze den Marker unterhalb der Eigenresonanz.'; }
+    else if (key === 'c1' || key === 'c2') { value = 1 / (w * w * now['l' + key[1]]); why = ''; }
+    else if (key === 'l2') { value = now.c2 > 0 ? 1 / (w * w * now.c2) : Math.abs(z[1]) / w; }
+    else value = mag; // r1, r2, rp: height of the resonance or the plateau at the marker
+    if (!(value > 0) || !Number.isFinite(value)) { toast(why || 'Aus diesem Marker lässt sich kein positiver Wert ableiten.'); return; }
+    em.edit.values = { ...now, [key]: value };
+    toast(MODEL_LABELS[key][0].split(' · ')[0] + ' = ' + si(value, MODEL_LABELS[key][1]) + ' aus dem Marker bei ' + hz(f) +
+      (key === 'c1' || key === 'c2' ? ' (Resonanz mit ' + MODEL_LABELS['l' + key[1]][0].split(' · ')[0] + ')' : ''));
+    renderAnalysis();
+  }
+  // Dragging a slider moves the model curve live; the details are only rebuilt when the slider is released.
+  function modelSlide(slider, done) {
+    const em = currentElement();
+    if (!em) return;
+    const key = slider.dataset.key, value = Number(slider.dataset.base) * 10 ** (Number(slider.value) / 100);
+    em.edit.values = { ...modelValues(em.model), [key]: value };
+    if (done) { renderAnalysis(); return; }
+    const input = $('model-' + key);
+    if (input) input.value = si(value, input.dataset.unit);
+    state.view = compareView(esbView(), esbView);
+    updatePlot(true);
+    const next = currentElement(), summary = $('model-summary');
+    if (summary && next) { summary.textContent = modelSummary(next); summary.dataset.err = next.quality.err; summary.dataset.phase = next.quality.phase; summary.dataset.edited = '1'; }
+  }
+
   function elementView(kind) {
     const data = elementData(kind);
     if (!data) return { empty: 'Wähle zwei verschiedene aktive Ports oder Moden als Eingang und Ausgang der Serien- bzw. Shunt-Fixture.' };
@@ -8948,6 +9284,8 @@ const Plot = (() => {
       : '<p class="detect-note" id="esb-detected">' + icon('check') + esc('Automatisch erkannt: ' + Magnetic.label(detected.category, window.I18N.lang) + ' · ' + LEVEL_NAME[detected.level] +
         ' · Fixture ' + FIXTURE_NAME[fixture]) + '</p>';
     const mk = (key, label, color, values, dash = null) => ({ key: 'el:' + key, label, color, values, dash, visible: !state.hiddenTraces.has('el:' + key) });
+    const em = elementModel(kind, data), modelAt = em ? Array.from(state.dataset.freq, f => f > 0 ? RF.modelImpedance(em.model, f) : null) : null;
+    const modelCurve = (key, label, pick) => ({ ...mk(key, label, '#c4622d', Float64Array.from(modelAt, pick), [2, 3]) });
     let traces, unit, yLabel, refLines = [], focus = null;
     if (fmt === 'l') {
       const lu = kind === 'series' ? 1e-6 : 1e-9;
@@ -8976,7 +9314,7 @@ const Plot = (() => {
         mk('zabs', '|Z|', MODE_PALETTE.dd[0], Float64Array.from(z, v => v ? Math.hypot(v[0], v[1]) : NaN)),
         mk('zre', kind === 'series' ? 'R = Re Z' : 'ESR = Re Z', MODE_PALETTE.dc[0], Float64Array.from(z, v => v ? v[0] : NaN), REFLECTION_DASH)
       ];
-      if (kind === 'series' && r.model) traces.push(modelTrace('el:zfit', 'Modell |Z|', '#c4622d', r.model));
+      if (em) traces.push(modelCurve('zfit', 'Modell |Z|', v => v ? Math.hypot(v[0], v[1]) : NaN), { ...modelCurve('zfitre', kind === 'series' ? 'Modell R' : 'Modell ESR', v => v ? v[0] : NaN), color: MODE_PALETTE.dc[0], dash: [1, 3] });
     }
     const route = fixture === 'reflection' ? from.key : from.key + ' → ' + to.key;
     const details = () => detectNote + '<section class="detail-card"><div class="fit-summary"><h3>' + (kind === 'series' ? 'Induktives Bauteil' : 'Kapazitives Bauteil') +
@@ -8991,10 +9329,11 @@ const Plot = (() => {
       '</div><p class="note">' + (fixture === 'reflection' ? 'Die Formel gilt für eine Eintor-Messung gegen Masse. Weit weg von Z₀ sinkt die Messgenauigkeit eines VNA deutlich. '
         : 'Die Formel gilt für eine reine ' + (fixture === 'series' ? 'Serien' : 'Shunt') +
         '-Fixture zwischen den gewählten Ports. Für kleine Impedanzen (Serie) bzw. große Impedanzen (Shunt) sinkt die Messgenauigkeit eines VNA deutlich. ') + help + '</p></section>' +
-      (kind === 'series' ? resonantCard(r.model, 'Ersatzschaltbild bis zur 2. Resonanz', true) : '');
+      (em ? modelEditor(em) : '<section class="detail-card"><div class="fit-summary"><h3>Modell-Editor</h3><small>' + (kind === 'series'
+        ? 'Für das Modell fehlt ein induktiver Bereich bei tiefen Frequenzen.' : 'Für das Modell fehlt ein kapazitiver Bereich bei tiefen Frequenzen.') + '</small></div></section>');
     return {
       traces, unit, yLabel, title: kind === 'series' ? 'Induktives Bauteil' : 'Kapazitives Bauteil', caption: route + ' · Fixture ' + FIXTURE_NAME[fixture],
-      native: '', positive: !['l', 'c'].includes(fmt), signed: ['l', 'c'].includes(fmt), refLines, focus, details
+      native: '', positive: !['l', 'c'].includes(fmt), signed: ['l', 'c'].includes(fmt), refLines, focus, details, fitBand: em && fmt === 'z' ? em.band : null
     };
   }
 
@@ -9044,6 +9383,7 @@ const Plot = (() => {
     $('empty-panel').innerHTML = '<h2>' + esc(title) + '</h2><p>' + esc(content) + '</p>' +
       (canConfigure ? actionButton('Ports konfigurieren', 'tab', 'ports', 'button primary', 'network') : '');
     $('analysis-details').innerHTML = '';
+    detailsShown = null;
     Plot.set(null);
   }
 
@@ -9109,8 +9449,14 @@ const Plot = (() => {
     }, preserveHover);
   }
 
+  // The cards are only rebuilt when their content changes. Moving a marker or leaving an input field must not
+  // replace a button under the pointer or wipe a value that is being typed into the model editor.
+  let detailsShown = null;
   function renderDetails() {
-    $('analysis-details').innerHTML = state.view?.details?.() || '';
+    const html = state.view?.details?.() || '', key = window.I18N.lang + '\u0000' + html, box = $('analysis-details');
+    if (key === detailsShown && box.childElementCount) return;
+    detailsShown = key;
+    box.innerHTML = html;
   }
 
   function renderTraces() {
@@ -10041,6 +10387,10 @@ const typed = state.tab === 's' && state.basis === 'mm' && ['cmc', 'lan'].includ
     'lib-delete': libraryDelete,
     'lib-new': () => { shelf.naming = !shelf.naming; renderShelf(); },
     'esb-spice': exportModel,
+    'model-fit': modelFit,
+    'model-reset': modelReset,
+    'model-window': modelWindow,
+    'model-marker': modelFromMarker,
     theme: () => { Theme.toggle(); render(); },
     'menu-toggle': () => toggleMenu(),
     'menu-go': value => {
@@ -10095,7 +10445,7 @@ const typed = state.tab === 's' && state.basis === 'mm' && ['cmc', 'lan'].includ
 
   document.addEventListener('submit', event => {
     const handler = {
-      'pair-form': savePair, 'profile-form': saveProfile, 'sweep-form': applySweep, 'shelf-form': shelfStore, 'lib-new-form': libraryCreate, 'pairz-form': applyPairImpedance, 'reference-form': applyReference, 'fit-form': applyFit, 'axes-form': applyAxes, 'load-form': applyLoad
+      'pair-form': savePair, 'profile-form': saveProfile, 'sweep-form': applySweep, 'shelf-form': shelfStore, 'lib-new-form': libraryCreate, 'model-form': modelApply, 'pairz-form': applyPairImpedance, 'reference-form': applyReference, 'fit-form': applyFit, 'axes-form': applyAxes, 'load-form': applyLoad
     }[event.target.id];
     if (!handler) return;
     event.preventDefault();
@@ -10186,8 +10536,15 @@ const typed = state.tab === 's' && state.basis === 'mm' && ['cmc', 'lan'].includ
     session.filter = event.target.value;
     renderSession();
   });
+  document.addEventListener('input', event => { if (event.target.matches('.model-slider')) modelSlide(event.target, false); });
   document.addEventListener('change', event => {
     const el = event.target;
+    if (el.matches('.model-slider')) { modelSlide(el, true); return; }
+    if (el.matches('.model-fix input')) {
+      const em = currentElement(), key = el.name.slice(4);
+      if (em) { em.edit.fixed = el.checked ? [...new Set([...em.edit.fixed, key])] : em.edit.fixed.filter(k => k !== key); persistSettings(); }
+      return;
+    }
     if (el.matches('.session-pick input')) {
       el.checked ? session.picked.add(el.value) : session.picked.delete(el.value);
       renderShelf();
