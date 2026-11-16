@@ -7,7 +7,7 @@ const here = path.dirname(fileURLToPath(import.meta.url)), fast = process.argv.i
 const suites = [
   ['Statische Prüfungen', '../static.mjs'], ['Bauteil-Erkennung', '../magnetic.unit.mjs'], ['E · RF-Mathematik', '../rf.reference.mjs'],
   ...(fast ? [] : [['A · ZIP und Refresh', 'a-zip-refresh.mjs'], ['B · Gesamtes ZIP in Bibliothek', 'b-zip-library.mjs'], ['C · Unvollständige Importe', 'c-interrupted-import.mjs'],
-    ['D · Mobile Ansicht', 'd-mobile.mjs'], ['ZIP-Robustheit', 'zip-robust.mjs'], ['Speicher, Sicherung, Migration', 'storage.mjs'], ['Bibliothek · Umbenennen, Verschieben', 'library-edit.mjs'], ['Achsen und Z-Tab', 'axes-z.mjs'], ['ESB · Bauteilerkennung', 'esb-detect.mjs'], ['ESB · Modell-Editor', 'model-editor.mjs'], ['ESB · CMC- und Übertragerschaltbild', 'schematics.mjs'], ['Englische Oberfläche', 'i18n.mjs']])
+    ['D · Mobile Ansicht', 'd-mobile.mjs'], ['ZIP-Robustheit', 'zip-robust.mjs'], ['Speicher, Sicherung, Migration', 'storage.mjs'], ['Bibliothek · Umbenennen, Verschieben', 'library-edit.mjs'], ['Achsen und Z-Tab', 'axes-z.mjs'], ['ESB · Bauteilerkennung', 'esb-detect.mjs'], ['ESB · Modell-Editor', 'model-editor.mjs'], ['ESB · CMC- und Übertragerschaltbild', 'schematics.mjs'], ['ESB · Editor CMC und Übertrager', 'multi-editor.mjs'], ['Englische Oberfläche', 'i18n.mjs']])
 ];
 const rows = [];
 for (const [name, file] of suites) {

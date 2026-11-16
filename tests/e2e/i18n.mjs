@@ -123,6 +123,13 @@ try {
     if (name === 'cmc.s4p') { await page.fill('#fit-form input[name=start]', '20 kHz'); await page.fill('#fit-form input[name=stop]', '300 kHz'); await page.click('#fit-form button[type=submit]'); await ready(); await page.waitForSelector('#cmc-unphysical'); }
     await german('Schaltbild ' + name + ': Bild, Tabelle und Hinweise', '#' + id);
     await german('Auswahlfelder ' + name, '#view-controls');
+    if (name === 'cmc.s4p') { await page.fill('#fit-form input[name=start]', '10 kHz'); await page.fill('#fit-form input[name=stop]', '100 MHz'); await page.click('#fit-form button[type=submit]'); await ready(); await page.selectOption('#control-cmc-format', 'zesb'); await ready(); }
+    await page.waitForSelector('#model-editor');
+    await german('Vierpol-Editor ' + name + ': Zeilen, Zusammenfassung, Hinweise', '#model-editor');
+    await german('Vierpol-Editor ' + name + ': Überschrift, Unterzeile und Legende', '.chart-panel, .chart-card, main');
+    await page.click('button[data-action="model-fit"]'); await page.waitForTimeout(700);
+    await german('Vierpol-Editor ' + name + ': Meldung nach dem Optimieren', '#toast');
+    await german('Vierpol-Editor ' + name + ': Zusammenfassung „von Hand geändert“ und Hinweis im Schaltbild', '#analysis-details');
   }
   await page.click('button[data-action="eval-marker"]'); await page.waitForTimeout(200);
   await german('Meldung zur Auswertefrequenz', '#toast');

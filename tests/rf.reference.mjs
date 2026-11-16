@@ -308,5 +308,77 @@ console.log('Vergleich mit dem Rechenkern der veröffentlichten Fassung (Branch 
   }
 }
 
+console.log('Vierpol-Modelle: CMC und Übertrager (Formel, Netzliste und Fit beschreiben dieselbe Schaltung)');
+{
+  const cmc = { type: 'cmc', m: 0.99e-3, ls: 10e-6, rw: 0.05, rfe: 40e3, ct: 4e-12, cw: 2e-12, cg: 0.5e-12 };
+  const freq = logf(1e4, 3e8, 121), refs = [50, 50, 50, 50];
+  const fromSpice = netlist(RF.modelNetlist(cmc, 'CMC'))({ f1: 1e4, f2: 3e8, n: 121 });
+  let worst = 0;
+  fromSpice.freq.forEach((f, i) => { const s = RF.fromZY(RF.cmcModelY(cmc, f), refs, 'Y'); for (let k = 0; k < s.length; k++) worst = Math.max(worst, Math.abs(s[k] - fromSpice.samples[i][k])); });
+  check('CMC: S-Matrix aus der Modellformel = SPICE-Simulation der exportierten Netzliste', worst < 1e-7, 'max. Abweichung ' + worst.toExponential(2));
+  // modal admittances against the hand calculation at one frequency
+  const f0 = 1e6, w0 = 2 * Math.PI * f0, y = RF.cmcModal(cmc, f0);
+  const core = C.div(C.mul([0, 2 * w0 * cmc.m], [cmc.rfe, 0]), C.add([0, 2 * w0 * cmc.m], [cmc.rfe, 0]));
+  const yh = C.add(C.s(C.div([1, 0], C.add([cmc.rw, w0 * cmc.ls], core)), 2), [0, w0 * (2 * cmc.ct + cmc.cg)]);
+  const yd = C.add(C.s(C.div([1, 0], [cmc.rw, w0 * cmc.ls]), 2), [0, w0 * (2 * cmc.ct + 2 * cmc.cw + cmc.cg)]);
+  check('CMC: Modenadmittanzen wie von Hand gerechnet (Gleichtakt 2M, Gegentakt nur Lσ)', cclose(y[2], yh, 1e-12) && cclose(y[3], yd, 1e-12) && cclose(y[0], [0, w0 * cmc.cg], 1e-12) && cclose(y[1], [0, w0 * (2 * cmc.cw + cmc.cg)], 1e-12));
+  // low-frequency limits of the CISPR impedances: Z CM → (Rw + jω(Lσ + 2M))/2, Z DM → 2(Rw + jωLσ)
+  const zl = RF.cmcModelZ(cmc, 2e4), wl = 2 * Math.PI * 2e4;
+  check('CMC: Z CM und Z DM bei tiefer Frequenz = (R_w + jω(Lσ+2M))/2 und 2(R_w + jωLσ)', close(zl.cm[1], wl * (cmc.ls + 2 * cmc.m) / 2, 2e-3) && close(zl.dm[1], 2 * wl * cmc.ls, 2e-3) && close(zl.dm[0], 2 * cmc.rw, 2e-3));
+  // the fit recovers the parameters from a deliberately wrong start
+  const meas = { cm: [], dm: [], refCm: 25, refDm: 100 };
+  for (const f of freq) { const z = RF.cmcModelZ(cmc, f); meas.cm.push(z.cm); meas.dm.push(z.dm); }
+  const start = { ...cmc, m: 0.6e-3, ls: 16e-6, rw: 0.09, rfe: 25e3, ct: 6e-12, cw: 1.2e-12, cg: 0.5e-12 };
+  const before = RF.multiQuality(freq, meas, start), fit = RF.fitMulti(freq, meas, start, { prior: { cw: 2e-12, cg: 0.5e-12 } });
+  const rel = key => Math.abs(fit.model[key] / cmc[key] - 1);
+  check('CMC: Optimierung findet aus verstellten Startwerten zurück', fit.err < 0.05 && fit.err < before.err / 20 && ['m', 'ls', 'rw', 'rfe', 'ct'].every(key => rel(key) < 0.03),
+    'vorher ' + before.err.toFixed(2) + ' dB, nachher ' + fit.err.toFixed(4) + ' dB · ' + ['m', 'ls', 'rw', 'rfe', 'ct', 'cw', 'cg'].map(key => key + ' ' + (100 * rel(key)).toFixed(2) + ' %').join(', '));
+  check('CMC: Güte je Kurve wird getrennt ausgewiesen', Number.isFinite(fit.parts.cm.err) && Number.isFinite(fit.parts.dm.err) && Number.isFinite(fit.parts.cm.phase));
+  const held = RF.fitMulti(freq, meas, start, { fixed: ['m', 'cg'], prior: { cw: 2e-12 } });
+  check('CMC: festgehaltene Parameter bleiben exakt stehen', held.model.m === start.m && held.model.cg === start.cg && held.model.ls !== start.ls);
+  check('CMC: alle Parameter bleiben positiv', RF.modelParams(fit.model).every(p => p.value > 0) && RF.modelParams(fit.model).length === 7);
+  check('CMC: zu wenige Punkte im Fenster → kein Ergebnis statt eines erfundenen', RF.fitMulti(freq, meas, start, { band: [1e4, 1.5e4] }) === null);
+
+  for (const flip of [false, true]) {
+    const tr = { type: 'trafo', lm: 350e-6, lst: 1.2e-6, n: 2, rpri: 0.4, rsec: 1.5, rfe: 20e3, cp: 15e-12, cwa: NaN, cwx: NaN, flip };
+    // primary and secondary minus grounded: the differential two-port of the formula, without the distributed Cww
+    const text = RF.modelNetlist(tr, 'TR') + '.subckt TOP 1 3\nX1 1 0 3 0 TR\n.ends\n';
+    const two = netlist(text)({ f1: 1e3, f2: 5e7, n: 81 }, 'TOP');
+    let bad = 0;
+    two.freq.forEach((f, i) => { const z = RF.toZY(two.samples[i], [50, 50], 'Z'), zm = RF.trafoModelZ(tr, f); for (const [r, c] of [[0, 0], [1, 1], [1, 0], [0, 1]]) if (!cclose(RF.get(z, 2, r, c), RF.get(zm, 2, r, c), 2e-6, 1e-9)) bad++; });
+    check('Übertrager' + (flip ? ' (Polarität gedreht)' : '') + ': Z-Matrix der Formel = SPICE-Simulation der Netzliste', bad === 0, bad + ' abweichende Einträge');
+    const zlow = RF.trafoModelZ(tr, 1e3), wl2 = 2 * Math.PI * 1e3;
+    check('Übertrager' + (flip ? ' (gedreht)' : '') + ': L₁₁ = L_m + Lσ/2, L₂₂ = n²·L₁₁, Vorzeichen von Z₂₁', close(RF.get(zlow, 2, 0, 0)[1] / wl2, tr.lm + tr.lst / 2, 1e-3) && close(RF.get(zlow, 2, 1, 1)[1] / wl2, 4 * (tr.lm + tr.lst / 2), 1e-3) && Math.sign(RF.get(zlow, 2, 1, 0)[1]) === (flip ? -1 : 1));
+  }
+  {
+    const tr = { type: 'trafo', lm: 350e-6, lst: 1.2e-6, n: 2, rpri: 0.4, rsec: 1.5, rfe: 20e3, cp: 15e-12, cwa: 9e-12, cwx: 3e-12, flip: false };
+    // short-circuit leakage seen from the primary: Lσ/2 + (Lσ/2 ∥ L_m) ≈ Lσ
+    const f = 1e5, z = RF.trafoModelZ(tr, f), zsc = C.sub(RF.get(z, 2, 0, 0), C.div(C.mul(RF.get(z, 2, 0, 1), RF.get(z, 2, 1, 0)), RF.get(z, 2, 1, 1)));
+    check('Übertrager: Kurzschluss-Induktivität = gesamte Streuung Lσ', close(zsc[1] / (2 * Math.PI * f), tr.lst, 5e-3), (zsc[1] / (2 * Math.PI * f) * 1e6).toFixed(4) + ' µH');
+    // the full four-terminal netlist: common mode between the windings is Cww = Cwa + Cwx
+    const four = netlist(RF.modelNetlist(tr, 'TR') + '.subckt CM 1 3\nX1 1 1 3 3 TR\n.ends\n')({ f1: 1e4, f2: 1e5, n: 11 }, 'CM');
+    const ycm = RF.toZY(four.samples[5], [50, 50], 'Y'), fc = four.freq[5];
+    check('Übertrager: Netzliste hat zwischen den kurzgeschlossenen Wicklungen genau Cww = Cwa + Cwx', close(-RF.get(ycm, 2, 0, 1)[1] / (2 * Math.PI * fc), tr.cwa + tr.cwx, 1e-4));
+    // the floating four-terminal netlist, driven purely differentially, is the two-port of the formula – including both capacitance parts
+    const full = netlist(RF.modelNetlist(tr, 'TR'))({ f1: 1e4, f2: 3e7, n: 61 });
+    let bad = 0, worst = 0;
+    full.freq.forEach((ff, i) => {
+      const y4 = RF.toZY(full.samples[i], [50, 50, 50, 50], 'Y'), yd = RF.matrix(2), g = (r, c) => RF.get(y4, 4, r, c);
+      // V = (a, −a, b, −b), I_d = (I₊ − I₋)/2, V_d = 2a: Y_d = ¼·[(y11 − y12 − y21 + y22) …]
+      const dd = (p, q) => C.s(C.sub(C.add(g(2 * p, 2 * q), g(2 * p + 1, 2 * q + 1)), C.add(g(2 * p, 2 * q + 1), g(2 * p + 1, 2 * q))), 0.25);
+      for (const [r, c] of [[0, 0], [0, 1], [1, 0], [1, 1]]) RF.put(yd, 2, r, c, dd(r, c));
+      const ym = RF.toZY(RF.fromZY(RF.trafoModelZ(tr, ff), [50, 50], 'Z'), [50, 50], 'Y');
+      for (const [r, c] of [[0, 0], [0, 1], [1, 0], [1, 1]]) { const a = RF.get(yd, 2, r, c), b = RF.get(ym, 2, r, c), e = Math.hypot(a[0] - b[0], a[1] - b[1]) / Math.hypot(...b); worst = Math.max(worst, e); if (e > 1e-5) bad++; }
+    });
+    check('Übertrager: rein differentiell betriebene Vierpol-Netzliste = Zweitor der Formel (mit Cwa und Cwx)', bad === 0, 'größte relative Abweichung ' + worst.toExponential(2));
+    const freq2 = logf(2e3, 3e7, 101), meas2 = { z: Array.from(freq2, f2 => RF.trafoModelZ(tr, f2)) };
+    const start = { ...tr, lm: 500e-6, lst: 2e-6, n: 1.7, rpri: 0.7, rsec: 1, rfe: 12e3, cp: 25e-12, cwa: 6e-12, cwx: 6e-12 };
+    const fit = RF.fitMulti(freq2, meas2, start, { priorSum: { keys: ['cwa', 'cwx'], value: 12e-12 } }), rel = key => Math.abs(fit.model[key] / tr[key] - 1);
+    check('Übertrager: Optimierung findet aus verstellten Startwerten zurück, auch die Aufteilung der Wicklungskapazität', fit.err < 0.05 && ['lm', 'lst', 'n', 'rpri', 'rsec', 'rfe'].every(key => rel(key) < 0.03) && ['cp', 'cwa', 'cwx'].every(key => rel(key) < 0.1),
+      fit.err.toFixed(4) + ' dB · ' + ['lm', 'lst', 'n', 'rpri', 'rsec', 'rfe', 'cp', 'cwa', 'cwx'].map(key => key + ' ' + (100 * rel(key)).toFixed(2) + ' %').join(', '));
+    check('Übertrager: Polarität ist kein Fitparameter und bleibt erhalten', fit.model.flip === false && RF.modelParams(fit.model).every(p => p.key !== 'flip'));
+  }
+}
+
 console.log((fail ? 'FAIL' : 'PASS') + ' · E · RF-Mathematik · ' + pass + '/' + (pass + fail));
 process.exit(fail ? 1 : 0);
