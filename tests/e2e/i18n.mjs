@@ -58,6 +58,18 @@ try {
   await page.waitForSelector('#lib-new-form');
   await german('Bibliothek mit Baum, Filtern und „Neu“', '#shelf');
   await page.click('#lib-new-form button[data-action="lib-new"]');
+  await page.click('.lib-row.is-file button[data-action="lib-edit"]');
+  await page.waitForSelector('#lib-edit-form');
+  await german('Bibliothek: Datei umbenennen oder verschieben', '#shelf');
+  await page.fill('#lib-edit-form input[name=name]', 'neu');
+  await page.click('#lib-edit-form button[type=submit]');
+  await page.waitForSelector('#lib-edit-form', { state: 'detached' });
+  await german('Meldung nach dem Umbenennen', '#toast');
+  await page.click('.lib-row:not(.is-file) button[data-action="lib-edit"]');
+  await page.waitForSelector('#lib-edit-form');
+  await german('Bibliothek: Ordner umbenennen', '#shelf');
+  await page.click('#lib-edit-form [data-action="lib-edit"]');
+  await page.waitForSelector('#lib-edit-form', { state: 'detached' });
   // conflict dialog
   fs.writeFileSync(zip, makeZip([{ name: 'cap.s2p', data: touchstone(2, 999) }]));
   await page.setInputFiles('#file-input', zip);

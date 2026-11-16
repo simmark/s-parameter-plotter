@@ -1032,8 +1032,9 @@ html[data-theme="dark"] .ev-score.pro { color: #5cc9bf; border-color: #2c5f5a; }
 .lib-filters #lib-sort { grid-column: 1 / -1; }
 .lib-filters .field-input, .lib-filters select { min-height: 28px; font-size: 11.5px; min-width: 0; }
 .lib-tree { display: grid; gap: 2px; max-height: 320px; overflow: auto; padding-right: 2px; }
-.lib-row { display: grid; grid-template-columns: minmax(0, 1fr) 26px 26px; gap: 2px; padding-left: calc(var(--depth, 0) * 12px); }
-.lib-row.is-file { grid-template-columns: minmax(0, 1fr) 26px; }
+.lib-row { display: grid; grid-template-columns: minmax(0, 1fr) 26px 26px 26px; gap: 2px; padding-left: calc(var(--depth, 0) * 12px); }
+.lib-row.is-file { grid-template-columns: minmax(0, 1fr) 26px 26px; }
+.lib-edit { margin-left: calc(var(--depth, 0) * 12px); }
 .lib-folder { min-width: 0; display: flex; align-items: center; gap: 5px; min-height: 28px; padding: 3px 6px; border: 1px solid transparent; border-radius: 5px; background: transparent; text-align: left; font-size: 11.5px; font-weight: 650; color: var(--ink); }
 .lib-folder:hover { background: var(--accent-soft); }
 .lib-folder .icon { width: 12px; height: 12px; flex: none; transition: transform .12s; }
@@ -1123,8 +1124,8 @@ html[data-theme="dark"] .legal-line { background: #25231c; }
   .session-open, .lib-folder { min-height: 40px; }
   .session-row { grid-template-columns: minmax(0, 1fr) 40px; }
   .session-row.is-selecting { grid-template-columns: 40px minmax(0, 1fr) 40px; }
-  .lib-row { grid-template-columns: minmax(0, 1fr) 40px 40px; }
-  .lib-row.is-file { grid-template-columns: minmax(0, 1fr) 40px; }
+  .lib-row { grid-template-columns: minmax(0, 1fr) 40px 40px 40px; }
+  .lib-row.is-file { grid-template-columns: minmax(0, 1fr) 40px 40px; }
   .session-tools .quiet-button { min-height: 36px; padding: 4px 8px; font-size: 12px; }
   .session-tools .icon-button { width: 38px; height: 36px; min-height: 36px; }
   .lib-bar .quiet-button, .lib-bar .session-compare { min-height: 38px; min-width: 38px; }
@@ -1345,7 +1346,7 @@ window.I18N = (() => {
     "Ersatzschaltbild mit Werten": "Equivalent circuit with values", "T-Ersatzschaltbild mit Werten": "T equivalent circuit with values", "Vergrößern": "Enlarge", "Schaltbild vergrößern oder wieder einpassen; vergrößert lässt es sich verschieben": "Enlarge the drawing or fit it again; enlarged it can be moved", "Je Wicklung: R_w und Streuung Lσ in Reihe mit dem gekoppelten Teil M · R_Fe parallel zum gekoppelten Teil · Ct parallel je Wicklung · Cw je Seite zwischen den Wicklungen · Cg je Anschluss gegen Masse": "Per winding: R_w and leakage Lσ in series with the coupled part M · R_Fe across the coupled part · Ct across each winding · Cw between the windings on each side · Cg from each terminal to ground", "L · Induktivität je Wicklung": "L · inductance per winding", "M · Gegeninduktivität": "M · mutual inductance", "Lσ = L − M · Streuung je Wicklung": "Lσ = L − M · leakage per winding", "R_w · je Wicklung, aus R₀ von Z DM / 2": "R_w · per winding, from R₀ of Z DM / 2", "R_Fe · je Wicklung, aus der CM-Resonanz × 2": "R_Fe · per winding, from the CM resonance × 2", "Normierung: Im Gleichtakt liegen beide Wicklungen parallel, Z CM = jω(L + M)/2 an 25 Ω. Im Gegentakt liegen sie in Reihe, Z DM = j2ω(L − M) = j2ωLσ an 100 Ω. L, M, Cw, Cg und Ct stammen aus dem Fit im gewählten Band. R_w und R_Fe stammen aus dem Modell bis zur 2. Resonanz und sind Näherungen: R_Fe gilt nur nahe der Gleichtakt-Resonanz, Kernverluste sind frequenzabhängig.": "Normalisation: in common mode both windings are in parallel, Z CM = jω(L + M)/2 at 25 Ω. In differential mode they are in series, Z DM = j2ω(L − M) = j2ωLσ at 100 Ω. L, M, Cw, Cg and Ct come from the fit in the chosen band. R_w and R_Fe come from the model up to the 2nd resonance and are approximations: R_Fe only holds near the common-mode resonance, core losses depend on frequency.", "Primärbezogen: R₁ und Lσ₁ in Reihe · L_m parallel R_Fe · idealer Übertrager 1 : n · Lσ₂ und R₂ auf der Sekundärseite · C_p über der Primärwicklung · Cww zwischen den Wicklungen": "Referred to the primary: R₁ and Lσ₁ in series · L_m in parallel with R_Fe · ideal transformer 1 : n · Lσ₂ and R₂ on the secondary side · C_p across the primary winding · Cww between the windings", "L_m · Hauptinduktivität = OCL − Lσ₁": "L_m · magnetising inductance = OCL − Lσ₁", "Lσ₁ · primär (Annahme: hälftig)": "Lσ₁ · primary (assumption: half each)", "Lσ₂ · sekundär = Lσ₁·n²": "Lσ₂ · secondary = Lσ₁·n²", "n · Übersetzung 1 : n": "n · turns ratio 1 : n", "R₁ · Re Z₁₁ bei tiefer Frequenz": "R₁ · Re Z₁₁ at low frequency", "R₂ · Re Z₂₂ bei tiefer Frequenz": "R₂ · Re Z₂₂ at low frequency", "R_Fe · Re Z₁₁ in der Leerlaufresonanz": "R_Fe · Re Z₁₁ at the open-circuit resonance", "Lσ aus k · L₁₁(1 − k²)": "Lσ from k · L₁₁(1 − k²)", "Was die Messung festlegt: OCL, n, Cww, C_p, R₁, R₂ und die gesamte Streuinduktivität bei kurzgeschlossener Sekundärseite,": "What the measurement determines: OCL, n, Cww, C_p, R₁, R₂ and the total leakage inductance with the secondary shorted,", "Was sie nicht festlegt: wie sich die Streuung auf Primär- und Sekundärseite verteilt. Von den Klemmen aus ist nur die Summe messbar; das Bild teilt sie je zur Hälfte auf (Lσ₁ = Lσ₂/n²). Wer die Aufteilung braucht, muss sie aus dem Wickelaufbau oder einer Feldrechnung nehmen.": "What it does not determine: how the leakage splits between primary and secondary. From the terminals only the sum can be measured; the drawing splits it half and half (Lσ₁ = Lσ₂/n²). If you need the split, take it from the winding build-up or a field calculation.", "R₁ und R₂ enthalten den Anteil der Kernverluste, der bei der tiefsten Messfrequenz schon wirkt; eine Gleichstrommessung ist genauer. R_Fe ist eine Näherung aus einer einzigen Frequenz; Kernverluste hängen von Frequenz und Aussteuerung ab.": "R₁ and R₂ include the share of core loss already present at the lowest measured frequency; a DC measurement is more accurate. R_Fe is an approximation from a single frequency; core losses depend on frequency and drive level.", "Auswertung bei": "Evaluate at", "= Marker": "= marker", "Die Frequenz des aktiven Markers als Auswertefrequenz für OCL, n und k übernehmen": "Use the frequency of the active marker as the evaluation frequency for OCL, n and k", "Anwenden": "Apply", "Cg je Anschluss": "Cg per terminal",
     "n. b.": "n/d", "Ct (aus dem Gleichtakt)": "Ct (from common mode)", "Ct (aus dem Gegentakt)": "Ct (from differential mode)",
     "T-Ersatzschaltbild eines Übertragers mit idealem Übertrager 1 : n": "T equivalent circuit of a transformer with an ideal transformer 1 : n",
-    "Sortierung der Dateien": "Sort order of the files", "Sortiert nach Name": "Sorted by name", "Neueste zuerst": "Newest first", "Nach Portzahl": "By port count", "Größte zuerst": "Largest first"
+    "Bibliothek umbenennen": "Rename the library", "Name der Bibliothek": "Name of the library", "Umbenennen oder verschieben": "Rename or move", "Dateiname": "File name", "Ordnerpfad": "Folder path", "leer = oberste Ebene": "empty = top level", "z. B. CMC/0805": "e.g. CMC/0805", "Die Dateiendung bleibt erhalten. Unterordner mit „/“.": "The file extension is kept. Sub folders with \"/\".", "Ein neuer Pfad benennt den Ordner um oder verschiebt ihn samt Inhalt. Ein vorhandener Ordner als Ziel führt beide zusammen.": "A new path renames the folder or moves it with its content. An existing folder as the target merges both.", "Gib einen Dateinamen ein.": "Enter a file name.", "Gib einen Ordnerpfad ein.": "Enter a folder path.", "Ein Ordner kann nicht in sich selbst verschoben werden.": "A folder cannot be moved into itself.", "Die Datei gibt es in der Bibliothek nicht mehr.": "The file no longer exists in the library.", "Die Bibliothek gibt es nicht mehr.": "The library no longer exists.", "Sortierung der Dateien": "Sort order of the files", "Sortiert nach Name": "Sorted by name", "Neueste zuerst": "Newest first", "Nach Portzahl": "By port count", "Größte zuerst": "Largest first"
   }));
   const PATTERNS = [
     [/^Im gewählten Fit-Band nicht bestimmbar \(der Fit liefert einen negativen Wert\): (.+)\. Wähle ein Band, in dem dieses Element die Kurve prägt – für Kapazitäten reicht es meist, das Band zu höheren Frequenzen zu erweitern\.$/, (m, a) => 'Not determinable in the chosen fit band (the fit returns a negative value): ' + a.split(', ').map(t).join(', ') + '. Choose a band in which this element shapes the curve – for capacitances it usually helps to extend the band to higher frequencies.'],
@@ -1376,6 +1377,10 @@ window.I18N = (() => {
     [/^(\d+) von (\d+) Dateien in der Bibliothek „(.+)“ gespeichert und geprüft$/, '$1 of $2 files saved to the library "$3" and verified'],
     [/^Kontrolle nach dem Speichern: (\d+) (?:Datei ist|Dateien sind) in der Bibliothek vorhanden und stimm(?:t|en) mit dem Original überein\.$/, 'Check after saving: $1 file(s) are present in the library and match the original.'],
     [/^(\d+) Datei(?:en)? aus der Bibliothek gelöscht\. Die Sitzung bleibt unverändert\.$/, '$1 file(s) deleted from the library. The session stays unchanged.'],
+    [/^Bibliothek heißt jetzt „(.+)“\.$/, 'The library is now called "$1".'], [/^Bibliothek (.+) umbenennen$/, 'Rename library $1'], [/^(.+) umbenennen oder verschieben$/, 'Rename or move $1'],
+    [/^Datei heißt jetzt „(.+)“\.$/, 'The file is now called "$1".'], [/^„(.+)“ nach „(.+)“ verschoben\.$/, '"$1" moved to "$2".'], [/^„(.+)“ nach oberste Ebene verschoben\.$/, '"$1" moved to the top level.'],
+    [/^Ordner „(.+)“ heißt jetzt „(.+)“ · 1 Datei verschoben\.$/, 'Folder "$1" is now "$2" · 1 file moved.'], [/^Ordner „(.+)“ heißt jetzt „(.+)“ · (\d+) Dateien verschoben\.$/, 'Folder "$1" is now "$2" · $3 files moved.'],
+    [/^Am Ziel gibt es schon eine Datei mit diesem Namen: (.+)$/, 'The target already holds a file with this name: $1'], [/^Der Name ist nicht zulässig: (.+)$/, 'This name is not allowed: $1'],
     [/^Bibliothek „(.+)“ angelegt\.$/, 'Library "$1" created.'], [/^Bibliothek (.+) wirklich löschen$/, 'Really delete library $1'], [/^Bibliothek (.+) leeren oder löschen$/, 'Empty or delete library $1'],
     [/^(.+) aus der Bibliothek löschen$/, 'Delete $1 from the library'], [/^(.+) wirklich löschen$/, 'Really delete $1'], [/^Ordner (.+) in die Sitzung laden$/, 'Load folder $1 into the session'], [/^(.+) auswählen$/, 'Select $1'],
     [/^Der Import „(.+)“ wurde unterbrochen \((\d+) von (\d+) Dateien verarbeitet\)\. Es wurde nichts davon übernommen; vorhandene Dateien sind unverändert\. Bitte erneut importieren\.$/, 'The import "$1" was interrupted ($2 of $3 files processed). Nothing of it was kept; existing files are unchanged. Please import again.'],
@@ -4549,6 +4554,42 @@ const Store = (() => {
     await collect(hashes);
     return hashes.length;
   }
+  // Renames or moves library entries. All changes land in one transaction or none; a target that is already
+  // taken by another file aborts the whole move, so nothing is overwritten or half moved.
+  async function moveEntries(changes) {
+    if (!db || !changes.length) return 0;
+    const clean = changes.map(change => {
+      const safe = Zip.safePath((change.path ? change.path + '/' : '') + change.name);
+      if (!safe) throw new StoreError('name', 'Der Name ist nicht zulässig: ' + change.name);
+      return { id: change.id, path: safe.dir, name: safe.name };
+    });
+    return tx('entries', 'readwrite', async s => {
+      const moving = new Map();
+      for (const change of clean) {
+        const record = await wrap(s.get(change.id));
+        if (!record || record.scope !== 'library') throw new StoreError('missing', 'Die Datei gibt es in der Bibliothek nicht mehr.');
+        moving.set(change.id, { record, change });
+      }
+      const libs = new Set([...moving.values()].map(item => item.record.libId));
+      const taken = new Map();
+      for (const other of await wrap(s.index('scope').getAll('library'))) {
+        if (!libs.has(other.libId) || other.pending || moving.has(other.id)) continue;
+        taken.set(other.libId + '\n' + keyOf(other).toLowerCase(), other);
+      }
+      for (const { record, change } of moving.values()) {
+        const key = record.libId + '\n' + keyOf(change).toLowerCase();
+        if (taken.has(key)) throw new StoreError('conflict', 'Am Ziel gibt es schon eine Datei mit diesem Namen: ' + keyOf(change));
+        taken.set(key, record);
+      }
+      let n = 0;
+      for (const { record, change } of moving.values()) {
+        if (record.path === change.path && record.name === change.name) continue;
+        record.path = change.path; record.name = change.name; record.movedAt = Date.now();
+        s.put(record); n++;
+      }
+      return n;
+    });
+  }
   async function fileOf(record) {
     const blob = await contentFile(record.hash);
     if (!blob) throw new StoreError('missing', 'Die gespeicherte Datei fehlt im Browserspeicher. Bitte erneut importieren.');
@@ -4585,6 +4626,19 @@ const Store = (() => {
     const lib = { id: uid('lib'), name: clean, createdAt: Date.now() };
     await tx('libraries', 'readwrite', s => { s.put(lib); });
     return lib;
+  }
+  async function renameLibrary(id, name) {
+    const clean = String(name ?? '').replace(/[\u0000-\u001f]/g, ' ').trim().slice(0, 60);
+    if (!clean) throw new StoreError('name', 'Gib einen Namen für die Bibliothek ein.');
+    const list = await libraries();
+    if (list.some(lib => lib.id !== id && lib.name.toLowerCase() === clean.toLowerCase())) throw new StoreError('name', 'Eine Bibliothek mit diesem Namen gibt es schon.');
+    return tx('libraries', 'readwrite', async s => {
+      const lib = await wrap(s.get(id));
+      if (!lib) throw new StoreError('missing', 'Die Bibliothek gibt es nicht mehr.');
+      lib.name = clean;
+      s.put(lib);
+      return lib;
+    });
   }
   async function removeLibrary(id) {
     const list = await entries('library', id);
@@ -4903,8 +4957,8 @@ const Store = (() => {
   }
 
   return {
-    init, persistent, info, hooks, hashOf, sha256js, keyOf, entries, entry, updateEntry, removeEntries, fileOf, replaceContent, verifyContent,
-    libraries, createLibrary, removeLibrary, importBatch, recover, interrupted, dismissImport, trimImports, sweep, getMeta, setMeta,
+    init, persistent, info, hooks, hashOf, sha256js, keyOf, entries, entry, updateEntry, removeEntries, moveEntries, fileOf, replaceContent, verifyContent,
+    libraries, createLibrary, renameLibrary, removeLibrary, importBatch, recover, interrupted, dismissImport, trimImports, sweep, getMeta, setMeta,
     diagnose, requestPersist, selfTest, estimate, exportBackup, readBackup, importBackup, migrate, MAIN_LIBRARY, MAX_FILE, StoreError
   };
 })();
@@ -7067,7 +7121,7 @@ const Plot = (() => {
   }
 
   // ---- Library: files the user keeps on purpose. Several libraries, folders and subfolders, search and filters. ----
-  const shelf = { libId: Store.MAIN_LIBRARY, form: false, naming: false, confirm: '', query: '', ports: '', type: '', sort: 'name', open: new Set(), entries: [], libs: [], job: 0 };
+  const shelf = { libId: Store.MAIN_LIBRARY, form: false, naming: false, confirm: '', edit: '', query: '', ports: '', type: '', sort: 'name', open: new Set(), entries: [], libs: [], job: 0 };
   const libLabel = lib => lib && lib.id === Store.MAIN_LIBRARY && lib.name === 'Bibliothek' ? window.I18N.t('Bibliothek') : lib?.name ?? '';
   const cleanFolder = text => String(text ?? '').split(/[\\/]/).map(part => part.replace(/[:*?"<>|\u0000-\u001f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 80)).filter(part => part && part !== '.' && part !== '..').join('/');
   const sessionFiles = items => new Set(items.map(item => item.entryId ?? item.id)).size;
@@ -7135,9 +7189,13 @@ const Plot = (() => {
     const libKey = 'lib:' + shelf.libId;
     const bar = '<div class="lib-bar"><select id="lib-select" aria-label="Bibliothek wählen">' + options(libs.map(item => [item.id, item.name]), shelf.libId) + '</select>' +
       actionButton('Neu', 'lib-new', '', 'quiet-button', 'plus', ' title="Neue Bibliothek erstellen"') +
+      '<button type="button" class="session-compare" data-action="lib-edit" data-value="' + esc(libKey) + '" aria-pressed="' + (shelf.edit === libKey) + '" title="Bibliothek umbenennen" aria-label="Bibliothek ' + esc(libLabel(lib)) + ' umbenennen">✎</button>' +
       (shelf.confirm === libKey
         ? '<button type="button" class="session-compare shelf-confirm" data-action="lib-delete" data-value="' + esc(libKey) + '" title="Wirklich löschen" aria-label="Bibliothek ' + esc(libLabel(lib)) + ' wirklich löschen">!</button>'
-        : '<button type="button" class="session-compare" data-action="lib-ask" data-value="' + esc(libKey) + '" title="Bibliothek leeren oder löschen" aria-label="Bibliothek ' + esc(libLabel(lib)) + ' leeren oder löschen"' + disabled(!entries.length && shelf.libId === Store.MAIN_LIBRARY) + '>×</button>') + '</div>';
+        : '<button type="button" class="session-compare" data-action="lib-ask" data-value="' + esc(libKey) + '" title="Bibliothek leeren oder löschen" aria-label="Bibliothek ' + esc(libLabel(lib)) + ' leeren oder löschen"' + disabled(!entries.length && shelf.libId === Store.MAIN_LIBRARY) + '>×</button>') + '</div>' +
+      (shelf.edit === libKey ? '<form id="lib-edit-form" class="shelf-form lib-edit"><input type="hidden" name="key" value="' + esc(libKey) + '">' +
+        '<label class="control"><span class="field-label">Name der Bibliothek</span><input class="field-input" name="name" maxlength="60" value="' + esc(libLabel(lib)) + '" autocomplete="off"></label>' +
+        '<div class="shelf-form-actions"><button class="button primary" type="submit">Speichern</button>' + actionButton('Abbrechen', 'lib-edit', libKey, 'quiet-button') + '</div></form>' : '');
     const portOptions = [...new Set(entries.map(entry => entry.ports).filter(Boolean))].sort((a, b) => a - b);
     const typeOptions = [...new Set(entries.map(entry => entry.type).filter(Boolean))].sort(collator.compare);
     const query = shelf.query.trim().toLowerCase();
@@ -7159,6 +7217,9 @@ const Plot = (() => {
     const tree = box.querySelector('.lib-tree');
     if (tree && top !== null) tree.scrollTop = top;
     if (shelf.naming) box.querySelector('#lib-new-form input')?.focus({ preventScroll: true });
+    const editing = box.querySelector('#lib-edit-form input[name="name"], #lib-edit-form input[name="folder"]');
+    if (editing && shelf.editFocus !== shelf.edit) { shelf.editFocus = shelf.edit; editing.focus({ preventScroll: true }); editing.select?.(); }
+    if (!shelf.edit) shelf.editFocus = '';
   }
 
   function libraryTree(entries, expandAll) {
@@ -7178,8 +7239,15 @@ const Plot = (() => {
     const remove = (key, label) => shelf.confirm === key
       ? '<button type="button" class="session-compare shelf-confirm" data-action="lib-delete" data-value="' + esc(key) + '" title="Wirklich löschen" aria-label="' + esc(label) + ' wirklich löschen">!</button>'
       : '<button type="button" class="session-compare" data-action="lib-ask" data-value="' + esc(key) + '" title="Aus der Bibliothek löschen" aria-label="' + esc(label) + ' aus der Bibliothek löschen">×</button>';
+    const edit = (key, label) => '<button type="button" class="session-compare" data-action="lib-edit" data-value="' + esc(key) + '" aria-pressed="' + (shelf.edit === key) + '" title="Umbenennen oder verschieben" aria-label="' + esc(label) + ' umbenennen oder verschieben">✎</button>';
+    const folderList = '<datalist id="lib-folders">' + [...new Set(shelf.entries.map(entry => entry.path).filter(Boolean))].sort(collator.compare).map(folder => '<option value="' + esc(folder) + '">').join('') + '</datalist>';
+    const editForm = (key, depth, entry, path) => shelf.edit !== key ? '' : '<form id="lib-edit-form" class="shelf-form lib-edit" style="--depth:' + depth + '"><input type="hidden" name="key" value="' + esc(key) + '">' +
+      (entry ? '<label class="control"><span class="field-label">Dateiname</span><input class="field-input" name="name" maxlength="200" value="' + esc(entry.name) + '" autocomplete="off"></label>' : '') +
+      '<label class="control"><span class="field-label">' + (entry ? 'Ordner' : 'Ordnerpfad') + '</span><input class="field-input" name="folder" list="lib-folders" value="' + esc(entry ? entry.path : path) + '" placeholder="' + (entry ? 'leer = oberste Ebene' : 'z. B. CMC/0805') + '" autocomplete="off"></label>' + folderList +
+      '<p class="note">' + (entry ? 'Die Dateiendung bleibt erhalten. Unterordner mit „/“.' : 'Ein neuer Pfad benennt den Ordner um oder verschiebt ihn samt Inhalt. Ein vorhandener Ordner als Ziel führt beide zusammen.') + '</p>' +
+      '<div class="shelf-form-actions"><button class="button primary" type="submit">Speichern</button>' + actionButton('Abbrechen', 'lib-edit', key, 'quiet-button') + '</div></form>';
     const fileRow = (entry, depth) => '<div class="lib-row is-file" style="--depth:' + depth + '"><button type="button" class="session-open" data-action="lib-open-file" data-value="' + esc(entry.id) +
-      '" data-key="' + esc(Store.keyOf(entry)) + '" title="In die Sitzung laden und öffnen"><span>' + esc(entry.name) + '</span>' + (entry.ports ? '<small>' + entry.ports + 'P</small>' : '') + '</button>' + remove('file:' + entry.id, entry.name) + '</div>';
+      '" data-key="' + esc(Store.keyOf(entry)) + '" title="In die Sitzung laden und öffnen"><span>' + esc(entry.name) + '</span>' + (entry.ports ? '<small>' + entry.ports + 'P</small>' : '') + '</button>' + edit('file:' + entry.id, entry.name) + remove('file:' + entry.id, entry.name) + '</div>' + editForm('file:' + entry.id, depth, entry);
     function walk(parent, depth) {
       for (const path of paths) {
         if (depthOf(path) !== depth + 1 || (parent && !path.startsWith(parent + '/'))) continue;
@@ -7188,7 +7256,7 @@ const Plot = (() => {
         out.push('<div class="lib-row" style="--depth:' + depth + '"><button type="button" class="lib-folder" data-action="lib-toggle" data-value="' + esc(path) + '" aria-expanded="' + open + '" title="' + esc(path) + '">' +
           icon('chevron') + '<span>' + esc(name) + '</span><small>' + totals.get(path) + '</small></button>' +
           '<button type="button" class="session-compare" data-action="lib-open-folder" data-value="' + esc(path) + '" title="Ordner in die Sitzung laden und durchblättern" aria-label="Ordner ' + esc(name) + ' in die Sitzung laden">▸</button>' +
-          remove('folder:' + path, 'Ordner ' + name) + '</div>');
+          edit('folder:' + path, 'Ordner ' + name) + remove('folder:' + path, 'Ordner ' + name) + '</div>' + editForm('folder:' + path, depth, null, path));
         if (!open) continue;
         walk(path, depth + 1);
         for (const entry of files.get(path)) { if (++rows > 600) return; out.push(fileRow(entry, depth + 1)); }
@@ -7305,6 +7373,39 @@ const Plot = (() => {
         toast(plural(ids.length, 'Datei', 'Dateien') + ' aus der Bibliothek gelöscht. Die Sitzung bleibt unverändert.');
       }
     } catch (error) { toast(error.message); }
+    renderShelf();
+  }
+
+  // Renames or moves a file, a folder with everything below it, or renames the library itself.
+  async function libraryEdit(form) {
+    const data = new FormData(form), value = String(data.get('key') || ''), [kind, ...rest] = value.split(':'), key = rest.join(':');
+    try {
+      if (kind === 'lib') {
+        const lib = await Store.renameLibrary(key, data.get('name'));
+        toast('Bibliothek heißt jetzt „' + lib.name + '“.');
+      } else if (kind === 'file') {
+        const entry = shelf.entries.find(item => item.id === key);
+        if (!entry) throw new Error('Die Datei gibt es in der Bibliothek nicht mehr.');
+        let name = String(data.get('name') ?? '').replace(/[\\/:*?"<>|\u0000-\u001f]/g, ' ').replace(/\s+/g, ' ').trim();
+        if (!name) throw new Error('Gib einen Dateinamen ein.');
+        const ext = (entry.name.match(/\.[^.]+$/) || [''])[0];
+        if (ext && !name.toLowerCase().endsWith(ext.toLowerCase())) name = name.replace(/\.+$/, '') + ext;
+        const path = cleanFolder(data.get('folder'));
+        const moved = await Store.moveEntries([{ id: entry.id, path, name }]);
+        if (moved) { if (path) for (let parts = path.split('/'), i = 1; i <= parts.length; i++) shelf.open.add(parts.slice(0, i).join('/')); toast(path !== entry.path ? '„' + name + '“ nach ' + (path ? '„' + path + '“' : 'oberste Ebene') + ' verschoben.' : 'Datei heißt jetzt „' + name + '“.'); }
+      } else {
+        const target = cleanFolder(data.get('folder'));
+        if (!target) throw new Error('Gib einen Ordnerpfad ein.');
+        if (target === key) { shelf.edit = ''; renderShelf(); return; }
+        if (target.startsWith(key + '/')) throw new Error('Ein Ordner kann nicht in sich selbst verschoben werden.');
+        const list = shelf.entries.filter(entry => entry.path === key || entry.path.startsWith(key + '/'));
+        const moved = await Store.moveEntries(list.map(entry => ({ id: entry.id, name: entry.name, path: target + entry.path.slice(key.length) })));
+        for (const open of [...shelf.open]) if (open === key || open.startsWith(key + '/')) { shelf.open.delete(open); shelf.open.add(target + open.slice(key.length)); }
+        for (let parts = target.split('/'), i = 1; i < parts.length; i++) shelf.open.add(parts.slice(0, i).join('/'));
+        toast('Ordner „' + key + '“ heißt jetzt „' + target + '“ · ' + plural(moved, 'Datei', 'Dateien') + ' verschoben.');
+      }
+      shelf.edit = '';
+    } catch (error) { toast(error.message); return; }   // the form stays as typed so the name can be corrected
     renderShelf();
   }
 
@@ -10466,7 +10567,8 @@ const typed = state.tab === 's' && state.basis === 'mm' && ['cmc', 'lan'].includ
     'lib-toggle': value => { shelf.open.has(value) ? shelf.open.delete(value) : shelf.open.add(value); renderShelf(); },
     'lib-open-folder': value => libraryOpen(value, true),
     'lib-open-file': value => libraryOpen(value, false),
-    'lib-ask': value => { shelf.confirm = value; renderShelf(); },
+    'lib-ask': value => { shelf.confirm = value; shelf.edit = ''; renderShelf(); },
+    'lib-edit': value => { shelf.edit = shelf.edit === value ? '' : value; shelf.confirm = ''; renderShelf(); },
     'lib-delete': libraryDelete,
     'lib-new': () => { shelf.naming = !shelf.naming; renderShelf(); },
     'esb-spice': exportModel,
@@ -10530,7 +10632,7 @@ const typed = state.tab === 's' && state.basis === 'mm' && ['cmc', 'lan'].includ
 
   document.addEventListener('submit', event => {
     const handler = {
-      'pair-form': savePair, 'profile-form': saveProfile, 'sweep-form': applySweep, 'shelf-form': shelfStore, 'lib-new-form': libraryCreate, 'model-form': modelApply, 'eval-form': form => setEvalFreq(parseHz(new FormData(form).get('eval'))), 'pairz-form': applyPairImpedance, 'reference-form': applyReference, 'fit-form': applyFit, 'axes-form': applyAxes, 'load-form': applyLoad
+      'pair-form': savePair, 'profile-form': saveProfile, 'sweep-form': applySweep, 'shelf-form': shelfStore, 'lib-new-form': libraryCreate, 'lib-edit-form': libraryEdit, 'model-form': modelApply, 'eval-form': form => setEvalFreq(parseHz(new FormData(form).get('eval'))), 'pairz-form': applyPairImpedance, 'reference-form': applyReference, 'fit-form': applyFit, 'axes-form': applyAxes, 'load-form': applyLoad
     }[event.target.id];
     if (!handler) return;
     event.preventDefault();
@@ -10633,7 +10735,7 @@ const typed = state.tab === 's' && state.basis === 'mm' && ['cmc', 'lan'].includ
     if (el.matches('.session-pick input')) {
       el.checked ? session.picked.add(el.value) : session.picked.delete(el.value);
       renderShelf();
-    } else if (el.id === 'lib-select') { shelf.libId = el.value; shelf.confirm = ''; shelf.open.clear(); renderShelf(); }
+    } else if (el.id === 'lib-select') { shelf.libId = el.value; shelf.confirm = ''; shelf.edit = ''; shelf.open.clear(); renderShelf(); }
     else if (el.id === 'lib-ports') { shelf.ports = el.value; renderShelf(); }
     else if (el.id === 'lib-type') { shelf.type = el.value; renderShelf(); }
     else if (el.id === 'lib-sort') { shelf.sort = el.value; renderShelf(); }
