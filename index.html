@@ -1,6 +1,7 @@
 <!doctype html>
 <!--
   S-Parameter Analyzer · © 2026 Simon Mark · info.simonlation@gmail.com
+  All rights reserved · Proprietary software · Lizenzbedingungen / license terms: LICENSE.txt
   Alle Rechte vorbehalten. Kein Open Source: Kopieren, Verändern oder Weiterverwenden des Quelltexts, auch in Teilen,
   nur mit schriftlicher Zustimmung des Autors.
   All rights reserved. Not open source: copying, modifying or reusing this source code, in whole or in part,
@@ -1011,6 +1012,67 @@ html[data-theme="dark"] .physics-verdict.is-good { color: #5cc9bf; } html[data-t
 .ev-score.pro { color: #1e7f78; border-color: #9fd3cd; } .ev-score.con { color: #a43b2b; border-color: #e3b1a8; }
 html[data-theme="dark"] .ev-score.pro { color: #5cc9bf; border-color: #2c5f5a; } html[data-theme="dark"] .ev-score.con { color: #ff9a8a; border-color: #6a3a33; }
 .physics-modes td, .physics-modes th { text-align: right; } .physics-modes td:first-child, .physics-modes th:first-child { text-align: left; }
+
+/* v8: durable store, library tree, storage and licence dialogs */
+.session-files h4 { flex-wrap: wrap; row-gap: 3px; }
+.session-tools { flex-wrap: wrap; justify-content: flex-end; }
+.storage-notice { display: grid; gap: 6px; margin-top: 10px; }
+.storage-notice .inline-notice { margin: 0; display: flex; gap: 8px; align-items: flex-start; justify-content: space-between; }
+.storage-notice .quiet-button { flex: none; font-size: 11px; padding: 2px 5px; }
+.session-state { display: flex; align-items: center; gap: 5px; margin: 0 0 5px; font-size: 10.5px; color: var(--muted); }
+.session-state::before { content: ""; flex: none; width: 7px; height: 7px; border-radius: 50%; background: #2e8b57; }
+.session-state.is-volatile::before { background: #c9821a; }
+.session-row.is-selecting { grid-template-columns: 26px minmax(0, 1fr) 26px; }
+.session-pick { display: grid; place-items: center; border: 1px solid var(--line); border-radius: 5px; background: var(--surface); }
+.session-pick input { width: 15px; height: 15px; margin: 0; accent-color: var(--accent); }
+.lib-bar { display: flex; gap: 4px; align-items: center; margin: 0 0 5px; }
+.lib-bar select { flex: 1; min-width: 0; min-height: 28px; font-size: 11.5px; }
+.lib-filters { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 4px; margin: 0 0 5px; }
+.lib-filters .field-input, .lib-filters select { min-height: 28px; font-size: 11.5px; min-width: 0; }
+.lib-tree { display: grid; gap: 2px; max-height: 320px; overflow: auto; padding-right: 2px; }
+.lib-row { display: grid; grid-template-columns: minmax(0, 1fr) 26px 26px; gap: 2px; padding-left: calc(var(--depth, 0) * 12px); }
+.lib-row.is-file { grid-template-columns: minmax(0, 1fr) 26px; }
+.lib-folder { min-width: 0; display: flex; align-items: center; gap: 5px; min-height: 28px; padding: 3px 6px; border: 1px solid transparent; border-radius: 5px; background: transparent; text-align: left; font-size: 11.5px; font-weight: 650; color: var(--ink); }
+.lib-folder:hover { background: var(--accent-soft); }
+.lib-folder .icon { width: 12px; height: 12px; flex: none; transition: transform .12s; }
+.lib-folder[aria-expanded="true"] .icon { transform: rotate(90deg); }
+.lib-folder span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lib-folder small { color: var(--muted); font-size: 10px; font-weight: 600; }
+.store-content { display: grid; gap: 10px; font-size: 12.5px; }
+.store-bar { height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; }
+.store-bar > span { display: block; height: 100%; width: 0; background: var(--accent); transition: width .15s; }
+.store-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 14px; margin: 0; }
+.store-stats div { display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px solid var(--line); padding-bottom: 3px; }
+.store-stats dt { color: var(--muted); }
+.store-stats dd { margin: 0; font-weight: 650; }
+.store-result { margin: 0; font-weight: 650; }
+.store-result.is-bad { color: #a23b2c; }
+.store-failed { max-height: 180px; overflow: auto; margin: 0; padding: 0 0 0 16px; font-size: 11.5px; }
+.store-failed li { margin: 2px 0; overflow-wrap: anywhere; }
+.store-failed small { color: var(--muted); }
+.storage-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.storage-table th { text-align: left; font-weight: 600; color: var(--muted); padding: 5px 10px 5px 0; vertical-align: top; width: 46%; }
+.storage-table td { padding: 5px 0; font-weight: 650; overflow-wrap: anywhere; }
+.storage-table tr + tr { border-top: 1px solid var(--line); }
+.storage-actions { display: flex; flex-wrap: wrap; gap: 7px; margin: 12px 0 4px; }
+.storage-steps { margin: 8px 0 0; padding: 0; list-style: none; font-size: 12px; display: grid; gap: 3px; }
+.storage-steps li::before { content: "✓ "; color: #2e8b57; font-weight: 700; }
+.storage-steps li.is-bad::before { content: "✕ "; color: #b3261e; }
+.license-text { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font-family: inherit; font-size: 12.5px; line-height: 1.5; }
+.legal-line { margin: 0; padding: 5px 23px 9px; font-size: 10.5px; color: var(--muted); background: var(--ivory); }
+.link-button { border: 0; background: none; padding: 0; font: inherit; color: var(--accent-dark); text-decoration: underline; cursor: pointer; }
+body.view-focus .legal-line { display: none; }
+html[data-theme="dark"] .legal-line { background: #25231c; }
+@media (max-width: 760px) { .legal-line { padding: 5px 10px 9px; } .store-stats { grid-template-columns: minmax(0, 1fr); } }
+@media (pointer: coarse) {
+  .session-open, .lib-folder { min-height: 40px; }
+  .session-row { grid-template-columns: minmax(0, 1fr) 40px; }
+  .session-row.is-selecting { grid-template-columns: 40px minmax(0, 1fr) 40px; }
+  .lib-row { grid-template-columns: minmax(0, 1fr) 40px 40px; }
+  .lib-row.is-file { grid-template-columns: minmax(0, 1fr) 40px; }
+  .session-tools .quiet-button { min-height: 34px; padding: 4px 8px; font-size: 12px; }
+  .lib-filters .field-input, .lib-filters select, .lib-bar select, .session-filter { min-height: 38px; font-size: 14px; }
+}
 </style>
 <script>
 'use strict';
@@ -1437,8 +1499,10 @@ window.I18N = (() => {
   <div class="settings-menu" id="settings-menu" role="menu" aria-label="Einstellungen" hidden>
     <button type="button" role="menuitem" class="menu-item" data-action="menu-go" data-value="files"><svg class="icon" aria-hidden="true"><use href="#i-file"/></svg><span class="menu-text"><strong>Dateien &amp; Bibliothek</strong><small id="menu-file-name">—</small></span></button>
     <button type="button" role="menuitem" class="menu-item" data-action="menu-go" data-value="packs"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg><span class="menu-text"><strong>Vorlagen &amp; Einstellungen</strong><small>Fingerabdrücke und Kurvenwahl laden, sichern</small></span></button>
+    <button type="button" role="menuitem" class="menu-item" data-action="menu-go" data-value="storage"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg><span class="menu-text"><strong>Speicher &amp; Sicherung</strong><small>Diagnose, Funktionstest, Sicherung der Bibliothek</small></span></button>
     <button type="button" role="menuitem" class="menu-item" data-action="menu-go" data-value="lang"><svg class="icon" aria-hidden="true"><use href="#i-swap"/></svg><span class="menu-text"><strong>Sprache</strong><small>Deutsch / English</small></span><span class="menu-badge mono" id="menu-lang-code" data-no-i18n>EN</span></button>
     <button type="button" role="menuitem" class="menu-item" data-action="menu-go" data-value="method"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg><span class="menu-text"><strong>Methodik &amp; Info</strong><small>Rechenwege, Formeln, Autor</small></span></button>
+    <button type="button" role="menuitem" class="menu-item" data-action="menu-go" data-value="license"><svg class="icon" aria-hidden="true"><use href="#i-file"/></svg><span class="menu-text"><strong>Lizenz</strong><small>© 2026 Simon Mark · proprietäre Software</small></span></button>
     <button type="button" role="menuitem" class="menu-item" data-action="menu-go" data-value="export"><svg class="icon" aria-hidden="true"><use href="#i-export"/></svg><span class="menu-text"><strong>Export</strong><small>Bild, CSV, Touchstone, SPICE</small></span></button>
     <button type="button" role="menuitem" class="menu-item" id="menu-install" data-action="menu-go" data-value="install" hidden><svg class="icon" aria-hidden="true"><use href="#i-install"/></svg><span class="menu-text"><strong>App installieren</strong><small>Offline am Startbildschirm</small></span></button>
   </div>
@@ -1467,9 +1531,9 @@ window.I18N = (() => {
           <button type="button" class="quiet-button" data-action="demo" data-value="4">CMC-Beispiel</button>
           <button type="button" class="quiet-button" data-action="demo" data-value="8">8-Port-Beispiel</button>
         </div>
+        <div id="storage-notice" class="storage-notice" hidden></div>
         <div id="session-files" class="session-files" hidden></div>
         <div id="shelf" class="session-files shelf" hidden></div>
-        <div id="recent-files" class="recent-files" hidden></div>
         <p id="import-notice" class="inline-notice" role="alert" hidden></p>
       </div>
       <div class="network-section">
@@ -1555,6 +1619,7 @@ window.I18N = (() => {
       </div>
     </section>
     <footer class="status-bar" id="status-bar"></footer>
+    <p class="legal-line"><span data-no-i18n>© 2026 Simon Mark · All rights reserved · Proprietary software</span> · <button type="button" class="link-button" data-action="license">Lizenz</button></p>
   </main>
 </div>
 
@@ -1642,7 +1707,8 @@ window.I18N = (() => {
   <circle cx="394" cy="214" r="21" fill="#d97757" stroke="#1f1e1d" stroke-width="9"/>
 </svg>
         <div><h3>S-Parameter Analyzer</h3><p>Entwickelt von <strong>Simon Mark</strong> · <a href="mailto:info.simonlation@gmail.com">info.simonlation@gmail.com</a></p>
-        <p>Alle Berechnungen laufen lokal im Browser. Messdateien verlassen das Gerät nicht.</p></div>
+        <p>Alle Berechnungen laufen lokal im Browser. Messdateien verlassen das Gerät nicht.</p>
+        <p>© 2026 Simon Mark · Alle Rechte vorbehalten · Proprietäre Software, kein Open Source. <button type="button" class="link-button" data-action="license">Lizenzbedingungen anzeigen</button></p></div>
       </div>
     </section>
     <section>
@@ -1704,7 +1770,8 @@ window.I18N = (() => {
   <circle cx="394" cy="214" r="21" fill="#d97757" stroke="#1f1e1d" stroke-width="9"/>
 </svg>
         <div><h3>S-Parameter Analyzer</h3><p>Developed by <strong>Simon Mark</strong> · <a href="mailto:info.simonlation@gmail.com">info.simonlation@gmail.com</a></p>
-        <p>All calculations run locally in the browser. Measurement files never leave the device.</p></div>
+        <p>All calculations run locally in the browser. Measurement files never leave the device.</p>
+        <p>© 2026 Simon Mark · All rights reserved · Proprietary software, not open source. <button type="button" class="link-button" data-action="license">Show license terms</button></p></div>
       </div>
     </section>
     <section>
@@ -1749,6 +1816,134 @@ window.I18N = (() => {
     </section>
     </div>
   </div>
+</dialog>
+
+<dialog id="store-dialog" class="dialog" aria-labelledby="store-title" data-state="idle">
+  <div class="dialog-head">
+    <div><h2 id="store-title">Import</h2><p id="store-subtitle"></p></div>
+  </div>
+  <div id="store-content" class="dialog-body store-content"></div>
+  <div id="store-foot" class="dialog-foot"></div>
+</dialog>
+
+<dialog id="storage-dialog" class="dialog wide-dialog" aria-labelledby="storage-title">
+  <div class="dialog-head">
+    <div><h2 id="storage-title">Speicher &amp; Sicherung</h2><p>Wo die Dateien liegen, ob der Speicher funktioniert und wie du ihn sicherst</p></div>
+    <button class="icon-button" type="button" data-action="close-dialog" aria-label="Schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+  </div>
+  <div id="storage-content" class="dialog-body"></div>
+  <input type="file" id="backup-input" accept=".zip,application/zip" hidden>
+  <div class="dialog-foot"><button class="button primary" type="button" data-action="close-dialog">Fertig</button></div>
+</dialog>
+
+<dialog id="license-dialog" class="dialog wide-dialog" aria-labelledby="license-title">
+  <div class="dialog-head">
+    <div><h2 id="license-title">Lizenz</h2><p data-no-i18n>© 2026 Simon Mark · All rights reserved · Proprietary software</p></div>
+    <button class="icon-button" type="button" data-action="close-dialog" aria-label="Schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+  </div>
+  <div class="dialog-body"><pre id="license-text" class="license-text" data-no-i18n tabindex="0">S-PARAMETER ANALYZER
+Proprietäre Software – Nutzungsbedingungen
+
+Copyright © 2026 Simon Mark. Alle Rechte vorbehalten.
+
+1. Urheberrecht
+
+Der S-Parameter Analyzer einschließlich seines vom Autor erstellten Quellcodes, der Benutzeroberfläche, der Grafiken, der Dokumentation und der zugehörigen Softwarebestandteile ist urheberrechtlich geschützt.
+
+Die öffentliche Zugänglichkeit des Quellcodes auf GitHub stellt keine Freigabe als Open-Source-Software dar.
+
+2. Gestattete Nutzung
+
+Die bestimmungsgemäße Nutzung der vom Rechteinhaber bereitgestellten Webanwendung ist gestattet.
+
+Soweit der Rechteinhaber offizielle ausführbare Versionen veröffentlicht, dürfen diese für eigene private oder berufliche Analysezwecke heruntergeladen und auf eigenen Geräten ausgeführt werden.
+
+Hierzu technisch notwendige Kopien sind gestattet.
+
+3. Einschränkungen
+
+Ohne vorherige schriftliche Zustimmung des Rechteinhabers ist es nicht gestattet, den Quellcode oder wesentliche Teile der Software zu vervielfältigen, zu verändern, als eigenes Produkt zu veröffentlichen, weiterzuverbreiten, zu verkaufen, Dritten zur eigenen Verwertung bereitzustellen oder in andere Softwareprodukte zu integrieren.
+
+Vorbehalten bleiben zwingende gesetzliche Rechte und Berechtigungen aus den anwendbaren Plattformbedingungen.
+
+4. Urheberrechtshinweise
+
+Vorhandene Urheberrechtshinweise dürfen nicht unberechtigt entfernt oder verändert werden.
+
+5. Drittkomponenten
+
+Für eingebundene Softwarekomponenten Dritter gelten deren jeweilige Lizenzbedingungen. Rechte an solchen Komponenten werden durch diese Lizenz nicht eingeschränkt.
+
+6. Benutzerdateien
+
+Diese Lizenz begründet keine Rechte des Softwareautors an den vom Anwender importierten Messdateien, Modellen oder Bibliotheken.
+
+7. Gewährleistung und Haftung
+
+Die Software wird ohne Zusicherung bestimmter Analyseergebnisse bereitgestellt. Gewährleistung und Haftung richten sich nach dem anwendbaren Recht. Zwingende gesetzliche Ansprüche bleiben unberührt.
+
+8. Genehmigungen und Kontakt
+
+Anfragen zur Nutzung, Anpassung, Integration oder Weiterverbreitung des Quellcodes sind an folgende Adresse zu richten:
+
+Simon Mark
+info.simonlation@gmail.com
+
+Diese Software wird nicht unter MIT, GPL, Apache oder einer anderen Open-Source-Lizenz veröffentlicht.
+
+========================================================================
+
+S-PARAMETER ANALYZER
+Proprietary Software – License Terms
+
+Copyright © 2026 Simon Mark. All rights reserved.
+
+1. Copyright
+
+S-Parameter Analyzer, including its original source code, user interface, graphics, documentation, and associated software components, is protected by copyright.
+
+Public availability of the source code on GitHub does not constitute an open-source license.
+
+2. Permitted Use
+
+Users may use the official web application for its intended purposes.
+
+Official executable releases, if provided by the copyright holder, may be downloaded and run on the user's own devices for private or professional analysis.
+
+Copies technically necessary for such permitted use are allowed.
+
+3. Restrictions
+
+Without prior written permission from the copyright holder, users may not reproduce, modify, redistribute, republish, sell, commercially exploit, incorporate into other software products, or otherwise make available for independent exploitation the source code or substantial parts of the software.
+
+Mandatory statutory rights and permissions arising under applicable platform terms remain unaffected.
+
+4. Copyright Notices
+
+Copyright and attribution notices must not be removed or altered without authorization.
+
+5. Third-Party Components
+
+Third-party software components remain subject to their respective license terms. Nothing in this license overrides the rights granted under those licenses.
+
+6. User Data
+
+This license does not grant the software author any rights over measurement files, models, or libraries imported by users.
+
+7. Warranty and Liability
+
+The software is provided without any guarantee of particular analytical results. Warranty and liability are governed by applicable law. Mandatory statutory rights remain unaffected.
+
+8. Permissions and Contact
+
+For licensing, modification, integration, or redistribution permissions, contact:
+
+Simon Mark
+info.simonlation@gmail.com
+
+This software is not released under the MIT, GPL, Apache, or any other open-source license.
+</pre></div>
+  <div class="dialog-foot"><button class="button primary" type="button" data-action="close-dialog">Fertig</button></div>
 </dialog>
 
 <div id="toast" class="toast" role="status" hidden></div>
@@ -3718,6 +3913,765 @@ const Magnetic = (() => {
   return { VERSION, LABEL, SHORT, LABEL_EN, SHORT_EN, label, MAGNETIC, analyze, fingerprint, distance, categoryFromName, familyClass, fmtHz };
 })();
 </script>
+<script id="store-core">
+'use strict';
+// Storage core: ZIP reading/writing and the durable file store. No DOM access, so it can be reused in a desktop shell.
+
+// ---- Zip: defensive reader (central directory, ZIP64, CRC check, size limits) and a plain writer for backups. ----
+const Zip = (() => {
+  const LIMITS = { entries: 20000, fileBytes: 100 * 1024 * 1024, totalBytes: 2 * 1024 * 1024 * 1024 };
+  const CP437 = 'ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥₧ƒáíóúñÑªº¿⌐¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■ ';
+  const CRC_TABLE = (() => {
+    const table = new Uint32Array(256);
+    for (let n = 0; n < 256; n++) {
+      let c = n;
+      for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+      table[n] = c >>> 0;
+    }
+    return table;
+  })();
+  function crc32(bytes, seed = 0) {
+    let c = ~seed >>> 0;
+    for (let i = 0; i < bytes.length; i++) c = CRC_TABLE[(c ^ bytes[i]) & 255] ^ (c >>> 8);
+    return ~c >>> 0;
+  }
+  class ZipError extends Error {
+    constructor(code, message) { super(message); this.name = 'ZipError'; this.code = code; }
+  }
+  const slice = async (blob, start, length) => new Uint8Array(await blob.slice(start, start + length).arrayBuffer());
+  const big = (view, at) => {
+    const value = view.getBigUint64(at, true);
+    if (value > BigInt(Number.MAX_SAFE_INTEGER)) throw new ZipError('damaged', 'Das ZIP-Archiv enthält ungültige Größenangaben.');
+    return Number(value);
+  };
+
+  function decodeName(bytes, utf8) {
+    if (!utf8) {
+      try { return new TextDecoder('utf-8', { fatal: true }).decode(bytes); } catch { /* legacy code page */ }
+      let out = '';
+      for (const b of bytes) out += b < 128 ? String.fromCharCode(b) : CP437[b - 128];
+      return out;
+    }
+    return new TextDecoder('utf-8').decode(bytes);
+  }
+
+  // Returns { dir, name } or null when the entry would leave the archive root or has no usable name.
+  function safePath(raw) {
+    const text = String(raw).replace(/\\/g, '/');
+    if (/^[a-zA-Z]:/.test(text) || text.includes('\u0000')) return null;
+    const parts = [];
+    for (const part of text.split('/')) {
+      if (part === '' || part === '.') continue;
+      if (part === '..') return null;
+      const clean = part.replace(/[\u0000-\u001f\u007f]/g, '').trim();
+      if (!clean || clean.length > 255) return null;
+      parts.push(clean);
+    }
+    if (!parts.length || parts.length > 32) return null;
+    return { name: parts.pop(), dir: parts.join('/') };
+  }
+
+  async function open(blob) {
+    const size = blob.size;
+    if (size < 22) throw new ZipError('not-zip', 'Kein lesbares ZIP-Archiv.');
+    const tailLength = Math.min(size, 65557 + 20), tail = await slice(blob, size - tailLength, tailLength);
+    const tv = new DataView(tail.buffer);
+    let end = -1;
+    for (let i = tail.length - 22; i >= 0; i--) if (tv.getUint32(i, true) === 0x06054b50) { end = i; break; }
+    if (end < 0) throw new ZipError('not-zip', 'Kein lesbares ZIP-Archiv. Das Ende des Archivs fehlt, die Datei ist vermutlich unvollständig.');
+    if (tv.getUint16(end + 4, true) !== 0 || tv.getUint16(end + 6, true) !== 0) throw new ZipError('multi-disk', 'Mehrteilige ZIP-Archive werden nicht unterstützt.');
+    let count = tv.getUint16(end + 10, true), cdSize = tv.getUint32(end + 12, true), cdOffset = tv.getUint32(end + 16, true);
+    if (end >= 20 && tv.getUint32(end - 20, true) === 0x07064b50) {
+      const at = big(tv, end - 20 + 8);
+      if (at + 56 > size) throw new ZipError('damaged', 'Das ZIP64-Archiv ist beschädigt.');
+      const z = await slice(blob, at, 56), zv = new DataView(z.buffer);
+      if (zv.getUint32(0, true) !== 0x06064b50) throw new ZipError('damaged', 'Das ZIP64-Archiv ist beschädigt.');
+      count = big(zv, 32); cdSize = big(zv, 40); cdOffset = big(zv, 48);
+    } else if (count === 0xffff || cdOffset === 0xffffffff) {
+      throw new ZipError('damaged', 'Das ZIP64-Archiv ist beschädigt.');
+    }
+    if (count > LIMITS.entries) throw new ZipError('too-many', 'Das Archiv enthält ' + count + ' Einträge. Mehr als ' + LIMITS.entries + ' werden nicht verarbeitet.');
+    if (cdOffset + cdSize > size) throw new ZipError('damaged', 'Das Inhaltsverzeichnis des ZIP-Archivs ist beschädigt.');
+    const cd = await slice(blob, cdOffset, cdSize), view = new DataView(cd.buffer);
+    const entries = [];
+    let at = 0;
+    for (let k = 0; k < count; k++) {
+      if (at + 46 > cd.length || view.getUint32(at, true) !== 0x02014b50) throw new ZipError('damaged', 'Das Inhaltsverzeichnis des ZIP-Archivs ist beschädigt.');
+      const flags = view.getUint16(at + 8, true), method = view.getUint16(at + 10, true), crc = view.getUint32(at + 16, true);
+      let packed = view.getUint32(at + 20, true), length = view.getUint32(at + 24, true), local = view.getUint32(at + 42, true);
+      const nameLength = view.getUint16(at + 28, true), extraLength = view.getUint16(at + 30, true), commentLength = view.getUint16(at + 32, true);
+      if (at + 46 + nameLength + extraLength + commentLength > cd.length) throw new ZipError('damaged', 'Das Inhaltsverzeichnis des ZIP-Archivs ist beschädigt.');
+      let raw = decodeName(cd.subarray(at + 46, at + 46 + nameLength), !!(flags & 0x800));
+      let x = at + 46 + nameLength;
+      const extraEnd = x + extraLength;
+      while (x + 4 <= extraEnd) {
+        const id = view.getUint16(x, true), len = view.getUint16(x + 2, true);
+        if (x + 4 + len > extraEnd) break;
+        if (id === 0x0001) {
+          let p = x + 4;
+          if (length === 0xffffffff && p + 8 <= x + 4 + len) { length = big(view, p); p += 8; }
+          if (packed === 0xffffffff && p + 8 <= x + 4 + len) { packed = big(view, p); p += 8; }
+          if (local === 0xffffffff && p + 8 <= x + 4 + len) { local = big(view, p); p += 8; }
+        } else if (id === 0x7075 && len > 5 && view.getUint8(x + 4) === 1) {
+          raw = new TextDecoder('utf-8').decode(cd.subarray(x + 9, x + 4 + len));
+        }
+        x += 4 + len;
+      }
+      at = extraEnd + commentLength;
+      const directory = raw.endsWith('/') || raw.endsWith('\\');
+      if (directory) continue;
+      const path = safePath(raw);
+      const entry = { raw, dir: path?.dir ?? '', name: path?.name ?? raw, size: length, packed, method, crc, problem: '' };
+      if (!path) entry.problem = 'Unsicherer oder ungültiger Pfad im Archiv.';
+      else if (flags & 0x41) entry.problem = 'Verschlüsselte ZIP-Einträge werden nicht unterstützt.';
+      else if (method !== 0 && method !== 8) entry.problem = 'Diese ZIP-Kompression (Methode ' + method + ') wird nicht unterstützt.';
+      else if (method === 8 && typeof DecompressionStream !== 'function') entry.problem = 'Dieser Browser kann komprimierte ZIP-Einträge nicht entpacken.';
+      else if (length > LIMITS.fileBytes) entry.problem = 'Die Datei überschreitet 100 MiB.';
+      else if (local + 30 > size || (method === 0 && packed !== length)) entry.problem = 'Der Eintrag ist beschädigt.';
+      entry.read = () => readEntry(blob, entry, local);
+      entries.push(entry);
+    }
+    return { entries, count };
+  }
+
+  async function readEntry(blob, entry, local) {
+    if (entry.problem) throw new ZipError('entry', entry.problem);
+    const head = await slice(blob, local, 30), hv = new DataView(head.buffer);
+    if (head.length < 30 || hv.getUint32(0, true) !== 0x04034b50) throw new ZipError('entry', 'Der Eintrag ist beschädigt.');
+    const start = local + 30 + hv.getUint16(26, true) + hv.getUint16(28, true);
+    if (start + entry.packed > blob.size) throw new ZipError('entry', 'Der Eintrag ist abgeschnitten.');
+    const data = blob.slice(start, start + entry.packed);
+    let bytes;
+    if (entry.method === 0) bytes = new Uint8Array(await data.arrayBuffer());
+    else {
+      // The declared size is the hard limit while inflating: a ZIP bomb is stopped after that many bytes.
+      const reader = data.stream().pipeThrough(new DecompressionStream('deflate-raw')).getReader();
+      bytes = new Uint8Array(entry.size);
+      let filled = 0;
+      try {
+        for (;;) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          if (filled + value.length > entry.size) {
+            await reader.cancel().catch(() => {});
+            throw new ZipError('entry', 'Der Eintrag ist größer als im Archiv angegeben.');
+          }
+          bytes.set(value, filled);
+          filled += value.length;
+        }
+      } catch (error) {
+        if (error instanceof ZipError) throw error;
+        throw new ZipError('entry', 'Der Eintrag ist beschädigt und lässt sich nicht entpacken.');
+      }
+      if (filled !== entry.size) throw new ZipError('entry', 'Der Eintrag ist beschädigt (Länge weicht ab).');
+    }
+    if (crc32(bytes) !== entry.crc) throw new ZipError('entry', 'Der Eintrag ist beschädigt (Prüfsumme weicht ab).');
+    return bytes;
+  }
+
+  // Writer without compression: Touchstone backups stay byte-identical and the blob is built from parts, not from one large buffer.
+  async function build(files, onProgress = null) {
+    const encoder = new TextEncoder(), parts = [], central = [];
+    let offset = 0, done = 0;
+    for (const file of files) {
+      const name = encoder.encode(file.path), bytes = new Uint8Array(await file.blob.arrayBuffer());
+      if (offset + bytes.length + name.length + 30 > 0xfffffff0 || files.length > 0xfffe) throw new ZipError('too-large', 'Die Sicherung überschreitet 4 GiB und kann nicht als eine ZIP-Datei geschrieben werden.');
+      const crc = crc32(bytes), head = new DataView(new ArrayBuffer(30));
+      head.setUint32(0, 0x04034b50, true); head.setUint16(4, 20, true); head.setUint16(6, 0x800, true);
+      head.setUint32(14, crc, true); head.setUint32(18, bytes.length, true); head.setUint32(22, bytes.length, true); head.setUint16(26, name.length, true);
+      parts.push(head.buffer, name, file.blob);
+      const entry = new DataView(new ArrayBuffer(46));
+      entry.setUint32(0, 0x02014b50, true); entry.setUint16(4, 20, true); entry.setUint16(6, 20, true); entry.setUint16(8, 0x800, true);
+      entry.setUint32(16, crc, true); entry.setUint32(20, bytes.length, true); entry.setUint32(24, bytes.length, true);
+      entry.setUint16(28, name.length, true); entry.setUint32(42, offset, true);
+      central.push(entry.buffer, name);
+      offset += 30 + name.length + bytes.length;
+      onProgress?.(++done, files.length);
+    }
+    const cdSize = central.reduce((sum, part) => sum + part.byteLength, 0), end = new DataView(new ArrayBuffer(22));
+    end.setUint32(0, 0x06054b50, true); end.setUint16(8, files.length, true); end.setUint16(10, files.length, true);
+    end.setUint32(12, cdSize, true); end.setUint32(16, offset, true);
+    return new Blob([...parts, ...central, end.buffer], { type: 'application/zip' });
+  }
+
+  return { open, build, crc32, safePath, LIMITS, ZipError };
+})();
+
+// ---- Store: content-addressed files (OPFS, IndexedDB as fallback) plus metadata for session and libraries in IndexedDB. ----
+const Store = (() => {
+  const DB_NAME = 's-parameter-analyzer', DB_VERSION = 2, CONTENT_DIR = 'inhalt', MAIN_LIBRARY = 'lib-main';
+  const MAX_FILE = 100 * 1024 * 1024;
+  let db = null, contentDir = null, ready = null;
+  const info = { idb: false, opfs: false, opfsWrite: false, error: '', blocked: false };
+  // Test hook: lets the regression tests interrupt an import at a defined point.
+  const hooks = { beforeCommit: null, afterWrite: null };
+
+  class StoreError extends Error {
+    constructor(code, message) { super(message); this.name = 'StoreError'; this.code = code; }
+  }
+  const uid = prefix => prefix + '-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+  const keyOf = entry => (entry.path ? entry.path + '/' : '') + entry.name;
+  const isQuota = error => error?.name === 'QuotaExceededError' || /quota/i.test(error?.message || '');
+
+  // SHA-256: Web Crypto where available (secure context), otherwise the same digest in plain JavaScript.
+  const K = new Uint32Array([0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174, 0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da, 0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967, 0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85, 0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070, 0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3, 0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2]);
+  function sha256js(bytes) {
+    const h = new Uint32Array([0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19]);
+    const length = bytes.length, total = (length + 9 + 63) & ~63, data = new Uint8Array(total), w = new Uint32Array(64);
+    data.set(bytes); data[length] = 0x80;
+    const view = new DataView(data.buffer);
+    view.setUint32(total - 8, Math.floor(length / 0x20000000), false); view.setUint32(total - 4, (length << 3) >>> 0, false);
+    for (let at = 0; at < total; at += 64) {
+      for (let i = 0; i < 16; i++) w[i] = view.getUint32(at + 4 * i, false);
+      for (let i = 16; i < 64; i++) {
+        const a = w[i - 15], b = w[i - 2];
+        w[i] = (w[i - 16] + ((a >>> 7 | a << 25) ^ (a >>> 18 | a << 14) ^ (a >>> 3)) + w[i - 7] + ((b >>> 17 | b << 15) ^ (b >>> 19 | b << 13) ^ (b >>> 10))) >>> 0;
+      }
+      let [a, b, c, d, e, f, g, k] = h;
+      for (let i = 0; i < 64; i++) {
+        const t1 = (k + ((e >>> 6 | e << 26) ^ (e >>> 11 | e << 21) ^ (e >>> 25 | e << 7)) + ((e & f) ^ (~e & g)) + K[i] + w[i]) >>> 0;
+        const t2 = (((a >>> 2 | a << 30) ^ (a >>> 13 | a << 19) ^ (a >>> 22 | a << 10)) + ((a & b) ^ (a & c) ^ (b & c))) >>> 0;
+        k = g; g = f; f = e; e = (d + t1) >>> 0; d = c; c = b; b = a; a = (t1 + t2) >>> 0;
+      }
+      h[0] += a; h[1] += b; h[2] += c; h[3] += d; h[4] += e; h[5] += f; h[6] += g; h[7] += k;
+    }
+    return [...h].map(v => v.toString(16).padStart(8, '0')).join('');
+  }
+  async function hashOf(bytes) {
+    if (globalThis.crypto?.subtle) {
+      try {
+        return [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))].map(v => v.toString(16).padStart(2, '0')).join('');
+      } catch { /* fall through */ }
+    }
+    return sha256js(bytes);
+  }
+
+  // ---- IndexedDB ----
+  function openDb() {
+    return new Promise((resolve, reject) => {
+      let request;
+      try { request = indexedDB.open(DB_NAME, DB_VERSION); } catch (error) { reject(error); return; }
+      request.onupgradeneeded = () => {
+        const d = request.result;
+        // Version 1 kept the last opened files in "files"; the store stays untouched so that a migration can never lose it.
+        if (!d.objectStoreNames.contains('files')) d.createObjectStore('files', { keyPath: 'id' });
+        if (!d.objectStoreNames.contains('entries')) {
+          const entries = d.createObjectStore('entries', { keyPath: 'id' });
+          entries.createIndex('scope', 'scope');
+          entries.createIndex('hash', 'hash');
+        }
+        if (!d.objectStoreNames.contains('imports')) d.createObjectStore('imports', { keyPath: 'id' });
+        if (!d.objectStoreNames.contains('libraries')) d.createObjectStore('libraries', { keyPath: 'id' });
+        if (!d.objectStoreNames.contains('meta')) d.createObjectStore('meta', { keyPath: 'key' });
+        if (!d.objectStoreNames.contains('blobs')) d.createObjectStore('blobs', { keyPath: 'hash' });
+      };
+      request.onblocked = () => { info.blocked = true; };
+      request.onsuccess = () => {
+        const d = request.result;
+        d.onversionchange = () => { d.close(); db = null; info.idb = false; };
+        resolve(d);
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+  const wrap = request => new Promise((resolve, reject) => { request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error); });
+  function tx(stores, mode, work) {
+    return new Promise((resolve, reject) => {
+      if (!db) { reject(new StoreError('unavailable', 'Der Browserspeicher ist nicht verfügbar.')); return; }
+      let t, result;
+      try { t = db.transaction(stores, mode); } catch (error) { reject(error); return; }
+      t.oncomplete = () => resolve(result);
+      t.onerror = () => reject(t.error);
+      t.onabort = () => reject(t.error || new StoreError('aborted', 'Der Schreibvorgang wurde abgebrochen.'));
+      try {
+        const out = work(...[].concat(stores).map(name => t.objectStore(name)));
+        if (out && typeof out.then === 'function') out.then(value => { result = value; }, error => { try { t.abort(); } catch { /* already finished */ } reject(error); });
+        else result = out;
+      } catch (error) { try { t.abort(); } catch { /* already finished */ } reject(error); }
+    });
+  }
+  const getAll = (store, index = null, query = null) => tx(store, 'readonly', s => wrap((index ? s.index(index) : s).getAll(query)));
+  const getOne = (store, key) => tx(store, 'readonly', s => wrap(s.get(key)));
+  const getMeta = async key => (await getOne('meta', key))?.value ?? null;
+  const setMeta = (key, value) => tx('meta', 'readwrite', s => { s.put({ key, value }); });
+
+  async function init() {
+    ready ??= (async () => {
+      try {
+        db = await Promise.race([openDb(), new Promise((_, reject) => setTimeout(() => reject(new StoreError('blocked', 'Die Datenbank wird von einem anderen Tab mit einer älteren Version blockiert. Schließe die anderen Tabs der App und lade neu.')), 4000))]);
+        info.idb = true;
+      } catch (error) {
+        info.error = error?.message || String(error);
+      }
+      try {
+        if (navigator.storage?.getDirectory) {
+          const root = await navigator.storage.getDirectory();
+          contentDir = await root.getDirectoryHandle(CONTENT_DIR, { create: true });
+          info.opfs = true;
+          info.opfsWrite = typeof FileSystemFileHandle !== 'undefined' && 'createWritable' in FileSystemFileHandle.prototype;
+        }
+      } catch { contentDir = null; }
+      return info;
+    })();
+    return ready;
+  }
+  const persistent = () => !!db;
+
+  // ---- Content: one file per SHA-256. createWritable() writes to a swap file and replaces atomically on close(). ----
+  async function contentFile(hash) {
+    if (contentDir) {
+      try { return await (await contentDir.getFileHandle(hash)).getFile(); } catch { /* not in OPFS */ }
+    }
+    if (db) {
+      const record = await getOne('blobs', hash);
+      if (record) return record.blob;
+    }
+    return null;
+  }
+  async function putContent(bytes, hash) {
+    const existing = await contentFile(hash);
+    if (existing && existing.size === bytes.length) return 'kept';
+    if (contentDir && info.opfsWrite) {
+      try {
+        const handle = await contentDir.getFileHandle(hash, { create: true });
+        const writer = await handle.createWritable();
+        try { await writer.write(bytes); await writer.close(); }
+        catch (error) { await writer.abort?.().catch(() => {}); throw error; }
+        return 'opfs';
+      } catch (error) {
+        try { await contentDir.removeEntry(hash); } catch { /* nothing written */ }
+        if (isQuota(error)) throw new StoreError('quota', 'Der Speicherplatz des Browsers reicht nicht aus.');
+      }
+    }
+    try {
+      await tx('blobs', 'readwrite', s => { s.put({ hash, size: bytes.length, blob: new Blob([bytes]) }); });
+    } catch (error) {
+      if (isQuota(error)) throw new StoreError('quota', 'Der Speicherplatz des Browsers reicht nicht aus.');
+      throw new StoreError('write', 'Die Datei konnte nicht gespeichert werden: ' + (error?.message || error));
+    }
+    return 'idb';
+  }
+  async function removeContent(hash) {
+    if (contentDir) { try { await contentDir.removeEntry(hash); } catch { /* not there */ } }
+    if (db) { try { await tx('blobs', 'readwrite', s => { s.delete(hash); }); } catch { /* not there */ } }
+  }
+  async function verifyContent(hash, size) {
+    const file = await contentFile(hash);
+    if (!file) return 'Die gespeicherte Datei fehlt.';
+    if (file.size !== size) return 'Die gespeicherte Datei hat eine andere Länge.';
+    if (await hashOf(new Uint8Array(await file.arrayBuffer())) !== hash) return 'Die gespeicherte Datei weicht vom Original ab.';
+    return '';
+  }
+  // Content without any entry is removed. Runs after deletions and at start (never while an import holds the lock).
+  async function collect(hashes) {
+    for (const hash of new Set(hashes)) {
+      const used = await tx('entries', 'readonly', s => wrap(s.index('hash').count(hash)));
+      if (!used) await removeContent(hash);
+    }
+  }
+  const withLock = (mode, work) => navigator.locks?.request ? navigator.locks.request('spa-store', mode === 'try' ? { ifAvailable: true } : {}, lock => mode === 'try' && !lock ? null : work()) : work();
+  async function sweep() {
+    if (!db) return 0;
+    return await withLock('try', async () => {
+      const used = new Set((await getAll('entries')).map(entry => entry.hash));
+      const stale = [];
+      if (contentDir) for await (const [name, handle] of contentDir.entries()) if (handle.kind === 'file' && !used.has(name) && !name.endsWith('.crswap')) stale.push(name);
+      for (const record of await tx('blobs', 'readonly', s => wrap(s.getAllKeys()))) if (!used.has(record)) stale.push(record);
+      for (const hash of stale) await removeContent(hash);
+      return stale.length;
+    }) ?? 0;
+  }
+
+  // ---- Entries, libraries ----
+  const visible = entry => !entry.pending;
+  async function entries(scope, libId = null) {
+    if (!db) return [];
+    const list = (await getAll('entries', 'scope', scope)).filter(visible);
+    return libId ? list.filter(entry => entry.libId === libId) : list;
+  }
+  const entry = id => getOne('entries', id);
+  async function updateEntry(id, patch) {
+    if (!db) return null;
+    return tx('entries', 'readwrite', async s => {
+      const record = await wrap(s.get(id));
+      if (!record) return null;
+      Object.assign(record, typeof patch === 'function' ? patch(record) : patch);
+      s.put(record);
+      return record;
+    });
+  }
+  async function removeEntries(ids) {
+    if (!db || !ids.length) return 0;
+    const hashes = [];
+    await tx('entries', 'readwrite', async s => {
+      for (const id of ids) {
+        const record = await wrap(s.get(id));
+        if (record) { hashes.push(record.hash); s.delete(id); }
+      }
+    });
+    await collect(hashes);
+    return hashes.length;
+  }
+  async function fileOf(record) {
+    const blob = await contentFile(record.hash);
+    if (!blob) throw new StoreError('missing', 'Die gespeicherte Datei fehlt im Browserspeicher. Bitte erneut importieren.');
+    return new File([blob], record.name);
+  }
+  // Replaces the content of one entry (e.g. after a port profile was written into the file).
+  async function replaceContent(id, blob) {
+    const bytes = new Uint8Array(await blob.arrayBuffer()), hash = await hashOf(bytes);
+    const old = await entry(id);
+    if (!old) return null;
+    await putContent(bytes, hash);
+    const problem = await verifyContent(hash, bytes.length);
+    if (problem) throw new StoreError('verify', problem);
+    const record = await updateEntry(id, { hash, size: bytes.length });
+    await collect([old.hash]);
+    return record;
+  }
+
+  async function libraries() {
+    if (!db) return [];
+    const list = await getAll('libraries');
+    if (!list.length) {
+      const main = { id: MAIN_LIBRARY, name: 'Bibliothek', createdAt: Date.now() };
+      await tx('libraries', 'readwrite', s => { s.put(main); });
+      return [main];
+    }
+    return list.sort((a, b) => a.createdAt - b.createdAt);
+  }
+  async function createLibrary(name) {
+    const clean = String(name ?? '').replace(/[\u0000-\u001f]/g, ' ').trim().slice(0, 60);
+    if (!clean) throw new StoreError('name', 'Gib einen Namen für die Bibliothek ein.');
+    const list = await libraries();
+    if (list.some(lib => lib.name.toLowerCase() === clean.toLowerCase())) throw new StoreError('name', 'Eine Bibliothek mit diesem Namen gibt es schon.');
+    const lib = { id: uid('lib'), name: clean, createdAt: Date.now() };
+    await tx('libraries', 'readwrite', s => { s.put(lib); });
+    return lib;
+  }
+  async function removeLibrary(id) {
+    const list = await entries('library', id);
+    await removeEntries(list.map(item => item.id));
+    if (id !== MAIN_LIBRARY) await tx('libraries', 'readwrite', s => { s.delete(id); });
+  }
+
+  // ---- Import pipeline: prepare → read and validate → write content → verify → commit metadata in one transaction. ----
+  function uniqueName(name, taken, dir) {
+    const dot = name.lastIndexOf('.'), base = dot > 0 ? name.slice(0, dot) : name, ext = dot > 0 ? name.slice(dot) : '';
+    for (let n = 2; ; n++) {
+      const next = base + ' (' + n + ')' + ext;
+      if (!taken.has((dir ? dir + '/' : '') + next)) return next;
+    }
+  }
+  async function estimate() {
+    try {
+      const e = await navigator.storage?.estimate?.();
+      return e ? { usage: e.usage ?? null, quota: e.quota ?? null } : { usage: null, quota: null };
+    } catch { return { usage: null, quota: null }; }
+  }
+
+  // files: [{ path, name, read() → Blob | Uint8Array, problem?, extra? }] or already stored content { path, name, hash, size }.
+  async function importBatch({ name, kind = 'files', scope = 'session', libId = null, files, resolveConflict = null, onProgress = null, signal = null }) {
+    await init();
+    const result = { persisted: persistent(), importId: null, name, total: files.length, entries: [], added: 0, identical: 0, replaced: 0, renamed: 0, skipped: 0, failed: [], cancelled: false, bytes: 0 };
+    if (!db) return result;
+    if (scope === 'library') libId ??= MAIN_LIBRARY;
+    const cancelled = () => !!signal?.aborted;
+    return await withLock('wait', async () => {
+      const importId = uid('imp'), written = [];
+      result.importId = importId;
+      const record = { id: importId, name, kind, scope, libId, state: 'pending', total: files.length, done: 0, startedAt: Date.now(), finishedAt: null };
+      await tx('imports', 'readwrite', s => { s.put(record); });
+      const abandon = async () => {
+        await tx('imports', 'readwrite', s => { s.delete(importId); });
+        await collect(written);
+        result.cancelled = true;
+        result.entries = [];
+        return result;
+      };
+      const known = files.reduce((sum, file) => sum + (file.hash ? 0 : file.size || 0), 0), space = await estimate();
+      if (known && space.quota !== null && space.usage !== null && known * 1.1 > space.quota - space.usage) {
+        await tx('imports', 'readwrite', s => { s.delete(importId); });
+        throw new StoreError('quota', 'Der Speicherplatz des Browsers reicht für diesen Import nicht aus.');
+      }
+      const progress = (phase, done) => onProgress?.({ phase, done, total: files.length, stored: candidates.length, failed: result.failed.length, bytes: result.bytes });
+      const candidates = [];
+      let quotaHit = false;
+      for (let i = 0; i < files.length; i++) {
+        if (cancelled()) return abandon();
+        const file = files[i];
+        try {
+          if (file.problem) throw new StoreError('invalid', file.problem);
+          if (quotaHit) throw new StoreError('quota', 'Der Speicherplatz des Browsers reicht nicht aus.');
+          let hash = file.hash, size = file.size;
+          if (!hash) {
+            const data = await file.read();
+            const bytes = data instanceof Uint8Array ? data : new Uint8Array(await data.arrayBuffer());
+            if (bytes.length > MAX_FILE) throw new StoreError('invalid', 'Die Datei überschreitet 100 MiB.');
+            if (!bytes.length) throw new StoreError('invalid', 'Die Datei ist leer.');
+            hash = await hashOf(bytes); size = bytes.length;
+            const how = await putContent(bytes, hash);
+            if (how !== 'kept') written.push(hash);
+            await hooks.afterWrite?.(i, file);
+          }
+          candidates.push({ path: file.path || '', name: file.name, hash, size, extra: file.extra || null });
+          result.bytes += size;
+        } catch (error) {
+          if (error?.code === 'quota') quotaHit = true;
+          result.failed.push({ path: file.path || '', name: file.name, reason: error?.message || String(error), index: i });
+        }
+        if ((i & 7) === 7) {
+          record.done = i + 1;
+          tx('imports', 'readwrite', s => { s.put(record); }).catch(() => {});
+        }
+        progress('write', i + 1);
+      }
+      if (cancelled()) return abandon();
+
+      // Verify what is really on disk before anything becomes visible.
+      const verified = [];
+      for (let i = 0; i < candidates.length; i++) {
+        if (cancelled()) return abandon();
+        const c = candidates[i], problem = await verifyContent(c.hash, c.size);
+        if (problem) result.failed.push({ path: c.path, name: c.name, reason: problem });
+        else verified.push(c);
+        onProgress?.({ phase: 'verify', done: i + 1, total: candidates.length, stored: verified.length, failed: result.failed.length, bytes: result.bytes });
+      }
+
+      // Conflicts: same place and name. Identical content is not stored twice, different content needs a decision.
+      const current = (await getAll('entries', 'scope', scope)).filter(e => visible(e) && (scope !== 'library' || e.libId === libId));
+      const byKey = new Map(current.map(e => [keyOf(e), e])), taken = new Set(byKey.keys());
+      const fresh = [], conflicts = [];
+      for (const c of verified) {
+        const key = keyOf(c), old = byKey.get(key);
+        if (old && old.hash === c.hash) { result.identical++; result.entries.push(old); continue; }
+        if (old) { conflicts.push({ candidate: c, old }); continue; }
+        if (taken.has(key)) { c.name = uniqueName(c.name, taken, c.path); result.renamed++; }
+        taken.add(keyOf(c));
+        fresh.push(c);
+      }
+      const removeIds = [], removeHashes = [];
+      if (conflicts.length) {
+        const decision = resolveConflict ? await resolveConflict(conflicts.map(({ candidate }) => keyOf(candidate))) : 'rename';
+        if (decision === 'cancel' || cancelled()) return abandon();
+        for (const { candidate, old } of conflicts) {
+          if (decision === 'skip') { result.skipped++; result.entries.push(old); continue; }
+          if (decision === 'replace') {
+            removeIds.push(old.id); removeHashes.push(old.hash);
+            candidate.keep = { settings: old.settings ?? null, subs: old.subs ?? null };
+            result.replaced++;
+          } else {
+            candidate.name = uniqueName(candidate.name, taken, candidate.path);
+            taken.add(keyOf(candidate));
+            result.renamed++;
+          }
+          fresh.push(candidate);
+        }
+      }
+      const now = Date.now();
+      const created = fresh.map((c, i) => ({
+        id: uid('e') + i, scope, libId: scope === 'library' ? libId : null, importId, path: c.path, name: c.name, hash: c.hash, size: c.size,
+        addedAt: now, settings: c.keep?.settings ?? c.extra?.settings ?? null, subs: c.keep?.subs ?? c.extra?.subs ?? null,
+        ports: c.extra?.ports ?? (Number(c.name.match(/\.s(\d+)p$/i)?.[1]) || null), type: c.extra?.type ?? '', source: c.extra?.source ?? name
+      }));
+      await hooks.beforeCommit?.(result);
+      if (cancelled()) return abandon();
+      // One transaction: either every entry of this import and its "committed" mark exist, or none of them.
+      record.state = 'committed'; record.finishedAt = Date.now(); record.done = files.length;
+      record.added = created.length; record.failed = result.failed.map(f => ({ path: f.path, name: f.name, reason: f.reason }));
+      await tx(['entries', 'imports', 'meta'], 'readwrite', (e, imports, meta) => {
+        for (const id of removeIds) e.delete(id);
+        for (const item of created) e.put(item);
+        imports.put(record);
+        meta.put({ key: 'lastSaved', value: record.finishedAt });
+      });
+      await collect(removeHashes);
+      result.added = created.length;
+      result.entries.push(...created);
+      return result;
+    });
+  }
+
+  // Imports that never reached their commit: nothing of them is visible; the content they wrote is removed.
+  async function recover() {
+    if (!db) return [];
+    return await withLock('try', async () => {
+      const open = (await getAll('imports')).filter(item => item.state === 'pending');
+      if (!open.length) return [];
+      const ids = new Set(open.map(item => item.id));
+      const leftovers = (await getAll('entries')).filter(item => item.pending && ids.has(item.importId));
+      await tx(['entries', 'imports'], 'readwrite', (e, imports) => {
+        for (const item of leftovers) e.delete(item.id);
+        for (const item of open) imports.put({ ...item, state: 'interrupted', finishedAt: Date.now() });
+      });
+      return open;
+    }) ?? [];
+  }
+  const dismissImport = id => tx('imports', 'readwrite', s => { s.delete(id); });
+  const interrupted = async () => db ? (await getAll('imports')).filter(item => item.state === 'interrupted') : [];
+  async function trimImports() {
+    if (!db) return;
+    const done = (await getAll('imports')).filter(item => item.state === 'committed').sort((a, b) => b.finishedAt - a.finishedAt);
+    if (done.length > 40) await tx('imports', 'readwrite', s => { for (const item of done.slice(40)) s.delete(item.id); });
+  }
+
+  // ---- Diagnosis, self test, backup ----
+  async function diagnose() {
+    await init();
+    const space = await estimate();
+    let persisted = null;
+    try { persisted = navigator.storage?.persisted ? await navigator.storage.persisted() : null; } catch { persisted = null; }
+    const all = db ? (await getAll('entries')).filter(visible) : [];
+    return {
+      idb: info.idb, opfs: info.opfs, opfsWrite: info.opfsWrite, error: info.error, backend: !db ? 'memory' : contentDir && info.opfsWrite ? 'opfs' : 'idb',
+      usage: space.usage, quota: space.quota, persisted,
+      files: new Set(all.map(item => item.hash)).size, bytes: [...new Map(all.map(item => [item.hash, item.size])).values()].reduce((a, b) => a + b, 0),
+      sessionFiles: all.filter(item => item.scope === 'session').length, libraryFiles: all.filter(item => item.scope === 'library').length,
+      libraries: db ? (await libraries()).length : 0, lastSaved: db ? await getMeta('lastSaved') : null, session: db ? await getMeta('session') : null
+    };
+  }
+  async function requestPersist() {
+    try { return navigator.storage?.persist ? await navigator.storage.persist() : null; } catch { return null; }
+  }
+  // Writes a test file through the same path as an import, reads it back, compares and removes it.
+  async function selfTest() {
+    await init();
+    const steps = [], step = (name, ok, detail = '') => { steps.push({ name, ok, detail }); return ok; };
+    if (!step('IndexedDB öffnen', !!db, info.error)) return { ok: false, steps };
+    const bytes = new TextEncoder().encode('S-Parameter Analyzer · Speichertest · ' + Date.now() + ' · äöü ' + Math.random());
+    const hash = await hashOf(bytes);
+    let ok = true;
+    try {
+      const how = await putContent(bytes, hash);
+      step('Testdatei schreiben', true, how === 'opfs' ? 'OPFS' : 'IndexedDB');
+      const problem = await verifyContent(hash, bytes.length);
+      ok = step('Testdatei lesen und vergleichen', !problem, problem) && ok;
+      await tx('meta', 'readwrite', s => { s.put({ key: 'selftest', value: Date.now() }); });
+      ok = step('Metadaten schreiben', (await getMeta('selftest')) > 0) && ok;
+    } catch (error) {
+      ok = step('Testdatei schreiben', false, error?.message || String(error));
+    }
+    try {
+      await removeContent(hash);
+      ok = step('Testdatei entfernen', !(await contentFile(hash))) && ok;
+    } catch (error) { ok = step('Testdatei entfernen', false, error?.message || String(error)); }
+    return { ok, steps };
+  }
+
+  const BACKUP_FILE = 'spa-backup.json';
+  async function exportBackup(settings = {}, onProgress = null) {
+    const all = (await getAll('entries')).filter(visible), files = [], seen = new Set();
+    for (const item of all) {
+      if (seen.has(item.hash)) continue;
+      seen.add(item.hash);
+      const blob = await contentFile(item.hash);
+      if (!blob) throw new StoreError('missing', 'Die Datei ' + keyOf(item) + ' fehlt im Browserspeicher. Die Sicherung wurde nicht erstellt.');
+      files.push({ path: CONTENT_DIR + '/' + item.hash, blob });
+    }
+    const manifest = {
+      format: 'spa-backup', version: 1, createdAt: new Date().toISOString(), libraries: await libraries(),
+      entries: all.map(({ id, scope, libId, path, name, hash, size, addedAt, settings: s, subs, ports, type, source }) => ({ id, scope, libId, path, name, hash, size, addedAt, settings: s, subs, ports, type, source })),
+      session: await getMeta('session'), settings
+    };
+    files.unshift({ path: BACKUP_FILE, blob: new Blob([JSON.stringify(manifest)], { type: 'application/json' }) });
+    return { blob: await Zip.build(files, onProgress), files: seen.size, entries: all.length };
+  }
+  async function readBackup(blob) {
+    const zip = await Zip.open(blob), head = zip.entries.find(item => item.dir === '' && item.name === BACKUP_FILE);
+    if (!head) return null;
+    let manifest;
+    try { manifest = JSON.parse(new TextDecoder().decode(await head.read())); } catch { throw new StoreError('backup', 'Die Sicherung ist beschädigt (Inhaltsverzeichnis nicht lesbar).'); }
+    if (manifest?.format !== 'spa-backup' || !Array.isArray(manifest.entries)) throw new StoreError('backup', 'Die Datei ist keine Sicherung des S-Parameter Analyzers.');
+    return { manifest, zip };
+  }
+  // Restores additively: nothing existing is overwritten; a different file under the same name is kept under a new name.
+  async function importBackup({ manifest, zip }, { onProgress = null, signal = null } = {}) {
+    const content = new Map(zip.entries.filter(item => item.dir === CONTENT_DIR).map(item => [item.name, item]));
+    const mine = await libraries(), libMap = new Map();
+    for (const lib of Array.isArray(manifest.libraries) ? manifest.libraries : []) {
+      const same = mine.find(item => item.id === lib.id) || mine.find(item => item.name.toLowerCase() === String(lib.name).toLowerCase());
+      libMap.set(lib.id, same ? same.id : (await createLibrary(String(lib.name))).id);
+    }
+    const summary = { added: 0, identical: 0, renamed: 0, failed: [], settings: manifest.settings ?? null, cancelled: false };
+    const groups = new Map();
+    for (const item of manifest.entries) {
+      if (!item || typeof item.name !== 'string' || !/^[0-9a-f]{64}$/.test(item.hash || '')) continue;
+      const scope = item.scope === 'library' ? 'library' : 'session', libId = scope === 'library' ? libMap.get(item.libId) ?? MAIN_LIBRARY : null;
+      const key = scope + '|' + (libId ?? '');
+      if (!groups.has(key)) groups.set(key, { scope, libId, files: [] });
+      const safe = Zip.safePath((item.path ? item.path + '/' : '') + item.name);
+      const source = content.get(item.hash);
+      groups.get(key).files.push({
+        path: safe?.dir ?? '', name: safe?.name ?? item.name, size: item.size,
+        problem: !safe ? 'Unsicherer oder ungültiger Pfad in der Sicherung.' : !source ? 'Der Dateiinhalt fehlt in der Sicherung.' : '',
+        read: async () => {
+          const bytes = await source.read();
+          if (await hashOf(bytes) !== item.hash) throw new StoreError('backup', 'Der Dateiinhalt in der Sicherung ist beschädigt.');
+          return bytes;
+        },
+        extra: { settings: item.settings ?? null, subs: item.subs ?? null, ports: item.ports ?? null, type: item.type ?? '', source: item.source ?? 'Sicherung' }
+      });
+    }
+    for (const group of groups.values()) {
+      const r = await importBatch({ name: 'Sicherung', kind: 'backup', scope: group.scope, libId: group.libId, files: group.files, resolveConflict: async () => 'rename', onProgress, signal });
+      if (r.cancelled) { summary.cancelled = true; break; }
+      summary.added += r.added; summary.identical += r.identical; summary.renamed += r.renamed; summary.failed.push(...r.failed);
+    }
+    return summary;
+  }
+
+  // ---- Migration from version 1: "Zuletzt geöffnet" (IndexedDB "files") and the folder library (OPFS "bibliothek"). ----
+  async function migrate() {
+    if (!db) return { recent: 0, shelf: 0 };
+    const out = { recent: 0, shelf: 0 };
+    if (!(await getMeta('migrated-recent'))) {
+      try {
+        const old = (await getAll('files')).filter(item => item?.blob && item.name).sort((a, b) => a.savedAt - b.savedAt);
+        if (old.length) {
+          const r = await importBatch({ name: 'Zuletzt geöffnet', kind: 'migration', scope: 'session', files: old.map(item => ({ path: '', name: item.name, size: item.size, read: async () => item.blob, extra: { settings: item.settings ?? null } })) });
+          out.recent = r.added;
+          const last = r.entries.find(e => e.name === old.at(-1).name);
+          if (last && !(await getMeta('session'))) await setMeta('session', { entryId: last.id, sub: null, updatedAt: Date.now() });
+          if (r.failed.length) throw new Error('unvollständig');
+        }
+        await setMeta('migrated-recent', Date.now());
+      } catch { /* retried at the next start; the old store is never deleted */ }
+    }
+    if (!(await getMeta('migrated-shelf'))) {
+      try {
+        const root = await navigator.storage?.getDirectory?.();
+        let shelf = null;
+        try { shelf = await root?.getDirectoryHandle('bibliothek'); } catch { shelf = null; }
+        if (shelf) {
+          const dec = name => { try { return decodeURIComponent(name); } catch { return name; } };
+          const files = [];
+          for await (const [folder, dir] of shelf.entries()) {
+            if (dir.kind !== 'directory') continue;
+            for await (const [name, handle] of dir.entries()) {
+              if (handle.kind === 'file') files.push({ path: dec(folder), name: dec(name), read: () => handle.getFile(), extra: { type: dec(folder), source: 'Bibliothek (Version 1)' } });
+            }
+          }
+          if (files.length) {
+            const r = await importBatch({ name: 'Bibliothek (Version 1)', kind: 'migration', scope: 'library', libId: MAIN_LIBRARY, files });
+            out.shelf = r.added + r.identical;
+            if (r.failed.length || out.shelf !== files.length) throw new Error('unvollständig');
+          }
+          // The old folder is only removed after every file was verified in the new store.
+          await root.removeEntry('bibliothek', { recursive: true });
+        }
+        await setMeta('migrated-shelf', Date.now());
+      } catch { /* retried at the next start; the old folder stays */ }
+    }
+    return out;
+  }
+
+  return {
+    init, persistent, info, hooks, hashOf, sha256js, keyOf, entries, entry, updateEntry, removeEntries, fileOf, replaceContent, verifyContent,
+    libraries, createLibrary, removeLibrary, importBatch, recover, interrupted, dismissImport, trimImports, sweep, getMeta, setMeta,
+    diagnose, requestPersist, selfTest, estimate, exportBackup, readBackup, importBackup, migrate, MAIN_LIBRARY, MAX_FILE, StoreError
+  };
+})();
+</script>
 <script>
 'use strict';
 
@@ -4616,7 +5570,7 @@ const Plot = (() => {
     axes: {}, markers: [0, null, null, null], activeMarker: 0,
     compare: { ids: [], delta: false }, profile: { name: '', source: 'default', score: null, matches: [], key: '' },
     viewMode: 0, hiddenTraces: new Set(), collapsed: mobile.matches, job: 0, importJob: 0,
-    busy: false, error: '', memo: new Map(), recordId: null, view: null, dialogLoad: null, pairDraft: null, toastTimer: null
+    busy: false, error: '', memo: new Map(), view: null, dialogLoad: null, pairDraft: null, toastTimer: null
   };
   const axis = () => state.axes[state.tab] ??= defaultAxes(state.tab);
   // Log Y only for quantities that are positive by nature (|Z|, L, C, ...); dB and phase stay linear.
@@ -4776,52 +5730,6 @@ const Plot = (() => {
     render();
     syncCompare();
   }
-
-  // ---- Local library: the last files and their settings stay on this device (IndexedDB). ----
-  const Library = (() => {
-    const MAX_FILES = 6, MAX_BYTES = 30 * 1024 * 1024;
-    let opening = null;
-    function open() {
-      opening ??= new Promise((resolve, reject) => {
-        const request = indexedDB.open('s-parameter-analyzer', 1);
-        request.onupgradeneeded = () => request.result.createObjectStore('files', { keyPath: 'id' });
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error);
-      });
-      return opening;
-    }
-    async function run(mode, work) {
-      const db = await open();
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction('files', mode);
-        const request = work(tx.objectStore('files'));
-        tx.oncomplete = () => resolve(request?.result);
-        tx.onerror = () => reject(tx.error);
-        tx.onabort = () => reject(tx.error);
-      });
-    }
-    const list = async () => ((await run('readonly', store => store.getAll())) || []).sort((a, b) => b.savedAt - a.savedAt);
-    const get = id => run('readonly', store => store.get(id));
-    const remove = id => run('readwrite', store => store.delete(id));
-    const clear = () => run('readwrite', store => store.clear());
-    async function remember(file) {
-      if (file.size > MAX_BYTES) return null;
-      const id = file.name + ':' + file.size;
-      const previous = await get(id);
-      const record = { id, name: file.name, size: file.size, blob: file, savedAt: Date.now(), settings: previous?.settings ?? null };
-      await run('readwrite', store => store.put(record));
-      const all = await list();
-      await Promise.all(all.slice(MAX_FILES).map(item => remove(item.id)));
-      return record;
-    }
-    async function saveSettings(id, settings) {
-      const record = await get(id);
-      if (!record) return;
-      record.settings = settings;
-      await run('readwrite', store => store.put(record));
-    }
-    return { list, get, remove, clear, remember, saveSettings };
-  })();
 
   function decodeText(bytes) {
     try {
@@ -5149,14 +6057,27 @@ const Plot = (() => {
   const MAX_SESSION = 1000, MAX_COMPARE = 6, KEEP_PARSED = 6;
   const FILE_COLORS = ['#c4622d', '#3266ce', '#008879', '#8a55b6', '#a26016', '#ca5260'];
   const FILE_DASH = [[7, 3], [2, 3], [9, 3, 2, 3], [12, 4], [4, 2], [1, 2]];
-  const session = { items: [], current: null, seq: 0, filter: '', parsed: [] };
+  const session = { items: [], current: null, seq: 0, filter: '', parsed: [], selecting: false, picked: new Set(), notices: [] };
   const compareCache = new Map();
   const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
   const sessionItem = id => session.items.find(item => item.id === id);
   const blankProfile = () => ({ name: '', source: 'default', score: null, matches: [], key: '', blocked: null });
   const configKey = () => JSON.stringify(state.config);
-  const fileSource = (file, path = '') => ({ name: file.name, path, size: file.size, handle: null, getFile: async () => file });
-  const handleSource = (handle, path = '') => ({ name: handle.name, path, size: null, handle, getFile: () => handle.getFile() });
+  // A descriptor is a file on its way into the store: { path, name, size, read() }.
+  const descKey = desc => (desc.path ? desc.path + '/' : '') + desc.name;
+  const fileDesc = (file, path = '') => ({ path, name: file.name, size: file.size, read: async () => file });
+  const handleDesc = (handle, path = '') => ({ path, name: handle.name, size: null, handle, read: () => handle.getFile() });
+  // Sources feed the session list. Stored ones read from the durable store; volatile ones only live in memory.
+  const entrySource = (entry, handle = null) => ({
+    name: entry.name, path: entry.path, size: entry.size, handle, entryId: entry.id, importId: entry.importId, pack: entry.source || '',
+    filePath: entry.path, fileName: entry.name, saved: entry.settings ?? null, subs: entry.subs ?? null, volatile: false,
+    getFile: async () => Store.fileOf(await Store.entry(entry.id) ?? entry)
+  });
+  const volatileSource = desc => ({
+    name: desc.name, path: desc.path, size: desc.size ?? null, handle: desc.handle ?? null, entryId: null, importId: null, pack: '',
+    filePath: desc.path, fileName: desc.name, saved: null, subs: null, volatile: true,
+    getFile: async () => { const data = await desc.read(); return new File([data], desc.name); }
+  });
 
   function addItems(sources) {
     const added = [];
@@ -5169,7 +6090,7 @@ const Plot = (() => {
       } else {
         if (session.items.length >= MAX_SESSION) break;
         item = { id: 'f' + (++session.seq), key, ports: Number(source.name.match(/\.s(\d+)p$/i)?.[1]) || null,
-          dataset: null, settings: null, profile: null, recordId: null, error: '', ...source };
+          dataset: null, settings: source.saved ?? null, profile: source.saved ? { ...blankProfile(), source: 'local', name: source.saved.profileName || '' } : null, error: '', ...source };
         session.items.push(item);
       }
       added.push(item);
@@ -5212,7 +6133,7 @@ const Plot = (() => {
     return JSON.parse(JSON.stringify({
       config: state.config, tab: state.tab, basis: state.basis, sFormat: state.sFormat, sKeys: state.sKeys,
       z: state.z, cispr: state.cispr, cmc: state.cmc, esb: state.esb, pairIn: state.pairIn, pairOut: state.pairOut,
-      markers: state.markers.map(i => i === null ? null : fs[i]), profileName: state.profile.name
+      markers: state.markers.map(i => i === null ? null : fs[i]), profileName: state.profile.name, axes: state.axes
     }));
   }
 
@@ -5251,12 +6172,9 @@ const Plot = (() => {
   }
 
   // Order: this session, this device, profile inside the file, learned template, previous file, default.
-  async function resolveSettings(item, record, alive) {
+  async function resolveSettings(item, alive) {
     if (item.settings) return { settings: item.settings, profile: item.profile ?? blankProfile() };
     const dataset = item.dataset, base = blankProfile();
-    if (record?.settings) {
-      return { settings: record.settings, profile: { ...base, source: 'local', name: record.settings.profileName || dataset.embedded?.name || '' } };
-    }
     const stored = dataset.spice && spiceStore()[dataset.spice.lib + '|' + dataset.spice.sub];
     if (stored) return { settings: stored, profile: { ...base, source: 'local', name: stored.profileName || '' } };
     const embedded = settingsFromEmbedded(dataset);
@@ -5271,12 +6189,13 @@ const Plot = (() => {
     if (state.dataset && !state.dataset.demo && state.dataset.n === dataset.n) {
       const carry = snapshotSettings();
       delete carry.cmc;
+      delete carry.axes;
       return { settings: carry, profile: { ...base, source: 'carry', name: state.profile.name, matches, blocked } };
     }
     return { settings: null, profile: { ...base, source: dataset.profile ? 'builtin' : 'default', matches, blocked } };
   }
 
-  async function openItem(id, { remember = false, keepTab = false } = {}) {
+  async function openItem(id, { keepTab = false } = {}) {
     const item = sessionItem(id);
     if (!item) return;
     const tabBefore = keepTab && state.dataset && !state.dataset.demo ? state.tab : null;
@@ -5295,17 +6214,11 @@ const Plot = (() => {
     try {
       const dataset = await loadDataset(item);
       if (job !== state.importJob) return;
-      let record = null;
-      if (remember && !item.make) {
-        try { record = await Library.remember(await item.getFile()); } catch { record = null; }
-        if (record) item.recordId = record.id;
-      }
-      if (job !== state.importJob) return;
-      const resolved = await resolveSettings(item, record, () => job === state.importJob);
+      const resolved = await resolveSettings(item, () => job === state.importJob);
       if (job !== state.importJob) return;
       if (mobile.matches) state.collapsed = true;
-      state.recordId = item.recordId;
       session.current = id;
+      rememberCurrent(item);
       state.profile = { ...resolved.profile };
       initDataset(dataset, resolved.settings);
       state.profile.key = configKey();
@@ -5314,7 +6227,6 @@ const Plot = (() => {
       if (state.profile.source === 'template') {
         toast('Vorlage „' + state.profile.name + '“ erkannt · ' + Templates.similarity(state.profile.score) + ' % · Ports automatisch zugeordnet');
       } else if (dataset.warnings.length && mobile.matches) toast(dataset.warnings[0]);
-      renderRecent();
       renderSession();
       renderShelf();
     } catch (error) {
@@ -5346,7 +6258,9 @@ const Plot = (() => {
         const lib = Spice.parse(decodeText(await file.arrayBuffer()), source.name);
         const folder = (source.path ? source.path + '/' : '') + source.name;
         for (const sub of lib.tops) {
-          out.push({ name: sub.label, path: folder, size: null, handle: null, ports: sub.pins.length, getFile: source.getFile, make: () => Spice.dataset(lib, sub, spiceSweep()) });
+          out.push({ name: sub.label, path: folder, size: null, handle: null, ports: sub.pins.length, getFile: source.getFile, make: () => Spice.dataset(lib, sub, spiceSweep()),
+            entryId: source.entryId ?? null, importId: source.importId ?? null, pack: source.pack ?? '', volatile: !!source.volatile,
+            filePath: source.filePath ?? source.path ?? '', fileName: source.fileName ?? source.name, saved: source.subs?.[sub.label] ?? null });
         }
         if (!lib.tops.length) throw new Error('Keine eigenständigen Subcircuits gefunden.');
       } catch (error) {
@@ -5376,10 +6290,10 @@ const Plot = (() => {
     const name = state.dataset.name.replace(/\.[^.]+$/, '').replace(/[^\w]+/g, '_').replace(/^_+|_+$/g, '') + '_ESB';
     const file = new File([RF.resonantNetlist(model, name)], name + '.lib', { type: 'text/plain' });
     if (mode === 'save') saveBlob(file, file.name);
-    else openSources([fileSource(file)]);
+    else ingest({ ...newBag(), files: [fileDesc(file)] });
   }
 
-  async function openSources(list, { remember = false } = {}) {
+  async function openSources(list, { prefer = null } = {}) {
     const sources = await expandModels(list);
     if (!sources.length) {
       toast('Keine Touchstone-Dateien gefunden.');
@@ -5388,100 +6302,275 @@ const Plot = (() => {
     const added = addItems(sources);
     if (!added.length) return;
     renderSession();
-    await openItem(added[0].id, { remember });
-    if (added.length > 1 && state.profile.source !== 'template') toast(added.length + ' Dateien geladen · ← / → blättert');
+    const fresh = new Set(added);
+    await openItem((added.find(item => prefer && item.entryId === prefer) ?? session.items.find(item => fresh.has(item)) ?? added[0]).id);
   }
 
-  const importFile = async (file, { remember = true } = {}) => file ? openSources(await expandFiles([file]), { remember }) : undefined;
+  const importFile = async file => file ? ingest(await expandFiles([file])) : undefined;
 
   function stepSession(delta) {
     const index = session.items.findIndex(item => item.id === session.current);
     const next = session.items[index + Number(delta)];
-    if (next) openItem(next.id, { keepTab: true, remember: true });
+    if (next) openItem(next.id, { keepTab: true });
   }
 
-  function clearSession() {
-    session.items = session.items.filter(item => item.id === session.current);
-    state.compare.ids = [];
-    compareCache.clear();
+  // Removes session files from the list and from the durable session store. Library copies keep their content.
+  async function dropItems(gone) {
+    if (!gone.length) return;
+    const drop = new Set(gone);
+    session.items = session.items.filter(item => !drop.has(item));
+    for (const item of gone) { session.picked.delete(item.id); compareCache.delete(item.id); }
+    state.compare.ids = state.compare.ids.filter(id => sessionItem(id));
+    const kept = new Set(session.items.map(item => item.entryId).filter(Boolean));
+    const ids = [...new Set(gone.map(item => item.entryId).filter(id => id && !kept.has(id)))];
+    try { await Store.removeEntries(ids); } catch (error) { toast('Die Sitzung konnte nicht vollständig bereinigt werden: ' + error.message); }
+  }
+
+  async function clearSession() {
+    const gone = session.items.filter(item => item.id !== session.current);
     session.filter = '';
+    session.selecting = false;
+    await dropItems(gone);
     renderSession();
+    renderShelf();
     if (state.dataset) renderMain();
   }
 
+  // ---- Import pipeline UI: progress, conflicts and result. A file only counts as saved once the store has verified it. ----
+  const fileSize = bytes => bytes == null ? '—' : bytes >= 1073741824 ? (bytes / 1073741824).toLocaleString(LOCALE, { maximumFractionDigits: 2 }) + ' GB'
+    : bytes >= 1048576 ? (bytes / 1048576).toLocaleString(LOCALE, { maximumFractionDigits: 1 }) + ' MB' : Math.max(bytes ? 1 : 0, Math.round(bytes / 1024)) + ' kB';
+  const Progress = (() => {
+    const box = () => $('store-dialog');
+    let controller = null, timer = null, pending = null, now = null, space = { usage: null, quota: null }, again = null;
+    const show = () => { clearTimeout(timer); timer = null; openDialog('store-dialog'); };
+    const setState = value => { box().dataset.state = value; };
+    function begin(title, subtitle, total) {
+      controller = new AbortController();
+      now = { total, written: 0, verified: 0, stored: 0, failed: 0, bytes: 0 };
+      again = null;
+      $('store-title').textContent = title;
+      $('store-subtitle').textContent = subtitle;
+      box().dataset.result = '';
+      footKind = '';
+      setState('running');
+      paint();
+      Store.estimate().then(value => { space = value; if (box().dataset.state === 'running') paint(); });
+      clearTimeout(timer);
+      if (total > 3) show(); else timer = setTimeout(show, 450);
+      return controller.signal;
+    }
+    function update(p) {
+      if (!now) return;
+      if (p.phase === 'verify') { now.verified = p.done; now.written = now.total; } else { now.total = p.total; now.verified = 0; now.written = p.done; }
+      now.stored = p.stored; now.failed = p.failed; now.bytes = p.bytes;
+      paint();
+    }
+    function stats(percent) {
+      return '<div class="store-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + percent + '"><span style="width:' + percent + '%"></span></div>' +
+        '<dl class="store-stats">' +
+        '<div><dt>Zu speichern</dt><dd class="mono" id="store-total">' + now.total + '</dd></div>' +
+        '<div><dt>Gespeichert</dt><dd class="mono" id="store-stored">' + now.stored + '</dd></div>' +
+        '<div><dt>Fehlgeschlagen</dt><dd class="mono" id="store-failed-count">' + now.failed + '</dd></div>' +
+        '<div><dt>Fortschritt</dt><dd class="mono" id="store-percent">' + percent + ' %</dd></div>' +
+        '<div><dt>Datenmenge</dt><dd class="mono">' + esc(fileSize(now.bytes)) + '</dd></div>' +
+        '<div><dt>Speicher belegt</dt><dd class="mono">' + esc(space.usage === null ? '—' : fileSize(space.usage) + (space.quota ? ' / ' + fileSize(space.quota) : '')) + '</dd></div></dl>';
+    }
+    function paint() {
+      const percent = now.total ? Math.min(99, Math.round(50 * (now.written + now.verified) / now.total)) : 0;
+      insertHtml($('store-content'), stats(percent) + '<p class="note">' + (now.verified || now.written >= now.total ? 'Gespeicherte Dateien werden geprüft …' : 'Dateien werden gelesen und gespeichert …') + '</p>');
+      // The button is only replaced when the state changes; a click must never hit a node that was just re-rendered.
+      foot('run', actionButton('Abbrechen', 'store-cancel', '', 'button'));
+    }
+    let footKind = '';
+    function foot(kind, html) {
+      if (footKind === kind) return;
+      footKind = kind;
+      insertHtml($('store-foot'), html);
+    }
+    function askConflict(keys) {
+      return new Promise(resolve => {
+        pending = resolve;
+        setState('conflict');
+        insertHtml($('store-content'), '<p class="store-result">' + keys.length + (keys.length === 1 ? ' Datei gibt es' : ' Dateien gibt es') + ' an dieser Stelle schon mit anderem Inhalt.</p>' +
+          '<ul class="store-failed">' + keys.slice(0, 8).map(key => '<li class="mono" data-no-i18n>' + esc(key) + '</li>').join('') + '</ul>' +
+          (keys.length > 8 ? '<p class="note">+' + (keys.length - 8) + ' weitere</p>' : '') +
+          '<p class="note">Überspringen behält die vorhandenen Dateien. Ersetzen tauscht sie aus. Umbenennen legt die neuen Dateien zusätzlich unter neuem Namen ab.</p>');
+        foot('conflict', actionButton('Abbrechen', 'store-cancel', '', 'button') + actionButton('Überspringen', 'store-conflict', 'skip', 'button') +
+          actionButton('Ersetzen', 'store-conflict', 'replace', 'button') + actionButton('Umbenennen', 'store-conflict', 'rename', 'button primary'));
+        show();
+      });
+    }
+    function answer(value) {
+      const resolve = pending;
+      pending = null;
+      if (!resolve) return;
+      setState('running');
+      paint();
+      resolve(value);
+    }
+    function cancel() {
+      controller?.abort();
+      if (pending) answer('cancel');
+    }
+    // summary: { quiet, bad, headline, lines, failed, retry, data }
+    function finish({ quiet = false, bad = false, headline = '', lines = [], failed = [], retry = null, data = null } = {}) {
+      clearTimeout(timer); timer = null;
+      controller = null; pending = null;
+      box().dataset.result = data ? JSON.stringify(data) : '';
+      if (quiet) {
+        setState('idle');
+        if (box().open) box().close();
+        return;
+      }
+      again = retry;
+      if (now) { now.written = now.verified = now.total; }
+      insertHtml($('store-content'), (now ? stats(100) : '') + '<p class="store-result' + (bad ? ' is-bad' : '') + '" id="store-headline">' + esc(headline) + '</p>' +
+        lines.map(line => '<p class="note">' + esc(line) + '</p>').join('') +
+        (failed.length ? '<p class="note">Nicht gespeichert:</p><ul class="store-failed" id="store-failed-list">' + failed.slice(0, 200).map(item =>
+          '<li><span class="mono" data-no-i18n>' + esc(descKey(item)) + '</span> <small>' + esc(item.reason) + '</small></li>').join('') + '</ul>' +
+          (failed.length > 200 ? '<p class="note">+' + (failed.length - 200) + ' weitere</p>' : '') : ''));
+      footKind = '';
+      foot('done', (retry ? actionButton('Erneut versuchen', 'store-retry', '', 'button') : '') + actionButton('Fertig', 'store-close', '', 'button primary'));
+      setState(bad ? 'failed' : 'done');
+      show();
+    }
+    function close() {
+      setState('idle');
+      if (box().open) box().close();
+    }
+    return { begin, update, askConflict, answer, cancel, finish, close, retry: () => { const run = again; close(); run?.(); }, closable: () => !['running', 'conflict'].includes(box().dataset.state) };
+  })();
+
+  const plural = (n, one, many) => n + ' ' + (n === 1 ? one : many);
+  const newBag = () => ({ files: [], unsupported: 0, errors: [], packs: [], backups: [] });
+  let ingestQueue = Promise.resolve();
+  // Imports run one after another: a second import waits instead of interleaving with the first.
+  function ingest(bag, options = {}) {
+    const run = ingestQueue.then(() => runIngest(bag, options));
+    ingestQueue = run.catch(error => { toast(error?.message || String(error)); });
+    return run;
+  }
+
+  async function runIngest(bag, { name = '', kind = '', open = true } = {}) {
+    for (const backup of bag.backups) await backupImport(backup);
+    if (!bag.files.length) {
+      if (!bag.backups.length) toast(bag.errors[0] || 'Keine Touchstone-Dateien gefunden.');
+      return null;
+    }
+    name ||= bag.packs.length === 1 ? bag.packs[0] : bag.files.length === 1 ? bag.files[0].name : plural(bag.files.length, 'Datei', 'Dateien');
+    kind ||= bag.packs.length ? 'zip' : 'files';
+    const notes = [...bag.errors];
+    const room = Math.max(0, MAX_SESSION - new Set(session.items.map(item => item.entryId ?? item.id)).size);
+    let files = bag.files;
+    if (files.length > room) {
+      notes.push('Eine Sitzung fasst höchstens ' + MAX_SESSION + ' Dateien. ' + (files.length - room) + ' Dateien wurden nicht geladen.');
+      files = files.slice(0, room);
+      if (!files.length) { Progress.finish({ bad: true, headline: 'Import nicht möglich', lines: notes }); return null; }
+    }
+    const signal = Progress.begin('Import', name, files.length);
+    let result;
+    try {
+      result = await Store.importBatch({ name, kind, scope: 'session', files, resolveConflict: Progress.askConflict, onProgress: Progress.update, signal });
+    } catch (error) {
+      Progress.finish({ bad: true, headline: 'Import fehlgeschlagen', lines: [error.message, 'Es wurde nichts übernommen. Bereits gespeicherte Dateien sind unverändert.'], data: { ok: false, added: 0, total: files.length, error: error.code || 'error' } });
+      return null;
+    }
+    if (result.cancelled) {
+      Progress.finish({ quiet: true, data: { ok: false, cancelled: true, added: 0, total: files.length } });
+      toast('Import abgebrochen. Es wurde nichts übernommen.');
+      return null;
+    }
+    let sources;
+    if (result.persisted) {
+      const handles = new Map(files.filter(file => file.handle).map(file => [descKey(file), file.handle]));
+      sources = result.entries.map(entry => entrySource(entry, handles.get(Store.keyOf(entry)) ?? null));
+    } else {
+      sources = files.filter(file => !file.problem).map(volatileSource);
+      result.failed = files.filter(file => file.problem).map(file => ({ path: file.path, name: file.name, reason: file.problem }));
+    }
+    const good = result.added + result.identical + result.skipped, data = { ok: result.persisted && !result.failed.length, persisted: result.persisted, total: files.length,
+      added: result.added, identical: result.identical, renamed: result.renamed, replaced: result.replaced, skipped: result.skipped, failed: result.failed.length, unsupported: bag.unsupported };
+    if (result.identical) notes.unshift(plural(result.identical, 'Datei war', 'Dateien waren') + ' bereits unverändert vorhanden.');
+    if (result.renamed) notes.unshift(plural(result.renamed, 'Datei wurde', 'Dateien wurden') + ' unter neuem Namen abgelegt.');
+    if (result.replaced) notes.unshift(plural(result.replaced, 'vorhandene Datei wurde', 'vorhandene Dateien wurden') + ' ersetzt.');
+    if (result.skipped) notes.unshift(plural(result.skipped, 'Datei wurde', 'Dateien wurden') + ' übersprungen, die vorhandene Fassung bleibt.');
+    if (bag.unsupported) notes.push(plural(bag.unsupported, 'nicht unterstützte Datei', 'nicht unterstützte Dateien') + ' im Archiv ausgelassen.');
+    const retryable = result.failed.filter(item => Number.isInteger(item.index) && !files[item.index].problem);
+    const retry = retryable.length ? () => ingest({ ...newBag(), files: retryable.map(item => files[item.index]) }, { name, kind, open }) : null;
+    if (!result.persisted) {
+      session.volatile = true;
+      Progress.finish({ quiet: !result.failed.length && !bag.errors.length, bad: true, headline: plural(sources.length, 'Datei', 'Dateien') + ' geladen, aber nicht dauerhaft gespeichert', lines: notes, failed: result.failed, data });
+      toast('Nicht dauerhaft gespeichert: Dieser Browser erlaubt hier keinen dauerhaften Speicher.');
+    } else if (result.failed.length || bag.errors.length || files.length < bag.files.length) {
+      Progress.finish({ bad: !good, headline: good + ' von ' + files.length + ' Dateien dauerhaft gespeichert und geprüft', lines: notes, failed: result.failed, retry, data });
+    } else {
+      Progress.finish({ quiet: true, data });
+      if (files.length > 1 || notes.length) toast(plural(good, 'Datei', 'Dateien') + ' dauerhaft gespeichert' + (files.length > 1 ? ' · ← / → blättert' : '') + (result.identical ? ' · ' + result.identical + ' bereits vorhanden' : ''));
+    }
+    renderStorageNotice();
+    if (open && sources.length) await openSources(sources);
+    else renderSession();
+    renderShelf();
+    return result;
+  }
+
   // ---- Sources: folders (picker, drag & drop, fallback input) and ZIP archives. ----
-  async function walkDirectory(dir, path, out, depth = 0) {
-    for await (const [name, handle] of dir.entries()) {
-      if (out.length >= MAX_SESSION) return;
-      if (handle.kind === 'file') {
-        if (TOUCHSTONE_NAME.test(name)) out.push(handleSource(handle, path));
-      } else if (depth < 5) await walkDirectory(handle, path + '/' + name, out, depth + 1);
+  async function addZip(file, bag, prefix = '') {
+    try {
+      const zip = await Zip.open(file);
+      if (zip.entries.some(entry => entry.dir === '' && entry.name === 'spa-backup.json')) { bag.backups.push(file); return; }
+      const root = (prefix ? prefix + '/' : '') + file.name.replace(ZIP_NAME, ''), found = [];
+      let bytes = 0;
+      for (const entry of zip.entries) {
+        if (/(^|\/)__MACOSX(\/|$)/.test(entry.raw.replace(/\\/g, '/')) || /^\._|^\.DS_Store$|^Thumbs\.db$/i.test(entry.name)) continue;
+        if (!TOUCHSTONE_NAME.test(entry.name)) { bag.unsupported++; continue; }
+        bytes += entry.size;
+        found.push({ path: root + (entry.dir ? '/' + entry.dir : ''), name: entry.name, size: entry.size, problem: entry.problem, read: entry.read });
+      }
+      if (bytes > Zip.LIMITS.totalBytes) throw new Error('Das Archiv würde entpackt mehr als 2 GiB belegen und wird nicht geladen.');
+      if (!found.length) throw new Error('Das Archiv enthält keine Touchstone- oder SPICE-Dateien.');
+      bag.files.push(...found);
+      bag.packs.push(file.name);
+    } catch (error) {
+      bag.errors.push(file.name + ' · ' + error.message);
     }
   }
 
-  async function walkEntry(entry, path, out, top = false) {
-    if (out.length >= MAX_SESSION) return;
+  async function walkDirectory(dir, path, bag, depth = 0) {
+    for await (const [name, handle] of dir.entries()) {
+      if (bag.files.length >= MAX_SESSION) return;
+      if (handle.kind === 'file') {
+        if (TOUCHSTONE_NAME.test(name)) bag.files.push(handleDesc(handle, path));
+      } else if (depth < 8) await walkDirectory(handle, path + '/' + name, bag, depth + 1);
+    }
+  }
+
+  async function walkEntry(entry, path, bag, top = false) {
+    if (bag.files.length >= MAX_SESSION) return;
     if (entry.isFile) {
-      if (!top && !TOUCHSTONE_NAME.test(entry.name)) return;
+      const zip = ZIP_NAME.test(entry.name);
+      if (!TOUCHSTONE_NAME.test(entry.name) && !(top && zip)) { if (top) bag.unsupported++; return; }
       const file = await new Promise((resolve, reject) => entry.file(resolve, reject));
-      if (ZIP_NAME.test(file.name)) out.push(...await unzip(file));
-      else out.push(fileSource(file, path));
+      if (zip) await addZip(file, bag, path);
+      else bag.files.push(fileDesc(file, path));
       return;
     }
     const reader = entry.createReader(), here = path ? path + '/' + entry.name : entry.name;
     for (;;) {
       const batch = await new Promise((resolve, reject) => reader.readEntries(resolve, reject));
       if (!batch.length) break;
-      for (const child of batch) await walkEntry(child, here, out);
+      for (const child of batch) await walkEntry(child, here, bag);
     }
-  }
-
-  async function unzip(file) {
-    const bytes = await file.arrayBuffer(), view = new DataView(bytes);
-    let end = -1;
-    for (let i = bytes.byteLength - 22; i >= Math.max(0, bytes.byteLength - 66000); i--) {
-      if (view.getUint32(i, true) === 0x06054b50) { end = i; break; }
-    }
-    if (end < 0) throw new Error('Kein lesbares ZIP-Archiv.');
-    const count = view.getUint16(end + 10, true);
-    let at = view.getUint32(end + 16, true);
-    if (count === 0xffff || at === 0xffffffff) throw new Error('ZIP64-Archive werden nicht unterstützt.');
-    const root = file.name.replace(ZIP_NAME, ''), out = [];
-    for (let k = 0; k < count && at + 46 <= bytes.byteLength; k++) {
-      if (view.getUint32(at, true) !== 0x02014b50) break;
-      const flags = view.getUint16(at + 8, true), method = view.getUint16(at + 10, true), packed = view.getUint32(at + 20, true);
-      const nameLength = view.getUint16(at + 28, true), local = view.getUint32(at + 42, true);
-      const full = new TextDecoder().decode(new Uint8Array(bytes, at + 46, nameLength));
-      at += 46 + nameLength + view.getUint16(at + 30, true) + view.getUint16(at + 32, true);
-      if (full.endsWith('/') || !TOUCHSTONE_NAME.test(full) || /(^|\/)__MACOSX\/|(^|\/)\._/.test(full)) continue;
-      const slash = full.lastIndexOf('/'), name = full.slice(slash + 1);
-      out.push({
-        name, path: root + (slash > 0 ? '/' + full.slice(0, slash) : ''), size: null, handle: null,
-        getFile: async () => {
-          if (flags & 1) throw new Error('Verschlüsselte ZIP-Einträge werden nicht unterstützt.');
-          const start = local + 30 + view.getUint16(local + 26, true) + view.getUint16(local + 28, true);
-          const data = new Uint8Array(bytes, start, packed);
-          if (method === 0) return new File([data], name);
-          if (method !== 8 || typeof DecompressionStream !== 'function') throw new Error('Diese ZIP-Kompression wird hier nicht unterstützt.');
-          const stream = new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
-          return new File([await new Response(stream).blob()], name);
-        }
-      });
-    }
-    return out;
   }
 
   async function expandFiles(files, strict = false) {
-    const out = [];
+    const bag = newBag();
     for (const file of files) {
       const rel = file.webkitRelativePath || '';
-      if (ZIP_NAME.test(file.name)) {
-        try { out.push(...await unzip(file)); } catch (error) { toast(file.name + ' · ' + error.message); }
-      } else if (!strict || TOUCHSTONE_NAME.test(file.name)) {
-        out.push(fileSource(file, rel.includes('/') ? rel.slice(0, rel.lastIndexOf('/')) : ''));
-      }
+      if (ZIP_NAME.test(file.name) && !strict) await addZip(file, bag);
+      else if (!strict || TOUCHSTONE_NAME.test(file.name)) bag.files.push(fileDesc(file, rel.includes('/') ? rel.slice(0, rel.lastIndexOf('/')) : ''));
     }
-    return out;
+    return bag;
   }
 
   async function sourcesFromDrop(transfer) {
@@ -5490,20 +6579,20 @@ const Plot = (() => {
     const files = [...transfer.files];
     const entries = items.map(item => item.webkitGetAsEntry?.() ?? null);
     const handles = items.map(item => item.getAsFileSystemHandle ? item.getAsFileSystemHandle().catch(() => null) : null);
-    const out = [];
+    const bag = newBag();
     try {
       const resolved = await Promise.all(handles);
       if (resolved.length && resolved.every(Boolean)) {
         for (const handle of resolved) {
-          if (handle.kind === 'directory') await walkDirectory(handle, handle.name, out);
-          else if (ZIP_NAME.test(handle.name)) out.push(...await unzip(await handle.getFile()));
-          else out.push(handleSource(handle));
+          if (handle.kind === 'directory') await walkDirectory(handle, handle.name, bag);
+          else if (ZIP_NAME.test(handle.name)) await addZip(await handle.getFile(), bag);
+          else bag.files.push(handleDesc(handle));
         }
-        return out;
+        return bag;
       }
       if (entries.length && entries.every(Boolean)) {
-        for (const entry of entries) await walkEntry(entry, '', out, true);
-        return out;
+        for (const entry of entries) await walkEntry(entry, '', bag, true);
+        return bag;
       }
     } catch (error) {
       toast(error.message);
@@ -5520,24 +6609,22 @@ const Plot = (() => {
     try {
       dir = await window.showDirectoryPicker({ id: 'spa-folder', mode: 'read', ...(startIn ? { startIn } : {}) });
     } catch { return; }
-    const out = [];
-    try { await walkDirectory(dir, dir.name, out); } catch (error) { toast(error.message); return; }
+    const bag = newBag();
+    try { await walkDirectory(dir, dir.name, bag); } catch (error) { toast(error.message); return; }
     const loose = startIn && sessionItem(session.current);
-    if (!loose) { openSources(out); return; }
+    if (!loose) { ingest(bag, { kind: 'folder', name: dir.name }); return; }
     // The opened file stays in view; it is replaced by its entry inside the folder.
-    const added = addItems(out);
-    for (const item of added) {
-      let same = false;
-      try { same = item.name === loose.name && await item.handle.isSameEntry(loose.handle); } catch { same = false; }
-      if (!same) continue;
-      Object.assign(item, { dataset: loose.dataset, settings: loose.settings, profile: loose.profile, recordId: loose.recordId });
-      session.items = session.items.filter(other => other !== loose);
-      session.parsed = session.parsed.map(id => id === loose.id ? item.id : id);
-      session.current = item.id;
-      break;
+    await ingest(bag, { kind: 'folder', name: dir.name, open: false });
+    const twin = session.items.find(item => item !== loose && item.name === loose.name && item.path === dir.name);
+    if (twin && sessionItem(loose.id)) {
+      Object.assign(twin, { dataset: loose.dataset, settings: loose.settings, profile: loose.profile });
+      session.parsed = session.parsed.map(id => id === loose.id ? twin.id : id);
+      session.current = twin.id;
+      rememberCurrent(twin);
+      await dropItems([loose]);
+      persistSettings();
     }
     renderSession();
-    toast(added.length + ' Dateien im Ordner · ← / → blättert');
   }
 
   function compareLetter(id) {
@@ -5546,6 +6633,32 @@ const Plot = (() => {
     if (id === session.current) return 'A';
     const index = ids.indexOf(id);
     return index < 0 ? '' : 'BCDEFGH'[index];
+  }
+
+  // Storage notices: no durable storage, interrupted imports, results of the one-time migration.
+  function renderStorageNotice() {
+    const box = $('storage-notice'), parts = [];
+    const real = session.items.length > 0;
+    if (!Store.persistent()) {
+      parts.push('<p class="inline-notice" id="notice-volatile"><span>' + (Store.info.blocked
+        ? 'Die Datenbank wird von einem anderen Tab mit einer älteren Version blockiert. Schließe die anderen Tabs der App und lade neu. Bis dahin wird nichts dauerhaft gespeichert.'
+        : 'Dieser Browser erlaubt hier keinen dauerhaften Speicher (z. B. privater Modus). Geladene Dateien gehen beim Neuladen verloren.') + '</span></p>');
+    } else if (real && session.items.some(item => item.volatile)) {
+      parts.push('<p class="inline-notice" id="notice-volatile"><span>Ein Teil der Dateien ist nicht dauerhaft gespeichert und geht beim Neuladen verloren.</span></p>');
+    }
+    for (const note of session.notices) {
+      parts.push('<p class="inline-notice' + (note.neutral ? ' neutral' : '') + '" data-notice="' + esc(note.id) + '"><span>' + esc(note.text) + '</span>' +
+        actionButton('Verstanden', 'notice-dismiss', note.id, 'quiet-button') + '</p>');
+    }
+    box.hidden = !parts.length;
+    insertHtml(box, parts.join(''));
+  }
+
+  function dismissNotice(id) {
+    const note = session.notices.find(item => item.id === id);
+    session.notices = session.notices.filter(item => item.id !== id);
+    if (note?.importId) Store.dismissImport(note.importId).catch(() => {});
+    renderStorageNotice();
   }
 
   function renderSession() {
@@ -5561,132 +6674,380 @@ const Plot = (() => {
     });
     const current = items[index];
     const sibling = items.length === 1 && current?.handle && window.showDirectoryPicker;
-    box.hidden = items.length < 2 && !sibling;
+    box.hidden = !items.length;
+    box.dataset.count = String(items.length);
+    box.dataset.current = current?.key ?? '';
     if (box.hidden) { box.innerHTML = ''; return; }
-    if (sibling) {
-      insertHtml(box, actionButton('Nachbardateien aus dem Ordner laden', 'open-siblings', '', 'quiet-button', 'network'));
-      return;
-    }
     const filter = session.filter.trim().toLowerCase();
     const shown = filter ? items.filter(item => item.key.toLowerCase().includes(filter)) : items;
+    const volatile = items.filter(item => item.volatile).length;
+    const top = box.querySelector('.session-list')?.scrollTop ?? null;
     let folder = null;
     const rows = shown.slice(0, 300).map(item => {
       const letter = compareLetter(item.id), k = 'BCDEFGH'.indexOf(letter);
       const head = item.path !== folder ? '<div class="session-folder" title="' + esc(item.path) + '">' + esc(item.path || 'Einzelne Dateien') + '</div>' : '';
       folder = item.path;
-      return head + '<div class="session-row' + (item.id === session.current ? ' is-current' : '') + (item.error ? ' has-error' : '') + '"' +
+      return head + '<div class="session-row' + (item.id === session.current ? ' is-current' : '') + (item.error ? ' has-error' : '') + (session.selecting ? ' is-selecting' : '') + '"' +
         (k >= 0 ? ' style="--fc:' + FILE_COLORS[k % FILE_COLORS.length] + '"' : '') + '>' +
-        '<button type="button" class="session-open" id="session-' + item.id + '" data-action="session-open" data-value="' + item.id + '" title="' + esc(item.error || item.key) + '">' +
+        (session.selecting ? '<label class="session-pick" title="Auswählen"><input type="checkbox" value="' + item.id + '" aria-label="' + esc(item.name) + ' auswählen"' + checked(session.picked.has(item.id)) + '></label>' : '') +
+        '<button type="button" class="session-open" id="session-' + item.id + '" data-action="session-open" data-value="' + item.id + '" data-key="' + esc(item.key) + '" title="' + esc(item.error || item.key) + '">' +
         '<span>' + esc(item.name) + '</span>' + (item.ports ? '<small>' + item.ports + 'P</small>' : '') + '</button>' +
         '<button type="button" class="session-compare" data-action="session-compare" data-value="' + item.id + '"' + pressed(!!letter) +
         ' title="Im Diagramm vergleichen" aria-label="' + esc(item.name) + ' vergleichen">' + (letter || '+') + '</button></div>';
     }).join('');
-    insertHtml(box, '<h4>Dateien <small>' + items.length + '</small><span class="session-tools">' +
-      iconButton('Vorherige Datei (Bild↑)', 'session-step', -1, 'chevron', ' data-flip' + disabled(index <= 0)) +
-      iconButton('Nächste Datei (Bild↓)', 'session-step', 1, 'chevron', disabled(index >= items.length - 1)) +
-      actionButton('Stapel', 'batch-open', '', 'quiet-button', '', ' title="Alle Dateien analysieren und Fingerabdrücke lernen"') + actionButton('Leeren', 'session-clear', '', 'quiet-button') + '</span></h4>' +
+    insertHtml(box, '<h4>Aktuelle Sitzung <small>' + items.length + '</small><span class="session-tools">' +
+      (items.length > 1 ? iconButton('Vorherige Datei (Bild↑)', 'session-step', -1, 'chevron', ' data-flip' + disabled(index <= 0)) +
+        iconButton('Nächste Datei (Bild↓)', 'session-step', 1, 'chevron', disabled(index >= items.length - 1)) +
+        actionButton('Stapel', 'batch-open', '', 'quiet-button', '', ' title="Alle Dateien analysieren und Fingerabdrücke lernen"') +
+        actionButton(session.selecting ? 'Fertig' : 'Auswählen', 'session-select', '', 'quiet-button', '', ' title="Mehrere Dateien für die Bibliothek auswählen"' + pressed(session.selecting)) +
+        actionButton('Leeren', 'session-clear', '', 'quiet-button', '', ' title="Alle anderen Dateien aus der Sitzung entfernen. Die Bibliothek bleibt unverändert."') : '') + '</span></h4>' +
+      '<p class="session-state' + (volatile ? ' is-volatile' : '') + '" id="session-state" data-saved="' + (volatile ? '0' : '1') + '">' +
+      (volatile ? 'Nur im Arbeitsspeicher · geht beim Neuladen verloren' : 'Dauerhaft gespeichert · bleibt nach dem Neuladen erhalten') + '</p>' +
       (items.length > 8 ? '<input id="session-filter" class="field-input session-filter" type="search" placeholder="Filtern …" aria-label="Dateien filtern" value="' + esc(session.filter) + '">' : '') +
       '<div class="session-list">' + rows + '</div>' +
       (shown.length > 300 ? '<p class="note">+' + (shown.length - 300) + ' weitere · Filter nutzen</p>' : '') +
-      (!shown.length ? '<p class="note">Kein Treffer.</p>' : ''));
-    box.querySelector('.is-current')?.scrollIntoView({ block: 'nearest' });
+      (!shown.length ? '<p class="note">Kein Treffer.</p>' : '') +
+      (sibling ? actionButton('Nachbardateien aus dem Ordner laden', 'open-siblings', '', 'quiet-button', 'network') : ''));
+    // Keep the scroll position of the list; only bring the open file into view inside the list, never scroll the page.
+    const list = box.querySelector('.session-list'), row = list?.querySelector('.is-current');
+    if (list && top !== null) list.scrollTop = top;
+    if (list && row) {
+      const a = row.offsetTop - list.offsetTop, b = a + row.offsetHeight;
+      if (a < list.scrollTop) list.scrollTop = a;
+      else if (b > list.scrollTop + list.clientHeight) list.scrollTop = b - list.clientHeight;
+    }
   }
 
-  // ---- Library: files kept inside the app (origin private file system), sorted into folders by component type. ----
-  const Shelf = (() => {
-    const supported = !!navigator.storage?.getDirectory;
-    const ui = { form: false, confirm: '' };
-    let root = null;
-    const base = async () => root ??= await (await navigator.storage.getDirectory()).getDirectoryHandle('bibliothek', { create: true });
-    const clean = (name, fallback) => String(name ?? '').replace(/[\\/:*?"<>|\u0000-\u001f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 80) || fallback;
+  // ---- Library: files the user keeps on purpose. Several libraries, folders and subfolders, search and filters. ----
+  const shelf = { libId: Store.MAIN_LIBRARY, form: false, naming: false, confirm: '', query: '', ports: '', type: '', open: new Set(), entries: [], libs: [], job: 0 };
+  const cleanFolder = text => String(text ?? '').split(/[\\/]/).map(part => part.replace(/[:*?"<>|\u0000-\u001f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 80)).filter(part => part && part !== '.' && part !== '..').join('/');
+  const sessionFiles = items => new Set(items.map(item => item.entryId ?? item.id)).size;
+  const typeOf = item => item.profile?.name || item.settings?.profileName || item.saved?.profileName || '';
 
-    // Names are stored ASCII-encoded: some browsers lose folders with non-ASCII names in the private file system.
-    const enc = name => encodeURIComponent(name).replace(/%20/g, ' '), dec = name => { try { return decodeURIComponent(name); } catch { return name; } };
-
-    async function folders() {
-      const out = [];
-      for await (const [raw, handle] of (await base()).entries()) {
-        const name = dec(raw);
-        if (handle.kind !== 'directory') continue;
-        let count = 0;
-        for await (const [, child] of handle.entries()) if (child.kind === 'file') count++;
-        out.push({ name, count, handle });
-      }
-      return out.sort((a, b) => collator.compare(a.name, b.name));
-    }
-
-    async function put(folder, file) {
-      const dir = await (await base()).getDirectoryHandle(enc(clean(folder, 'Unsortiert')), { create: true });
-      const handle = await dir.getFileHandle(enc(clean(file.name, 'datei')), { create: true });
-      const writer = await handle.createWritable();
-      await writer.write(file);
-      await writer.close();
-    }
-
-    const remove = async name => (await base()).removeEntry(enc(name), { recursive: true });
-    return { supported, ui, folders, put, remove, dec };
-  })();
+  function shelfScopes() {
+    const current = sessionItem(session.current), out = [['one', 'Nur die geöffnete Datei']];
+    const pack = current?.importId ? session.items.filter(item => item.importId === current.importId) : [];
+    const packCount = sessionFiles(pack), all = sessionFiles(session.items);
+    if (packCount > 1) out.unshift(['pack', (ZIP_NAME.test(current.pack) ? 'Gesamtes ZIP „' : 'Gesamtes Importpaket „') + current.pack + '“ übernehmen · ' + packCount + ' Dateien']);
+    const picked = session.items.filter(item => session.picked.has(item.id));
+    if (picked.length) out.push(['picked', sessionFiles(picked) + ' ausgewählte Dateien']);
+    if (all > 1) out.push(['all', 'Alle ' + all + ' Dateien der Sitzung'], ['type', 'Alle Dateien nach Bauteiltyp einsortieren']);
+    return out;
+  }
+  function shelfFolder(scope) {
+    const current = sessionItem(session.current);
+    if (scope === 'pack') return cleanFolder((current?.pack || '').replace(ZIP_NAME, '')) || 'Import';
+    if (scope === 'one') return state.profile.name || 'Unsortiert';
+    return scope === 'type' ? 'Unsortiert' : '';
+  }
+  function shelfSuggest(form) {
+    const input = form?.elements.folder;
+    if (input && !input.dataset.touched) input.value = shelfFolder(form.elements.scope.value);
+  }
 
   async function renderShelf() {
-    const box = $('shelf');
-    if (!Shelf.supported) { box.hidden = true; return; }
-    let folders = [];
-    try { folders = await Shelf.folders(); } catch { box.hidden = true; return; }
+    const box = $('shelf'), job = ++shelf.job;
+    if (!Store.persistent()) {
+      box.hidden = false;
+      insertHtml(box, '<h4>Bibliothek</h4><p class="note" id="shelf-unavailable">Die Bibliothek braucht dauerhaften Browserspeicher. Er ist hier nicht verfügbar; Einzelheiten stehen unter „Speicher &amp; Sicherung“.</p>');
+      return;
+    }
+    let libs, entries;
+    try {
+      libs = await Store.libraries();
+      if (!libs.some(lib => lib.id === shelf.libId)) shelf.libId = libs[0].id;
+      entries = await Store.entries('library', shelf.libId);
+    } catch (error) {
+      if (job !== shelf.job) return;
+      box.hidden = false;
+      insertHtml(box, '<h4>Bibliothek</h4><p class="inline-notice">Die Bibliothek lässt sich nicht lesen: ' + esc(error.message) + '</p>');
+      return;
+    }
+    if (job !== shelf.job) return;
+    shelf.libs = libs; shelf.entries = entries;
+    entries.sort((a, b) => collator.compare(a.path, b.path) || collator.compare(a.name, b.name));
     box.hidden = false;
+    box.dataset.count = String(entries.length);
+    const lib = libs.find(item => item.id === shelf.libId);
     const real = !!state.dataset && !state.dataset.demo && !!sessionItem(session.current);
-    const many = session.items.length > 1;
-    const form = Shelf.ui.form && real ? '<form id="shelf-form" class="shelf-form">' +
-      '<label class="control"><span class="field-label">Ordner</span><input class="field-input" name="folder" list="shelf-folders" value="' + esc(state.profile.name || 'Unsortiert') +
-      '" placeholder="z. B. LAN-Übertrager"></label><datalist id="shelf-folders">' + folders.map(folder => '<option value="' + esc(folder.name) + '">').join('') + '</datalist>' +
-      (many ? selectField('Umfang', 'scope', [['one', 'Nur die geöffnete Datei'], ['all', 'Alle ' + session.items.length + ' Dateien in diesen Ordner'], ['type', 'Alle Dateien nach Bauteiltyp einsortieren']], 'one') : '') +
-      '<div class="shelf-form-actions"><button class="button primary" type="submit">Ablegen</button>' + actionButton('Abbrechen', 'shelf-cancel', '', 'quiet-button') + '</div></form>' : '';
-    insertHtml(box, '<h4>Bibliothek <small>' + folders.reduce((sum, folder) => sum + folder.count, 0) + '</small><span class="session-tools">' +
-      actionButton('Ablegen', 'shelf-add', '', 'quiet-button', 'plus', disabled(!real) + ' title="Geöffnete Dateien dauerhaft in der App ablegen"') + '</span></h4>' + form +
-      (folders.length ? '<div class="shelf-list">' + folders.map(folder => '<div class="session-row">' +
-        '<button type="button" class="session-open" data-action="shelf-open" data-value="' + esc(folder.name) + '" title="Ordner öffnen und durchblättern"><span>' + esc(folder.name) + '</span><small>' + folder.count + '</small></button>' +
-        (Shelf.ui.confirm === folder.name
-          ? '<button type="button" class="session-compare shelf-confirm" data-action="shelf-delete" data-value="' + esc(folder.name) + '" title="Wirklich löschen" aria-label="Ordner ' + esc(folder.name) + ' wirklich löschen">!</button>'
-          : '<button type="button" class="session-compare" data-action="shelf-ask" data-value="' + esc(folder.name) + '" title="Ordner löschen" aria-label="Ordner ' + esc(folder.name) + ' löschen">×</button>') +
-        '</div>').join('') + '</div>'
-        : '<p class="note">Noch leer. „Ablegen“ speichert geöffnete Dateien dauerhaft in der App, nach Bauteiltyp sortiert und offline verfügbar.</p>'));
+    const scopes = real ? shelfScopes() : [], scope = scopes[0]?.[0] ?? 'one';
+    const folders = [...new Set(entries.map(entry => entry.path).filter(Boolean))];
+    const form = shelf.form && real ? '<form id="shelf-form" class="shelf-form">' +
+      (scopes.length > 1 ? '<label class="control"><span>Umfang</span><select id="shelf-scope" name="scope">' + options(scopes, scope) + '</select></label>' : '<input type="hidden" name="scope" value="one">') +
+      '<label class="control"><span class="field-label">Ordner in „' + esc(lib.name) + '“</span><input class="field-input" name="folder" list="shelf-folders" value="' + esc(shelfFolder(scope)) +
+      '" placeholder="z. B. LAN-Übertrager oder CMC/0805" autocomplete="off"></label><datalist id="shelf-folders">' + folders.map(folder => '<option value="' + esc(folder) + '">').join('') + '</datalist>' +
+      '<p class="note">Unterordner mit „/“. Bei mehreren Dateien bleibt die Ordnerstruktur des Imports erhalten.</p>' +
+      '<div class="shelf-form-actions"><button class="button primary" type="submit">Übernehmen</button>' + actionButton('Abbrechen', 'shelf-cancel', '', 'quiet-button') + '</div></form>' : '';
+    const naming = shelf.naming ? '<form id="lib-new-form" class="shelf-form"><label class="control"><span class="field-label">Name der neuen Bibliothek</span>' +
+      '<input class="field-input" name="name" maxlength="60" placeholder="z. B. Würth CMC" autocomplete="off"></label>' +
+      '<div class="shelf-form-actions"><button class="button primary" type="submit">Anlegen</button>' + actionButton('Abbrechen', 'lib-new', '', 'quiet-button') + '</div></form>' : '';
+    const libKey = 'lib:' + shelf.libId;
+    const bar = '<div class="lib-bar"><select id="lib-select" aria-label="Bibliothek wählen">' + options(libs.map(item => [item.id, item.name]), shelf.libId) + '</select>' +
+      actionButton('Neu', 'lib-new', '', 'quiet-button', 'plus', ' title="Neue Bibliothek erstellen"') +
+      (shelf.confirm === libKey
+        ? '<button type="button" class="session-compare shelf-confirm" data-action="lib-delete" data-value="' + esc(libKey) + '" title="Wirklich löschen" aria-label="Bibliothek ' + esc(lib.name) + ' wirklich löschen">!</button>'
+        : '<button type="button" class="session-compare" data-action="lib-ask" data-value="' + esc(libKey) + '" title="Bibliothek leeren oder löschen" aria-label="Bibliothek ' + esc(lib.name) + ' leeren oder löschen"' + disabled(!entries.length && shelf.libId === Store.MAIN_LIBRARY) + '>×</button>') + '</div>';
+    const portOptions = [...new Set(entries.map(entry => entry.ports).filter(Boolean))].sort((a, b) => a - b);
+    const typeOptions = [...new Set(entries.map(entry => entry.type).filter(Boolean))].sort(collator.compare);
+    const query = shelf.query.trim().toLowerCase();
+    if (shelf.ports && !portOptions.includes(Number(shelf.ports))) shelf.ports = '';
+    if (shelf.type && !typeOptions.includes(shelf.type)) shelf.type = '';
+    const filtering = !!(query || shelf.ports || shelf.type);
+    const shown = entries.filter(entry => (!query || Store.keyOf(entry).toLowerCase().includes(query)) && (!shelf.ports || String(entry.ports) === shelf.ports) && (!shelf.type || entry.type === shelf.type));
+    const filters = entries.length > 6 || filtering ? '<div class="lib-filters">' +
+      '<input id="lib-query" class="field-input" type="search" placeholder="Bibliothek durchsuchen …" aria-label="Bibliothek durchsuchen" value="' + esc(shelf.query) + '">' +
+      '<select id="lib-ports" aria-label="Nach Portzahl filtern">' + options([['', 'Ports'], ...portOptions.map(n => [n, n + 'P'])], shelf.ports) + '</select>' +
+      '<select id="lib-type" aria-label="Nach Bauteiltyp filtern">' + options([['', 'Typ'], ...typeOptions.map(name => [name, name])], shelf.type) + '</select></div>' : '';
+    const top = box.querySelector('.lib-tree')?.scrollTop ?? null;
+    insertHtml(box, '<h4>Bibliothek <small>' + entries.length + '</small><span class="session-tools">' +
+      actionButton('Übernehmen', 'shelf-add', '', 'quiet-button', 'plus', disabled(!real) + ' title="Dateien der Sitzung dauerhaft in die Bibliothek übernehmen"') + '</span></h4>' +
+      bar + naming + form + filters +
+      (entries.length ? '<div class="lib-tree">' + libraryTree(shown, filtering) + '</div>' + (filtering && !shown.length ? '<p class="note">Kein Treffer.</p>' : '')
+        : '<p class="note">Noch leer. „Übernehmen“ legt Dateien der Sitzung dauerhaft in dieser Bibliothek ab: einzeln, als ganzes ZIP oder als Auswahl.</p>'));
+    const tree = box.querySelector('.lib-tree');
+    if (tree && top !== null) tree.scrollTop = top;
+    if (shelf.naming) box.querySelector('#lib-new-form input')?.focus({ preventScroll: true });
   }
 
-  async function shelfStore(form) {
-    const data = new FormData(form), scope = data.get('scope') || 'one', folder = String(data.get('folder') || '').trim();
-    const items = scope === 'one' ? [sessionItem(session.current)] : session.items;
-    const current = sessionItem(session.current);
-    if (current && current.dataset === state.dataset) current.profile = state.profile;
-    const seen = new Set();
-    let stored = 0, failed = 0;
-    try { await navigator.storage.persist?.(); } catch { /* best effort */ }
-    for (const item of items) {
-      try {
-        const file = await item.getFile();
-        const target = scope === 'type' ? item.profile?.name || item.dataset?.embedded?.name || folder || 'Unsortiert' : folder || 'Unsortiert';
-        // All subcircuits of one SPICE library share a file: store it once per folder.
-        const key = target + '/' + file.name;
-        if (seen.has(key)) continue;
-        seen.add(key);
-        await Shelf.put(target, file.name === item.name || item.make ? file : new File([file], item.name));
-        stored++;
-      } catch { failed++; }
+  function libraryTree(entries, expandAll) {
+    const files = new Map([['', []]]), totals = new Map();
+    for (const entry of entries) {
+      const parts = entry.path ? entry.path.split('/') : [];
+      for (let i = 1; i <= parts.length; i++) {
+        const path = parts.slice(0, i).join('/');
+        totals.set(path, (totals.get(path) || 0) + 1);
+        if (!files.has(path)) files.set(path, []);
+      }
+      files.get(entry.path || '').push(entry);
     }
-    Shelf.ui.form = false;
-    toast(stored + (stored === 1 ? ' Datei' : ' Dateien') + ' in der Bibliothek abgelegt.' + (failed ? ' ' + failed + ' fehlgeschlagen.' : ''));
+    const paths = [...files.keys()].filter(Boolean).sort(collator.compare), depthOf = path => path.split('/').length;
+    let rows = 0;
+    const out = [];
+    const remove = (key, label) => shelf.confirm === key
+      ? '<button type="button" class="session-compare shelf-confirm" data-action="lib-delete" data-value="' + esc(key) + '" title="Wirklich löschen" aria-label="' + esc(label) + ' wirklich löschen">!</button>'
+      : '<button type="button" class="session-compare" data-action="lib-ask" data-value="' + esc(key) + '" title="Aus der Bibliothek löschen" aria-label="' + esc(label) + ' aus der Bibliothek löschen">×</button>';
+    const fileRow = (entry, depth) => '<div class="lib-row is-file" style="--depth:' + depth + '"><button type="button" class="session-open" data-action="lib-open-file" data-value="' + esc(entry.id) +
+      '" data-key="' + esc(Store.keyOf(entry)) + '" title="In die Sitzung laden und öffnen"><span>' + esc(entry.name) + '</span>' + (entry.ports ? '<small>' + entry.ports + 'P</small>' : '') + '</button>' + remove('file:' + entry.id, entry.name) + '</div>';
+    function walk(parent, depth) {
+      for (const path of paths) {
+        if (depthOf(path) !== depth + 1 || (parent && !path.startsWith(parent + '/'))) continue;
+        if (++rows > 600) return;
+        const open = expandAll || shelf.open.has(path), name = path.slice(parent ? parent.length + 1 : 0);
+        out.push('<div class="lib-row" style="--depth:' + depth + '"><button type="button" class="lib-folder" data-action="lib-toggle" data-value="' + esc(path) + '" aria-expanded="' + open + '" title="' + esc(path) + '">' +
+          icon('chevron') + '<span>' + esc(name) + '</span><small>' + totals.get(path) + '</small></button>' +
+          '<button type="button" class="session-compare" data-action="lib-open-folder" data-value="' + esc(path) + '" title="Ordner in die Sitzung laden und durchblättern" aria-label="Ordner ' + esc(name) + ' in die Sitzung laden">▸</button>' +
+          remove('folder:' + path, 'Ordner ' + name) + '</div>');
+        if (!open) continue;
+        walk(path, depth + 1);
+        for (const entry of files.get(path)) { if (++rows > 600) return; out.push(fileRow(entry, depth + 1)); }
+      }
+    }
+    walk('', 0);
+    for (const entry of files.get('')) { if (++rows > 600) break; out.push(fileRow(entry, 0)); }
+    if (rows > 600) out.push('<p class="note">Mehr als 600 Zeilen · Suche oder Filter nutzen</p>');
+    return out.join('');
+  }
+
+  function commonDir(dirs) {
+    if (!dirs.length) return '';
+    let parts = dirs[0] ? dirs[0].split('/') : [];
+    for (const dir of dirs.slice(1)) {
+      const other = dir ? dir.split('/') : [];
+      let n = 0;
+      while (n < parts.length && n < other.length && parts[n] === other[n]) n++;
+      parts = parts.slice(0, n);
+    }
+    return parts.join('/');
+  }
+
+  // Copies session files into the library. Stored files are referenced by their hash, so nothing is written twice,
+  // but every file is read back and compared before the library shows it.
+  async function shelfStore(form) {
+    const data = new FormData(form), scope = data.get('scope') || 'one', folder = cleanFolder(data.get('folder'));
+    const current = sessionItem(session.current);
+    if (!current) return;
+    if (current.dataset === state.dataset) { current.profile = state.profile; current.settings = snapshotSettings(); }
+    const items = scope === 'one' ? [current] : scope === 'pack' ? session.items.filter(item => item.importId === current.importId)
+      : scope === 'picked' ? session.items.filter(item => session.picked.has(item.id)) : session.items;
+    const groups = new Map();
+    for (const item of items) {
+      const key = item.entryId ?? item.id;
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(item);
+    }
+    const lists = [...groups.values()], prefix = commonDir(lists.map(group => group[0].filePath ?? group[0].path ?? ''));
+    const files = [];
+    for (const group of lists) {
+      const item = group[0], type = typeOf(item), dir = item.filePath ?? item.path ?? '';
+      const rel = dir.slice(prefix.length).replace(/^\//, '');
+      const path = scope === 'one' ? folder || 'Unsortiert' : scope === 'type' ? cleanFolder(type) || folder || 'Unsortiert' : [folder, rel].filter(Boolean).join('/');
+      const extra = { type, ports: item.make ? null : item.ports, source: item.pack || '',
+        settings: item.make ? null : item.settings, subs: item.make ? Object.fromEntries(group.filter(sub => sub.settings).map(sub => [sub.name, sub.settings])) : null };
+      let stored = null;
+      try { stored = item.entryId ? await Store.entry(item.entryId) : null; } catch { stored = null; }
+      const name = item.fileName ?? item.name;
+      files.push(stored ? { path, name, hash: stored.hash, size: stored.size, extra } : { path, name, size: item.size, read: item.getFile, extra });
+    }
+    shelf.form = false;
+    renderShelf();
+    await shelfRun(files, shelf.libId);
+  }
+
+  async function shelfRun(files, libId) {
+    const lib = shelf.libs.find(item => item.id === libId) ?? { name: 'Bibliothek' };
+    try { await Store.requestPersist(); } catch { /* best effort */ }
+    const signal = Progress.begin('In die Bibliothek übernehmen', lib.name, files.length);
+    let result;
+    try {
+      result = await Store.importBatch({ name: lib.name, kind: 'library', scope: 'library', libId, files, resolveConflict: Progress.askConflict, onProgress: Progress.update, signal });
+    } catch (error) {
+      Progress.finish({ bad: true, headline: 'Übernahme fehlgeschlagen', lines: [error.message, 'Die Bibliothek ist unverändert.'], data: { ok: false, added: 0, total: files.length, error: error.code || 'error' } });
+      return;
+    }
+    if (result.cancelled) {
+      Progress.finish({ quiet: true, data: { ok: false, cancelled: true, added: 0, total: files.length } });
+      toast('Übernahme abgebrochen. Die Bibliothek ist unverändert.');
+      return;
+    }
+    // Count what is really in the library now instead of trusting the import result.
+    const ids = new Set((await Store.entries('library', libId)).map(entry => entry.id));
+    const present = result.entries.filter(entry => ids.has(entry.id)).length, lines = [];
+    if (result.identical) lines.push(plural(result.identical, 'Datei war', 'Dateien waren') + ' bereits unverändert vorhanden.');
+    if (result.renamed) lines.push(plural(result.renamed, 'Datei wurde', 'Dateien wurden') + ' unter neuem Namen abgelegt.');
+    if (result.replaced) lines.push(plural(result.replaced, 'vorhandene Datei wurde', 'vorhandene Dateien wurden') + ' ersetzt.');
+    if (result.skipped) lines.push(plural(result.skipped, 'Datei wurde', 'Dateien wurden') + ' übersprungen, die vorhandene Fassung bleibt.');
+    lines.push('Kontrolle nach dem Speichern: ' + plural(present, 'Datei ist', 'Dateien sind') + ' in der Bibliothek vorhanden und stimmen mit dem Original überein.');
+    const retryable = result.failed.filter(item => Number.isInteger(item.index));
+    const ok = !result.failed.length && present === files.length;
+    Progress.finish({
+      bad: !ok, headline: present + ' von ' + files.length + ' Dateien in der Bibliothek „' + lib.name + '“ gespeichert und geprüft', lines, failed: result.failed,
+      retry: retryable.length ? () => shelfRun(retryable.map(item => files[item.index]), libId) : null,
+      data: { ok, total: files.length, present, added: result.added, identical: result.identical, renamed: result.renamed, replaced: result.replaced, skipped: result.skipped, failed: result.failed.length }
+    });
+    session.selecting = false;
+    session.picked.clear();
+    renderSession();
     renderShelf();
   }
 
-  async function shelfOpen(name) {
-    const folder = (await Shelf.folders()).find(item => item.name === name);
-    if (!folder) return;
-    const out = [];
-    await walkDirectory(folder.handle, 'Bibliothek/' + name, out);
-    for (const source of out) source.name = Shelf.dec(source.name);
-    session.items = [];
-    session.current = null;
-    state.compare.ids = [];
-    compareCache.clear();
-    openSources(out);
+  // Library files open in the session; the library itself never changes by browsing it.
+  async function libraryOpen(value, folder) {
+    const lib = shelf.libs.find(item => item.id === shelf.libId);
+    const list = folder ? shelf.entries.filter(entry => entry.path === value || entry.path.startsWith(value + '/')) : shelf.entries.filter(entry => entry.id === value);
+    if (!list.length || !lib) return;
+    const files = list.map(entry => ({ path: ['Bibliothek', lib.name, entry.path].filter(Boolean).join('/'), name: entry.name, hash: entry.hash, size: entry.size,
+      extra: { settings: entry.settings ?? null, subs: entry.subs ?? null, type: entry.type ?? '', ports: entry.ports ?? null, source: lib.name + (folder ? ' / ' + value : '') } }));
+    await ingest({ ...newBag(), files }, { name: lib.name + (folder ? ' / ' + value : ''), kind: 'library' });
+  }
+
+  async function libraryDelete(value) {
+    shelf.confirm = '';
+    const [kind, ...rest] = value.split(':'), key = rest.join(':');
+    try {
+      if (kind === 'lib') {
+        await Store.removeLibrary(key);
+        toast(key === Store.MAIN_LIBRARY ? 'Bibliothek geleert.' : 'Bibliothek gelöscht.');
+      } else {
+        const ids = kind === 'file' ? [key] : shelf.entries.filter(entry => entry.path === key || entry.path.startsWith(key + '/')).map(entry => entry.id);
+        await Store.removeEntries(ids);
+        toast(plural(ids.length, 'Datei', 'Dateien') + ' aus der Bibliothek gelöscht. Die Sitzung bleibt unverändert.');
+      }
+    } catch (error) { toast(error.message); }
+    renderShelf();
+  }
+
+  async function libraryCreate(form) {
+    try {
+      const lib = await Store.createLibrary(new FormData(form).get('name'));
+      shelf.libId = lib.id;
+      shelf.naming = false;
+      shelf.open.clear();
+      toast('Bibliothek „' + lib.name + '“ angelegt.');
+    } catch (error) { toast(error.message); }
+    renderShelf();
+  }
+
+  // ---- Storage: diagnosis, self test and backup. ----
+  async function openStorage() {
+    openDialog('storage-dialog');
+    const box = $('storage-content');
+    if (!box.innerHTML) box.innerHTML = '<p class="note">Speicher wird geprüft …</p>';
+    let d;
+    try { d = await Store.diagnose(); } catch (error) { box.innerHTML = '<p class="inline-notice">' + esc(error.message) + '</p>'; return; }
+    const yes = value => value ? 'Ja' : 'Nein', when = value => value ? new Date(value).toLocaleString(LOCALE) : '—';
+    const active = sessionItem(session.current);
+    const rows = [
+      ['Browser unterstützt OPFS', yes(d.opfs) + (d.opfs && !d.opfsWrite ? ' · Schreiben nur über IndexedDB' : ''), 'opfs'],
+      ['Dateiablage', d.backend === 'opfs' ? 'OPFS (privates Dateisystem der App)' : d.backend === 'idb' ? 'IndexedDB' : 'Nur Arbeitsspeicher', 'backend'],
+      ['Verwendeter Speicher', d.usage === null ? 'unbekannt' : fileSize(d.usage), 'usage'],
+      ['Geschätzter verfügbarer Speicher', d.quota === null || d.usage === null ? 'unbekannt' : fileSize(Math.max(0, d.quota - d.usage)), 'free'],
+      ['Persistente Speicherung', d.persisted === true ? 'gewährt' : d.persisted === false ? 'nicht gewährt' : 'unbekannt', 'persisted'],
+      ['Gespeicherte Dateien', d.files + ' · ' + fileSize(d.bytes), 'files'],
+      ['Bibliotheken', d.libraries + ' · ' + plural(d.libraryFiles, 'Datei', 'Dateien'), 'libraries'],
+      ['Aktive Sitzung', plural(d.sessionFiles, 'Datei', 'Dateien') + (active ? ' · geöffnet: ' + active.name : ''), 'session'],
+      ['Letzte erfolgreiche Sicherung im Browserspeicher', when(d.lastSaved), 'saved']
+    ];
+    box.innerHTML = (d.backend === 'memory' ? '<p class="inline-notice">Dauerhafter Speicher ist hier nicht verfügbar' + (d.error ? ': ' + esc(d.error) : '.') + '</p>' : '') +
+      '<table class="storage-table"><tbody>' + rows.map(([label, value, key]) => '<tr><th scope="row">' + esc(label) + '</th><td data-storage="' + key + '">' + esc(value) + '</td></tr>').join('') + '</tbody></table>' +
+      '<div class="storage-actions">' + actionButton('Funktionstest', 'storage-test', '', 'button') +
+      (d.persisted === false ? actionButton('Dauerhafte Speicherung anfordern', 'storage-persist', '', 'button') : '') +
+      actionButton('Sicherung exportieren', 'backup-export', '', 'button', 'export', disabled(d.backend === 'memory' || !d.files)) +
+      actionButton('Sicherung importieren', 'backup-import', '', 'button', 'upload', disabled(d.backend === 'memory')) + '</div>' +
+      '<div id="storage-test-result"></div>' +
+      '<p class="note">Importierte Dateien liegen im Speicher dieses Browsers auf diesem Gerät. Sie überstehen Neuladen, Neustart und App-Updates. Sie sind aber nicht unzerstörbar: Wer die Browserdaten oder Websitedaten löscht, die App deinstalliert oder im privaten Modus arbeitet, entfernt sie. Ohne gewährte persistente Speicherung darf der Browser sie bei Platzmangel auch selbst bereinigen.</p>' +
+      '<p class="note">Die Sicherung ist eine ZIP-Datei mit allen Dateien der Bibliotheken und der Sitzung, ihren Ordnern, Portzuordnungen, Vorlagen und Einstellungen. Bewahre sie außerhalb des Browsers auf. Beim Einspielen wird nichts Vorhandenes überschrieben.</p>';
+  }
+
+  async function storageTest() {
+    const box = $('storage-test-result');
+    box.innerHTML = '<p class="note">Test läuft …</p>';
+    let r;
+    try { r = await Store.selfTest(); } catch (error) { r = { ok: false, steps: [{ name: 'Funktionstest', ok: false, detail: error.message }] }; }
+    box.dataset.ok = String(r.ok);
+    box.innerHTML = '<p class="store-result' + (r.ok ? '' : ' is-bad') + '">' + (r.ok ? 'Funktionstest bestanden: Schreiben, Lesen, Vergleichen und Entfernen funktionieren.' : 'Funktionstest fehlgeschlagen.') + '</p>' +
+      '<ul class="storage-steps">' + r.steps.map(step => '<li' + (step.ok ? '' : ' class="is-bad"') + '>' + esc(step.name) + (step.detail ? ' <small>' + esc(step.detail) + '</small>' : '') + '</li>').join('') + '</ul>';
+  }
+
+  async function backupExport() {
+    toast('Sicherung wird erstellt …');
+    try {
+      const local = key => { try { return JSON.parse(localStorage.getItem(key)); } catch { return null; } };
+      const { blob, files, entries } = await Store.exportBackup({ templates: Templates.all(), prefs: Prefs.all(), spice: spiceStore(), sweep: local('spa-sweep') });
+      const name = 'S-Parameter-Analyzer-Sicherung-' + new Date().toISOString().slice(0, 10) + '.zip';
+      saveBlob(blob, name);
+      toast(name + ' gespeichert · ' + plural(entries, 'Eintrag', 'Einträge') + ', ' + plural(files, 'Datei', 'Dateien') + '.');
+    } catch (error) {
+      toast('Sicherung fehlgeschlagen: ' + error.message);
+    }
+  }
+
+  async function backupImport(file) {
+    let backup;
+    try { backup = await Store.readBackup(file); } catch (error) { toast(file.name + ' · ' + error.message); return; }
+    if (!backup) { toast(file.name + ' ist keine Sicherung des S-Parameter Analyzers.'); return; }
+    if (!Store.persistent()) { toast('Die Sicherung lässt sich nicht einspielen: Dauerhafter Speicher ist hier nicht verfügbar.'); return; }
+    const total = backup.manifest.entries.length, signal = Progress.begin('Sicherung einspielen', file.name, total);
+    let summary;
+    try { summary = await Store.importBackup(backup, { onProgress: Progress.update, signal }); }
+    catch (error) { Progress.finish({ bad: true, headline: 'Sicherung nicht eingespielt', lines: [error.message], data: { ok: false } }); return; }
+    const lines = [];
+    const s = summary.settings;
+    if (s && typeof s === 'object') {
+      const merged = Templates.merge(s.templates), curves = Prefs.merge(s.prefs);
+      if (merged.added) lines.push(plural(merged.added, 'Vorlage', 'Vorlagen') + ' übernommen.');
+      if (curves) lines.push(plural(curves, 'Kurvenwahl', 'Kurvenwahlen') + ' übernommen.');
+      if (s.spice && typeof s.spice === 'object') {
+        const store = { ...s.spice, ...spiceStore() };
+        try { localStorage.setItem('spa-spice', JSON.stringify(store)); } catch { /* storage full */ }
+      }
+    }
+    if (summary.identical) lines.unshift(plural(summary.identical, 'Datei war', 'Dateien waren') + ' bereits unverändert vorhanden.');
+    if (summary.renamed) lines.unshift(plural(summary.renamed, 'Datei wurde', 'Dateien wurden') + ' unter neuem Namen abgelegt, weil es am selben Ort schon eine andere Fassung gab.');
+    Progress.finish({ bad: summary.failed.length > 0 && !summary.added, headline: summary.cancelled ? 'Einspielen abgebrochen' : plural(summary.added, 'Datei', 'Dateien') + ' aus der Sicherung eingespielt und geprüft',
+      lines, failed: summary.failed, data: { ok: !summary.failed.length && !summary.cancelled, added: summary.added, identical: summary.identical, renamed: summary.renamed, failed: summary.failed.length } });
+    await restoreSession(false);
+    renderShelf();
+    if ($('storage-dialog').open) openStorage();
   }
 
   // ---- View modes: normal, reduced (plot, curves, markers) and full screen (plot with marker values). ----
@@ -5929,12 +7290,9 @@ const Plot = (() => {
       state.dataset.embedded = check.embedded;
       state.profile.source = 'file';
       state.profile.key = configKey();
-      if (item.recordId) {
-        try {
-          const record = await Library.remember(file);
-          if (record) { item.recordId = record.id; state.recordId = record.id; }
-        } catch { /* the profile is in the file either way */ }
-        renderRecent();
+      if (item.entryId) {
+        try { await Store.replaceContent(item.entryId, file); }
+        catch (error) { toast('Die gespeicherte Kopie konnte nicht aktualisiert werden: ' + error.message); }
       }
       const learned = !!state.profile.name && learnTemplate(true);
       toast((inPlace ? 'Profil in ' + item.name + ' gespeichert.' : 'Kopie mit Profil heruntergeladen: ' + item.name) + (learned ? ' Vorlage „' + state.profile.name + '“ gelernt.' : ''));
@@ -6118,40 +7476,24 @@ const Plot = (() => {
       '</div></section>';
   }
 
-  async function openRecent(recordId) {
-    try {
-      const record = await Library.get(recordId);
-      if (!record) { renderRecent(); return; }
-      await importFile(new File([record.blob], record.name), { remember: true });
-    } catch (error) {
-      toast('Die gespeicherte Datei lässt sich nicht öffnen: ' + error.message);
-    }
-  }
-
-  async function renderRecent() {
-    const box = $('recent-files');
-    let items = [];
-    try { items = await Library.list(); } catch { items = []; }
-    box.hidden = !items.length;
-    if (!items.length) { box.innerHTML = ''; return; }
-    const size = bytes => bytes > 1048576 ? (bytes / 1048576).toFixed(1).replace('.', ',') + ' MB' : Math.max(1, Math.round(bytes / 1024)) + ' kB';
-    box.innerHTML = '<h4>Zuletzt geöffnet ' + actionButton('Leeren', 'clear-recent', '', 'quiet-button') + '</h4>' +
-      items.map(item => '<button type="button" class="recent-item' + (item.id === state.recordId ? ' is-current' : '') +
-        '" data-action="recent" data-value="' + esc(item.id) + '" title="' + esc(item.name) + '">' + icon('file') +
-        '<span>' + esc(item.name) + '</span><small>' + size(item.size) + '</small></button>').join('');
-  }
-
-  // Settings are stored per file, so reopening a file restores pairs, loads and views.
-  let settingsTimer = null;
+  // Settings are stored with the file entry, so a reload restores pairs, loads, markers, axes and the open view.
+  let settingsTimer = null, settingsJob = null;
   function persistSettings() {
-    if (!state.recordId || !state.dataset || state.dataset.demo) return;
+    const item = sessionItem(session.current);
+    if (!item?.entryId || !state.dataset || state.dataset.demo || item.dataset !== state.dataset) return;
+    const settings = snapshotSettings(), entryId = item.entryId, sub = item.make ? item.name : null;
+    settingsJob = () => {
+      settingsJob = null;
+      clearTimeout(settingsTimer);
+      Store.updateEntry(entryId, sub ? record => ({ subs: { ...(record.subs || {}), [sub]: settings } }) : { settings }).catch(() => {});
+    };
     clearTimeout(settingsTimer);
-    const recordId = state.recordId;
-    settingsTimer = setTimeout(() => {
-      if (recordId !== state.recordId) return;
-      const settings = snapshotSettings();
-      Library.saveSettings(recordId, settings).catch(() => {});
-    }, 500);
+    settingsTimer = setTimeout(() => settingsJob?.(), 300);
+  }
+  const flushSettings = () => settingsJob?.();
+  function rememberCurrent(item) {
+    if (!item?.entryId) return;
+    Store.setMeta('session', { entryId: item.entryId, sub: item.make ? item.name : null, updatedAt: Date.now() }).catch(() => {});
   }
 
   function applySettings(dataset, saved) {
@@ -6176,23 +7518,29 @@ const Plot = (() => {
     if (Array.isArray(saved.markers)) {
       state.markers = [0, 1, 2, 3].map(i => Number.isFinite(saved.markers[i]) ? Plot.nearest(dataset.freq, saved.markers[i], true) : (i || saved.markers.every(m => m === null) ? null : state.markers[0]));
     }
+    if (saved.axes && typeof saved.axes === 'object') {
+      const range = r => Array.isArray(r) && r.length === 2 && r.every(Number.isFinite) && r[0] < r[1] ? [r[0], r[1]] : null;
+      for (const [tab, a] of Object.entries(saved.axes)) {
+        if (!Object.hasOwn(TABS, tab) || !a || typeof a !== 'object') continue;
+        state.axes[tab] = { ...defaultAxes(tab), ...(a.x === 'log' || a.x === 'linear' ? { x: a.x } : {}), ...(a.y === 'log' || a.y === 'linear' ? { y: a.y } : {}), xRange: range(a.xRange), yRange: range(a.yRange) };
+      }
+    }
   }
 
   function loadDemo(n) {
     state.importJob++;
-    state.recordId = null;
+    flushSettings();
     session.current = null;
     state.profile = blankProfile();
     $('import-notice').classList.remove('neutral');
     if (mobile.matches) state.collapsed = true;
     initDataset(RF.demoNetwork(n));
     state.profile.key = configKey();
-    renderRecent();
     renderSession();
     renderShelf();
   }
 
-  // Start order: a file shared from Android, a file opened from the OS, the last file, otherwise the demo.
+  // Start order: restore the saved session, then a file shared from Android or opened from the OS, otherwise the demo.
   async function receiveSharedFile() {
     const params = new URLSearchParams(location.search);
     if (!params.has('shared') || !('caches' in window)) return false;
@@ -6210,6 +7558,23 @@ const Plot = (() => {
     }
   }
 
+  // Rebuilds the session list from the durable store. Files are read lazily, so 100 and more entries start quickly.
+  async function restoreSession(open) {
+    let entries;
+    try { entries = await Store.entries('session'); } catch { return false; }
+    if (!entries.length) return false;
+    const known = new Set(session.items.map(item => item.entryId));
+    const added = addItems(await expandModels(entries.filter(entry => !known.has(entry.id)).map(entry => entrySource(entry))));
+    renderSession();
+    renderStorageNotice();
+    if (!open || !added.length) return true;
+    let meta = null;
+    try { meta = await Store.getMeta('session'); } catch { meta = null; }
+    const target = added.find(item => item.entryId === meta?.entryId && (!meta.sub || item.name === meta.sub)) ?? added.find(item => item.entryId === meta?.entryId) ?? added[0];
+    await openItem(target.id);
+    return !!state.dataset && session.current === target.id;
+  }
+
   async function boot() {
     let launched = false;
     if ('launchQueue' in window) {
@@ -6217,20 +7582,35 @@ const Plot = (() => {
         if (!params.files?.length) return;
         launched = true;
         // With "focus-existing" further files opened from the system land in this window and join the list.
-        openSources(params.files.map(handle => handleSource(handle)), { remember: true });
+        const bag = newBag();
+        for (const handle of params.files) {
+          if (ZIP_NAME.test(handle.name)) await addZip(await handle.getFile(), bag);
+          else bag.files.push(handleDesc(handle));
+        }
+        ingest(bag);
       });
     }
-    if (await receiveSharedFile()) return;
-    if (launched) return;
+    await Store.init();
+    let broken = [];
     try {
-      const [last] = await Library.list();
-      if (last && !launched) {
-        state.recordId = last.id;
-        await openRecent(last.id);
-        if (state.dataset) return;
-      }
-    } catch { /* storage unavailable, e.g. private mode */ }
-    if (!state.dataset && !launched) loadDemo(4);
+      const moved = await Store.migrate();
+      if (moved.shelf) session.notices.push({ id: 'migrated-shelf', neutral: true, text: 'Die bisherige Bibliothek wurde in den neuen Speicher übernommen: ' + plural(moved.shelf, 'Datei', 'Dateien') + ', geprüft.' });
+      await Store.recover();
+      broken = await Store.interrupted();
+    } catch { /* storage problems are shown by the notice and the storage dialog */ }
+    for (const item of broken) {
+      session.notices.push({ id: item.id, importId: item.id, text: 'Der Import „' + item.name + '“ wurde unterbrochen (' + (item.done || 0) + ' von ' + item.total + ' Dateien verarbeitet). Es wurde nichts davon übernommen; vorhandene Dateien sind unverändert. Bitte erneut importieren.' });
+    }
+    Store.sweep().catch(() => {});
+    Store.trimImports().catch(() => {});
+    renderStorageNotice();
+    renderShelf();
+    const shared = new URLSearchParams(location.search).has('shared');
+    let restored = false;
+    try { restored = await restoreSession(!shared && !launched); } catch { restored = false; }
+    if (await receiveSharedFile()) return;
+    if (launched || (restored && state.dataset)) return;
+    if (!state.dataset) loadDemo(4);
   }
 
   function refsSummary(refs) {
@@ -8317,7 +9697,7 @@ const typed = state.tab === 's' && state.basis === 'mm' && ['cmc', 'lan'].includ
     'batch-open': () => { $('pack-dialog').open && $('pack-dialog').close(); openBatch(); },
     'batch-run': runBatch,
     'batch-cancel': () => { batch.cancel = true; },
-    'batch-file': value => { $('batch-dialog').close(); openItem(value, { keepTab: true, remember: true }); },
+    'batch-file': value => { $('batch-dialog').close(); openItem(value, { keepTab: true }); },
     'pack-export': () => packAction('export'),
     'pack-import': () => packAction('import'),
     'pack-reset': () => packAction('reset'),
@@ -8350,10 +9730,21 @@ const typed = state.tab === 's' && state.basis === 'mm' && ['cmc', 'lan'].includ
       renderSidebar();
       if (!state.collapsed) window.scrollTo({ top: 0, behavior: 'smooth' });
     },
-    recent: openRecent,
     'open-folder': () => openFolder(),
     'open-siblings': () => openFolder(sessionItem(session.current)?.handle),
-    'session-open': value => openItem(value, { keepTab: true, remember: true }),
+    'session-open': value => openItem(value, { keepTab: true }),
+    'session-select': () => { session.selecting = !session.selecting; if (!session.selecting) session.picked.clear(); renderSession(); renderShelf(); },
+    'notice-dismiss': dismissNotice,
+    'store-cancel': () => Progress.cancel(),
+    'store-conflict': value => Progress.answer(value),
+    'store-close': () => Progress.close(),
+    'store-retry': () => Progress.retry(),
+    storage: openStorage,
+    'storage-test': storageTest,
+    'storage-persist': async () => { const ok = await Store.requestPersist(); toast(ok ? 'Der Browser hat die dauerhafte Speicherung gewährt.' : 'Der Browser hat die dauerhafte Speicherung nicht gewährt. Die Daten bleiben trotzdem gespeichert, solange der Browser sie nicht bereinigt.'); openStorage(); },
+    'backup-export': backupExport,
+    'backup-import': () => $('backup-input').click(),
+    license: () => openDialog('license-dialog'),
     'session-step': stepSession,
     'session-compare': toggleCompare,
     'session-clear': clearSession,
@@ -8361,11 +9752,14 @@ const typed = state.tab === 's' && state.basis === 'mm' && ['cmc', 'lan'].includ
     'compare-clear': () => { state.compare.ids = []; state.compare.delta = false; renderSession(); syncCompare(true); },
     'learn-template': () => learnTemplate(),
     'view-mode': () => setViewMode((state.viewMode + 1) % 3),
-    'shelf-add': () => { Shelf.ui.form = true; if (state.collapsed) { state.collapsed = false; renderSidebar(); } renderShelf(); },
-    'shelf-cancel': () => { Shelf.ui.form = false; renderShelf(); },
-    'shelf-open': shelfOpen,
-    'shelf-ask': value => { Shelf.ui.confirm = value; renderShelf(); },
-    'shelf-delete': async value => { Shelf.ui.confirm = ''; try { await Shelf.remove(value); } catch (error) { toast(error.message); } renderShelf(); },
+    'shelf-add': () => { shelf.form = true; if (state.collapsed) { state.collapsed = false; renderSidebar(); } renderShelf(); },
+    'shelf-cancel': () => { shelf.form = false; renderShelf(); },
+    'lib-toggle': value => { shelf.open.has(value) ? shelf.open.delete(value) : shelf.open.add(value); renderShelf(); },
+    'lib-open-folder': value => libraryOpen(value, true),
+    'lib-open-file': value => libraryOpen(value, false),
+    'lib-ask': value => { shelf.confirm = value; renderShelf(); },
+    'lib-delete': libraryDelete,
+    'lib-new': () => { shelf.naming = !shelf.naming; renderShelf(); },
     'esb-spice': exportModel,
     theme: () => { Theme.toggle(); render(); },
     'menu-toggle': () => toggleMenu(),
@@ -8374,6 +9768,8 @@ const typed = state.tab === 's' && state.basis === 'mm' && ['cmc', 'lan'].includ
       if (value === 'files') actions['toggle-sidebar']();
       else if (value === 'lang') actions.lang();
       else if (value === 'packs') openPacks();
+      else if (value === 'storage') openStorage();
+      else if (value === 'license') openDialog('license-dialog');
       else if (value === 'method') $('method-button').click();
       else if (value === 'export') $('export-button').click();
       else if (value === 'install') $('pwa-install').click();
@@ -8382,12 +9778,6 @@ const typed = state.tab === 's' && state.basis === 'mm' && ['cmc', 'lan'].includ
     'apply-template': applyTemplate,
     'physics-apply': applyPhysicsMapping,
     'delete-template': value => { Templates.remove(value); state.profile.matches = state.profile.matches.filter(m => m.tpl.n + '|' + m.tpl.name !== value); renderConfig(); },
-    'clear-recent': async () => {
-      try { await Library.clear(); } catch {}
-      state.recordId = null;
-      renderRecent();
-      toast('Liste geleert. Die geöffnete Datei bleibt bis zum Schließen geladen.');
-    },
     method: () => openDialog('method-dialog'),
     download
   };
@@ -8425,7 +9815,7 @@ const typed = state.tab === 's' && state.basis === 'mm' && ['cmc', 'lan'].includ
 
   document.addEventListener('submit', event => {
     const handler = {
-      'pair-form': savePair, 'profile-form': saveProfile, 'sweep-form': applySweep, 'shelf-form': shelfStore, 'pairz-form': applyPairImpedance, 'reference-form': applyReference, 'fit-form': applyFit, 'axes-form': applyAxes, 'load-form': applyLoad
+      'pair-form': savePair, 'profile-form': saveProfile, 'sweep-form': applySweep, 'shelf-form': shelfStore, 'lib-new-form': libraryCreate, 'pairz-form': applyPairImpedance, 'reference-form': applyReference, 'fit-form': applyFit, 'axes-form': applyAxes, 'load-form': applyLoad
     }[event.target.id];
     if (!handler) return;
     event.preventDefault();
@@ -8464,13 +9854,21 @@ const typed = state.tab === 's' && state.basis === 'mm' && ['cmc', 'lan'].includ
   $('file-input').addEventListener('change', async event => {
     const files = [...event.target.files];
     event.target.value = '';
-    if (files.length) openSources(await expandFiles(files), { remember: true });
+    if (files.length) ingest(await expandFiles(files));
   });
   $('folder-input').addEventListener('change', async event => {
     const files = [...event.target.files];
     event.target.value = '';
-    if (files.length) openSources(await expandFiles(files, true));
+    if (files.length) ingest(await expandFiles(files, true), { kind: 'folder', name: (files[0].webkitRelativePath || '').split('/')[0] });
   });
+  $('backup-input').addEventListener('change', event => {
+    const file = event.target.files[0];
+    event.target.value = '';
+    if (file) backupImport(file);
+  });
+  $('store-dialog').addEventListener('cancel', event => { if (!Progress.closable()) event.preventDefault(); });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushSettings(); });
+  window.addEventListener('pagehide', flushSettings);
   // In the plot the arrow keys step through the files; Shift + arrow moves the marker.
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape' && state.viewMode && !document.querySelector('dialog[open]')) { setViewMode(0); return; }
@@ -8481,10 +9879,22 @@ const typed = state.tab === 's' && state.basis === 'mm' && ['cmc', 'lan'].includ
   }, true);
   document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && state.viewMode > 1) setViewMode(1); });
   document.addEventListener('input', event => {
+    if (event.target.id === 'lib-query') { shelf.query = event.target.value; renderShelf(); return; }
     if (event.target.id !== 'session-filter') return;
     session.filter = event.target.value;
     renderSession();
   });
+  document.addEventListener('change', event => {
+    const el = event.target;
+    if (el.matches('.session-pick input')) {
+      el.checked ? session.picked.add(el.value) : session.picked.delete(el.value);
+      renderShelf();
+    } else if (el.id === 'lib-select') { shelf.libId = el.value; shelf.confirm = ''; shelf.open.clear(); renderShelf(); }
+    else if (el.id === 'lib-ports') { shelf.ports = el.value; renderShelf(); }
+    else if (el.id === 'lib-type') { shelf.type = el.value; renderShelf(); }
+    else if (el.id === 'shelf-scope') shelfSuggest(el.form);
+  });
+  document.addEventListener('input', event => { if (event.target.name === 'folder' && event.target.form?.id === 'shelf-form') event.target.dataset.touched = '1'; });
   window.addEventListener('dragover', event => {
     if (!event.dataTransfer.types.includes('Files')) return;
     event.preventDefault();
@@ -8498,7 +9908,7 @@ const typed = state.tab === 's' && state.basis === 'mm' && ['cmc', 'lan'].includ
     if (!event.dataTransfer.files.length) return;
     event.preventDefault();
     $('dropzone').classList.remove('is-dragging');
-    sourcesFromDrop(event.dataTransfer).then(sources => openSources(sources, { remember: true }));
+    sourcesFromDrop(event.dataTransfer).then(bag => ingest(bag));
   });
 
   boot();
