@@ -2,7 +2,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { serve, launch, tempDir, makeZip, bigPackage, waitIdle, importResult, sessionKeys, libraryKeys, Report } from './lib.mjs';
+import { serve, launch, tempDir, makeZip, bigPackage, waitIdle, importResult, sessionKeys, libraryKeys, Report, until } from './lib.mjs';
 
 const report = new Report('B · Gesamtes ZIP in Bibliothek');
 const srv = await serve(), profile = tempDir('spa-b-'), work = tempDir('spa-b-files-');
@@ -62,7 +62,7 @@ try {
   // clearing the session must not touch the library
   await page.click('button[data-action="session-clear"]');
   await page.waitForFunction(() => document.getElementById('session-files').dataset.count === '1');
-  await page.waitForFunction(async () => (await Store.entries('session')).length === 1);
+  await until(page, async () => (await Store.entries('session')).length === 1);
   report.equal('Sitzung leeren löscht keine Bibliotheksdateien', (await libraryKeys(page)).length, 104);
 
   // 4–5: close the library, restart the browser completely

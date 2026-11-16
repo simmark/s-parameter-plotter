@@ -2,7 +2,7 @@
 // Erwartung: nichts Halbes wird sichtbar, vorhandene Daten bleiben unverändert, die App meldet den Abbruch.
 import fs from 'node:fs';
 import path from 'node:path';
-import { serve, launch, tempDir, makeZip, bigPackage, touchstone, waitIdle, importResult, sessionKeys, libraryKeys, Report } from './lib.mjs';
+import { serve, launch, tempDir, makeZip, bigPackage, touchstone, waitIdle, importResult, sessionKeys, libraryKeys, Report, until } from './lib.mjs';
 
 const report = new Report('C · Unvollständige Importe');
 const srv = await serve(), profile = tempDir('spa-c-'), work = tempDir('spa-c-files-');
@@ -52,7 +52,7 @@ try {
   report.equal('Reload: vorhandene Dateien unbeschädigt', await intact(page), 0);
   report.equal('Reload: Reste des abgebrochenen Imports werden entfernt', await orphans(page), 0);
   await page.click('#storage-notice button[data-action="notice-dismiss"]');
-  await page.waitForFunction(async () => (await Store.interrupted()).length === 0);
+  await until(page, async () => (await Store.interrupted()).length === 0);
   report.check('Meldung lässt sich bestätigen', true);
 
   // --- 2: interruption after everything was written and verified, right before the commit ---

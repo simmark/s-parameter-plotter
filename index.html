@@ -957,7 +957,7 @@ html[data-theme="dark"] .app-bar .bar-button:hover { background: #3a382f; color:
 .file-pager { display: none; }
 @media (max-width: 850px) {
   .app-bar { position: relative; }
-  .file-chip, .file-nav, .app-bar .packs-button, .app-bar .lang-button, .app-bar #method-button, .app-bar #export-button, .app-bar #pwa-install, .app-bar .offline-status { display: none !important; }
+  .file-chip, .file-nav, .app-bar .packs-button, .app-bar .storage-button, .app-bar .lang-button, .app-bar #method-button, .app-bar #export-button, .app-bar #pwa-install, .app-bar .offline-status { display: none !important; }
   .app-bar .theme-button, .app-bar .settings-button { display: inline-flex !important; width: 40px; height: 40px; padding: 0; justify-content: center; align-items: center; border: 1px solid var(--line-dark); border-radius: 10px; }
   .app-bar .bar-actions { gap: 8px; margin-left: auto; }
   .app-bar .bar-button .icon { width: 20px; height: 20px; }
@@ -1492,6 +1492,7 @@ window.I18N = (() => {
     <button class="bar-button" id="pwa-install" type="button" title="App installieren" aria-label="App installieren" hidden><svg class="icon" aria-hidden="true"><use href="#i-install"/></svg><span>Installieren</span></button>
     <span class="offline-status" title="Die Messdaten bleiben im Browser"><span></span><strong id="pwa-status">Offline-Cache wird vorbereitet</strong></span>
     <button class="bar-button packs-button" type="button" id="packs-button" data-action="packs" title="Vorlagen und Einstellungen sichern, laden, teilen" aria-label="Vorlagen und Einstellungen"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg><span>Vorlagen</span></button>
+    <button class="bar-button storage-button" type="button" id="storage-button" data-action="storage" title="Speicher prüfen, Bibliothek sichern und wiederherstellen" aria-label="Speicher und Sicherung"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg><span>Speicher</span></button>
     <button class="bar-button" type="button" id="method-button" aria-label="Methodik"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg><span>Methodik</span></button>
     <button class="bar-button export-button" type="button" id="export-button" aria-label="Export"><svg class="icon" aria-hidden="true"><use href="#i-export"/></svg><span>Export</span></button>
     <button class="bar-button settings-button" type="button" id="settings-button" data-action="menu-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="settings-menu" title="Einstellungen" aria-label="Einstellungen"><svg class="icon" aria-hidden="true"><use href="#i-gear"/></svg></button>
@@ -6505,7 +6506,8 @@ const Plot = (() => {
       Progress.finish({ bad: !good, headline: good + ' von ' + files.length + ' Dateien dauerhaft gespeichert und geprüft', lines: notes, failed: result.failed, retry, data });
     } else {
       Progress.finish({ quiet: true, data });
-      if (files.length > 1 || notes.length) toast(plural(good, 'Datei', 'Dateien') + ' dauerhaft gespeichert' + (files.length > 1 ? ' · ← / → blättert' : '') + (result.identical ? ' · ' + result.identical + ' bereits vorhanden' : ''));
+      if (files.length > 1 || notes.length || bag.unsupported) toast(plural(good, 'Datei', 'Dateien') + ' dauerhaft gespeichert' + (files.length > 1 ? ' · ← / → blättert' : '') + (result.identical ? ' · ' + result.identical + ' bereits vorhanden' : '') +
+        (bag.unsupported ? ' · ' + plural(bag.unsupported, 'nicht unterstützte Datei', 'nicht unterstützte Dateien') + ' ausgelassen' : ''));
     }
     renderStorageNotice();
     if (open && sources.length) await openSources(sources);

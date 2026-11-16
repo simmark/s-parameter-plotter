@@ -10,9 +10,12 @@ import { chromium } from 'playwright';
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.json': 'application/json', '.webmanifest': 'application/manifest+json', '.png': 'image/png', '.txt': 'text/plain; charset=utf-8' };
 
+// The root can be switched while the server runs: that is how the update from an older app version is tested on one origin.
 export function serve(root = ROOT) {
   return new Promise(resolve => {
+    const state = { root };
     const server = http.createServer((req, res) => {
+      const root = state.root;
       let rel = decodeURIComponent(new URL(req.url, 'http://x').pathname);
       if (rel.endsWith('/')) rel += 'index.html';
       const file = path.join(root, rel);
@@ -20,7 +23,7 @@ export function serve(root = ROOT) {
       res.writeHead(200, { 'Content-Type': TYPES[path.extname(file)] || 'application/octet-stream', 'Cache-Control': 'no-store' });
       fs.createReadStream(file).pipe(res);
     });
-    server.listen(0, '127.0.0.1', () => resolve({ url: 'http://127.0.0.1:' + server.address().port + '/', close: () => new Promise(done => server.close(done)) }));
+    server.listen(0, '127.0.0.1', () => resolve({ url: 'http://127.0.0.1:' + server.address().port + '/', setRoot: next => { state.root = next; }, close: () => new Promise(done => { server.closeAllConnections?.(); server.close(done); }) }));
   });
 }
 
@@ -61,7 +64,7 @@ export function touchstone(ports, seed = 1, points = 60) {
 const crcTable = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
 export const crc32 = buf => { let c = 0xffffffff; for (const b of buf) c = crcTable[(c ^ b) & 255] ^ (c >>> 8); return (~c) >>> 0; };
 // entries: [{ name, data, method = 8, flags, rawName, corrupt, fakeSize, encrypted }]
-export function makeZip(entries, { comment = '' } = {}) {
+export function makeZip(entries, { comment = '', zip64 = false } = {}) {
   const parts = [], central = [];
   let offset = 0;
   for (const e of entries) {
@@ -78,12 +81,27 @@ export function makeZip(entries, { comment = '' } = {}) {
     const cd = Buffer.alloc(46);
     cd.writeUInt32LE(0x02014b50, 0); cd.writeUInt16LE(20, 4); cd.writeUInt16LE(20, 6); cd.writeUInt16LE(flags, 8); cd.writeUInt16LE(method, 10);
     cd.writeUInt32LE(crc, 16); cd.writeUInt32LE(body.length, 20); cd.writeUInt32LE(size, 24); cd.writeUInt16LE(name.length, 28); cd.writeUInt32LE(offset, 42);
-    parts.push(head, name, body); central.push(cd, name);
+    let extra = Buffer.alloc(0);
+    if (zip64) {
+      // ZIP64 extended information: sizes and offset move into the extra field, the 32-bit fields hold 0xFFFFFFFF.
+      extra = Buffer.alloc(28);
+      extra.writeUInt16LE(1, 0); extra.writeUInt16LE(24, 2); extra.writeBigUInt64LE(BigInt(size), 4); extra.writeBigUInt64LE(BigInt(body.length), 12); extra.writeBigUInt64LE(BigInt(offset), 20);
+      cd.writeUInt32LE(0xffffffff, 20); cd.writeUInt32LE(0xffffffff, 24); cd.writeUInt32LE(0xffffffff, 42); cd.writeUInt16LE(28, 30); cd.writeUInt16LE(45, 6);
+    }
+    parts.push(head, name, body); central.push(cd, name, extra);
     offset += 30 + name.length + body.length;
   }
   const cdBuf = Buffer.concat(central), end = Buffer.alloc(22), note = Buffer.from(comment, 'utf8');
   end.writeUInt32LE(0x06054b50, 0); end.writeUInt16LE(entries.length, 8); end.writeUInt16LE(entries.length, 10);
   end.writeUInt32LE(cdBuf.length, 12); end.writeUInt32LE(offset, 16); end.writeUInt16LE(note.length, 20);
+  if (zip64) {
+    const record = Buffer.alloc(56), locator = Buffer.alloc(20);
+    record.writeUInt32LE(0x06064b50, 0); record.writeBigUInt64LE(44n, 4); record.writeUInt16LE(45, 12); record.writeUInt16LE(45, 14);
+    record.writeBigUInt64LE(BigInt(entries.length), 24); record.writeBigUInt64LE(BigInt(entries.length), 32); record.writeBigUInt64LE(BigInt(cdBuf.length), 40); record.writeBigUInt64LE(BigInt(offset), 48);
+    locator.writeUInt32LE(0x07064b50, 0); locator.writeBigUInt64LE(BigInt(offset + cdBuf.length), 8); locator.writeUInt32LE(1, 16);
+    end.writeUInt16LE(0xffff, 8); end.writeUInt16LE(0xffff, 10); end.writeUInt32LE(0xffffffff, 12); end.writeUInt32LE(0xffffffff, 16);
+    return Buffer.concat([...parts, cdBuf, record, locator, end, note]);
+  }
   return Buffer.concat([...parts, cdBuf, end, note]);
 }
 
@@ -118,5 +136,15 @@ export class Report {
     const verdict = this.failed ? 'FAIL' : 'PASS';
     console.log(verdict + ' · ' + this.title + ' · ' + (this.rows.length - this.failed) + '/' + this.rows.length);
     return !this.failed;
+  }
+}
+
+// Polls an async check inside the page (waitForFunction does not wait for promises).
+export async function until(page, check, arg = undefined, timeout = 120000) {
+  const start = Date.now();
+  for (;;) {
+    if (await page.evaluate(check, arg)) return;
+    if (Date.now() - start > timeout) throw new Error('Zeitüberschreitung beim Warten auf: ' + String(check).slice(0, 120));
+    await page.waitForTimeout(100);
   }
 }
