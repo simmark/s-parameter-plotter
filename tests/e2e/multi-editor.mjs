@@ -2,7 +2,7 @@
 // folgen dem Editor, Reimport der exportierten Netzliste ergibt wieder dieselben Werte. Referenzbauteile wie in schematics.mjs.
 import fs from 'node:fs';
 import path from 'node:path';
-import { serve, launch, tempDir, Report, spiceTouchstone, REF_CMC, refTransformer } from './lib.mjs';
+import { serve, launch, tempDir, Report, spiceTouchstone, REF_CMC, refTransformer, optimize } from './lib.mjs';
 
 const report = new Report('ESB · Editor für CMC und Übertrager');
 const srv = await serve(), work = tempDir('spa-mu-files-'), profile = tempDir('spa-mu-');
@@ -74,7 +74,7 @@ try {
   report.check('CMC: Modellkurve liegt im induktiven Bereich auf der Messung (< 0,3 dB)', dCm < 0.3 && dDm < 0.3, 'CM ' + dCm.toFixed(3) + ' dB · DM ' + dDm.toFixed(3) + ' dB');
 
   // optimise from the start values
-  await page.click('button[data-action="model-fit"]'); await page.waitForTimeout(600);
+  await optimize(page);
   s = await summary(); v = await values(CK);
   report.check('CMC: „Optimieren“ verkleinert die Abweichung und nennt das Ergebnis', s.edited && s.err <= startErr + 1e-9 && /Optimiert/.test(await toast()), startErr.toFixed(3) + ' → ' + s.err.toFixed(3) + ' dB · ' + await toast());
   report.check('CMC: optimierte Werte treffen das Referenzbauteil (M, Lσ, R_w, Ct auf 5 %, R_Fe auf 10 %)', near(v.m, 990e-6, 0.05) && near(v.ls, 10e-6, 0.05) && near(v.rw, 0.05, 0.05) && near(v.ct, 4e-12, 0.05) && near(v.rfe, 40e3, 0.1),
@@ -94,7 +94,7 @@ try {
   // fix one, optimise the rest
   await page.check('input[name="fix-cg"]');
   await setValue('cg', '0,7 pF');
-  await page.click('button[data-action="model-fit"]'); await page.waitForTimeout(600);
+  await optimize(page);
   v = await values(CK); s = await summary();
   report.check('CMC: Optimieren holt M zurück, der festgehaltene Wert Cg bleibt exakt stehen', near(v.m, 990e-6, 0.05) && near(v.cg, 0.7e-12, 1e-3) && /1 fest/.test(await toast()), 'M ' + pct(v.m, 990e-6) + ' · Cg ' + v.cg.toExponential(3) + ' · ' + s.err.toFixed(3) + ' dB');
   report.check('CMC: alle Werte bleiben positiv', CK.every(k => v[k] > 0));
@@ -134,7 +134,7 @@ try {
   await page.click('#tab-ports'); await page.click('button[data-action="pair-preset"][data-value="adjacent"]'); await ready();
   await page.click('#tab-cmc'); await ready();
   await page.waitForSelector('#model-editor');
-  await page.click('button[data-action="model-fit"]'); await page.waitForTimeout(600);
+  await optimize(page);
   const back = await values(CK), sBack = await summary();
   report.check('CMC: Reimport der exportierten Netzliste und erneutes Optimieren ergibt wieder die exportierten Werte (3 %)', sBack.err < 0.1 && ['m', 'ls', 'rw', 'rfe', 'ct'].every(k => near(back[k], edited[k], 0.03)),
     libName + ' · ' + sBack.err.toFixed(4) + ' dB · ' + CK.map(k => k + ' ' + pct(back[k], edited[k])).join(' · '));
@@ -162,7 +162,7 @@ try {
   report.check('Übertrager: Abweichung je Kurve Z₁₁, Z₂₂, Z₂₁ und Kurzschlussimpedanz Z_k', /Z₁₁ .* dB · Z₂₂ .* dB · Z₂₁ .* dB · Z_k .* dB/.test(s.text), s.text);
   const tStart = s.err, r1Start = v.rpri;
   report.check('Übertrager: abgeleitete Größen und Polarität', /L₁₁ = L_m \+ Lσ\/2 = 35\d[.,]?\d* µH .* Cww = Cwa \+ Cwx = 12 pF .* gleichsinnig/.test(await page.textContent('#model-derived')), await page.textContent('#model-derived'));
-  await page.click('button[data-action="model-fit"]'); await page.waitForTimeout(900);
+  await optimize(page);
   v = await values(TK); s = await summary();
   report.check('Übertrager: „Optimieren“ verkleinert die Abweichung', s.edited && s.err <= tStart + 1e-9, tStart.toFixed(3) + ' → ' + s.err.toFixed(3) + ' dB · ' + s.phase.toFixed(2) + '°');
   report.check('Übertrager: Optimieren findet die Lage der Wicklungskapazität: im Referenzbauteil liegt sie zwischen gleichnamigen Anschlüssen (Summe 12 pF, Cwa überwiegt)', near(v.cwa + v.cwx, 12e-12, 0.1) && v.cwa > 2 * v.cwx, 'Cwa ' + (v.cwa * 1e12).toFixed(2) + ' pF · Cwx ' + (v.cwx * 1e12).toFixed(3) + ' pF');
@@ -173,7 +173,7 @@ try {
   report.check('Übertrager: Handeingabe n = 3 erscheint im Schaltbild, mit Hinweis auf den Editor', /1 : 3/.test(l['1 : n'][0]) && await page.locator('#schematic-edited').count() === 1 && (await summary()).err > s.err + 1, l['1 : n'][0]);
   report.check('Übertrager: Lσ₂ = Lσ₁·n² im Bild folgt n', near(num(l['Lσ₂'][0]), 9 * num(l['Lσ₁'][0]), 0.02), l['Lσ₁'][0] + ' · ' + l['Lσ₂'][0]);
   await page.check('input[name="fix-rfe"]');
-  await page.click('button[data-action="model-fit"]'); await page.waitForTimeout(900);
+  await optimize(page);
   const fixedRfe = v.rfe; v = await values(TK);
   report.check('Übertrager: Optimieren holt n = 2 zurück, R_Fe bleibt fest', near(v.n, 2, 0.03) && near(v.rfe, fixedRfe, 2e-3), 'n ' + v.n + ' · R_Fe ' + v.rfe);
   // fit window from markers
@@ -195,7 +195,7 @@ try {
   await page.waitForSelector('#model-editor');
   report.check('Übertrager mit gedrehter Sekundärwicklung: Polarität „invertiert“ im Editor', /invertiert/.test(await page.textContent('#model-derived')));
   s = await summary();
-  await page.click('button[data-action="model-fit"]'); await page.waitForTimeout(900);
+  await optimize(page);
   const sFlip = await summary();
   report.check('… Modell passt auch dort (Phase von Z₂₁ stimmt)', sFlip.err <= s.err + 1e-9 && sFlip.phase < 5, sFlip.err.toFixed(3) + ' dB · ' + sFlip.phase.toFixed(2) + '°');
   report.check('… und die Netzliste dreht die Sekundärwicklung', /^Lt 4 s1 /m.test((await lib('save')).text));

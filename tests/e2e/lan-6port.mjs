@@ -1,6 +1,6 @@
 // LAN-Übertrager mit Mittelanzapfungen als 6-Port-Datei: Profil aus Herstellerkopf und Pin-Skizze, Anzapfungen offen,
 // Sekundärseite nach Punktkonvention, Übertrager-Editor bestimmt n = 1 und gleichsinnige Polarität. Synthetische Daten.
-import { serve, launch, tempDir, Report, spiceTouchstone } from './lib.mjs';
+import { serve, launch, tempDir, Report, spiceTouchstone, optimize } from './lib.mjs';
 import { lanHeader, LAN_NETLIST } from '../lan-fixture.mjs';
 
 const report = new Report('LAN-Übertrager · 6 Ports mit Mittelanzapfung');
@@ -30,7 +30,7 @@ try {
   report.check('ESB: L₁₁ ≈ 700 µH (4 × 175 µH bei k = 0,999)', Math.abs(l11 / 699.3e-6 - 1) < 0.03, (l11 * 1e6).toFixed(1) + ' µH');
   report.check('ESB: n = 1', Math.abs(num(await page.inputValue('#model-n')) - 1) < 0.01, await page.inputValue('#model-n'));
   const before = Number(await page.getAttribute('#model-summary', 'data-err'));
-  await page.click('button[data-action="model-fit"]'); await page.waitForTimeout(300);
+  await optimize(page);
   const after = Number(await page.getAttribute('#model-summary', 'data-err'));
   report.check('ESB: Optimieren verkleinert die Abweichung', after <= before, before.toFixed(3) + ' → ' + after.toFixed(3) + ' dB');
   report.check('ESB: jede Zeile zeigt die Bestimmtheit', (await page.$$('.model-row .model-spread')).length === (await page.$$('.model-row')).length);

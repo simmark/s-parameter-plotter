@@ -16,6 +16,7 @@ const C = { add: (a, b) => [a[0] + b[0], a[1] + b[1]], sub: (a, b) => [a[0] - b[
   div: (a, b) => { const d = b[0] ** 2 + b[1] ** 2; return [(a[0] * b[0] + a[1] * b[1]) / d, (a[1] * b[0] - a[0] * b[1]) / d]; }, s: (a, k) => [a[0] * k, a[1] * k] };
 let seed = 12345;
 const rnd = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 2 ** 32 - 0.5; };
+const TAU = 2 * Math.PI;
 const logf = (f1, f2, n) => Float64Array.from({ length: n }, (_, k) => f1 * (f2 / f1) ** (k / (n - 1)));
 const active = n => RF.indices(n).map(() => ({ type: 'active' }));
 function dataset(n, freq, sampleAt, refs = Array(n).fill(50)) {
@@ -309,6 +310,49 @@ console.log('Vergleich mit dem Rechenkern der veröffentlichten Fassung (Branch 
   }
 }
 
+console.log('Optimierer: Levenberg–Marquardt, glattes Residuum, Kombination mit dem Simplex');
+{
+  // LM on a small least-squares problem: y = a·exp(−t/b) + c, exact data → exact parameters
+  const ts = Array.from({ length: 30 }, (_, k) => k / 3), truth = [2.5, 1.7, 0.4], model = x => ts.map(t => x[0] * Math.exp(-t / x[1]) + x[2]);
+  const data = model(truth), lmRun = RF.levenbergMarquardt(x => model(x).map((v, j) => v - data[j]), [1, 4, 0]);
+  check('Levenberg–Marquardt: exakte Daten → exakte Parameter (exponentieller Abfall, 3 Parameter)', lmRun.x.every((v, k) => Math.abs(v / truth[k] - 1) < 1e-6) && lmRun.f < 1e-20, lmRun.x.map(v => v.toFixed(6)).join(', ') + ' · ' + lmRun.evaluations + ' Auswertungen');
+  const boxed = RF.levenbergMarquardt(x => [x[0] - 5], [0], { lo: [-1], hi: [2] });
+  check('Levenberg–Marquardt: Schritte bleiben in den Grenzen', boxed.x[0] === 2, String(boxed.x[0]));
+  // sharp differential-mode resonance (no R_σ), all values far off: the default (LM, simplex, LM; the best is kept) reaches
+  // the measured resonance and is never worse than the simplex or LM alone
+  const sharp = { type: 'cmc', m: 1e-3, ls: 3e-6, rw: 0.05, rfe: 8e3, ct: 2e-12, cw: 6e-12, cg: 1.5e-12 }, fq = logf(1e3, 3e8, 201);
+  const ms = { y: Array.from(fq, f => RF.cmcModal(sharp, f)), ref: 50 }, st = { ...sharp, m: 1.6e-3, ls: 2e-6, rw: 0.1, rfe: 5e3, ct: 4e-12, cw: 3e-12, cg: 3e-12 };
+  const robust = RF.fitMulti(fq, ms, st), simplex = RF.fitMulti(fq, ms, st, { method: 'nm' }), alone = RF.fitMulti(fq, ms, st, { method: 'lm' });
+  check('Optimierer: Standard (LM + Simplex + LM) findet die scharfe Resonanz, mindestens so gut wie Simplex und LM allein',
+    robust.err < 0.05 && Math.abs(robust.model.ls / sharp.ls - 1) < 0.01 && robust.cost <= simplex.cost * 1.01 + 1e-12 && robust.cost <= alone.cost * 1.01 + 1e-12,
+    'Standard ' + robust.err.toFixed(3) + ' dB · Simplex ' + simplex.err.toFixed(3) + ' dB · LM allein ' + alone.err.toFixed(3) + ' dB');
+  // the residual has no step at ±180°: a model shifted by a full turn of phase costs the same as the original
+  const same = RF.multiQuality(fq, ms, sharp);
+  check('Residuum: Modell gleich Messung → Abweichung 0 in Betrag und Phase', same.err < 1e-9 && same.phase < 1e-6);
+}
+
+console.log('Kernglieder: Relaxationszeiten aus der Messung, Startwerte, Anzahl prüfen');
+{
+  const base = { type: 'cmc', m: 1e-3, ls: 3e-6, rls: 3e3, rw: 0.05, rfe: 8e3, ct: 2e-12, cw: 6e-12, cx: 1e-12, cg: 1.5e-12 };
+  // two dispersion regions: 0.6 mH with its corner at 2 MHz, 0.4 mH at 100 kHz (R = 2·2π·M·f_c)
+  const two = { ...base, m: 0.6e-3, rfe: 2 * TAU * 0.6e-3 * 2e6, m2: 0.4e-3, rfe2: 2 * TAU * 0.4e-3 * 1e5 };
+  const fq = logf(1e3, 3e8, 161), mTwo = { y: Array.from(fq, f => RF.cmcModal(two, f)), ref: 50 }, mOne = { y: Array.from(fq, f => RF.cmcModal(base, f)), ref: 50 };
+  const groups = RF.coreRelaxation(fq, mTwo, base) ?? [];
+  const tauOf = (m, r) => 2 * m / r, wantTau = [tauOf(two.m, two.rfe), tauOf(two.m2, two.rfe2)];
+  check('Relaxationszeiten: zwei Gruppen mit den richtigen Induktivitäten und Zeitkonstanten (je ±5 %)',
+    groups.length === 2 && Math.abs(groups[0].m / two.m - 1) < 0.05 && Math.abs(groups[1].m / two.m2 - 1) < 0.05 && Math.abs(groups[0].tau / wantTau[0] - 1) < 0.05 && Math.abs(groups[1].tau / wantTau[1] - 1) < 0.05,
+    groups.map(g => (g.m * 1e3).toFixed(3) + ' mH · τ ' + g.tau.toExponential(2)).join(' | '));
+  const start2 = RF.cmcCoreStart(fq, mTwo, base, 2);
+  check('Startwerte für 2 Glieder treffen die Messung schon (< 0,1 dB), Glied 1 ist das größere', RF.multiQuality(fq, mTwo, start2).err < 0.1 && start2.m > start2.m2, RF.multiQuality(fq, mTwo, start2).err.toFixed(3) + ' dB');
+  const start3 = RF.cmcCoreStart(fq, mTwo, base, 3), total = RF.coreSections(start3).reduce((a, [m]) => a + m, 0);
+  check('3 Glieder aus 2 Gruppen: größte Gruppe geteilt, Gesamtinduktivität bleibt', RF.coreSections(start3).length === 3 && Math.abs(total / (two.m + two.m2) - 1) < 0.05, (total * 1e3).toFixed(3) + ' mH');
+  const orderTwo = RF.cmcSectionOrder(fq, mTwo, base), orderOne = RF.cmcSectionOrder(fq, mOne, { ...base, m: 1.3e-3 });
+  const got = orderTwo.best.model;
+  check('Anzahl prüfen: zwei echte Glieder → 2, Werte auf 2 % genau', orderTwo.best.count === 2 && Math.abs(got.m / two.m - 1) < 0.02 && Math.abs(got.m2 / two.m2 - 1) < 0.02 && Math.abs(got.rfe / two.rfe - 1) < 0.02 && Math.abs(got.rfe2 / two.rfe2 - 1) < 0.02,
+    orderTwo.fits.map(f => f.count + ': ' + f.err.toFixed(4) + ' dB' + (f.distinct ? '' : ' (nicht getrennt)')).join(' · '));
+  check('Anzahl prüfen: ein Glied → 1 (weitere teilen nur dieselbe Relaxation)', orderOne.best.count === 1, orderOne.fits.map(f => f.count + ': ' + f.err.toFixed(4) + ' dB' + (f.distinct ? '' : ' (nicht getrennt)')).join(' · '));
+}
+
 console.log('LAN-Übertrager mit Mittelanzapfung (6 Ports): Profil aus dem Dateikopf');
 {
   const parse = (head, n = 6) => RF.parseTouchstone(head + zeroData(n), 'lan.s' + n + 'p');
@@ -345,7 +389,7 @@ console.log('Vierpol-Modelle: CMC und Übertrager (Formel, Netzliste und Fit bes
   const meas = { y: Array.from(freq, f => RF.cmcModal(cmc, f)), ref: 50 };
   const start = { ...cmc, m: 0.6e-3, ls: 16e-6, rw: 0.09, rfe: 25e3, ct: 6e-12, cw: 1.2e-12, cg: 0.8e-12 };
   const before = RF.multiQuality(freq, meas, start), fit = RF.fitMulti(freq, meas, start), rel = key => Math.abs(fit.model[key] / cmc[key] - 1);
-  check('CMC: Optimierung auf den natürlichen Moden findet aus verstellten Startwerten zurück (auch Cw und Cg)', fit.err < 0.05 && fit.err < before.err / 20 && ['m', 'ls', 'ct', 'cw', 'cg'].every(key => rel(key) < 0.03) && rel('rfe') < 0.1,
+  check('CMC: Optimierung auf den natürlichen Moden findet aus verstellten Startwerten zurück, alle bestimmten Werte auf 1 % (auch R_Fe, Cw und Cg)', fit.err < 0.05 && fit.err < before.err / 20 && ['m', 'ls', 'ct', 'cw', 'cg'].every(key => rel(key) < 0.01) && rel('rfe') < 0.01,
     'vorher ' + before.err.toFixed(2) + ' dB, nachher ' + fit.err.toFixed(4) + ' dB · ' + ['m', 'ls', 'rw', 'rfe', 'ct', 'cw', 'cg'].map(key => key + ' ' + (100 * rel(key)).toFixed(2) + ' %').join(', '));
   check('CMC: Güte je Mode G, V, H, D wird getrennt ausgewiesen', ['g', 'v', 'h', 'd'].every(k => Number.isFinite(fit.parts[k].err)));
   const spread = RF.multiSpread(freq, meas, cmc);
@@ -430,7 +474,7 @@ console.log('Vierpol-Modelle: CMC und Übertrager (Formel, Netzliste und Fit bes
     const freq2 = logf(2e3, 3e7, 101), meas2 = { z: Array.from(freq2, f2 => RF.trafoModelZ(tr, f2)) };
     const start = { ...tr, lm: 500e-6, lst: 2e-6, n: 1.7, rpri: 0.7, rsec: 1, rfe: 12e3, cp: 25e-12, cwa: 6e-12, cwx: 6e-12 };
     const fit = RF.fitMulti(freq2, meas2, start, { priorSum: { keys: ['cwa', 'cwx'], value: 12e-12 } }), rel = key => Math.abs(fit.model[key] / tr[key] - 1);
-    check('Übertrager: Optimierung findet aus verstellten Startwerten zurück, auch die Aufteilung der Wicklungskapazität (R₁, R₂ gegen 100 Ω nur grob)', fit.err < 0.05 && ['lm', 'lst', 'n'].every(key => rel(key) < 0.03) && ['rfe', 'cp', 'cwa', 'cwx'].every(key => rel(key) < 0.1) && ['rpri', 'rsec'].every(key => rel(key) < 0.5),
+    check('Übertrager: Optimierung findet aus verstellten Startwerten zurück, alle bestimmten Werte auf 1 %, auch die Aufteilung der Wicklungskapazität (R₁, R₂ gegen 100 Ω nur grob)', fit.err < 0.05 && ['lm', 'lst', 'n', 'rfe', 'cp', 'cwa', 'cwx'].every(key => rel(key) < 0.01) && ['rpri', 'rsec'].every(key => rel(key) < 0.5),
       fit.err.toFixed(4) + ' dB · ' + ['lm', 'lst', 'n', 'rpri', 'rsec', 'rfe', 'cp', 'cwa', 'cwx'].map(key => key + ' ' + (100 * rel(key)).toFixed(2) + ' %').join(', '));
     check('Übertrager: Polarität ist kein Fitparameter und bleibt erhalten', fit.model.flip === false && RF.modelParams(fit.model).every(p => p.key !== 'flip'));
   }

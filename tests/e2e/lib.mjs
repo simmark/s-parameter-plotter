@@ -185,3 +185,10 @@ export async function spiceTouchstone(netlist, sweep) {
 }
 export const REF_CMC = '.subckt CMC 1 2 3 4\nRa 1 11 0.05\nRb 2 12 0.05\nL1 11 3 1m\nL2 12 4 1m\nK1 L1 L2 0.99\nRf1 11 3 40k\nRf2 12 4 40k\nCw1 1 2 2p\nCw2 3 4 2p\nCg1 1 0 0.5p\nCg2 2 0 0.5p\nCg3 3 0 0.5p\nCg4 4 0 0.5p\nCt1 1 3 4p\nCt2 2 4 4p\n.ends\n';
 export const refTransformer = (flip = false) => '.subckt TR 1 2 3 4\nR1 1 11 0.4\nL1 11 2 350u\nRf 11 2 20k\nCp 11 2 15p\nL2 ' + (flip ? '13 3' : '3 13') + ' 1400u\nR2 13 4 1.5\nK1 L1 L2 0.997\nRi1 1 5 1e9\nRi2 3 5 1e9\nCa 1 3 6p\nCb 2 4 6p\n.ends\n';
+
+// "Optimieren" in the model editor: four-terminal fits run in a worker; the editor carries data-busy until the result is in.
+export async function optimize(page, action = 'model-fit') {
+  await page.click('button[data-action="' + action + '"]');
+  await page.waitForFunction(() => !document.querySelector('#model-editor[data-busy]'), null, { timeout: 180000 });
+  await page.waitForTimeout(50);
+}

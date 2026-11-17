@@ -1,7 +1,7 @@
 // Englische Oberfläche: Alle neuen Texte (Sitzung, Bibliothek, Import, Speicher, Achsen, Z-Tab, ESB) müssen übersetzt sein.
 import fs from 'node:fs';
 import path from 'node:path';
-import { serve, launch, tempDir, makeZip, touchstone, Report, logFreqs, capacitorZ, fixtureS2P, spiceTouchstone, REF_CMC, refTransformer } from './lib.mjs';
+import { serve, launch, tempDir, makeZip, touchstone, Report, logFreqs, capacitorZ, fixtureS2P, spiceTouchstone, REF_CMC, refTransformer, optimize } from './lib.mjs';
 
 const report = new Report('Englische Oberfläche');
 const srv = await serve(), work = tempDir('spa-en-files-');
@@ -109,7 +109,7 @@ try {
   // model editor actions and the CMC / transformer drawings
   await page.fill('#model-c', '-1'); await page.click('#model-form button[type=submit]'); await page.waitForTimeout(150);
   await german('Editor: Meldung bei ungültigem Wert', '#toast');
-  await page.fill('#model-c', '1 nF'); await page.click('button[data-action="model-fit"]'); await page.waitForTimeout(300);
+  await page.fill('#model-c', '1 nF'); await optimize(page);
   await german('Editor: Meldung nach dem Optimieren', '#toast');
   await page.click('button[data-action="model-marker"][data-value="c"]'); await page.waitForTimeout(200);
   await german('Editor: Meldung zur Marker-Übernahme', '#toast');
@@ -127,7 +127,7 @@ try {
     await page.waitForSelector('#model-editor');
     await german('Vierpol-Editor ' + name + ': Zeilen, Zusammenfassung, Hinweise', '#model-editor');
     await german('Vierpol-Editor ' + name + ': Überschrift, Unterzeile und Legende', '.chart-panel, .chart-card, main');
-    await page.click('button[data-action="model-fit"]'); await page.waitForTimeout(700);
+    await optimize(page);
     await german('Vierpol-Editor ' + name + ': Meldung nach dem Optimieren', '#toast');
     await german('Vierpol-Editor ' + name + ': Zusammenfassung „von Hand geändert“ und Hinweis im Schaltbild', '#analysis-details');
   }

@@ -2,7 +2,7 @@
 // Modell und Messung gleichzeitig, Messdaten unverändert, SPICE-Export des bearbeiteten Modells und Reimport.
 import fs from 'node:fs';
 import path from 'node:path';
-import { serve, launch, tempDir, Report, logFreqs, inductorZ, capacitorZ, fixtureS2P } from './lib.mjs';
+import { serve, launch, tempDir, Report, logFreqs, inductorZ, capacitorZ, fixtureS2P, optimize } from './lib.mjs';
 
 const report = new Report('ESB · Modell-Editor');
 const srv = await serve(), work = tempDir('spa-me-files-');
@@ -57,12 +57,12 @@ try {
 
   // ---- fix a parameter and optimise the rest ----
   await page.check('input[name="fix-l1"]');
-  await page.click('button[data-action="model-fit"]'); await page.waitForTimeout(300);
+  await optimize(page);
   const fixedL = await value('l1'), fixedC = await value('c1'), s2 = await summary();
   report.check('„fest“: L₁ bleibt 20 µH, C₁ passt sich an die Resonanz an (≈ 2,5 pF)', Math.abs(fixedL / 20e-6 - 1) < 1e-3 && Math.abs(fixedC / 2.5e-12 - 1) < 0.15 && s2.err < s.err, (fixedL * 1e6).toFixed(2) + ' µH · ' + (fixedC * 1e12).toFixed(2) + ' pF · ' + s2.err.toFixed(2) + ' dB');
   report.check('Rückmeldung nennt Abweichung und feste Parameter', /Optimiert: .* dB und .*° RMS über \d+ Punkte · 1 fest/.test(await toast()), await toast());
   await page.uncheck('input[name="fix-l1"]');
-  await page.click('button[data-action="model-fit"]'); await page.waitForTimeout(300);
+  await optimize(page);
   const s3 = await summary();
   report.check('Alle frei: Optimierung findet 10 µH und 5 pF wieder (Betrag und Phase)', Math.abs(await value('l1') / L - 1) < 0.01 && Math.abs(await value('c1') / C - 1) < 0.02 && s3.err < 0.05 && s3.phase < 0.5, s3.text);
 
@@ -70,7 +70,7 @@ try {
   const keep = await value('c1');
   for (const bad of ['-3 pF', '0', 'abc']) { await setValue('c1', bad); }
   report.check('Negative, null und unlesbare Eingaben werden abgelehnt', /Gib einen positiven Wert ein/.test(await toast()));
-  await page.click('button[data-action="model-fit"]'); await page.waitForTimeout(200);
+  await optimize(page);
   await page.click('#tab-s'); await page.click('#tab-cmc'); await ready(); await page.waitForSelector('#model-editor');
   report.check('…und der gültige Wert bleibt im Modell', Math.abs(await value('c1') / keep - 1) < 0.02, (await value('c1') * 1e12).toFixed(3) + ' pF');
   await setValue('l1', '4,7u'); report.check('Eingabe „4,7u“ wird als 4,7 µH gelesen', Math.abs(await value('l1') / 4.7e-6 - 1) < 1e-3);
@@ -111,13 +111,13 @@ try {
   // inside this window only L and R0 are visible: a wrong C1 cannot be corrected from these points, with the full range it can
   await setValue('l1', '14 µH');
   await page.check('input[name="fix-c1"]'); await page.check('input[name="fix-r1"]');
-  await page.click('button[data-action="model-fit"]'); await page.waitForTimeout(300);
+  await optimize(page);
   report.check('Fit nutzt nur die Frequenzen im Fenster: L₁ wird aus 100 kHz … 5 MHz bestimmt', Math.abs(await value('l1') / L - 1) < 0.03 && Math.abs(Number((await toast()).match(/über (\d+) Punkte/)?.[1]) - points) <= 2, (await value('l1') * 1e6).toFixed(3) + ' µH · ' + await toast());
   await marker(1, '100 kHz');
   await page.click('button[data-action="model-window"][data-value="markers"]'); await page.waitForTimeout(150);
   report.check('Zwei Marker auf derselben Frequenz: Hinweis statt leerem Fenster', /zwei Marker auf verschiedene Frequenzen/i.test(await toast()), await toast());
   await page.fill('#model-form input[name=from]', '1 MHz'); await page.fill('#model-form input[name=to]', '1,05 MHz');
-  await page.click('button[data-action="model-fit"]'); await page.waitForTimeout(200);
+  await optimize(page);
   report.check('Zu enges Fenster: Optimierung meldet zu wenige Messpunkte', /zu wenige Messpunkte/.test(await toast()), await toast());
   await page.click('button[data-action="model-window"][data-value="all"]'); await page.waitForTimeout(200);
   report.check('„Ganzer Bereich“ öffnet das Fenster wieder', /Gültig von 10 kHz bis 3 GHz/.test((await summary()).text), (await summary()).text);
@@ -153,7 +153,7 @@ try {
   report.check('Kondensator: C = 100 nF, ESR = 20 mΩ, ESL = 0,8 nH aus dem komplexen Fit', Math.abs(await value('c') / 1e-7 - 1) < 0.01 && Math.abs(await value('esr') / 0.02 - 1) < 0.02 && Math.abs(await value('esl') / 0.8e-9 - 1) < 0.02);
   await setValue('esl', '3 nH'); await setValue('esr', '100 mΩ');
   await page.check('input[name="fix-c"]');
-  await page.click('button[data-action="model-fit"]'); await page.waitForTimeout(300);
+  await optimize(page);
   report.check('Kondensator: Optimierung mit festem C stellt ESR und ESL wieder her', Math.abs(await value('esr') / 0.02 - 1) < 0.02 && Math.abs(await value('esl') / 0.8e-9 - 1) < 0.02 && (await summary()).err < 0.05, (await summary()).text);
   data = await csv();
   report.check('Kondensator: Modellkurven für |Z| und ESR neben der Messung', data.head.some(h => /Modell \|Z\|/.test(h)) && data.head.some(h => /Modell ESR/.test(h)), data.head.join(' | '));
