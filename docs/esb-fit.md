@@ -5,7 +5,7 @@ Wie `RF.fitMulti` und seine Helfer arbeiten, und warum. Code: Block `rf-core` in
 ## Was verglichen wird
 
 - **CMC:** die Impedanzen der vier natürlichen Moden G, V, H, D (aus der Y-Matrix projiziert). Z CM und Z DM nach CISPR 17 eignen sich nicht, weil Cw und Cg darin exakt herausfallen.
-- **Übertrager:** Z₁₁, Z₂₂ und Z₂₁ des differentiellen Zweitors und die Kurzschlussimpedanz Z_k = Z₁₁ − Z₁₂Z₂₁/Z₂₂ (nur sie legt Streuung und Wicklungswiderstände fest).
+- **Übertrager:** die natürlichen Moden des differentiellen Zweitors, primärbezogen (Y' = T·Y·T, T = diag(1, n)). Mode M mit a = [1, σn]/√2 magnetisiert nur, Mode σ mit b = [σ, −n]/√2 treibt nur die Streuung; dazu die Kopplung y_ab. Die Basis kommt aus den Startwerten und bleibt während eines Fits fest. Wichtig: b steht in der primärbezogenen Metrik senkrecht auf a, nicht in der gewöhnlichen. Mit [σn, −1] enthielte die Kopplung bei n ≠ 1 einen Teil der Magnetisierung, (n − 1/n)/(2(1+n²)·Z_m), und verzöge R_Fe; synthetisch waren das 15 %.
 
 Jeder Punkt wird nach seiner **Auflösbarkeit** gewichtet: Eine Unsicherheit δ ≈ 3·10⁻³·|S| + 10⁻⁴ (etwa 0,03 dB, Annahme) ergibt einen relativen Fehler e der Impedanz (`RF.zError`). Das Gewicht ist 1/(1 + (e/5 %)²). Was die Messung nicht auflöst, lenkt den Fit nicht.
 
@@ -56,6 +56,30 @@ Jedes Glied 2M ∥ R ist eine Debye-Relaxation der komplexen Kerninduktivität: 
 
 Der verbleibende Gleichtaktfehler (−2,8 dB bei 0,4–1 MHz, +2,4 dB bei 10 MHz) liegt dort, wo |Z_H| mit 5–6 kΩ gegen 50 Ω nur schwach aufgelöst ist (Gewicht 0,2–0,35). Er ist zum großen Teil eine Grenze der Messung, kein fehlendes Modellelement.
 
+## Übertrager: Kapazitäten und Wirbelströme
+
+- **Wo die Kapazitäten wirken (1 : 1):** C_M = (C_p + C_p2)/2 + C_wx/2 (Mode M oberhalb ihrer Resonanz), C_σ = (C_p + C_p2)/2 + C_wa/2 (an der viel höheren Resonanz von Mode σ) und C_M–σ = (C_p − C_p2)/2 (Kopplung). Zusammen mit C_ww = C_wa + C_wx aus dem Gleichtakt sind alle vier festgelegt.
+- **Fitfenster:** Es reicht bis 1,2 × der Resonanz von Mode σ (erster Vorzeichenwechsel von Im Z_σ oberhalb 2 × f_res). Liegt sie oberhalb der Daten, reicht es bis 10 × f_res. Mit Z₁₁/Z₂₂/Z₂₁/Z_k bis 3 × f_res waren C_p, C_wa und C_wx an der WE-LAN unbestimmt (> 999 %).
+- **C_p2:** Die WE-LAN zeigt C_M–σ ≈ −0,55 pF, also mehr Kapazität sekundär als primär. Ein C_p nur auf der Primärseite kann das nicht.
+- **Startwerte der Kapazitäten:** C_M und C_M–σ werden oberhalb der Leerlaufresonanz abgelesen, C_σ aus der Resonanz und der Induktivität von Mode σ berechnet. Die Rückprojektion C = P⁻ᵀ·M·P⁻¹ mit P = [a b] liefert C_p, C_p2, C_wa und C_wx.
+- **Wirbelströme (Lσ_e ∥ R_e):** In der WE-LAN fällt die Induktivität von Mode σ von 152 nH (100 kHz) auf 114 nH (250 MHz), und ihr Widerstand steigt von 0,8 auf 10 Ω. Die erste Sprosse der Wirbelstromleiter, Lσ = Lσ_∞ + (Lσ_e ∥ R_e), bildet beides ab. Startwerte kommen aus dem Verhältnis der Induktivitäten tief und nahe der Resonanz und aus der Eckfrequenz. Fällt die Induktivität um weniger als 5 %, entfällt das Glied.
+- **Ergebnis an der WE-LAN, Fenster bis 355 MHz:**
+
+| Größe | Wert |
+|---|---|
+| Abweichung gesamt | 0,64 dB |
+| Mode M | 0,50 dB |
+| Mode σ | 0,38 dB |
+| Kopplung | 1,6 dB |
+| C_wa | 4,2 pF (±15 %) |
+| C_wx | 2,7 pF (±23 %) |
+| C_p2 | 1,3 pF (±24 %) |
+| C_p | klein |
+| Lσ tief | 273 nH |
+| Eckfrequenz der Wirbelströme | 73 MHz |
+
+- **Synthetisch** (SPICE, n = 2): Alle Werte werden auf ≤ 1 % gefunden, auch R₁ und R₂, die vorher nur grob bestimmt waren.
+
 ## R_σ und R_w
 
 - **R_σ** parallel zu Lσ beschreibt die Verluste im Gegentaktpfad. An der WE-CMB senkt es den Gegentaktfehler von 2,3 auf 0,23 dB.
@@ -63,6 +87,6 @@ Der verbleibende Gleichtaktfehler (−2,8 dB bei 0,4–1 MHz, +2,4 dB bei 10 MHz
 
 ## Offene Punkte
 
-- Übertrager-Fit auf den natürlichen Moden des Vierpols statt auf Z₁₁, Z₂₂, Z₂₁ und Z_k. Die Aufteilung C_p/Cwa/Cwx ist an der WE-LAN 7490140122B nicht bestimmt.
+- Die Kopplung M–σ der WE-LAN bleibt bei 1,6 dB. Mögliche Ursachen sind ungleiche Streuhälften (die hälftige Aufteilung ist eine Annahme) und Unsymmetrie der Wirbelströme.
 - Kernglieder gibt es nur bei der CMC, nicht beim Übertrager (L_m ∥ R_Fe).
 - δ = 0,03 dB ist eine Annahme. Eine Angabe der Messunsicherheit pro Datei würde die Gewichte belastbarer machen.

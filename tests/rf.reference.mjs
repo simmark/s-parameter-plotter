@@ -474,9 +474,35 @@ console.log('Vierpol-Modelle: CMC und Übertrager (Formel, Netzliste und Fit bes
     const freq2 = logf(2e3, 3e7, 101), meas2 = { z: Array.from(freq2, f2 => RF.trafoModelZ(tr, f2)) };
     const start = { ...tr, lm: 500e-6, lst: 2e-6, n: 1.7, rpri: 0.7, rsec: 1, rfe: 12e3, cp: 25e-12, cwa: 6e-12, cwx: 6e-12 };
     const fit = RF.fitMulti(freq2, meas2, start, { priorSum: { keys: ['cwa', 'cwx'], value: 12e-12 } }), rel = key => Math.abs(fit.model[key] / tr[key] - 1);
-    check('Übertrager: Optimierung findet aus verstellten Startwerten zurück, alle bestimmten Werte auf 1 %, auch die Aufteilung der Wicklungskapazität (R₁, R₂ gegen 100 Ω nur grob)', fit.err < 0.05 && ['lm', 'lst', 'n', 'rfe', 'cp', 'cwa', 'cwx'].every(key => rel(key) < 0.01) && ['rpri', 'rsec'].every(key => rel(key) < 0.5),
+    check('Übertrager: Optimierung auf Mode M, Mode σ und ihrer Kopplung findet aus verstellten Startwerten zurück, alle Werte auf 1 % (auch R₁, R₂ und die Aufteilung der Wicklungskapazität; R_Fe ist nur auf ±7 % bestimmt: 5 %)', fit.err < 0.05 && ['lm', 'lst', 'n', 'rpri', 'rsec', 'cp', 'cwa', 'cwx'].every(key => rel(key) < 0.01) && rel('rfe') < 0.05,
       fit.err.toFixed(4) + ' dB · ' + ['lm', 'lst', 'n', 'rpri', 'rsec', 'rfe', 'cp', 'cwa', 'cwx'].map(key => key + ' ' + (100 * rel(key)).toFixed(2) + ' %').join(', '));
     check('Übertrager: Polarität ist kein Fitparameter und bleibt erhalten', fit.model.flip === false && RF.modelParams(fit.model).every(p => p.key !== 'flip'));
+  }
+  {
+    // C_p2 across the secondary and the eddy-current rung Lσ_e ∥ R_e: formula and netlist describe the same circuit
+    const tr = { type: 'trafo', lm: 350e-6, lst: 0.9e-6, lse: 0.3e-6, rse: 40, n: 2, rpri: 0.4, rsec: 1.5, rfe: 20e3, cp: 15e-12, cp2: 4e-12, cwa: 9e-12, cwx: 3e-12, flip: false };
+    const full = netlist(RF.modelNetlist(tr, 'TR'))({ f1: 1e4, f2: 1e8, n: 61 });
+    let worst = 0;
+    full.freq.forEach((ff, i) => {
+      const y4 = RF.toZY(full.samples[i], [50, 50, 50, 50], 'Y'), yd = RF.matrix(2), g = (r, c) => RF.get(y4, 4, r, c);
+      const dd = (p, q) => C.s(C.sub(C.add(g(2 * p, 2 * q), g(2 * p + 1, 2 * q + 1)), C.add(g(2 * p, 2 * q + 1), g(2 * p + 1, 2 * q))), 0.25);
+      for (const [r, c] of [[0, 0], [0, 1], [1, 0], [1, 1]]) RF.put(yd, 2, r, c, dd(r, c));
+      const ym = RF.toZY(RF.fromZY(RF.trafoModelZ(tr, ff), [50, 50], 'Z'), [50, 50], 'Y');
+      for (const [r, c] of [[0, 0], [0, 1], [1, 0], [1, 1]]) { const a = RF.get(yd, 2, r, c), b = RF.get(ym, 2, r, c); worst = Math.max(worst, Math.hypot(a[0] - b[0], a[1] - b[1]) / Math.hypot(...b)); }
+    });
+    check('Übertrager mit C_p2 und Wirbelstromglied: Netzliste = Formel', worst < 1e-5 && /^Cp2 3 4 /m.test(RF.modelNetlist(tr, 'TR')) && /^Le1 /m.test(RF.modelNetlist(tr, 'TR')), 'größte relative Abweichung ' + worst.toExponential(2));
+    // eddy rung: leakage inductance Lσ + Lσ_e far below the corner R_e/(2π·Lσ_e), Lσ far above it
+    // (winding resistances negligible and no core loss, so the short-circuit impedance is the leakage alone)
+    const bare = { ...tr, rpri: 1e-6, rsec: 4e-6, rfe: NaN, cp: NaN, cp2: NaN, cwa: NaN, cwx: NaN };
+    const lsc = f => { const z = RF.trafoModelZ(bare, f), k = C.sub(RF.get(z, 2, 0, 0), C.div(C.mul(RF.get(z, 2, 0, 1), RF.get(z, 2, 1, 0)), RF.get(z, 2, 1, 1))); return k[1] / (2 * Math.PI * f); };
+    check('Wirbelstromglied: Streuinduktivität Lσ + Lσ_e weit unter der Ecke R_e/(2π·Lσ_e), Lσ weit darüber', close(lsc(1e3), 1.2e-6, 5e-3) && close(lsc(1e9), 0.9e-6, 5e-3), (lsc(1e3) * 1e6).toFixed(4) + ' → ' + (lsc(1e9) * 1e6).toFixed(4) + ' µH');
+    // the basis: in the primary-referred metric the coupling of the modes carries no magnetising part, also for n ≠ 1
+    const ideal = { type: 'trafo', lm: 350e-6, lst: 1.2e-6, n: 2, rpri: 0.4, rsec: 1.6, rfe: 20e3, flip: false }, basis = RF.trafoBasis(2, false);
+    // y_ab relative to the magnetising admittance y_aa, for R_Fe = 20 kΩ and 10 kΩ: with the right basis the core loss stays out
+    const yOf = (b, rfe) => { const c = RF.trafoCurves(RF.trafoModelZ({ ...ideal, rfe }, 1e5), b); return { ab: c[2] ? RF.div([1, 0], c[2]) : [0, 0], aa: RF.div([1, 0], c[0]) }; };
+    const change = b => { const p = yOf(b, 20e3), q = yOf(b, 10e3); return RF.abs(C.sub(p.ab, q.ab)) / RF.abs(C.sub(p.aa, q.aa)); };
+    const wrong = { a: basis.a, b: [2 / Math.sqrt(5), -1 / Math.sqrt(5)] };
+    check('Modenbasis: Kopplung M–σ hängt bei n = 2 nicht von R_Fe ab (mit euklidisch senkrechtem b schon)', change(basis) < 1e-6 && change(wrong) > 1e-2, change(basis).toExponential(1) + ' gegen ' + change(wrong).toExponential(1));
   }
 }
 

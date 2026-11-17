@@ -153,20 +153,21 @@ try {
   // ================= Übertrager =================
   await open('trafo.s4p');
   await page.waitForSelector('#model-editor');
-  const TK = ['lm', 'lst', 'n', 'rpri', 'rsec', 'rfe', 'cp', 'cwa', 'cwx'];
+  const TK = ['lm', 'lst', 'n', 'rpri', 'rsec', 'rfe', 'cp', 'cp2', 'cwa', 'cwx'];
   const lsRef = 350e-6 * (1 - 0.997 ** 2);
-  report.equal('Übertrager: Editor zeigt alle neun Elemente des T-Modells', await page.$$eval('.model-row', n => n.map(r => r.dataset.key)), TK);
+  report.equal('Übertrager: Editor zeigt alle Elemente des T-Modells (mit C_p2 über der Sekundärwicklung)', await page.$$eval('.model-row', n => n.map(r => r.dataset.key)), TK);
   v = await values(TK); s = await summary();
-  report.check('Übertrager: Startwerte sind die der Auswertung (L_m, Lσ, n = 2, R_Fe 20 kΩ, C_p 15 pF, Cww 12 pF je zur Hälfte auf Cwa und Cwx)', near(v.lm + v.lst / 2, 350e-6, 0.02) && near(v.lst, lsRef, 0.05) && near(v.n, 2, 0.01) && near(v.rfe, 20e3, 0.1) && near(v.cp, 15e-12, 0.15) && near(v.cwa + v.cwx, 12e-12, 0.05) && near(v.cwa, v.cwx, 1e-6),
+  // the file ends at 30 MHz, below the leakage resonance: without it the start splits Cww evenly (the natural modes fix it later)
+  report.check('Übertrager: Startwerte der Auswertung (L_m, Lσ, n = 2, R_Fe 20 kΩ, C_p 15 pF, Cww 12 pF je zur Hälfte, Streuresonanz oberhalb der Daten)', near(v.lm + v.lst / 2, 350e-6, 0.02) && near(v.lst, lsRef, 0.05) && near(v.n, 2, 0.01) && near(v.rfe, 20e3, 0.1) && near(v.cp, 15e-12, 0.15) && near(v.cwa + v.cwx, 12e-12, 0.05) && near(v.cwa, v.cwx, 1e-6),
     TK.map(k => k + ' ' + v[k].toExponential(3)).join(' · '));
-  report.check('Übertrager: Abweichung je Kurve Z₁₁, Z₂₂, Z₂₁ und Kurzschlussimpedanz Z_k', /Z₁₁ .* dB · Z₂₂ .* dB · Z₂₁ .* dB · Z_k .* dB/.test(s.text), s.text);
+  report.check('Übertrager: Abweichung je natürlicher Mode: M (Magnetisierung), σ (Streuung) und ihre Kopplung', /Mode M .* dB · Mode σ .* dB · Mode M–σ .* dB/.test(s.text), s.text);
   const tStart = s.err, r1Start = v.rpri;
   report.check('Übertrager: abgeleitete Größen und Polarität', /L₁₁ = L_m \+ Lσ\/2 = 35\d[.,]?\d* µH .* Cww = Cwa \+ Cwx = 12 pF .* gleichsinnig/.test(await page.textContent('#model-derived')), await page.textContent('#model-derived'));
   await optimize(page);
   v = await values(TK); s = await summary();
   report.check('Übertrager: „Optimieren“ verkleinert die Abweichung', s.edited && s.err <= tStart + 1e-9, tStart.toFixed(3) + ' → ' + s.err.toFixed(3) + ' dB · ' + s.phase.toFixed(2) + '°');
   report.check('Übertrager: Optimieren findet die Lage der Wicklungskapazität: im Referenzbauteil liegt sie zwischen gleichnamigen Anschlüssen (Summe 12 pF, Cwa überwiegt)', near(v.cwa + v.cwx, 12e-12, 0.1) && v.cwa > 2 * v.cwx, 'Cwa ' + (v.cwa * 1e12).toFixed(2) + ' pF · Cwx ' + (v.cwx * 1e12).toFixed(3) + ' pF');
-  report.check('Übertrager: optimierte Werte treffen das Referenzbauteil (L_m, Lσ, n auf 3 %; R₁, R₂, R_Fe auf 10 %)', near(v.lm + v.lst / 2, 350e-6, 0.03) && near(v.lst, lsRef, 0.03) && near(v.n, 2, 0.03) && near(v.rpri, 0.4, 0.1) && near(v.rsec, 1.5, 0.1) && near(v.rfe, 20e3, 0.1),
+  report.check('Übertrager: optimierte Werte treffen das Referenzbauteil (L_m, Lσ, n auf 1 %; R₁, R₂ auf 3 %, R_Fe auf 5 %, C_p auf 15 %)', near(v.lm + v.lst / 2, 350e-6, 0.01) && near(v.lst, lsRef, 0.01) && near(v.n, 2, 0.01) && near(v.rpri, 0.4, 0.03) && near(v.rsec, 1.5, 0.03) && near(v.rfe, 20e3, 0.05) && near(v.cp, 15e-12, 0.15),
     'L₁₁ ' + pct(v.lm + v.lst / 2, 350e-6) + ' · Lσ ' + pct(v.lst, lsRef) + ' · n ' + pct(v.n, 2) + ' · R₁ ' + pct(v.rpri, 0.4) + ' (Start ' + pct(r1Start, 0.4) + ') · R₂ ' + pct(v.rsec, 1.5) + ' · R_Fe ' + pct(v.rfe, 20e3) + ' · C_p ' + pct(v.cp, 15e-12));
   await setValue('n', '3');
   l = await labels('transformer-schematic');
