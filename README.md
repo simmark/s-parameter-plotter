@@ -19,8 +19,8 @@ Alle Berechnungen laufen lokal auf dem Gerät. Messdateien werden nicht hochgela
   - Offene Ports mit Open, Short, R, R + jX oder RLC abschließen
 - **Modenimpedanz je Paar:** Z_D und Z_C frei wählbar, z. B. 0,1 Ω / 100 Ω für Netzfilter nach CISPR 17
 - **Smith-Chart** mit Zᵢₙ am Marker
-- **Impedanz:** Zᵢₙ, Z- und Y-Matrix, Serien- und Shunt-Fixture, L/C als Serien- oder Parallelersatz
-- **CISPR 17:2011 § 6.3.1:** Eintor, Zweitor (Serie/Shunt) und Vierport CM/DM; Ω-Kurven standardmäßig log-log
+- **Tab Z · Impedanz:** Zᵢₙ, Z- und Y-Matrix, Serien- und Shunt-Fixture; R/ESR, X, Phase, L/ESL und C als Serien- oder Parallelersatz mit Vorzeichen, Güte Q
+- **Tab Z · CISPR 17:2011 § 6.3.1:** Eintor, Zweitor (Serie/Shunt) und Vierport CM/DM; Ω-Kurven standardmäßig log-log
 - **ESB-Modell mit automatischer Erkennung:**
   - **CMC:** Cw, Cg, Ct, L, M, k und Eigenresonanzen
   - **Übertrager (T-Modell):** OCL, OCL₀ aus LC-Fit, n, k, Streuinduktivität Lσ (Sekundärseite kurzgeschlossen), Cww, R, f_res, C_par
@@ -82,6 +82,68 @@ Alle Berechnungen laufen lokal auf dem Gerät. Messdateien werden nicht hochgela
 
 - Stapel analysieren (Seitenleiste → „Stapel“ oder Vorlagen-Dialog): lernt aus allen geladenen Dateien mit gespeichertem Port-Profil Fingerabdrücke und erkennt die übrigen damit automatisch, auch bei vertauschten Ports. Nicht erkannte Dateien werden als „Unbekannt“ aufgelistet.
 
+## Version 8: Dauerhafter Speicher, Bibliothek, mobile Dateiverwaltung, Achsen
+
+**Dateien bleiben nach F5 erhalten**
+
+- Jede importierte Datei, jeder Ordner und jedes ZIP wird beim Import in den Browserspeicher geschrieben, zurückgelesen und mit dem Original verglichen (SHA-256). Erst danach gilt die Datei als gespeichert.
+- Die **Sitzung** (alle geladenen Dateien, die geöffnete Datei, Tab, Ports, Marker, Achsen) ist nach Neuladen, Browser-Neustart und App-Update wieder da.
+- Die **Bibliothek** ist die bewusst geordnete Sammlung: mehrere Bibliotheken, Ordner und Unterordner, Suche, Filter nach Portzahl und Bauteiltyp.
+- **„In Bibliothek“** bietet: nur die geöffnete Datei, das gesamte ZIP bzw. Importpaket, mehrere ausgewählte Dateien, alle Dateien der Sitzung. Der Dialog zeigt Anzahl, gespeichert, fehlgeschlagen, Prozent und Speicherbelegung und prüft am Ende, was wirklich in der Bibliothek liegt.
+- Gleiche Inhalte liegen nur einmal im Speicher. „Sitzung leeren“ löscht nichts aus der Bibliothek, Löschen in der Bibliothek beschädigt keine Sitzungsdatei.
+- **Namenskonflikte** (gleicher Ort, anderer Inhalt): Überspringen, Ersetzen oder Umbenennen. Nichts wird unbemerkt überschrieben.
+- **Unterbrochene Importe** (Tab geschlossen, Browser beendet, Abbrechen) hinterlassen nichts Halbes. Die App meldet sie beim nächsten Start und räumt auf.
+- **ZIP:** verschachtelte Ordner, Unicode-Namen, ZIP64, CRC-Prüfung je Datei; verschlüsselte, beschädigte oder nicht unterstützte Einträge werden einzeln gemeldet. Schutz gegen ZIP-Bomben (100 MiB je Datei, 2 GiB je Archiv, 20 000 Einträge) und Pfade, die aus dem Archiv herausführen.
+- **Speicher & Sicherung** (Kopfzeile bzw. Zahnrad-Menü): OPFS ja/nein, belegter und freier Speicher, persistente Speicherung, Anzahl Dateien und Bibliotheken, letzte Sicherung, Funktionstest (schreiben, lesen, vergleichen, entfernen), Sicherung als ZIP exportieren und wieder einspielen.
+- Browserspeicher ist **nicht unzerstörbar**: Browserdaten löschen, App deinstallieren oder privater Modus entfernen die Dateien. Deshalb gibt es die Sicherung.
+- Daten der Vorversion (Bibliothek und „Zuletzt geöffnet“) werden beim ersten Start übernommen und geprüft.
+
+**Handy**
+
+- Das Ordnersymbol links oben öffnet die Dateiverwaltung als Schublade von links. Schließen mit X, Tippen daneben, Wischen nach links oder der Zurück-Taste.
+- Datei antippen → Diagramm → Schublade zu. Kein Sprung an den Seitenanfang, die Scrollposition der Schublade bleibt.
+
+**Diagramme**
+
+- L(f) und C(f) werden mit Vorzeichen gezeichnet; Resonanzen und Vorzeichenwechsel haben keine Lücken mehr.
+- Y-Achse **±Log** (symmetrisch logarithmisch) für vorzeichenbehaftete Größen. Die einfache Log-Achse gibt es nur für positive Größen.
+- Y-Skala mit der Maus: Mausrad zoomt, Ziehen verschiebt, Doppelklick setzt zurück; Umschalt + Mausrad im Diagramm zoomt ebenfalls vertikal. Minimum und Maximum lassen sich eingeben. Achsen werden je Datei und Ansicht gespeichert.
+- Impedanz und CISPR 17 liegen in einem Tab **Z**; gespeicherte Einstellungen bleiben gültig.
+
+**ESB**
+
+- Bei 1- und 2-Port-Dateien wählt die Physik-Erkennung das Modell (induktiv oder kapazitiv) und die Fixture (Serie, Shunt, Eintor). Ein Kondensator in einer Serien-Fixture wird nicht mehr als Induktivität behandelt. Das Ergebnis ist als sicher, wahrscheinlich oder nicht eindeutig gekennzeichnet und lässt sich übersteuern.
+- **Modell-Editor für Zweipole:** Die Werte des automatischen Fits lassen sich eintippen (10 µH, 4,7n, 1e-6), per Regler um eine Dekade verstellen, einzeln festhalten und im Fitfenster neu optimieren. Optimiert werden Betrag und Phase der komplexen Impedanz; alle Werte bleiben positiv. Gültigkeitsbereich und Abweichung (dB und Grad RMS) stehen dabei.
+- **Modell-Editor für CMC und Übertrager:** Derselbe Editor arbeitet auch mit den Vierpol-Modellen. CMC: M, Lσ, R_σ (Verluste der Streuung, parallel zu Lσ), R_w, R_Fe, Ct, Cw, Cx, Cg; optimiert wird auf Betrag und Phase der vier natürlichen Moden (G, V, H, D), jeder Punkt gewichtet nach seiner Auflösbarkeit. Übertrager: L_m, Lσ, n, R₁, R₂, R_Fe, C_p sowie die Wicklungskapazität in zwei Teilen (Cwa zwischen gleichnamigen Anschlüssen, Cwx über Kreuz); optimiert wird auf Z₁₁, Z₂₂, Z₂₁ und die Kurzschlussimpedanz Z_k. Die Startwerte sind die der Auswertung; Schaltbild, Modellkurve und SPICE-Export (Vierpol mit gekoppelten Induktivitäten, k = 1) zeigen immer die Schaltung des Editors. Annahmen, die eine Klemmenmessung nicht prüfen kann (hälftige Streuung, symmetrische CMC), stehen beim Editor.
+- **Bestimmtheit je Parameter:** Jede Zeile des Vierpol-Editors zeigt, wie fest die Messung im Fitfenster den Wert legt (gut ≤ ± 10 %, schwach ≤ ± 100 %, nicht bestimmt). „Optimieren“ hält nicht bestimmbare Werte automatisch auf ihrem Wert vor dem Lauf fest (abschaltbar); eine Gegenprobe lässt Werte frei, ohne die der Fit spürbar schlechter wird. Werte, die der Fit gegen null drückt, gelten als „klein“, nicht als unbestimmt.
+- **Kernglieder der CMC:** Auswahl 1, 2 oder 3 Glieder M ∥ R_Fe; die Startwerte kommen aus der Verteilung der Relaxationszeiten, die aus der Messung freigestellt wird. „Anzahl prüfen“ fittet alle drei und übernimmt die kleinste Anzahl, die die Messung trägt (ein weiteres Glied muss die Abweichung um mindestens 10 % senken und eine eigene Zeitkonstante behalten). Schaltbild-Tabelle und SPICE-Export zeigen alle Glieder.
+- **Optimierer:** Levenberg-Marquardt zusammen mit dem Simplex (das Beste aus beiden), danach proximale Nachiteration: Gut bestimmte Werte werden nicht mehr zu den Startwerten gezogen (synthetisch < 0,01 % statt bis zu 8 % bei R_Fe). Die Phase geht als Sehne auf dem Einheitskreis ein, ohne Sprung bei ±180°. Die Rechnung läuft im Hintergrund (Web Worker), die Seite bleibt bedienbar. Methode und Befunde: [docs/esb-fit.md](docs/esb-fit.md).
+- **Übertrager auf natürlichen Moden:** Optimiert wird auf Mode M (Magnetisierung), Mode σ (Streuung) und ihrer Kopplung, primärbezogen. Das Fitfenster reicht bis über die Resonanz von Mode σ, denn erst dort zeigt sich C_wa. Damit sind C_p, C_p2 (neu, über der Sekundärwicklung), C_wa und C_wx bestimmbar; ihre Startwerte kommen aus den Moden. Ein optionales Wirbelstromglied Lσ_e ∥ R_e bildet die zu hohen Frequenzen abfallende Streuinduktivität ab. Synthetisch werden alle Werte auf ≤ 1 % gefunden, auch R₁ und R₂.
+- **R_w bei CMCs:** Der Editor nennt R_w den gesamten Serienwiderstand der Messung. Bei der WE-CMB 744823601 sind das rund 0,5 Ω je Wicklung bei einem Datenblattwert von höchstens 13 mΩ; der Rest stammt aus der Messanordnung. Für ein Bauteilmodell den Datenblattwert eintragen und festhalten.
+- **LAN-Übertrager mit Mittelanzapfung (6 Ports):** WE-LAN-Dateien werden aus Herstellerkopf und Pin-Skizze erkannt: je Seite drei aufeinanderfolgende Pins, die mittlere ist die Anzapfung und bleibt offen; Primär P1/P3, Sekundär nach Punktkonvention (das Tor, das in der Skizze in derselben Zeile wie Port 1 steht, ist Plus). Der Knopf „<Artikelnummer> · CT Open“ setzt diese Zuordnung. Die Messung prüft die Polarität, der Editor zeigt sie an. 7490220115 behält seine bisherige Zuordnung.
+- **Bibliothek ordnen:** Dateien und Ordner lassen sich umbenennen und verschieben (Stift-Knopf in jeder Zeile), Bibliotheken umbenennen. Ein Vorgang gelingt ganz oder gar nicht; ein belegtes Ziel wird abgelehnt, nichts wird überschrieben.
+- **Y-Achse am Touchscreen:** Skala links ziehen verschiebt, zwei Finger übereinander zoomen, Doppeltippen auf die Skala stellt die Automatik wieder her.
+- **Marker und Fit:** „M“ neben einem Parameter übernimmt den Startwert vom aktiven Marker (L = X/ω, C = −1/(ωX), R = Re Z, C der Resonanz). „Fenster = M1 … M2“ begrenzt den Fit auf den Bereich zwischen zwei Markern. Beim Übertrager setzt „= Marker“ die Auswertefrequenz für OCL, n und k.
+- Messkurve und Modellkurve liegen gleichzeitig im Diagramm. Die Messdaten werden nie verändert.
+- **Modelle:** induktiv R₀ + (L₁ ∥ C₁ ∥ R₁) + zweiter Kreis; kapazitiv ESR + ESL + C. Beide lassen sich als SPICE-`.lib` speichern oder direkt als Modell öffnen.
+- **CMC-Schaltbild mit Werten:** je Wicklung R_w, Streuinduktivität Lσ = L − M und gekoppelter Teil M mit k, dazu R_Fe, Ct, Cw, Cg. Ein Fitwert, den das gewählte Band nicht bestimmt (negativ), erscheint als „n. b.“ mit Hinweis.
+- **Übertrager-Schaltbild mit Werten:** R₁, Lσ₁, L_m ∥ R_Fe, idealer Übertrager 1 : n, Lσ₂, R₂, C_p, Cww. Die Aufteilung der Streuung auf Primär- und Sekundärseite ist von den Klemmen aus nicht messbar und als Annahme gekennzeichnet.
+- Schaltbilder lassen sich vergrößern und verschieben, auch am Handy.
+
+## Tests
+
+```
+node tests/static.mjs            # Lizenz, Cache-Version, Syntax
+node tests/magnetic.unit.mjs     # Bauteil-Erkennung
+node tests/rf.reference.mjs      # RF-Mathematik gegen Referenznetzwerke und gegen main
+node tests/e2e/run.mjs           # alles: dazu Browser-Abläufe A–D, ZIP, Speicher, Achsen, ESB, Englisch (braucht Playwright und Chrome)
+node tests/e2e/run.mjs --fast    # nur die drei Gruppen ohne Browser
+node tests/e2e/perf.mjs          # Zeitmessung mit 100 und 1000 Dateien
+SPA_PRIVATE_DATA=/pfad node tests/real.data.mjs   # echte Herstellerdaten gegen das Datenblatt (Dateien nicht im Repository)
+```
+
+Die Browser-Tests brauchen einmalig `npm install playwright` (oder `CHROME_PATH=/pfad/zu/chrome`). Alle Testdaten sind synthetisch und werden zur Laufzeit erzeugt. Was nur am echten Gerät geprüft werden kann, steht in [docs/geraetetests.md](docs/geraetetests.md). Aufbau des Speichers: [docs/speicher.md](docs/speicher.md).
+
 ## Bauteil-Erkennung (Physik)
 
 - Beim Öffnen von 1-, 2- und 4-Port-Dateien wertet die App die komplexe S-Matrix aus. Vierpole: Wicklungspfade, L₁, L₂, k, Windungsverhältnis, Kernverlust, Eigenresonanz, Sdd21/Scc21/Sdc21. Daraus folgt der Kandidat CMC, gekoppelte Doppeldrossel, Übertrager oder „nicht eindeutig“. Zweipole: Induktivität (Ferrit, Luft/Keramik, Perle), Kondensator, Widerstand.
@@ -92,7 +154,11 @@ Alle Berechnungen laufen lokal auf dem Gerät. Messdateien werden nicht hochgela
 
 ## Lizenz
 
-© 2026 Simon Mark · info.simonlation@gmail.com. Alle Rechte vorbehalten. Kein Open Source: Kopieren, Verändern oder Weiterverwenden des Quelltexts, auch in Teilen, nur mit schriftlicher Zustimmung des Autors.
+© 2026 Simon Mark · info.simonlation@gmail.com. Alle Rechte vorbehalten. **Proprietäre Software, kein Open Source.**
+
+Das Repository ist öffentlich lesbar. Das ist keine Freigabe: Kopieren, Verändern, Weiterverbreiten oder Einbauen des Quelltexts in andere Produkte, auch in Teilen, ist nur mit vorheriger schriftlicher Zustimmung des Rechteinhabers gestattet. Die bestimmungsgemäße Nutzung der bereitgestellten Web-App ist erlaubt.
+
+Die vollständigen Bedingungen stehen in [LICENSE.txt](LICENSE.txt) und in der App unter **Lizenz**. Die App enthält keine Softwarekomponenten Dritter.
 
 ## Bedienung
 
@@ -105,7 +171,10 @@ Alle Berechnungen laufen lokal auf dem Gerät. Messdateien werden nicht hochgela
 | Doppelklick | Doppeltippen | Zoom zurücksetzen |
 | – | Waagerecht wischen | Aktiven Marker verschieben |
 
-Die letzten 6 Dateien (je bis 30 MB) bleiben mit Portkonfiguration, Ansicht und Markern auf dem Gerät gespeichert.
+| Mausrad / Ziehen auf der Y-Skala | – (Achsendialog) | Vertikale Achse zoomen / verschieben |
+| Doppelklick auf die Y-Skala | – | Vertikale Achse zurücksetzen |
+
+Alle geladenen Dateien (je bis 100 MiB, bis 1000 je Sitzung) bleiben mit Portkonfiguration, Ansicht, Markern und Achsen auf dem Gerät gespeichert.
 
 ## Installation auf Android
 
@@ -122,7 +191,7 @@ Settings → Pages → *Deploy from a branch* → `main` / `(root)`.
 
 ## Aktualisieren
 
-`python tools/build.py <quellordner> <zielordner>` schreibt eine neue Cache-Version in `sw.js`. Installierte Apps zeigen beim nächsten Öffnen „Neue Version verfügbar → Neu laden“.
+`python3 tools/build.py` schreibt die Cache-Version (Hash der App-Dateien) direkt in `sw.js`. Das muss vor jedem Commit laufen, der die App ändert: Ohne neue Version zeigt eine installierte App weiter die alte `index.html` aus dem Cache. `python3 tools/build.py --check` prüft das, `node tests/static.mjs` ebenfalls. Installierte Apps zeigen beim nächsten Öffnen „Neue Version verfügbar → Neu laden“. Gespeicherte Dateien bleiben bei einem Update erhalten.
 
 ---
 
@@ -149,6 +218,10 @@ Open several files, a folder or a ZIP; step through with PgUp/PgDn; overlay up t
 
 SPICE library viewer (R, L, C, K, X, parameterised subcircuits → S-parameters), in-app library with folders, arrow-key stepping, reduced and full-screen view, 0–4 markers, tying ports together, equivalent circuit up to the second resonance with SPICE export, dark theme.
 
+### Version 8
+
+Durable storage: every imported file, folder and ZIP is written to browser storage (OPFS, IndexedDB as fallback), read back and verified, so the session survives reloads, restarts and updates. Libraries with folders, search and filters; adding the open file, a whole ZIP or a selection with progress and a verified result. Robust ZIP reader (ZIP64, CRC, size limits, path checks). Storage diagnosis, self test, backup export and import. On phones the file manager is a drawer from the left. Signed L(f)/C(f), symmetric log Y axis, Y axis by mouse, one tab "Z" for impedance and CISPR 17. Equivalent-circuit model and fixture for one- and two-port files follow the physics detection. Model editor for two-poles: type, drag, fix and re-optimise parameters on magnitude and phase inside a fit window set by markers; SPICE export of the edited model. CMC and transformer drawings carry the fitted values, including leakage inductance per winding and the ideal 1 : n transformer. The four-terminal editor shows per parameter how firmly the measurement fixes it and keeps undetermined values fixed while optimising; the CMC model has a loss resistor R_σ across the leakage and 1–3 core sections, with start values from the relaxation times of the measured core and a check of how many sections the measurement supports. Fits combine Levenberg–Marquardt with the simplex and run in a web worker. WE-LAN 6-port files with centre taps are recognised from the header and pin sketch (taps open, secondary by dot convention).
+
 ### License
 
-© 2026 Simon Mark. All rights reserved. Not open source: copying, modifying or reusing the source code, in whole or in part, requires the written permission of the author.
+© 2026 Simon Mark. All rights reserved. **Proprietary software, not open source.** The repository is publicly readable; that is not a release: copying, modifying, redistributing or incorporating the source code, in whole or in part, requires the prior written permission of the copyright holder. Using the provided web app for its intended purpose is permitted. Full terms: [LICENSE.txt](LICENSE.txt) and in the app under **License**. The app contains no third-party software components.

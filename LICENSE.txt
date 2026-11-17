@@ -1,0 +1,101 @@
+S-PARAMETER ANALYZER
+Proprietäre Software – Nutzungsbedingungen
+
+Copyright © 2026 Simon Mark. Alle Rechte vorbehalten.
+
+1. Urheberrecht
+
+Der S-Parameter Analyzer einschließlich seines vom Autor erstellten Quellcodes, der Benutzeroberfläche, der Grafiken, der Dokumentation und der zugehörigen Softwarebestandteile ist urheberrechtlich geschützt.
+
+Die öffentliche Zugänglichkeit des Quellcodes auf GitHub stellt keine Freigabe als Open-Source-Software dar.
+
+2. Gestattete Nutzung
+
+Die bestimmungsgemäße Nutzung der vom Rechteinhaber bereitgestellten Webanwendung ist gestattet.
+
+Soweit der Rechteinhaber offizielle ausführbare Versionen veröffentlicht, dürfen diese für eigene private oder berufliche Analysezwecke heruntergeladen und auf eigenen Geräten ausgeführt werden.
+
+Hierzu technisch notwendige Kopien sind gestattet.
+
+3. Einschränkungen
+
+Ohne vorherige schriftliche Zustimmung des Rechteinhabers ist es nicht gestattet, den Quellcode oder wesentliche Teile der Software zu vervielfältigen, zu verändern, als eigenes Produkt zu veröffentlichen, weiterzuverbreiten, zu verkaufen, Dritten zur eigenen Verwertung bereitzustellen oder in andere Softwareprodukte zu integrieren.
+
+Vorbehalten bleiben zwingende gesetzliche Rechte und Berechtigungen aus den anwendbaren Plattformbedingungen.
+
+4. Urheberrechtshinweise
+
+Vorhandene Urheberrechtshinweise dürfen nicht unberechtigt entfernt oder verändert werden.
+
+5. Drittkomponenten
+
+Für eingebundene Softwarekomponenten Dritter gelten deren jeweilige Lizenzbedingungen. Rechte an solchen Komponenten werden durch diese Lizenz nicht eingeschränkt.
+
+6. Benutzerdateien
+
+Diese Lizenz begründet keine Rechte des Softwareautors an den vom Anwender importierten Messdateien, Modellen oder Bibliotheken.
+
+7. Gewährleistung und Haftung
+
+Die Software wird ohne Zusicherung bestimmter Analyseergebnisse bereitgestellt. Gewährleistung und Haftung richten sich nach dem anwendbaren Recht. Zwingende gesetzliche Ansprüche bleiben unberührt.
+
+8. Genehmigungen und Kontakt
+
+Anfragen zur Nutzung, Anpassung, Integration oder Weiterverbreitung des Quellcodes sind an folgende Adresse zu richten:
+
+Simon Mark
+info.simonlation@gmail.com
+
+Diese Software wird nicht unter MIT, GPL, Apache oder einer anderen Open-Source-Lizenz veröffentlicht.
+
+========================================================================
+
+S-PARAMETER ANALYZER
+Proprietary Software – License Terms
+
+Copyright © 2026 Simon Mark. All rights reserved.
+
+1. Copyright
+
+S-Parameter Analyzer, including its original source code, user interface, graphics, documentation, and associated software components, is protected by copyright.
+
+Public availability of the source code on GitHub does not constitute an open-source license.
+
+2. Permitted Use
+
+Users may use the official web application for its intended purposes.
+
+Official executable releases, if provided by the copyright holder, may be downloaded and run on the user's own devices for private or professional analysis.
+
+Copies technically necessary for such permitted use are allowed.
+
+3. Restrictions
+
+Without prior written permission from the copyright holder, users may not reproduce, modify, redistribute, republish, sell, commercially exploit, incorporate into other software products, or otherwise make available for independent exploitation the source code or substantial parts of the software.
+
+Mandatory statutory rights and permissions arising under applicable platform terms remain unaffected.
+
+4. Copyright Notices
+
+Copyright and attribution notices must not be removed or altered without authorization.
+
+5. Third-Party Components
+
+Third-party software components remain subject to their respective license terms. Nothing in this license overrides the rights granted under those licenses.
+
+6. User Data
+
+This license does not grant the software author any rights over measurement files, models, or libraries imported by users.
+
+7. Warranty and Liability
+
+The software is provided without any guarantee of particular analytical results. Warranty and liability are governed by applicable law. Mandatory statutory rights remain unaffected.
+
+8. Permissions and Contact
+
+For licensing, modification, integration, or redistribution permissions, contact:
+
+Simon Mark
+info.simonlation@gmail.com
+
+This software is not released under the MIT, GPL, Apache, or any other open-source license.
