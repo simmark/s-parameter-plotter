@@ -446,7 +446,7 @@ input[type="checkbox"] { accent-color: var(--accent); }
 .cn-inspector { margin-top: 10px; padding: 10px; border: 1px solid var(--line); border-radius: 8px; }
 .cn-inspector h3 { margin: 0 0 4px; font-size: 14px; }
 .cn-ports { max-height: 420px; }
-.cn-ports select { max-width: 150px; font: inherit; font-size: 12px; }
+.cn-ports select { width: 9.5em; max-width: 150px; font: inherit; font-size: 12px; }
 .cn-ports tr.is-conflict td { background: var(--mode-cd-soft); }
 .cn-pairs { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; margin: 0 0 10px; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 4px 12px; }
 .cn-pairs legend { font-size: 12px; color: var(--muted); padding: 0 4px; }
@@ -1427,7 +1427,8 @@ window.I18N = (() => {
     "Übersprechen und Laufzeit": "Crosstalk and delay", "Leistungssummen über alle anderen Kanäle: PSNEXT am selben Ende, PSFEXT vom Ende 1 zum Ende 2. Laufzeit: Gruppenlaufzeit von SDD21 (Median, wo |SDD21| > −6 dB); Lane: Abweichung vom Mittel aller Kanäle; Skew: τ(+) − τ(−) innerhalb des Paars aus den Single-Ended-Pfaden. Keine Grenzwerte.": "Power sums over all other channels: PSNEXT at the same end, PSFEXT from end 1 to end 2. Delay: group delay of SDD21 (median where |SDD21| > −6 dB); lane: deviation from the mean of all channels; skew: τ(+) − τ(−) within the pair from the single-ended paths. No limits.", "Die Abtastung ist für die Phase zu grob: Mindestens ein Phasenschritt war größer als 90°. Die Phase wurde über die Laufzeit-Kontinuität entfaltet (Annahme einer glatten Laufzeit). Für verlässliche Laufzeiten dichter messen.": "The sampling is too coarse for the phase: at least one phase step exceeded 90°. The phase was unwrapped by delay continuity (assuming a smooth delay). Measure more densely for reliable delays.", "Laufzeit": "Delay", "Lane": "Lane", "Skew im Paar": "Intra-pair skew", "PSNEXT Ende 1 max.": "PSNEXT end 1 max.", "PSNEXT Ende 2 max.": "PSNEXT end 2 max.", "PSFEXT max.": "PSFEXT max.", "stärkster Störer": "strongest aggressor", "Kanal im Diagramm": "Channel in the chart",
     "Zeitbereich": "Time domain", "Zeit": "Time", "Sprungantwort, TDR und Augendiagramm": "Step response, TDR and eye diagram", "Sprung- und Impulsantwort, TDR-Impedanz, Augendiagramm · aus den Frequenzdaten": "Step and impulse response, TDR impedance, eye diagram · from the frequency data", "Antwort (Zeile)": "Response (row)", "Anregung (Spalte)": "Excitation (column)", "Darstellung": "Display", "Sprungantwort": "Step response", "Impulsantwort": "Impulse response", "TDR · Impedanz": "TDR · impedance", "Fenster": "Window", "Rechteck (ohne)": "Rectangle (none)", "Flanke 10–90 % [ps]": "Edge 10–90 % [ps]", "Zeit bis [ns]": "Time up to [ns]", "keine": "none", "Kurve": "Curve", "Abtastung": "Sampling", "Zeitschritt": "Time step", "Zeitfenster": "Time window", "Laufzeit (50 %)": "Delay (50 %)", "linear": "linear", "logarithmisch": "logarithmic", "ungleichmäßig": "non-uniform", "Verlauf": "Waveform", "Augendiagramm": "Eye diagram", "Bitrate [Gbit/s]": "Bit rate [Gbit/s]", "Amplitude ± [V]": "Amplitude ± [V]", "Muster": "Pattern", "Auge berechnen": "Compute eye", "Augenhöhe": "Eye height", "Augenbreite": "Eye width", "Schlechtester Fall": "Worst case", "Bitrate und Amplitude müssen positiv sein.": "Bit rate and amplitude must be positive.", "Das Netzwerk wird berechnet …": "The network is being computed …", "Logarithmische Abtastung: Zwischen den Punkten wird linear interpoliert. Feine Strukturen im Zeitbereich (Reflexionen, Resonanzen) können fehlen. Für TDR und Augen eine dichte, lineare Messung verwenden.": "Logarithmic sampling: values between the points are interpolated linearly. Fine structures in the time domain (reflections, resonances) may be missing. Use a dense, linear sweep for TDR and eyes.", "Ungleichmäßige Abtastung: Zwischen den Punkten wird linear interpoliert.": "Non-uniform sampling: values between the points are interpolated linearly.", "Phasenschritte über 90° zwischen Punkten: Die Phase wurde über die Laufzeit-Kontinuität entfaltet (Annahme einer glatten Laufzeit).": "Phase steps above 90° between points: the phase was unwrapped by delay continuity (assuming a smooth delay).", "Die zu f → 0 extrapolierte Phase liegt weit von 0° und 180°: Der Gleichanteil ist unsicher.": "The phase extrapolated to f → 0 is far from 0° and 180°: the DC value is uncertain.", "Impedanz Z = Z₀·(1+ρ)/(1−ρ) aus der Sprungantwort der Reflexion; Z₀ = Bezugsimpedanz der Mode. Ohne Flanke oder Fenster schwingt die Kurve an Sprüngen über (Gibbs).": "Impedance Z = Z₀·(1+ρ)/(1−ρ) from the step response of the reflection; Z₀ = reference impedance of the mode. Without edge or window the curve overshoots at steps (Gibbs).", "Sprung der Höhe 1 am Eingang ab t = 0; vor t = 0 liegt ein Achtel des Zeitfensters, damit ein bandbegrenzter Sprung nicht umklappt.": "Unit step at the input from t = 0; one eighth of the time window lies before t = 0 so that a band-limited step does not wrap around.", "NRZ mit ±Amplitude, periodisches PRBS-Muster, Signal als Überlagerung der Pulsantwort dieser Kurve (lineares, zeitinvariantes Netzwerk). Ohne Jitter, Rauschen, Entzerrung und ohne Maske: keine Normbewertung.": "NRZ with ±amplitude, periodic PRBS pattern, signal as superposition of the pulse response of this curve (linear, time-invariant network). Without jitter, noise, equalisation and without a mask: no compliance assessment.",
     "Abtastzeitpunkt": "Sampling instant",
-    "Nur aus Messdaten: Welche Leiterenden auf derselben Seite liegen, folgt aus der Annahme, dass Nahübersprechen stärker ist als Fernübersprechen.": "From measured data only: which conductor ends lie on the same side follows from the assumption that near-end crosstalk is stronger than far-end crosstalk."
+    "Nur aus Messdaten: Welche Leiterenden auf derselben Seite liegen, folgt aus der Annahme, dass Nahübersprechen stärker ist als Fernübersprechen.": "From measured data only: which conductor ends lie on the same side follows from the assumption that near-end crosstalk is stronger than far-end crosstalk.",
+    "Wird im Hintergrund berechnet …": "Computing in the background …"
   }));
   const PATTERNS = [
     [/^Im gewählten Fit-Band nicht bestimmbar \(der Fit liefert einen negativen Wert\): (.+)\. Wähle ein Band, in dem dieses Element die Kurve prägt – für Kapazitäten reicht es meist, das Band zu höheren Frequenzen zu erweitern\.$/, (m, a) => 'Not determinable in the chosen fit band (the fit returns a negative value): ' + a.split(', ').map(t).join(', ') + '. Choose a band in which this element shapes the curve – for capacitances it usually helps to extend the band to higher frequencies.'],
@@ -7854,7 +7855,8 @@ const Plot = (() => {
       state.busy = true;
       render();
       await nextTick();
-      const network = await computeNetwork(dataset, config, state.layout, () => id === state.job);
+      const channels = state.connector?.channels?.length ? state.connector.channels : null;
+      const network = await computeNetwork(dataset, config, state.layout, () => id === state.job, 'main', channels);
       if (!network || id !== state.job) return;
       state.network = network;
     } catch (error) {
@@ -7931,6 +7933,109 @@ const Plot = (() => {
       worker.onerror = event => { event.preventDefault?.(); done(); direct().then(resolve, reject); };
       worker.postMessage({ name, args });
     });
+  }
+
+  // Compute worker: network (all frequency points), crosstalk of applied channels and eye diagrams run off the page, built from
+  // the same rf-core, td-core and connector-core source. Datasets are sent once and kept (the last three). A newer network job of
+  // the same lane (current file, comparison) ends the older one at its next pause. Results are identical to the page path (same
+  // code); if workers are missing or fail, everything runs on the page as before. window.SPA_NO_WORKER = true forces the page.
+  const compute = { url: null, worker: null, ids: new WeakMap(), sent: new Set(), next: 1, jobs: new Map(), failed: false, stats: { worker: 0, page: 0 } };
+  // local diagnostics for tests and the console (how many network jobs ran where); nothing leaves the browser
+  window.SPA_COMPUTE_STATS = () => ({ ...compute.stats, failed: compute.failed, running: !!compute.worker });
+  function computeWorker() {
+    if (compute.failed || typeof Worker !== 'function' || window.SPA_NO_WORKER) return null;
+    if (compute.worker) return compute.worker;
+    compute.url ??= URL.createObjectURL(new Blob([$('rf-core').textContent, '\n', $('td-core').textContent, '\n', $('connector-core').textContent, `
+      const sets = new Map(), latest = {};
+      const pause = () => new Promise(resolve => setTimeout(resolve, 0));
+      async function network(m) {
+        const ds = sets.get(m.id);
+        if (!ds) throw new Error('missing dataset');
+        const layout = RF.prepareNetwork(ds, m.config), se = [], mm = [];
+        let gaps = 0, start = performance.now();
+        for (let i = 0; i < ds.freq.length; i++) {
+          if ((i & 31) === 0 && performance.now() - start > 40) { await pause(); if (latest[m.lane] !== m.job) return null; start = performance.now(); }
+          const [a, b] = RF.processPoint(ds, m.config, layout, i);
+          se.push(a); mm.push(b); if (!a || !b) gaps++;
+        }
+        let xt = null;
+        if (m.channels?.length) xt = Connector.crosstalk({ freq: ds.freq, mm, se, modes: layout.mmModes, active: layout.active, channels: m.channels });
+        // one buffer per basis instead of one per point (thousands of transfers cost the page more than one copy here);
+        // this also leaves the cached dataset intact (without loads a point is the dataset's own matrix)
+        const pack = list => {
+          const len = list.find(Boolean)?.length || 0, data = new Float64Array(len * list.length), mask = new Uint8Array(list.length);
+          list.forEach((x, i) => { if (x) { data.set(x, i * len); mask[i] = 1; } });
+          return { len, data, mask };
+        };
+        const se2 = pack(se), mm2 = mm.every((x, i) => x === se[i]) ? null : pack(mm);
+        return { se: se2, mm: mm2, gaps, xt };
+      }
+      self.onmessage = async event => {
+        const m = event.data;
+        if (m.type === 'dataset') { sets.delete(m.id); sets.set(m.id, m.dataset); while (sets.size > 3) sets.delete(sets.keys().next().value); return; }
+        try {
+          if (m.type === 'network') {
+            latest[m.lane] = m.job;
+            const r = await network(m);
+            if (!r) { self.postMessage({ job: m.job, cancelled: true }); return; }
+            self.postMessage({ job: m.job, result: r }, [r.se.data.buffer, r.se.mask.buffer, ...(r.mm ? [r.mm.data.buffer, r.mm.mask.buffer] : [])]);
+          } else if (m.type === 'eye') {
+            const e = TD.eye(m.step, m.dt, m.opts);
+            self.postMessage({ job: m.job, result: e }, [e.wave.buffer]);
+          } else if (m.type === 'crosstalk') {
+            self.postMessage({ job: m.job, result: Connector.crosstalk(m.args) });
+          }
+        } catch (error) { self.postMessage({ job: m.job, error: error.message, missing: error.message === 'missing dataset' }); }
+      };`], { type: 'text/javascript' }));
+    try { compute.worker = new Worker(compute.url); } catch { compute.failed = true; return null; }
+    compute.worker.onmessage = event => {
+      const { job, result, error, cancelled, missing } = event.data, pending = compute.jobs.get(job);
+      if (!pending) return;
+      compute.jobs.delete(job);
+      if (cancelled) pending.resolve(null);
+      else if (error) pending.reject(Object.assign(new Error(error), { missing }));
+      else pending.resolve(result);
+    };
+    compute.worker.onerror = event => {
+      event.preventDefault?.();
+      compute.failed = true; compute.worker?.terminate(); compute.worker = null; compute.sent.clear();
+      for (const pending of compute.jobs.values()) pending.reject(Object.assign(new Error('Worker-Fehler'), { fallback: true }));
+      compute.jobs.clear();
+    };
+    return compute.worker;
+  }
+  function computeCall(message, transfer = []) {
+    const worker = computeWorker();
+    if (!worker) return null;
+    const job = compute.next++;
+    return new Promise((resolve, reject) => { compute.jobs.set(job, { resolve, reject }); worker.postMessage({ ...message, job }, transfer); });
+  }
+  function computeDataset(dataset) {
+    let id = compute.ids.get(dataset);
+    if (!id) { id = compute.next++; compute.ids.set(dataset, id); }
+    if (!compute.sent.has(id)) {
+      // a structured copy: the page keeps its dataset
+      compute.worker.postMessage({ type: 'dataset', id, dataset: { n: dataset.n, freq: dataset.freq, samples: dataset.samples, refs: dataset.refs, name: dataset.name } });
+      compute.sent.add(id);
+      if (compute.sent.size > 3) compute.sent.delete(compute.sent.values().next().value);
+    }
+    return id;
+  }
+  async function networkInWorker(dataset, config, lane, channels) {
+    if (!computeWorker()) return undefined;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const id = computeDataset(dataset);
+      try {
+        const r = await computeCall({ type: 'network', id, config, lane, channels: channels?.length ? channels : null });
+        if (r) compute.stats.worker++;
+        return r;
+      } catch (error) {
+        if (error.missing) { compute.sent.delete(id); continue; }   // dropped from the worker's cache: send again
+        if (error.fallback) return undefined;
+        throw error;
+      }
+    }
+    return undefined;
   }
 
   async function parseFile(file) {
@@ -9281,7 +9386,15 @@ const Plot = (() => {
   }
 
   // ---- Comparison: the same curves of other files, resampled onto the frequency grid of the open file. ----
-  async function computeNetwork(dataset, config, layout, alive) {
+  async function computeNetwork(dataset, config, layout, alive, lane = 'main', channels = null) {
+    const viaWorker = await networkInWorker(dataset, config, lane, channels);
+    if (viaWorker === null || !alive()) return null;
+    if (viaWorker) {
+      const unpack = p => Array.from(p.mask, (ok, i) => ok ? p.data.subarray(i * p.len, (i + 1) * p.len) : null);
+      const se = unpack(viaWorker.se), mm = viaWorker.mm ? unpack(viaWorker.mm) : se;
+      return { layout, se, mm, gaps: viaWorker.gaps, xt: viaWorker.xt, xtChannels: channels, worker: true };
+    }
+    compute.stats.page++;
     let start = performance.now();
     const se = [], mm = [];
     let gaps = 0;
@@ -9317,7 +9430,7 @@ const Plot = (() => {
           const key = JSON.stringify(config);
           if (compareCache.get(id)?.key === key) continue;
           const layout = RF.prepareNetwork(dataset, config);
-          const network = await computeNetwork(dataset, config, layout, () => job === compareJob);
+          const network = await computeNetwork(dataset, config, layout, () => job === compareJob, 'compare');
           if (!network) return;
           compareCache.set(id, { key, ctx: { dataset, config, layout, network, memo: new Map() } });
         } catch (error) {
@@ -10185,6 +10298,28 @@ const Plot = (() => {
   const CN_CATEGORY_CLASS = { certain: 'ok', likely: 'warn', several: 'warn', unresolved: 'bad', mismatch: 'bad' };
   const CN_SOURCE = { names: 'Portname', convention: 'Konvention', data: 'Messdaten', manual: 'manuell', template: 'Vorlage', file: 'Port-Map-Datei', '': '–' };
   const CN_ROLE = { ground: 'Masse', power: 'Versorgung', config: 'Konfiguration', sideband: 'Seitenband', usb2: 'USB 2.0', superspeed: 'SuperSpeed', signal: 'Signal', tap: 'Mittelanzapfung', shield: 'Schirm', led: 'LED' };
+  // The port table lists up to 64 × 65 nodes; the options of a row are created when it is first used (focus, pointer, key).
+  function cnFillOptions(el) {
+    if (!el?.matches?.('select.cn-node[data-lazy]')) return;
+    const p = cnProfile(), current = el.value;
+    if (!p) return;
+    el.innerHTML = '<option value="">–</option>' + Connector.nodesOf(p).map(id => '<option value="' + esc(id) + '"' + (id === current ? ' selected' : '') + '>' + esc(id.replace('@', ' · S')) + '</option>').join('');
+    el.removeAttribute('data-lazy');
+  }
+  for (const type of ['focusin', 'pointerdown', 'keydown']) document.addEventListener(type, event => cnFillOptions(event.target), true);
+  // the remaining rows are filled in idle time, a few per slice, so scripts and assistive tools also find every option
+  let cnIdle = 0;
+  function cnFillIdle() {
+    const run = ++cnIdle, idle = window.requestIdleCallback || (fn => setTimeout(() => fn({ timeRemaining: () => 8 }), 16));
+    const step = deadline => {
+      if (run !== cnIdle) return;
+      const rest = document.querySelectorAll('#connector-panel select.cn-node[data-lazy]');
+      for (const el of rest) { if (deadline.timeRemaining() < 2) break; cnFillOptions(el); }
+      if (document.querySelector('#connector-panel select.cn-node[data-lazy]')) idle(step);
+    };
+    idle(step);
+  }
+
   const cnBlank = () => ({ profile: '', configuration: '', mapping: null, detection: null, candidate: '', selected: '', channels: [], zoom: 1, pan: [0, 0], freq: null, matrixModes: 'D' });
   const cnProfile = () => Connector.profile(state.connector.profile);
   const cnAll = () => [...Connector.PROFILES, ...Connector.customProfiles()];
@@ -10275,7 +10410,7 @@ const Plot = (() => {
     const { config, channels } = Connector.toConfig(p, cn.mapping, state.dataset.n, { pairs, others: String(data.get('others') || 'match'), taps: String(data.get('taps') || 'open') });
     if (!config.pairs.length) { toast('Für die gewählten Paare sind nicht beide Ports zugeordnet.'); return; }
     state.config = config;
-    const links = new Map(Connector.checkChannels(p, cn.mapping, state.dataset).filter(c => c.fromData).map(c => [c.to, p.pairs.find(x => x.id === c.from)?.channelKey]));
+    const links = new Map(cnChecks(p, cn.mapping).filter(c => c.fromData).map(c => [c.to, p.pairs.find(x => x.id === c.from)?.channelKey]));
     cn.channels = channels.map(c => ({ id: c.id, pair: c.pair, side: c.side, channel: links.get(c.pair) ?? c.channel, end: c.end, name: c.name, plus: c.plus, minus: c.minus }));
     cn.applied = { pairs, others: String(data.get('others') || 'match'), taps: String(data.get('taps') || 'open') };
     state.basis = 'mm'; state.sKeys.mm = null; state.pairIn = 1; state.pairOut = Math.min(2, config.pairs.length);
@@ -10388,7 +10523,7 @@ const Plot = (() => {
     const partner = new Map(); thru.paths.forEach(x => { partner.set(x.a, x.b); partner.set(x.b, x.a); });
     // file profiles: + and − of a pair are confirmed when its channel shows transmission with the right polarity
     const fileState = new Map();
-    if (p.status === 'file') for (const c of Connector.checkChannels(p, mapping, state.dataset)) {
+    if (p.status === 'file') for (const c of cnChecks(p, mapping)) {
       const verdictOf = c.polarity === 'ok' ? 'ok' : c.polarity === 'inverted' ? 'conflict' : 'unconfirmed';
       for (const id of [c.from, c.to]) { const pair = p.pairs.find(x => x.id === id); if (!pair) continue; for (const k of [pair.plus, pair.minus]) if (fileState.get(k) !== 'conflict') fileState.set(k, verdictOf); }
     }
@@ -10404,9 +10539,16 @@ const Plot = (() => {
     return { verdict: out, validation: v };
   }
 
+  // Channel check, cached per dataset, profile and mapping (it is used by the pin verdicts, the check card and the apply step).
+  const cnCheckCache = { dataset: null, key: '', rows: null };
+  function cnChecks(p, mapping) {
+    const key = p.id + '|' + mapping.ports.join(',');
+    if (cnCheckCache.dataset !== state.dataset || cnCheckCache.key !== key) Object.assign(cnCheckCache, { dataset: state.dataset, key, rows: Connector.checkChannels(p, mapping, state.dataset) });
+    return cnCheckCache.rows;
+  }
   // Transmission and polarity per channel from the S-matrix of the current mapping (no limits, no pass/fail).
   function cnCheck(p) {
-    const rows = Connector.checkChannels(p, state.connector.mapping, state.dataset);
+    const rows = cnChecks(p, state.connector.mapping);
     if (!rows.length) return '';
     const POL = { ok: ['ok', '✓ richtig gepolt'], inverted: ['bad', '! + und − an einem Ende vertauscht'], open: ['warn', '? Phase nicht eindeutig'], none: ['bad', 'kein Durchgang'] };
     return '<section class="config-card"><div class="config-head"><h2>Kanalprüfung</h2><p>Für jeden Kanal: größte differentielle Übertragung |SDD21| zwischen den Enden und die Polarität. Bewertet wird die Phase bei der tiefsten Frequenz, an der |SDD21| 90 % des Maximums erreicht: nahe 0° richtig gepolt, nahe 180° vertauscht. Das prüft die Zuordnung, nicht das Bauteil.</p></div><div class="config-content"><div class="table-scroll"><table class="ports-table"><thead><tr><th scope="col">Kanal</th><th scope="col">Enden</th><th scope="col">max. |SDD21|</th><th scope="col">Phase</th><th scope="col">bei</th><th scope="col">Polarität</th></tr></thead><tbody>' +
@@ -10575,10 +10717,12 @@ const Plot = (() => {
     insertHtml(box, html);
   }
   // Eye picture: all 2-UI traces drawn with low alpha on a canvas (density), the decision phase as a line.
-  function tdEye() {
+  async function tdEye() {
     const t = state.time, c = tdCompute();
     if (!c) return;
-    const ui = 1 / t.rate, e = TD.eye(c.resp.step, c.resp.dt, { ui, amp: t.amp, order: t.order, s: 32 });
+    const ui = 1 / t.rate, opts = { ui, amp: t.amp, order: t.order, s: 32 };
+    const viaWorker = computeWorker() ? await computeCall({ type: 'eye', step: c.resp.step, dt: c.resp.dt, opts }).catch(error => { if (error.fallback) return null; throw error; }) : null;
+    const e = viaWorker || TD.eye(c.resp.step, c.resp.dt, opts);
     const W = 760, H = 340, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
     const g = cv.getContext('2d'), lim = t.amp * 1.4, sx = x => 30 + x / (2 * e.s) * (W - 40), sy = v => H / 2 - v / lim * (H / 2 - 16);
     g.fillStyle = '#fbfaf7'; g.fillRect(0, 0, W, H);
@@ -10608,8 +10752,8 @@ const Plot = (() => {
     const rate = num(d.get('rate')) * 1e9, amp = num(d.get('amp')), order = Number(d.get('order'));
     if (!(rate > 0) || !(amp > 0)) { toast('Bitrate und Amplitude müssen positiv sein.'); return; }
     t.rate = rate; t.amp = amp; t.order = [7, 9, 11].includes(order) ? order : 7;
-    try { tdEye(); } catch (error) { toast(error.message); }
-    persistSettings(); renderTime();
+    form.querySelector('button[type=submit]')?.setAttribute('aria-busy', 'true');
+    tdEye().catch(error => toast(error.message)).finally(() => { persistSettings(); if (state.tab === 'time') renderTime(); });
   }
 
   // Phase 2: crosstalk power sums, delay and skew per channel of the applied mapping.
@@ -10617,7 +10761,21 @@ const Plot = (() => {
     const cn = state.connector, net = state.network, layout = state.layout;
     if (!net || !cn.channels.length) return '';
     const key = state.dataset.name + '|' + layout.mmModes.length + '|' + cn.channels.map(c => c.id + c.channel + c.end).join(',');
-    if (cn.xtKey !== key) { cn.xt = Connector.crosstalk({ freq: state.dataset.freq, mm: net.mm, se: net.se, modes: layout.mmModes, active: layout.active, channels: cn.channels }); cn.xtKey = key; }
+    if (cn.xtKey !== key || cn.xtNet !== net) {
+      const sig = list => JSON.stringify((list || []).map(c => [c.id, c.channel, c.end, c.plus, c.minus]));
+      if (net.xt && sig(net.xtChannels) === sig(cn.channels)) { cn.xt = net.xt; cn.xtKey = key; cn.xtNet = net; }
+      else if (computeWorker() && cn.xtPending !== key + '|' + state.job) {
+        // not part of the network job (channels applied later): computed in the worker, the card follows when it is done
+        const job = state.job; cn.xtPending = key + '|' + job;
+        computeCall({ type: 'crosstalk', args: { freq: state.dataset.freq, mm: net.mm, se: net.se, modes: layout.mmModes, active: layout.active, channels: cn.channels } })
+          .then(result => { if (job !== state.job || state.network !== net) return; cn.xt = result; cn.xtKey = key; cn.xtNet = net; cn.xtPending = ''; if (state.tab === 'connector') renderConnector(); })
+          .catch(() => { cn.xtPending = 'page'; if (state.tab === 'connector') renderConnector(); });
+      }
+      if (cn.xtKey !== key || cn.xtNet !== net) {
+        if (cn.xtPending && cn.xtPending !== 'page') return '<section class="config-card"><div class="config-head"><h2>Übersprechen und Laufzeit</h2><p class="busy-note">Wird im Hintergrund berechnet …</p></div></section>';
+        cn.xt = Connector.crosstalk({ freq: state.dataset.freq, mm: net.mm, se: net.se, modes: layout.mmModes, active: layout.active, channels: cn.channels }); cn.xtKey = key; cn.xtNet = net; cn.xtPending = '';
+      }
+    }
     const res = cn.xt, fs = state.dataset.freq;
     if (!res.length) return '';
     const ps = v => Number.isFinite(v) ? (v * 1e12).toFixed(2) + ' ps' : '–';
@@ -10715,7 +10873,7 @@ const Plot = (() => {
       Array.from({ length: n }, (_, i) => {
         const node = cn.mapping.ports[i], x = partner.get(i), other = x ? (x.a === i ? x.b : x.a) : null;
         return '<tr class="' + (node && verdict.get(node) === 'conflict' ? 'is-conflict' : '') + '"><td><span class="port-id">P' + (i + 1) + '</span></td><td><small>' + esc(state.dataset.portNames[i] || '–') + '</small></td>' +
-          '<td><select class="cn-node" data-port="' + i + '" aria-label="Knoten für Port ' + (i + 1) + '"><option value="">–</option>' + nodes.map(id => '<option value="' + esc(id) + '"' + (id === node ? ' selected' : '') + '>' + esc(id.replace('@', ' · S')) + '</option>').join('') + '</select></td>' +
+          '<td><select class="cn-node" data-port="' + i + '" data-lazy="1" aria-label="Knoten für Port ' + (i + 1) + '"><option value="">–</option>' + (node ? '<option value="' + esc(node) + '" selected>' + esc(node.replace('@', ' · S')) + '</option>' : '') + '</select></td>' +
           '<td><small>' + esc(CN_SOURCE[cn.mapping.source[i] || '']) + '</small></td><td class="mono"><small>' + (other !== null ? 'P' + (other + 1) + ' · ' + x.mag.toFixed(2) + (x.clear ? '' : ' ?') : '–') + '</small></td></tr>';
       }).join('') + '</tbody></table></div></div></section>';
     // ---- apply
@@ -10731,6 +10889,7 @@ const Plot = (() => {
       ((cn.templates || []).length ? '<label class="control"><span>Gespeicherte Vorlage</span><select id="cn-template"><option value="">–</option>' + cn.templates.map((t, i) => '<option value="' + i + '"' + (t.profile.id !== p.id || t.ports !== n ? ' disabled' : '') + '>' + esc(t.name + ' · ' + t.ports + ' Ports') + '</option>').join('') + '</select></label>' : '') + '</div></div></section>';
     html += cnChannels() + cnCrosstalk() + cnMatrix();
     insertHtml(box, html);
+    cnFillIdle();
   }
 
   function renderConfig() {

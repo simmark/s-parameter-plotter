@@ -75,6 +75,24 @@ Hinweise erscheinen bei logarithmischer oder ungleichmäßiger Abtastung, unter 
   - Peak-Distortion: 2A·(Hauptcursor − Σ|ISI|), der schlechteste Fall über alle Muster.
 - Ohne Jitter, Rauschen, Entzerrung und Maske. Das ist keine Normbewertung.
 
+## Rechen-Worker
+
+- Netzwerk (alle Frequenzpunkte), Übersprechen der übernommenen Kanäle und Augendiagramm laufen in einem Web Worker. Er wird aus denselben Skriptblöcken gebaut (rf-core, td-core, connector-core), die Ergebnisse sind deshalb zeichengleich mit der Berechnung auf der Seite.
+- Ein Datensatz wird einmal an den Worker geschickt; er behält die letzten drei.
+- Je Bahn (aktuelle Datei, Vergleich) beendet ein neuer Auftrag den älteren an dessen nächster Pause (alle 40 ms).
+- Ergebnisse kommen gebündelt als ein Puffer je Basis zurück, nicht als Tausende Einzelmatrizen.
+- Startet der Worker nicht oder fällt er aus, rechnet die Seite wie bisher. `window.SPA_NO_WORKER = true` erzwingt das, `window.SPA_COMPUTE_STATS()` zeigt lokal, wo gerechnet wurde.
+- Die Port-Tabelle im Connector-Tab legt ihre Auswahllisten (bis 64 × 65 Einträge) erst bei Benutzung oder im Leerlauf an. Die Kanalprüfung wird je Datei, Profil und Zuordnung zwischengespeichert.
+
+Gemessen in Chrome bei 6-fach gedrosselter CPU, 48 Ports mit 10 Paaren (Übernehmen einer Zuordnung bis zur fertigen Übersprechen-Karte):
+
+| Datei | Worker | Seite (vor dieser Änderung) |
+|---|---|---|
+| 201 Punkte | längste Blockade 160–240 ms, fertig nach 0,7–1,0 s | 180–270 ms, 0,7–0,9 s |
+| 1005 Punkte (73 MB) | längste Blockade 192 ms, Summe 471 ms, fertig nach 0,8 s | 297 ms, Summe 774 ms, 1,4 s |
+
+Bei wenigen Punkten bestimmt das Zeichnen der Seite (Layout, Paint) die Blockade, nicht die Rechnung; dort bringt der Worker kaum etwas. Sein Nutzen wächst mit der Punktzahl. Die verbleibende Blockade ist das Neuzeichnen des Connector-Tabs.
+
 ## Prüfungen
 
 | Test | Inhalt |
@@ -82,6 +100,7 @@ Hinweise erscheinen bei logarithmischer oder ungleichmäßiger Abtastung, unter 
 | `tests/multiport.mjs` (30) | 3-Phasen-Drossel analytisch: Nullsystem R + jω(L+2M), Leitermoden R + jω(L−M), keine Konversion. Rücktransformation einer bekannten Modalmatrix, Export-Sperre. Port-Map, Polarität vertauscht, Paar auf falschen Kontakten, Verknüpfung über die Messung. Seitenfeld in Portnamen, Modell mit FEXT > NEXT. PSNEXT/PSFEXT unabhängig aus der Fixture-Matrix, Skew einer verlängerten Minusleitung gegen √(LC). |
 | `tests/timedomain.mjs` (22) | Leitung 0,4 ns auf 41 log-Punkten (einfache Entfaltung scheitert, geführte nicht), Hochpass ohne Führung, RC-Sprung, Gauß-Flanke, TDR 75 Ω und Kurzschluss, Vorzeichen des Gleichanteils. Auge: idealer Kanal, Leitung, RC gegen Peak-Distortion und analytisch 2A·(1 − 2e^(−T/τ)) bei 800 GHz Bandbreite. PRBS-Vollständigkeit, Laufzeit. |
 | `tests/pack.mjs` (11, mit `SPA_PACK`) | 21 Dateien des synthetischen Testpakets: Parser, vollständige Mixed-Mode-Matrix gegen NumPy (≤ 7·10⁻¹¹), Zuordnung USB-C/RJ45, alle Port-Maps und 53 Kanäle, Fan-out Typ A → C, 3-Phasen-CMC, Referenzlaufzeit. |
+| `tests/e2e/worker.mjs` (10) | Worker wird benutzt; Übersprechen, Matrix, Kurvenwerte und Auge zeichengleich mit `SPA_NO_WORKER`; Blockade unter 1 s bei 6× gedrosselter CPU; nicht startbarer Worker → Seite rechnet, gleiche Ergebnisse. |
 | `tests/e2e/phases.mjs` (40) | Browser: Port-Map laden, falsche Polarität, Übersprechen-Karte, Dreileitergruppen, Zeitbereich, TDR, Flanke, Auge, Neuladen, Englisch, Handy. |
 
 ## Hinweise zum Testpaket (2026-11-20)
@@ -97,4 +116,4 @@ Hinweise erscheinen bei logarithmischer oder ungleichmäßiger Abtastung, unter 
 - Die Laufzeit bei dünner Abtastung beruht auf der Annahme einer glatten Laufzeit; das ist markiert.
 - Für das Auge gibt es keinen Jitter, kein Rauschen, keine CTLE/DFE und keine Masken, weil Normmasken eine geklärte Quelle brauchen.
 - Die 0/α/β-Basis ist für symmetrische Drei-Leiter-Systeme gedacht. Bei unsymmetrischen Systemen zeigt die Konversion, wie stark die Modi koppeln; eine Eigenmodenzerlegung ist das nicht.
-- Kein Web Worker für 48 Ports: Netzwerk und Übersprechen brauchen bei 48 Ports × 51 Punkten in Node etwa 15 ms + 3 ms.
+- Gemessen wird die Reaktionsfähigkeit nur mit gedrosselter Desktop-CPU (6×), nicht auf einem echten Handy.

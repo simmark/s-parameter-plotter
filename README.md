@@ -146,6 +146,7 @@ Alle Berechnungen laufen lokal auf dem Gerät. Messdateien werden nicht hochgela
 - **Dreileitergruppen 0/α/β (Phase 3):** im Tab Ports & Lasten, z. B. 3-Phasen-CMC. Leistungsinvariante Clarke-Transformation, Kurven S00·21, Sαα·21, Sββ·21 und Konversion. Touchstone-Export dieser Basis wird abgelehnt (das Format kennt sie nicht).
 - **Neuer Tab „Zeitbereich“ (Phase 5/6):** Sprung- und Impulsantwort, TDR-Impedanz, Fenster, Gauß-Flanke; NRZ-Augendiagramm mit PRBS7/9/11, Augenhöhe, -breite und Peak-Distortion. Hinweise bei logarithmischer oder dünner Abtastung und bei geführter Phasenentfaltung.
 - Die automatische Zuordnung liest Portnamen wie `LEFT | A1 | GND | ground` und setzt nicht mehr voraus, dass Nahübersprechen stärker ist als Fernübersprechen.
+- **Rechen-Worker:** Netzwerk, Übersprechen und Augendiagramm laufen außerhalb der Seite (gleiche Ergebnisse, Rückfall auf die Seite ohne Worker). Die Port-Tabelle legt ihre Auswahllisten erst bei Benutzung oder im Leerlauf an.
 - Behoben: Einstellungen einer Datei gingen verloren, wenn innerhalb von 0,3 s zu einer anderen Datei gewechselt wurde.
 - Methode, Prüfungen und Grenzen: `docs/multiport-zeitbereich.md`.
 
