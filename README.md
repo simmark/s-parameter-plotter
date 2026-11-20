@@ -138,14 +138,28 @@ Alle Berechnungen laufen lokal auf dem Gerät. Messdateien werden nicht hochgela
 - **Bis 64 Ports** (vorher 32), z. B. `.s48p`.
 - Datenmodell, Algorithmus, Quellen und Grenzen: `docs/connector.md`.
 
+## Version 10: Multiport, 0/α/β, Zeitbereich, Augendiagramm
+
+- **Port-Map-Datei:** Im Tab Connector lässt sich eine JSON-Datei mit Pin, Seite, Signal und Rolle je Port sowie den Differenzpaaren laden (`simonlation.portmap.v1`, auch die Sidecar-Dateien des synthetischen Testpakets). Daraus entsteht ein Profil für genau diese Datei; es wird mit der Sitzung gespeichert.
+- **Kanalprüfung:** je Kanal größte |SDD21| zwischen den Enden und Polarität (Phase nahe 0° oder 180°). Vertauschtes + / − an einem Ende wird gemeldet, Paare ohne gemeinsamen Namen (Fan-out, Übertrager PRI/SEC) werden über die Messung verknüpft.
+- **Übersprechen und Laufzeit (Phase 2):** PSNEXT an beiden Enden, PSFEXT, stärkster Störer, Gruppenlaufzeit je Kanal, Lane-Abweichung, Skew im Paar; Diagramm je Kanal. Keine Grenzwerte.
+- **Dreileitergruppen 0/α/β (Phase 3):** im Tab Ports & Lasten, z. B. 3-Phasen-CMC. Leistungsinvariante Clarke-Transformation, Kurven S00·21, Sαα·21, Sββ·21 und Konversion. Touchstone-Export dieser Basis wird abgelehnt (das Format kennt sie nicht).
+- **Neuer Tab „Zeitbereich“ (Phase 5/6):** Sprung- und Impulsantwort, TDR-Impedanz, Fenster, Gauß-Flanke; NRZ-Augendiagramm mit PRBS7/9/11, Augenhöhe, -breite und Peak-Distortion. Hinweise bei logarithmischer oder dünner Abtastung und bei geführter Phasenentfaltung.
+- Die automatische Zuordnung liest Portnamen wie `LEFT | A1 | GND | ground` und setzt nicht mehr voraus, dass Nahübersprechen stärker ist als Fernübersprechen.
+- Behoben: Einstellungen einer Datei gingen verloren, wenn innerhalb von 0,3 s zu einer anderen Datei gewechselt wurde.
+- Methode, Prüfungen und Grenzen: `docs/multiport-zeitbereich.md`.
+
 ## Tests
 
 ```
 node tests/static.mjs            # Lizenz, Cache-Version, Syntax
 node tests/magnetic.unit.mjs     # Bauteil-Erkennung
 node tests/rf.reference.mjs      # RF-Mathematik gegen Referenznetzwerke und gegen main
+node tests/multiport.mjs         # Port-Map, Kanalprüfung, Übersprechen, Skew, 0/α/β (analytisch)
+node tests/timedomain.mjs        # Zeitbereich und Auge gegen analytische Fälle
+SPA_PACK=/pfad node tests/pack.mjs   # synthetisches Testpaket (21 Dateien, nicht im Repository), mit NumPy-Gegenrechnung
 node tests/e2e/run.mjs           # alles: dazu Browser-Abläufe A–D, ZIP, Speicher, Achsen, ESB, Englisch (braucht Playwright und Chrome)
-node tests/e2e/run.mjs --fast    # nur die drei Gruppen ohne Browser
+node tests/e2e/run.mjs --fast    # nur die Gruppen ohne Browser
 node tests/e2e/perf.mjs          # Zeitmessung mit 100 und 1000 Dateien
 SPA_PRIVATE_DATA=/pfad node tests/real.data.mjs   # echte Herstellerdaten gegen das Datenblatt (Dateien nicht im Repository)
 ```

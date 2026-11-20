@@ -11,9 +11,11 @@ export function load(app = APP) {
   const Spice = new Function('RF', sp + '\nreturn Spice;')(RF);
   const mm = html.match(/<script id="magnetic-core">([\s\S]*?)<\/script>/);
   const Magnetic = mm ? new Function('RF', mm[1] + '\nreturn Magnetic;')(RF) : null;
+  const td = html.match(/<script id="td-core">([\s\S]*?)<\/script>/);
+  const TD = td ? new Function(td[1] + '\nreturn TD;')() : null;
   const cc = html.match(/<script id="connector-core">([\s\S]*?)<\/script>/);
-  const Connector = cc ? new Function('RF', cc[1] + '\nreturn Connector;')(RF) : null;
-  return { RF, Spice, Magnetic, Connector };
+  const Connector = cc ? new Function('RF', 'TD', cc[1] + '\nreturn Connector;')(RF, TD) : null;
+  return { RF, Spice, Magnetic, Connector, TD };
 }
 export const read = (RF, file) => RF.parseTouchstone(fs.readFileSync(file, 'latin1'), path.basename(file));
 export const list = (dir, re = /\.s\d+p$/i) => fs.existsSync(dir) ? fs.readdirSync(dir).filter(f => re.test(f)).sort().map(f => path.join(dir, f)) : [];
