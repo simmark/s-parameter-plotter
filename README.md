@@ -130,6 +130,14 @@ Alle Berechnungen laufen lokal auf dem Gerät. Messdateien werden nicht hochgela
 - **Übertrager-Schaltbild mit Werten:** R₁, Lσ₁, L_m ∥ R_Fe, idealer Übertrager 1 : n, Lσ₂, R₂, C_p, Cww. Die Aufteilung der Streuung auf Primär- und Sekundärseite ist von den Klemmen aus nicht messbar und als Annahme gekennzeichnet.
 - Schaltbilder lassen sich vergrößern und verschieben, auch am Handy.
 
+## Version 9: Connector Studio
+
+- **Neuer Tab „Connector“:** Profil wählen (USB-C Receptacle mit 48 Ports, RJ45 8P8C mit 16 Ports, LAN-Magnetics S4P/S6P/S12P), automatische Portzuordnung mit Kategorie (eindeutig · wahrscheinlich · mehrere mögliche · nicht zuverlässig bestimmbar) und Begründung, technische Pinansicht beider Seiten mit Zoom, manuelle Korrektur je Port, Polarität je Seite, Paare tauschen, Steckorientierung drehen, Seiten tauschen.
+- **Übernahme in die Analyse:** gewählte Paare als Mixed-Mode-Paare, übrige Ports abgeschlossen; Kanaltabelle (SDD21, SDD11, SCD21) und Kopplungsmatrix mit IL/NEXT/FEXT aus der Zuordnung, Klick öffnet die Kurve.
+- **Vorlagen:** Zuordnung speichern, auf ähnliche Dateien anwenden, als versioniertes JSON (`simonlation.port-map`) exportieren und importieren.
+- **Bis 64 Ports** (vorher 32), z. B. `.s48p`.
+- Datenmodell, Algorithmus, Quellen und Grenzen: `docs/connector.md`.
+
 ## Tests
 
 ```

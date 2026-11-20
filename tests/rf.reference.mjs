@@ -276,10 +276,10 @@ console.log('Vergleich mit dem Rechenkern der veröffentlichten Fassung (Branch 
   let old = null;
   try {
     const file = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'spa-main-')), 'index.html');
-    fs.writeFileSync(file, execFileSync('git', ['-C', path.dirname(new URL('.', import.meta.url).pathname), 'show', (process.env.SPA_OLD_REF || 'origin/main') + ':index.html'], { maxBuffer: 64 * 1024 * 1024 }));
+    fs.writeFileSync(file, execFileSync('git', ['-C', path.dirname(new URL('.', import.meta.url).pathname), 'show', (process.env.SPA_OLD_REF || '5384472') + ':index.html'], { maxBuffer: 64 * 1024 * 1024 }));
     old = load(file);
   } catch { old = null; }
-  if (!old) check('Alte Fassung aus Git lesbar', false, 'git show origin/main:index.html fehlgeschlagen');
+  if (!old) check('Alte Fassung aus Git lesbar', false, 'git show 5384472:index.html fehlgeschlagen (Version 7)');
   else {
     let diff = 0, cases = 0;
     const same = (a, b) => (a === null && b === null) || (!!a && !!b && a.length === b.length && a.every((v, k) => Object.is(v, b[k]) || v === b[k]));
@@ -292,7 +292,7 @@ console.log('Vergleich mit dem Rechenkern der veröffentlichten Fassung (Branch 
       const a = RF.prepareNetwork(ds, cfg), b = old.RF.prepareNetwork(ds, cfg);
       for (let i = 0; i < 4; i++) { const x = RF.processPoint(ds, cfg, a, i), y = old.RF.processPoint(ds, cfg, b, i); cases++; if (!same(x[0], y[0]) || !same(x[1], y[1])) diff++; }
     }
-    check('Netzwerkberechnung (Lasten, Renormierung, Mixed Mode) in ' + cases + ' Fällen bitgleich mit main', diff === 0, diff + ' Abweichungen');
+    check('Netzwerkberechnung (Lasten, Renormierung, Mixed Mode) in ' + cases + ' Fällen bitgleich mit Version 7 (5384472)', diff === 0, diff + ' Abweichungen');
     const demo = RF.demoNetwork(8), demoOld = old.RF.demoNetwork(8);
     check('Beispielnetzwerk bitgleich', demo.samples.every((s, i) => same(s, demoOld.samples[i])));
     const nat = (R, d) => Array.from(d.freq, (f, i) => R.cmcNatural(R.submatrix(d.samples[i], 4, [0, 2, 1, 3]), [50, 50, 50, 50], f));

@@ -400,6 +400,64 @@ input[type="checkbox"] { accent-color: var(--accent); }
 .config-content .net-chip { font-size: 11px; min-width: 54px; }
 .config-content .net-chip em { font-size: 10px; }
 .pair-list { display: grid; gap: 6px; margin-top: 9px; }
+#connector-panel .control { min-width: 0; max-width: 100%; }
+#connector-panel select { max-width: 100%; min-width: 0; }
+#connector-panel .preset-row { flex-wrap: wrap; }
+.cn-facts { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 3px 12px; margin: 10px 0 0; font-size: 12.5px; }
+.cn-facts dt { color: var(--muted); }
+.cn-facts dd { margin: 0; }
+.cn-sources { margin-top: 8px; font-size: 12.5px; }
+.cn-sources ul { margin: 6px 0 0; padding-left: 18px; }
+.cn-badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; border: 1px solid var(--line-dark); background: var(--tint); }
+.cn-badge.is-ok { color: var(--mode-c); border-color: var(--mode-c-line); background: var(--mode-c-soft); }
+.cn-badge.is-warn { color: var(--warn-ink); border-color: var(--warn-line); background: var(--warn-bg); }
+.cn-badge.is-bad { color: var(--mode-cd); border-color: #efb9c3; background: var(--mode-cd-soft); }
+.cn-status { margin: 10px 0 6px; font-size: 13px; }
+.cn-cands { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.cn-cand { display: flex; justify-content: space-between; gap: 10px; align-items: center; padding: 8px 10px; border: 1px solid var(--line); border-radius: 7px; }
+.cn-cand.is-current { border-color: var(--accent-line); background: var(--accent-soft); }
+.cn-cand small { display: block; color: var(--muted); margin-top: 3px; }
+.cn-cand small.cn-warn, .cn-issues .is-error { color: var(--mode-cd); }
+.cn-current { font-size: 12px; color: var(--muted); }
+.cn-issues { margin: 10px 0 0; padding-left: 18px; font-size: 12.5px; }
+.cn-issues .is-warn { color: var(--warn-ink); }
+.cn-drawings { display: grid; gap: 10px; overflow: auto; }
+.cn-figure { margin: 0; border: 1px solid var(--line); border-radius: 8px; background: var(--tint); }
+.cn-figure figcaption { padding: 6px 10px; font-size: 12px; font-weight: 600; color: var(--muted); border-bottom: 1px solid var(--line); }
+.cn-svg { display: block; width: 100%; height: auto; touch-action: none; cursor: grab; }
+.cn-body { fill: var(--surface); stroke: var(--line-dark); }
+.cn-pin { cursor: pointer; outline: none; }
+.cn-pin rect { fill: color-mix(in srgb, var(--pin) 14%, var(--surface)); stroke: var(--pin); stroke-width: 1.4; }
+.cn-pin.is-free rect { fill: var(--surface); stroke-dasharray: 3 2; }
+.cn-pin.is-conflict rect { stroke: var(--mode-cd); stroke-width: 2.4; }
+.cn-pin.is-selected rect, .cn-pin:focus-visible rect { stroke: var(--select); stroke-width: 2.6; }
+.cn-pin text { text-anchor: middle; font-family: var(--mono); fill: var(--ink); pointer-events: none; }
+.cn-pin-id { font-size: 9.5px; font-weight: 600; }
+.cn-pin-port { font-size: 9px; fill: var(--muted) !important; }
+.cn-pin-label { font-size: 9px; font-family: var(--ui) !important; }
+.cn-pin-mark { font-size: 10px; font-weight: 700; }
+.cn-pin.is-ok .cn-pin-mark { fill: var(--mode-c); }
+.cn-pin.is-unconfirmed .cn-pin-mark { fill: var(--warn-ink); }
+.cn-pin.is-conflict .cn-pin-mark { fill: var(--mode-cd); }
+.cn-pair-line { fill: none; stroke: var(--pin); stroke-width: 3; stroke-linecap: round; }
+.cn-coil { fill: none; stroke: var(--ink); stroke-width: 1.6; }
+.cn-core { stroke: var(--ink); stroke-width: 1.4; }
+.cn-dot { fill: var(--ink); }
+.cn-inspector { margin-top: 10px; padding: 10px; border: 1px solid var(--line); border-radius: 8px; }
+.cn-inspector h3 { margin: 0 0 4px; font-size: 14px; }
+.cn-ports { max-height: 420px; }
+.cn-ports select { max-width: 150px; font: inherit; font-size: 12px; }
+.cn-ports tr.is-conflict td { background: var(--mode-cd-soft); }
+.cn-pairs { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; margin: 0 0 10px; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 4px 12px; }
+.cn-pairs legend { font-size: 12px; color: var(--muted); padding: 0 4px; }
+.cn-check { display: flex; gap: 6px; align-items: center; font-size: 13px; min-height: 32px; }
+.cn-heat { border-collapse: collapse; font-size: 11px; }
+.cn-heat th { padding: 4px 6px; font-weight: 600; white-space: nowrap; text-align: left; }
+.cn-heat td { padding: 1px; }
+.cn-cell { width: 58px; min-height: 38px; border: 0; border-radius: 4px; font: 600 11px var(--mono); color: #1f1e1d; cursor: pointer; display: grid; place-items: center; }
+.cn-cell small { font: 500 9px var(--ui); }
+.cn-cell:focus-visible { outline: 2px solid var(--select); }
+@media (max-width: 760px) { .cn-cand { flex-direction: column; align-items: stretch; } }
 .pair-card { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 7px; border: 1px solid color-mix(in srgb, var(--pc) 35%, var(--line)); border-left: 5px solid var(--pc); border-radius: 7px; background: color-mix(in srgb, var(--pc) 6%, #ffffff); }
 .pair-name { display: grid; place-items: center; min-width: 52px; min-height: 32px; padding: 3px 6px; color: var(--ink); background: #ffffff; border: 1px solid color-mix(in srgb, var(--pc) 40%, var(--line)); border-radius: 5px; font: 650 10px var(--mono); }
 .pair-chip { display: inline-flex; align-items: center; gap: 5px; font: 650 11px var(--mono); }
@@ -1352,7 +1410,7 @@ window.I18N = (() => {
     "Ersatzschaltbild mit Werten": "Equivalent circuit with values", "T-Ersatzschaltbild mit Werten": "T equivalent circuit with values", "Vergrößern": "Enlarge", "Schaltbild vergrößern oder wieder einpassen; vergrößert lässt es sich verschieben": "Enlarge the drawing or fit it again; enlarged it can be moved", "Je Wicklung: R_w und Streuung Lσ in Reihe mit dem gekoppelten Teil M · R_Fe parallel zum gekoppelten Teil · Ct parallel je Wicklung · Cw je Seite zwischen den Wicklungen · Cg je Anschluss gegen Masse": "Per winding: R_w and leakage Lσ in series with the coupled part M · R_Fe across the coupled part · Ct across each winding · Cw between the windings on each side · Cg from each terminal to ground", "L · Induktivität je Wicklung": "L · inductance per winding", "M · Gegeninduktivität": "M · mutual inductance", "Lσ = L − M · Streuung je Wicklung": "Lσ = L − M · leakage per winding", "R_w · je Wicklung, aus R₀ von Z DM / 2": "R_w · per winding, from R₀ of Z DM / 2", "R_Fe · je Wicklung, aus der CM-Resonanz × 2": "R_Fe · per winding, from the CM resonance × 2", "Normierung: Im Gleichtakt liegen beide Wicklungen parallel, Z CM = jω(L + M)/2 an 25 Ω. Im Gegentakt liegen sie in Reihe, Z DM = j2ω(L − M) = j2ωLσ an 100 Ω. L, M, Cw, Cg und Ct stammen aus dem Fit im gewählten Band. R_w und R_Fe stammen aus dem Modell bis zur 2. Resonanz und sind Näherungen: R_Fe gilt nur nahe der Gleichtakt-Resonanz, Kernverluste sind frequenzabhängig.": "Normalisation: in common mode both windings are in parallel, Z CM = jω(L + M)/2 at 25 Ω. In differential mode they are in series, Z DM = j2ω(L − M) = j2ωLσ at 100 Ω. L, M, Cw, Cg and Ct come from the fit in the chosen band. R_w and R_Fe come from the model up to the 2nd resonance and are approximations: R_Fe only holds near the common-mode resonance, core losses depend on frequency.", "Primärbezogen: R₁ und Lσ₁ in Reihe · L_m parallel R_Fe · idealer Übertrager 1 : n · Lσ₂ und R₂ auf der Sekundärseite · C_p über der Primärwicklung · Cww zwischen den Wicklungen": "Referred to the primary: R₁ and Lσ₁ in series · L_m in parallel with R_Fe · ideal transformer 1 : n · Lσ₂ and R₂ on the secondary side · C_p across the primary winding · Cww between the windings", "L_m · Hauptinduktivität = OCL − Lσ₁": "L_m · magnetising inductance = OCL − Lσ₁", "Lσ₁ · primär (Annahme: hälftig)": "Lσ₁ · primary (assumption: half each)", "Lσ₂ · sekundär = Lσ₁·n²": "Lσ₂ · secondary = Lσ₁·n²", "n · Übersetzung 1 : n": "n · turns ratio 1 : n", "R₁ · Re Z₁₁ bei tiefer Frequenz": "R₁ · Re Z₁₁ at low frequency", "R₂ · Re Z₂₂ bei tiefer Frequenz": "R₂ · Re Z₂₂ at low frequency", "R_Fe · Re Z₁₁ in der Leerlaufresonanz": "R_Fe · Re Z₁₁ at the open-circuit resonance", "Lσ aus k · L₁₁(1 − k²)": "Lσ from k · L₁₁(1 − k²)", "Was die Messung festlegt: OCL, n, Cww, C_p, R₁, R₂ und die gesamte Streuinduktivität bei kurzgeschlossener Sekundärseite,": "What the measurement determines: OCL, n, Cww, C_p, R₁, R₂ and the total leakage inductance with the secondary shorted,", "Was sie nicht festlegt: wie sich die Streuung auf Primär- und Sekundärseite verteilt. Von den Klemmen aus ist nur die Summe messbar; das Bild teilt sie je zur Hälfte auf (Lσ₁ = Lσ₂/n²). Wer die Aufteilung braucht, muss sie aus dem Wickelaufbau oder einer Feldrechnung nehmen.": "What it does not determine: how the leakage splits between primary and secondary. From the terminals only the sum can be measured; the drawing splits it half and half (Lσ₁ = Lσ₂/n²). If you need the split, take it from the winding build-up or a field calculation.", "R₁ und R₂ enthalten den Anteil der Kernverluste, der bei der tiefsten Messfrequenz schon wirkt; eine Gleichstrommessung ist genauer. R_Fe ist eine Näherung aus einer einzigen Frequenz; Kernverluste hängen von Frequenz und Aussteuerung ab.": "R₁ and R₂ include the share of core loss already present at the lowest measured frequency; a DC measurement is more accurate. R_Fe is an approximation from a single frequency; core losses depend on frequency and drive level.", "Auswertung bei": "Evaluate at", "= Marker": "= marker", "Die Frequenz des aktiven Markers als Auswertefrequenz für OCL, n und k übernehmen": "Use the frequency of the active marker as the evaluation frequency for OCL, n and k", "Anwenden": "Apply", "Cg je Anschluss": "Cg per terminal",
     "n. b.": "n/d", "Ct (aus dem Gleichtakt)": "Ct (from common mode)", "Ct (aus dem Gegentakt)": "Ct (from differential mode)",
     "T-Ersatzschaltbild eines Übertragers mit idealem Übertrager 1 : n": "T equivalent circuit of a transformer with an ideal transformer 1 : n",
-    "Bibliothek umbenennen": "Rename the library", "Name der Bibliothek": "Name of the library", "Umbenennen oder verschieben": "Rename or move", "Dateiname": "File name", "Ordnerpfad": "Folder path", "leer = oberste Ebene": "empty = top level", "z. B. CMC/0805": "e.g. CMC/0805", "Die Dateiendung bleibt erhalten. Unterordner mit „/“.": "The file extension is kept. Sub folders with \"/\".", "Ein neuer Pfad benennt den Ordner um oder verschiebt ihn samt Inhalt. Ein vorhandener Ordner als Ziel führt beide zusammen.": "A new path renames the folder or moves it with its content. An existing folder as the target merges both.", "Gib einen Dateinamen ein.": "Enter a file name.", "Gib einen Ordnerpfad ein.": "Enter a folder path.", "Ein Ordner kann nicht in sich selbst verschoben werden.": "A folder cannot be moved into itself.", "Die Datei gibt es in der Bibliothek nicht mehr.": "The file no longer exists in the library.", "Die Bibliothek gibt es nicht mehr.": "The library no longer exists.", "Eingaben wie 10 µH, 4,7n oder 1e-6. Der Regler verstellt um eine Dekade nach unten und oben. Optimiert werden Betrag und Phase der vier natürlichen Moden des Vierpols: G (alle Anschlüsse gegen Masse, zeigt Cg), V (Wicklung gegen Wicklung, Cw + Cx), H (Gleichtakt durch die Wicklungen) und D (Gegentakt durch die Wicklungen), nur mit den Messpunkten im Fitfenster (im Diagramm grün hinterlegt). Z CM und Z DM nach CISPR 17 sind dafür ungeeignet: Sie sind die reine Reihenimpedanz der Modenzweitore, Cw und Cg fallen darin exakt heraus. Jeder Punkt zählt nach seiner Auflösbarkeit (angenommene Messunsicherheit 0,03 dB); was die Messung nicht auflöst, lenkt den Fit nicht. Die Startwerte hängen nicht vom Fit-Band oben ab: M und Lσ stammen aus den Plateaus der Modeninduktivitäten unterhalb der jeweiligen Resonanz, die vier Kapazitäten aus den vier natürlichen Moden. Cx (diagonal, Eingang + zu Ausgang −) vervollständigt das Kapazitätsnetz; ohne Cx müsste Ct bei realen Drosseln negativ werden. R_σ parallel zu Lσ beschreibt die Verluste im Gegentaktpfad (Streufluss im Ferrit, Näheffekt): Der Gegentaktwiderstand realer Drosseln steigt etwa mit (ωLσ)²/R_σ, ein konstanter R_w allein trifft das nicht. Das Modell ist symmetrisch (beide Wicklungen gleich). Jedes Kernglied M ∥ R_Fe ist eine Relaxation mit einer Zeitkonstante 2M/R_Fe; ein Kern mit mehreren Dispersionsbereichen braucht mehrere Glieder, „Anzahl prüfen“ ermittelt, wie viele die Messung trägt. Schaltbild und SPICE-Export zeigen genau diese Schaltung. Alle Werte bleiben positiv. Die Messdaten werden dabei nie verändert.": "Entries like 10 µH, 4.7n or 1e-6. The slider moves one decade down and up. Magnitude and phase of the four natural modes of the four-port are optimised: G (all terminals against ground, shows Cg), V (winding against winding, Cw + Cx), H (common mode through the windings) and D (differential mode through the windings), using only the measured points inside the fit window (shaded green in the diagram). Z CM and Z DM per CISPR 17 are unsuitable for this: they are the pure series impedance of the mode two-ports, Cw and Cg drop out of them exactly. Each point counts by how well it is resolved (assumed measurement uncertainty 0.03 dB); what the measurement does not resolve does not steer the fit. The start values do not depend on the fit band above: M and Lσ come from the plateaus of the modal inductances below each resonance, the four capacitances from the four natural modes. Cx (diagonal, input + to output −) completes the capacitance network; without Cx a real choke would need a negative Ct. R_σ across Lσ describes the loss in the differential path (leakage flux in the ferrite, proximity effect): the differential resistance of real chokes rises roughly as (ωLσ)²/R_σ, which a constant R_w alone cannot match. The model is symmetric (both windings equal). Each core section M ∥ R_Fe is a relaxation with one time constant 2M/R_Fe; a core with several dispersion regions needs several sections, \"Check number\" finds how many the measurement supports. The schematic and the SPICE export show exactly this circuit. All values stay positive. The measured data is never changed.", "Eingaben wie 10 µH, 4,7n oder 1e-6. Der Regler verstellt um eine Dekade nach unten und oben. Optimiert werden Betrag und Phase der natürlichen Moden des differentiellen Zweitors, primärbezogen: Mode M (beide Wicklungen gleichsinnig, nur die Magnetisierung: L_m, R_Fe, oberhalb ihrer Resonanz eine Kapazität), Mode σ (die Amperewindungen heben sich auf, nur die Streuung: Lσ, R₁, R₂, bei ihrer eigenen, viel höheren Resonanz die Wicklungskapazität) und die Kopplung M–σ (Unsymmetrie beider Seiten), nur mit den Messpunkten im Fitfenster (im Diagramm grün hinterlegt). Das Fitfenster reicht bis über die Resonanz von Mode σ, denn erst dort zeigt sich Cwa. Bei 1 : 1 gilt C_M = (C_p + C_p2)/2 + Cwx/2, C_σ = (C_p + C_p2)/2 + Cwa/2 und C_M–σ = (C_p − C_p2)/2; mit Cww = Cwa + Cwx aus dem Gleichtakt sind alle vier Kapazitäten festgelegt, ihre Startwerte kommen aus diesen Moden. Lσ_e ∥ R_e (wenn die Messung es zeigt) ist der Wirbelstromanteil der Streuung: Die Streuinduktivität fällt zu hohen Frequenzen ab, ihr Widerstand steigt. Die Streuung wird je zur Hälfte auf beide Seiten gelegt; das ist eine Annahme, die die Klemmenmessung nicht prüfen kann. Schaltbild und SPICE-Export zeigen genau diese Schaltung. Alle Werte bleiben positiv. Die Messdaten werden dabei nie verändert.": "Entries like 10 µH, 4.7n or 1e-6. The slider moves one decade down and up. Magnitude and phase of the natural modes of the differential two-port, referred to the primary, are optimised: mode M (both windings in step, only the magnetisation: L_m, R_Fe, above its resonance a capacitance), mode σ (the ampere-turns cancel, only the leakage: Lσ, R₁, R₂, at its own, much higher resonance the winding capacitance) and the coupling M–σ (asymmetry of both sides), using only the measured points inside the fit window (shaded green in the diagram). The fit window reaches past the resonance of mode σ, because only there Cwa shows. For 1 : 1, C_M = (C_p + C_p2)/2 + Cwx/2, C_σ = (C_p + C_p2)/2 + Cwa/2 and C_M–σ = (C_p − C_p2)/2; with Cww = Cwa + Cwx from the common mode all four capacitances are fixed, and their start values come from these modes. Lσ_e ∥ R_e (where the measurement shows it) is the eddy-current part of the leakage: the leakage inductance falls towards high frequencies and its resistance rises. The leakage is split in halves between both sides; this is an assumption the terminal measurement cannot check. The schematic and the SPICE export show exactly this circuit. All values stay positive. The measured data is never changed.", "Lσ · Streuung je Wicklung": "Lσ · leakage per winding", "R_w · Widerstand je Wicklung": "R_w · resistance per winding", "R_w · Serienwiderstand je Wicklung": "R_w · series resistance per winding", "R_σ · Verluste der Streuung, parallel zu Lσ": "R_σ · leakage loss, across Lσ", "M₂ · Kernglied 2": "M₂ · core section 2", "R_Fe2 · Verluste Kernglied 2": "R_Fe2 · loss of core section 2", "M₃ · Kernglied 3": "M₃ · core section 3", "R_Fe3 · Verluste Kernglied 3": "R_Fe3 · loss of core section 3", "Kernglieder": "Core sections", "Anzahl prüfen": "Check number", "Prüfe …": "Checking …", "Optimiere …": "Optimising …", "Fittet 1, 2 und 3 Kernglieder und übernimmt die kleinste Anzahl, die die Messung trägt": "Fits 1, 2 and 3 core sections and keeps the smallest number the measurement supports", "Prüfung der Kernglieder im Fitfenster:": "Core sections checked inside the fit window:", "Ein weiteres Glied zählt nur, wenn es die gewichtete Abweichung um mindestens 10 % senkt und eine eigene Zeitkonstante behält (mindestens Faktor 2 Abstand); sonst teilt der Fit nur eine Relaxation auf, die die Messung nicht unterscheiden kann.": "A further section only counts if it lowers the weighted deviation by at least 10 % and keeps a time constant of its own (at least a factor 2 apart); otherwise the fit merely splits one relaxation that the measurement cannot tell apart.", "M · Summe der Kernglieder, im Bild als ein Glied": "M · sum of the core sections, drawn as one", "je Wicklung R_w + (Lσ ∥ R_σ) + (M ∥ R_Fe) · Ct · Cw · Cx · Cg": "per winding R_w + (Lσ ∥ R_σ) + (M ∥ R_Fe) · Ct · Cw · Cx · Cg", "R_σ · parallel zu Lσ, im Bild nicht gezeichnet": "R_σ · across Lσ, not drawn in the schematic", "Nicht bestimmbare Werte beim Optimieren automatisch festhalten": "Automatically keep values the measurement cannot determine fixed while optimising", "Die Spalte rechts zeigt, wie fest die Messung im Fitfenster jeden freien Wert legt: schlicht = gut bestimmt (≤ ± 10 %), farbig umrandet = schwach (≤ ± 100 %), farbig hinterlegt = nicht bestimmt.": "The column on the right shows how firmly the measurement inside the fit window fixes each free value: plain = well determined (≤ ± 10 %), coloured outline = weakly (≤ ± 100 %), coloured fill = not determined.", "gut bestimmt: so weit kann sich der Wert ändern, während die übrigen ausgleichen. Richtwert, kein Vertrauensintervall.": "well determined: the value can move this far while the others compensate. A guide, not a confidence interval.", "schwach bestimmt: so weit kann sich der Wert ändern, während die übrigen ausgleichen. Richtwert, kein Vertrauensintervall.": "weakly determined: the value can move this far while the others compensate. A guide, not a confidence interval.", "nicht bestimmt: so weit kann sich der Wert ändern, während die übrigen ausgleichen. Richtwert, kein Vertrauensintervall.": "not determined: the value can move this far while the others compensate. A guide, not a confidence interval.", "R_Fe · Kernverluste": "R_Fe · core loss", "Ct · über jeder Wicklung": "Ct · across each winding", "Cw · zwischen den Wicklungen je Seite": "Cw · between the windings per side", "Cg · je Anschluss gegen Masse": "Cg · per terminal to ground", "L_m · Hauptinduktivität": "L_m · magnetising inductance", "Lσ · gesamte Streuung, primärbezogen": "Lσ · total leakage, referred to the primary", "Lσ · Streuung, primärbezogen": "Lσ · leakage, referred to the primary", "Lσ_e · Streuanteil, den Wirbelströme bei hoher Frequenz verdrängen": "Lσ_e · part of the leakage that eddy currents push out at high frequency", "R_e · Wirbelstromverluste, parallel zu Lσ_e": "R_e · eddy-current loss, across Lσ_e", "n · Übersetzung 1 : n": "n · ratio 1 : n", "R₁ · Primärwicklung": "R₁ · primary winding", "R₂ · Sekundärwicklung": "R₂ · secondary winding", "C_p · über der Primärwicklung": "C_p · across the primary winding", "C_p2 · über der Sekundärwicklung": "C_p2 · across the secondary winding", "Lσ_e ∥ R_e · Wirbelstromanteil der Streuung, im Bild in Lσ enthalten": "Lσ_e ∥ R_e · eddy-current part of the leakage, included in Lσ in the drawing", "C_p2 · über der Sekundärwicklung, im Bild nicht gezeichnet": "C_p2 · across the secondary winding, not drawn in the schematic", "Cwa · Wicklung zu Wicklung, gleichnamige Anschlüsse": "Cwa · winding to winding, like terminals", "Cwx · Wicklung zu Wicklung, über Kreuz": "Cwx · winding to winding, crosswise", "je Wicklung R_w + Lσ + (M ∥ R_Fe) · Ct · Cw · Cx · Cg": "per winding R_w + Lσ + (M ∥ R_Fe) · Ct · Cw · Cx · Cg", "Impedanz · Ersatzschaltbild (Editor)": "Impedance · equivalent circuit (editor)", "Impedanz · je Mode bis 2. Resonanz": "Impedance · per mode up to the 2nd resonance", "CMC · Impedanz und Ersatzschaltbild": "CMC · impedance and equivalent circuit", "Z CM und Z DM nach CISPR 17 · Modell aus dem Editor gepunktet": "Z CM and Z DM per CISPR 17 · model from the editor dotted", "Das Bild zeigt die Werte aus dem Modell-Editor, nicht die der automatischen Auswertung.": "The drawing shows the values from the model editor, not those of the automatic evaluation.", "Für das Modell fehlen positive Werte für L und M. Prüfe Portpolarität und Fit-Band.": "The model lacks positive values for L and M. Check port polarity and fit band.", "Für das Modell fehlen positive Werte für OCL, Streuung oder Übersetzung.": "The model lacks positive values for OCL, leakage or ratio.", "Die Startwerte stammen aus Einzelauswertungen (Plateaus, Resonanzen) und treffen die Kurven als Ganzes noch nicht. „Optimieren“ passt sie an Betrag und Phase aller Kurven an.": "The start values come from single evaluations (plateaus, resonances) and do not yet match the curves as a whole. \"Optimise\" fits them to magnitude and phase of all curves.", "R_w · je Wicklung": "R_w · per winding", "R_Fe · je Wicklung": "R_Fe · per winding", "Cx · diagonal, Eingang + zu Ausgang −": "Cx · diagonal, input + to output −", "Cx · diagonal, im Bild nicht gezeichnet": "Cx · diagonal, not drawn in the schematic", "Portzuordnung fehlt": "Port assignment missing", "Vorschlag übernehmen": "Apply suggestion", "Sortierung der Dateien": "Sort order of the files", "Sortiert nach Name": "Sorted by name", "Neueste zuerst": "Newest first", "Nach Portzahl": "By port count", "Größte zuerst": "Largest first"
+    "Bibliothek umbenennen": "Rename the library", "Name der Bibliothek": "Name of the library", "Umbenennen oder verschieben": "Rename or move", "Dateiname": "File name", "Ordnerpfad": "Folder path", "leer = oberste Ebene": "empty = top level", "z. B. CMC/0805": "e.g. CMC/0805", "Die Dateiendung bleibt erhalten. Unterordner mit „/“.": "The file extension is kept. Sub folders with \"/\".", "Ein neuer Pfad benennt den Ordner um oder verschiebt ihn samt Inhalt. Ein vorhandener Ordner als Ziel führt beide zusammen.": "A new path renames the folder or moves it with its content. An existing folder as the target merges both.", "Gib einen Dateinamen ein.": "Enter a file name.", "Gib einen Ordnerpfad ein.": "Enter a folder path.", "Ein Ordner kann nicht in sich selbst verschoben werden.": "A folder cannot be moved into itself.", "Die Datei gibt es in der Bibliothek nicht mehr.": "The file no longer exists in the library.", "Die Bibliothek gibt es nicht mehr.": "The library no longer exists.", "Eingaben wie 10 µH, 4,7n oder 1e-6. Der Regler verstellt um eine Dekade nach unten und oben. Optimiert werden Betrag und Phase der vier natürlichen Moden des Vierpols: G (alle Anschlüsse gegen Masse, zeigt Cg), V (Wicklung gegen Wicklung, Cw + Cx), H (Gleichtakt durch die Wicklungen) und D (Gegentakt durch die Wicklungen), nur mit den Messpunkten im Fitfenster (im Diagramm grün hinterlegt). Z CM und Z DM nach CISPR 17 sind dafür ungeeignet: Sie sind die reine Reihenimpedanz der Modenzweitore, Cw und Cg fallen darin exakt heraus. Jeder Punkt zählt nach seiner Auflösbarkeit (angenommene Messunsicherheit 0,03 dB); was die Messung nicht auflöst, lenkt den Fit nicht. Die Startwerte hängen nicht vom Fit-Band oben ab: M und Lσ stammen aus den Plateaus der Modeninduktivitäten unterhalb der jeweiligen Resonanz, die vier Kapazitäten aus den vier natürlichen Moden. Cx (diagonal, Eingang + zu Ausgang −) vervollständigt das Kapazitätsnetz; ohne Cx müsste Ct bei realen Drosseln negativ werden. R_σ parallel zu Lσ beschreibt die Verluste im Gegentaktpfad (Streufluss im Ferrit, Näheffekt): Der Gegentaktwiderstand realer Drosseln steigt etwa mit (ωLσ)²/R_σ, ein konstanter R_w allein trifft das nicht. Das Modell ist symmetrisch (beide Wicklungen gleich). Jedes Kernglied M ∥ R_Fe ist eine Relaxation mit einer Zeitkonstante 2M/R_Fe; ein Kern mit mehreren Dispersionsbereichen braucht mehrere Glieder, „Anzahl prüfen“ ermittelt, wie viele die Messung trägt. Schaltbild und SPICE-Export zeigen genau diese Schaltung. Alle Werte bleiben positiv. Die Messdaten werden dabei nie verändert.": "Entries like 10 µH, 4.7n or 1e-6. The slider moves one decade down and up. Magnitude and phase of the four natural modes of the four-port are optimised: G (all terminals against ground, shows Cg), V (winding against winding, Cw + Cx), H (common mode through the windings) and D (differential mode through the windings), using only the measured points inside the fit window (shaded green in the diagram). Z CM and Z DM per CISPR 17 are unsuitable for this: they are the pure series impedance of the mode two-ports, Cw and Cg drop out of them exactly. Each point counts by how well it is resolved (assumed measurement uncertainty 0.03 dB); what the measurement does not resolve does not steer the fit. The start values do not depend on the fit band above: M and Lσ come from the plateaus of the modal inductances below each resonance, the four capacitances from the four natural modes. Cx (diagonal, input + to output −) completes the capacitance network; without Cx a real choke would need a negative Ct. R_σ across Lσ describes the loss in the differential path (leakage flux in the ferrite, proximity effect): the differential resistance of real chokes rises roughly as (ωLσ)²/R_σ, which a constant R_w alone cannot match. The model is symmetric (both windings equal). Each core section M ∥ R_Fe is a relaxation with one time constant 2M/R_Fe; a core with several dispersion regions needs several sections, \"Check number\" finds how many the measurement supports. The schematic and the SPICE export show exactly this circuit. All values stay positive. The measured data is never changed.", "Eingaben wie 10 µH, 4,7n oder 1e-6. Der Regler verstellt um eine Dekade nach unten und oben. Optimiert werden Betrag und Phase der natürlichen Moden des differentiellen Zweitors, primärbezogen: Mode M (beide Wicklungen gleichsinnig, nur die Magnetisierung: L_m, R_Fe, oberhalb ihrer Resonanz eine Kapazität), Mode σ (die Amperewindungen heben sich auf, nur die Streuung: Lσ, R₁, R₂, bei ihrer eigenen, viel höheren Resonanz die Wicklungskapazität) und die Kopplung M–σ (Unsymmetrie beider Seiten), nur mit den Messpunkten im Fitfenster (im Diagramm grün hinterlegt). Das Fitfenster reicht bis über die Resonanz von Mode σ, denn erst dort zeigt sich Cwa. Bei 1 : 1 gilt C_M = (C_p + C_p2)/2 + Cwx/2, C_σ = (C_p + C_p2)/2 + Cwa/2 und C_M–σ = (C_p − C_p2)/2; mit Cww = Cwa + Cwx aus dem Gleichtakt sind alle vier Kapazitäten festgelegt, ihre Startwerte kommen aus diesen Moden. Lσ_e ∥ R_e (wenn die Messung es zeigt) ist der Wirbelstromanteil der Streuung: Die Streuinduktivität fällt zu hohen Frequenzen ab, ihr Widerstand steigt. Die Streuung wird je zur Hälfte auf beide Seiten gelegt; das ist eine Annahme, die die Klemmenmessung nicht prüfen kann. Schaltbild und SPICE-Export zeigen genau diese Schaltung. Alle Werte bleiben positiv. Die Messdaten werden dabei nie verändert.": "Entries like 10 µH, 4.7n or 1e-6. The slider moves one decade down and up. Magnitude and phase of the natural modes of the differential two-port, referred to the primary, are optimised: mode M (both windings in step, only the magnetisation: L_m, R_Fe, above its resonance a capacitance), mode σ (the ampere-turns cancel, only the leakage: Lσ, R₁, R₂, at its own, much higher resonance the winding capacitance) and the coupling M–σ (asymmetry of both sides), using only the measured points inside the fit window (shaded green in the diagram). The fit window reaches past the resonance of mode σ, because only there Cwa shows. For 1 : 1, C_M = (C_p + C_p2)/2 + Cwx/2, C_σ = (C_p + C_p2)/2 + Cwa/2 and C_M–σ = (C_p − C_p2)/2; with Cww = Cwa + Cwx from the common mode all four capacitances are fixed, and their start values come from these modes. Lσ_e ∥ R_e (where the measurement shows it) is the eddy-current part of the leakage: the leakage inductance falls towards high frequencies and its resistance rises. The leakage is split in halves between both sides; this is an assumption the terminal measurement cannot check. The schematic and the SPICE export show exactly this circuit. All values stay positive. The measured data is never changed.", "Lσ · Streuung je Wicklung": "Lσ · leakage per winding", "R_w · Widerstand je Wicklung": "R_w · resistance per winding", "R_w · Serienwiderstand je Wicklung": "R_w · series resistance per winding", "R_σ · Verluste der Streuung, parallel zu Lσ": "R_σ · leakage loss, across Lσ", "M₂ · Kernglied 2": "M₂ · core section 2", "R_Fe2 · Verluste Kernglied 2": "R_Fe2 · loss of core section 2", "M₃ · Kernglied 3": "M₃ · core section 3", "R_Fe3 · Verluste Kernglied 3": "R_Fe3 · loss of core section 3", "Kernglieder": "Core sections", "Anzahl prüfen": "Check number", "Prüfe …": "Checking …", "Optimiere …": "Optimising …", "Fittet 1, 2 und 3 Kernglieder und übernimmt die kleinste Anzahl, die die Messung trägt": "Fits 1, 2 and 3 core sections and keeps the smallest number the measurement supports", "Prüfung der Kernglieder im Fitfenster:": "Core sections checked inside the fit window:", "Ein weiteres Glied zählt nur, wenn es die gewichtete Abweichung um mindestens 10 % senkt und eine eigene Zeitkonstante behält (mindestens Faktor 2 Abstand); sonst teilt der Fit nur eine Relaxation auf, die die Messung nicht unterscheiden kann.": "A further section only counts if it lowers the weighted deviation by at least 10 % and keeps a time constant of its own (at least a factor 2 apart); otherwise the fit merely splits one relaxation that the measurement cannot tell apart.", "M · Summe der Kernglieder, im Bild als ein Glied": "M · sum of the core sections, drawn as one", "je Wicklung R_w + (Lσ ∥ R_σ) + (M ∥ R_Fe) · Ct · Cw · Cx · Cg": "per winding R_w + (Lσ ∥ R_σ) + (M ∥ R_Fe) · Ct · Cw · Cx · Cg", "R_σ · parallel zu Lσ, im Bild nicht gezeichnet": "R_σ · across Lσ, not drawn in the schematic", "Nicht bestimmbare Werte beim Optimieren automatisch festhalten": "Automatically keep values the measurement cannot determine fixed while optimising", "Die Spalte rechts zeigt, wie fest die Messung im Fitfenster jeden freien Wert legt: schlicht = gut bestimmt (≤ ± 10 %), farbig umrandet = schwach (≤ ± 100 %), farbig hinterlegt = nicht bestimmt.": "The column on the right shows how firmly the measurement inside the fit window fixes each free value: plain = well determined (≤ ± 10 %), coloured outline = weakly (≤ ± 100 %), coloured fill = not determined.", "gut bestimmt: so weit kann sich der Wert ändern, während die übrigen ausgleichen. Richtwert, kein Vertrauensintervall.": "well determined: the value can move this far while the others compensate. A guide, not a confidence interval.", "schwach bestimmt: so weit kann sich der Wert ändern, während die übrigen ausgleichen. Richtwert, kein Vertrauensintervall.": "weakly determined: the value can move this far while the others compensate. A guide, not a confidence interval.", "nicht bestimmt: so weit kann sich der Wert ändern, während die übrigen ausgleichen. Richtwert, kein Vertrauensintervall.": "not determined: the value can move this far while the others compensate. A guide, not a confidence interval.", "R_Fe · Kernverluste": "R_Fe · core loss", "Ct · über jeder Wicklung": "Ct · across each winding", "Cw · zwischen den Wicklungen je Seite": "Cw · between the windings per side", "Cg · je Anschluss gegen Masse": "Cg · per terminal to ground", "L_m · Hauptinduktivität": "L_m · magnetising inductance", "Lσ · gesamte Streuung, primärbezogen": "Lσ · total leakage, referred to the primary", "Lσ · Streuung, primärbezogen": "Lσ · leakage, referred to the primary", "Lσ_e · Streuanteil, den Wirbelströme bei hoher Frequenz verdrängen": "Lσ_e · part of the leakage that eddy currents push out at high frequency", "R_e · Wirbelstromverluste, parallel zu Lσ_e": "R_e · eddy-current loss, across Lσ_e", "n · Übersetzung 1 : n": "n · ratio 1 : n", "R₁ · Primärwicklung": "R₁ · primary winding", "R₂ · Sekundärwicklung": "R₂ · secondary winding", "C_p · über der Primärwicklung": "C_p · across the primary winding", "C_p2 · über der Sekundärwicklung": "C_p2 · across the secondary winding", "Lσ_e ∥ R_e · Wirbelstromanteil der Streuung, im Bild in Lσ enthalten": "Lσ_e ∥ R_e · eddy-current part of the leakage, included in Lσ in the drawing", "C_p2 · über der Sekundärwicklung, im Bild nicht gezeichnet": "C_p2 · across the secondary winding, not drawn in the schematic", "Cwa · Wicklung zu Wicklung, gleichnamige Anschlüsse": "Cwa · winding to winding, like terminals", "Cwx · Wicklung zu Wicklung, über Kreuz": "Cwx · winding to winding, crosswise", "je Wicklung R_w + Lσ + (M ∥ R_Fe) · Ct · Cw · Cx · Cg": "per winding R_w + Lσ + (M ∥ R_Fe) · Ct · Cw · Cx · Cg", "Impedanz · Ersatzschaltbild (Editor)": "Impedance · equivalent circuit (editor)", "Impedanz · je Mode bis 2. Resonanz": "Impedance · per mode up to the 2nd resonance", "CMC · Impedanz und Ersatzschaltbild": "CMC · impedance and equivalent circuit", "Z CM und Z DM nach CISPR 17 · Modell aus dem Editor gepunktet": "Z CM and Z DM per CISPR 17 · model from the editor dotted", "Das Bild zeigt die Werte aus dem Modell-Editor, nicht die der automatischen Auswertung.": "The drawing shows the values from the model editor, not those of the automatic evaluation.", "Für das Modell fehlen positive Werte für L und M. Prüfe Portpolarität und Fit-Band.": "The model lacks positive values for L and M. Check port polarity and fit band.", "Für das Modell fehlen positive Werte für OCL, Streuung oder Übersetzung.": "The model lacks positive values for OCL, leakage or ratio.", "Die Startwerte stammen aus Einzelauswertungen (Plateaus, Resonanzen) und treffen die Kurven als Ganzes noch nicht. „Optimieren“ passt sie an Betrag und Phase aller Kurven an.": "The start values come from single evaluations (plateaus, resonances) and do not yet match the curves as a whole. \"Optimise\" fits them to magnitude and phase of all curves.", "R_w · je Wicklung": "R_w · per winding", "R_Fe · je Wicklung": "R_Fe · per winding", "Cx · diagonal, Eingang + zu Ausgang −": "Cx · diagonal, input + to output −", "Cx · diagonal, im Bild nicht gezeichnet": "Cx · diagonal, not drawn in the schematic", "Portzuordnung fehlt": "Port assignment missing", "Vorschlag übernehmen": "Apply suggestion", "Connector": "Connector", "Connector-Profil": "Connector profile", "Profil": "Profile", "– kein Profil –": "– no profile –", "Betriebsart": "Operating mode", "Bauform": "Type", "Ansicht": "View", "Messmodell": "Measurement model", "Quellen": "Sources", "Steckverbinder, Magnetics und Portzuordnung": "Connectors, magnetics and port mapping", "Steckverbinder und Magnetics · Kontakte, Messports, Kanäle": "Connectors and magnetics · contacts, measurement ports, channels", "Zuordnung": "Mapping", "Automatisch zuordnen": "Map automatically", "Zuordnung leeren": "Clear mapping", "Seiten tauschen": "Swap sides", "aktiv": "active", "Automatik in Stufen: Portnamen der Datei, Durchgänge (|S| bei tiefen Frequenzen), Nah-/Fernkopplung zwischen Nachbarn, Portreihenfolge-Konventionen. Eine unsichere Zuordnung wird nie als sicher übernommen.": "Automatic in stages: port names in the file, thru paths (|S| at low frequencies), near/far-end coupling between neighbours, port-order conventions. An uncertain mapping is never taken as certain.", "Noch keine automatische Zuordnung. Du kannst auch direkt in der Pinansicht oder der Tabelle zuordnen.": "No automatic mapping yet. You can also assign directly in the pin view or the table.", "Eindeutig zugeordnet": "Uniquely mapped", "Wahrscheinlich zugeordnet": "Probably mapped", "Mehrere mögliche Zuordnungen": "Several possible mappings", "Nicht zuverlässig bestimmbar": "Not reliably determinable", "Profil passt nicht zur Portzahl": "Profile does not fit the port count", "Aus den Messdaten: Durchgänge und Nachbarkopplung": "From the measured data: thru paths and neighbour coupling", "Aus der Messung: galvanische Gruppen und Phase": "From the measurement: galvanic groups and phase", "Abwechselnd: ungerade Ports Seite 1, gerade Seite 2": "Alternating: odd ports side 1, even ports side 2", "Seite 2 in umgekehrter Kontaktreihenfolge": "Side 2 in reverse contact order", "Die Portnamen widersprechen teilweise der gemessenen Nachbarkopplung; eine andere Belegung passt besser zu den Daten.": "The port names partly contradict the measured neighbour coupling; another assignment fits the data better.", "Aus den Daten gleichwertig:": "Equivalent from the data:", "Mittelanzapfung je Gruppe: der Anschluss mit der stärksten Verbindung zu beiden anderen.": "Centre tap per group: the terminal with the strongest connection to both others.", "Gleichsinnige Polarität der Sekundärseite aus der Phase der Differenzübertragung (Punktkonvention aus der Messung).": "Same-sense polarity of the secondary from the phase of the differential transmission (dot convention from the measurement).", "Welche Seite „primär“ heißt und welcher Primäranschluss „+“ ist, folgt aus der Portreihenfolge, nicht aus der Messung.": "Which side is called \"primary\" and which primary terminal is \"+\" follows from the port order, not from the measurement.", "Zu wenige Punkte im untersten Frequenzbereich.": "Too few points in the lowest frequency range.", "Pinansicht": "Pin view", "Farben: Differentialpaare; grau: Masse; braun: Versorgung.": "Colours: differential pairs; grey: ground; brown: supply.", "Vergrößern": "Zoom in", "Verkleinern": "Zoom out", "Ansicht zurücksetzen": "Reset view", "Kontakt anklicken (oder mit Tab und Enter wählen), dann den Messport zuweisen. ✓ Durchgang durch die Messung bestätigt · ? nicht bestätigt · ! doppelt belegt.": "Click a contact (or select it with Tab and Enter), then assign the measurement port. ✓ thru path confirmed by the measurement · ? not confirmed · ! assigned twice.", "Messport": "Measurement port", "– keiner –": "– none –", "Normativ:": "Normative:", "Paar tauschen mit": "Swap pair with", "… beide Seiten": "… both sides", "Masse": "Ground", "Versorgung": "Supply", "Konfiguration": "Configuration", "Seitenband": "Sideband", "Signal": "Signal", "Mittelanzapfung": "Centre tap", "Messports": "Measurement ports", "Jeder Port lässt sich einzeln korrigieren. „Durchgang“ ist der gemessene Partnerport mit der stärksten Übertragung bei tiefen Frequenzen.": "Every port can be corrected individually. \"Thru\" is the measured partner port with the strongest transmission at low frequencies.", "Name in der Datei": "Name in the file", "Knoten": "Node", "Quelle": "Source", "Durchgang": "Thru", "Portname": "Port name", "Konvention": "Convention", "Messdaten": "Measured data", "manuell": "manual", "Vorlage": "Template", "In die Analyse übernehmen": "Apply to the analysis", "Die gewählten Paare werden Mixed-Mode-Paare (D/C je Seite). Alle anderen Ports werden abgeschlossen. Danach stehen alle Kurven im Tab S-Parameter, im Smith-Chart, in Z und im ESB-Modell zur Verfügung.": "The chosen pairs become mixed-mode pairs (D/C per side). All other ports are terminated. All curves are then available in the S-parameter tab, the Smith chart, Z and the equivalent circuit.", "Paare": "Pairs", "(nicht zugeordnet)": "(not assigned)", "Übrige Ports": "Other ports", "angepasst abschließen (Bezugsimpedanz)": "terminate matched (reference impedance)", "offen": "open", "aktiv lassen (Single Ended)": "leave active (single-ended)", "Mittelanzapfungen": "Centre taps", "angepasst abschließen": "terminate matched", "aktiv lassen": "leave active", "In Analyse übernehmen": "Apply to analysis", "Als Vorlage speichern": "Save as template", "Zuordnung exportieren": "Export mapping", "Zuordnung importieren": "Import mapping", "Gespeicherte Vorlage": "Saved template", "Kanäle": "Channels", "Kanal": "Channel", "Moden": "Modes", "Kurven": "Curves", "Matrix · Übertragung und Kopplung": "Matrix · transmission and coupling", "Frequenz": "Frequency", "Frequenz der Matrix": "Frequency of the matrix", "Nur Differential": "Differential only", "Differential und Gleichtakt": "Differential and common mode", "Antwort ↓ · Anregung →": "Response ↓ · excitation →", "Wähle mindestens ein Paar.": "Choose at least one pair.", "Für die gewählten Paare sind nicht beide Ports zugeordnet.": "For the chosen pairs both ports are not assigned.", "Keine Zuordnung zum Speichern.": "No mapping to save.", "Keine Zuordnung gefunden.": "No mapping found.", "Die Datei ist zu groß für eine Port-Zuordnung.": "The file is too large for a port mapping.", "Keine Port-Zuordnung im SIMONLATION-Format.": "Not a port mapping in SIMONLATION format.", "Zuordnung unvollständig.": "Mapping incomplete.", "Sortierung der Dateien": "Sort order of the files", "Sortiert nach Name": "Sorted by name", "Neueste zuerst": "Newest first", "Nach Portzahl": "By port count", "Größte zuerst": "Largest first"
   }));
   const PATTERNS = [
     [/^Im gewählten Fit-Band nicht bestimmbar \(der Fit liefert einen negativen Wert\): (.+)\. Wähle ein Band, in dem dieses Element die Kurve prägt – für Kapazitäten reicht es meist, das Band zu höheren Frequenzen zu erweitern\.$/, (m, a) => 'Not determinable in the chosen fit band (the fit returns a negative value): ' + a.split(', ').map(t).join(', ') + '. Choose a band in which this element shapes the curve – for capacitances it usually helps to extend the band to higher frequencies.'],
@@ -1400,6 +1458,38 @@ window.I18N = (() => {
     [/^(\d+) von (\d+) Dateien in der Bibliothek „(.+)“ gespeichert und geprüft$/, '$1 of $2 files saved to the library "$3" and verified'],
     [/^Kontrolle nach dem Speichern: (\d+) (?:Datei ist|Dateien sind) in der Bibliothek vorhanden und stimm(?:t|en) mit dem Original überein\.$/, 'Check after saving: $1 file(s) are present in the library and match the original.'],
     [/^(\d+) Datei(?:en)? aus der Bibliothek gelöscht\. Die Sitzung bleibt unverändert\.$/, '$1 file(s) deleted from the library. The session stays unchanged.'],
+    [/^Wähle, was gemessen wurde\. Ein Profil ist eine Interpretation der (\d+) Messports; die Software prüft, ob die Messdaten dazu passen\. Die Originaldaten bleiben unverändert\.$/, 'Choose what was measured. A profile is an interpretation of the $1 measurement ports; the software checks whether the measured data fit it. The original data stay unchanged.'],
+    [/^Kein Profil passt zu (\d+) Ports\. Unterstützt: USB-C mit 48 Ports \(24 Kontakte, zwei Seiten\), RJ45 mit 16 Ports, LAN-Magnetics mit 4, 6 oder 12 Ports\.$/, 'No profile fits $1 ports. Supported: USB-C with 48 ports (24 contacts, two sides), RJ45 with 16 ports, LAN magnetics with 4, 6 or 12 ports.'],
+    [/^(Eindeutig zugeordnet|Wahrscheinlich zugeordnet|Mehrere mögliche Zuordnungen|Nicht zuverlässig bestimmbar) · (.+)$/, (m, a, b) => t(a) + ' · ' + t(b)],
+    [/^Ports 1–(\d+) Seite 1 in Kontaktreihenfolge, (\d+)–(\d+) Seite 2$/, 'Ports 1–$1 side 1 in contact order, $2–$3 side 2'],
+    [/^Aus den Portnamen der Datei \((\d+) von (\d+)\)$/, 'From the port names in the file ($1 of $2)'],
+    [/^(\d+) von (\d+) Durchgängen eindeutig erkannt \(\|S\| im unteren Band > 0,5 und mindestens doppelt so stark wie der nächste Kandidat\)\.$/, '$1 of $2 thru paths clearly identified (|S| in the lower band > 0.5 and at least twice as strong as the next candidate).'],
+    [/^Das Profil erwartet (\d+) Messports, die Datei hat (\d+)\. Diese Interpretation passt nicht\.$/, 'The profile expects $1 measurement ports, the file has $2. This interpretation does not fit.'],
+    [/^Galvanische Gruppen aus dem Verlauf zu tiefen Frequenzen \((.+)\)\.$/, 'Galvanic groups from the trend towards low frequencies ($1).'],
+    [/^Die galvanischen Gruppen der Messung \((.+)\) passen nicht zu (.+) Anschlüssen\.$/, 'The galvanic groups of the measurement ($1) do not fit $2 terminals.'],
+    [/^(?:Durchgänge \S+ % · )?(?:Nachbarkopplung r = \S+ · )?(?:Seiten \S+ % · )?Portnamen (?:\S+ %|–)$/, m => m.replace('Durchgänge', 'Thru paths').replace('Nachbarkopplung', 'Neighbour coupling').replace('Seiten', 'Sides').replace('Portnamen', 'Port names')],
+    [/^Port (\d+) zeigt auf unbekannten Knoten (.+)$/, 'Port $1 points to the unknown node $2'],
+    [/^(Die Portnamen widersprechen .+ Daten\. )?Nicht durch einen eindeutigen Durchgang bestätigt: (.+)\.$/, (m, a, b) => (a ? t(a.trim()) + ' ' : '') + 'Not confirmed by a clear thru path: ' + b + '.'],
+    [/^Knoten (.+) ist doppelt belegt: Port (\d+) und Port (\d+)$/, 'Node $1 is assigned twice: port $2 and port $3'],
+    [/^Paar (.+) Seite (\d) nur halb zugeordnet$/, 'Pair $1 side $2 only half assigned'],
+    [/^Paar (.+) nur halb zugeordnet$/, 'Pair $1 only half assigned'],
+    [/^1 Port ist keinem Kontakt zugeordnet; er wird beim Übernehmen abgeschlossen\.$/, '1 port is not assigned to a contact; it is terminated when applying.'],
+    [/^(\d+) Ports sind keinem Kontakt zugeordnet; sie werden beim Übernehmen abgeschlossen\.$/, '$1 ports are not assigned to a contact; they are terminated when applying.'],
+    [/^Polarität von (.+) tauschen · nur (.+)$/, (m, a, b) => 'Swap polarity of ' + a + ' · only ' + b],
+    [/^Polarität von (.+) tauschen$/, 'Swap polarity of $1'],
+    [/^Knoten für Port (\d+)$/, 'Node for port $1'],
+    [/^Werte bei (.+) \(Marker 1\)\. SDD21: Einfügedämpfung durch den Connector, SDD11: Reflexion, SCD21: Umwandlung Differential → Gleichtakt\. Keine Grenzwerte: Für eine Konformitätsaussage fehlen Normversion und Messbedingungen\.$/, 'Values at $1 (marker 1). SDD21: insertion loss through the connector, SDD11: reflection, SCD21: conversion differential → common mode. No limits: a compliance statement would need the standard version and the measurement conditions.'],
+    [/^\|S\| in dB bei (.+)\. NEXT: Anregung und Antwort auf derselben Seite, FEXT: auf verschiedenen Seiten, IL: dasselbe Paar durch den Connector\. Die Bezeichnung folgt aus der Zuordnung, nicht aus der Portnummer\. Ein Klick öffnet die Kurve\.$/, '|S| in dB at $1. NEXT: excitation and response on the same side, FEXT: on different sides, IL: the same pair through the connector. The label follows from the mapping, not from the port number. A click opens the curve.'],
+    [/^(\d+) Paare? aus der Zuordnung übernommen · übrige Ports (angepasst abgeschlossen|offen|aktiv)\.$/, (m, a, b) => a + (a === '1' ? ' pair' : ' pairs') + ' taken from the mapping · other ports ' + ({ 'angepasst abgeschlossen': 'terminated matched', offen: 'open', aktiv: 'active' }[b]) + '.'],
+    [/^Die Zuordnung hat Fehler: (.+)$/, (m, a) => 'The mapping has errors: ' + t(a)],
+    [/^Vorlage „(.+)“ gespeichert\.$/, 'Template "$1" saved.'],
+    [/^Vorlage nicht gespeichert: (.+)$/, 'Template not saved: $1'],
+    [/^Vorlage „(.+)“ angewendet\. Prüfe die Zuordnung, bevor du sie übernimmst\.$/, 'Template "$1" applied. Check the mapping before you apply it.'],
+    [/^Die Vorlage gilt für (\d+) Ports\.$/, 'The template applies to $1 ports.'],
+    [/^Zuordnung „(.+)“ geladen\.$/, 'Mapping "$1" loaded.'],
+    [/^Die Zuordnung gilt für (\d+) Ports, die Datei hat (\d+)\.$/, 'The mapping applies to $1 ports, the file has $2.'],
+    [/^Unbekanntes Connector-Profil: (.+)$/, 'Unknown connector profile: $1'],
+    [/^(.+) · (\d+) Ports$/, (m, a, b) => a + ' · ' + b + ' ports'],
     [/^Bibliothek heißt jetzt „(.+)“\.$/, 'The library is now called "$1".'], [/^Bibliothek (.+) umbenennen$/, 'Rename library $1'], [/^(.+) umbenennen oder verschieben$/, 'Rename or move $1'],
     [/^Datei heißt jetzt „(.+)“\.$/, 'The file is now called "$1".'], [/^„(.+)“ nach „(.+)“ verschoben\.$/, '"$1" moved to "$2".'], [/^„(.+)“ nach oberste Ebene verschoben\.$/, '"$1" moved to the top level.'],
     [/^Ordner „(.+)“ heißt jetzt „(.+)“ · 1 Datei verschoben\.$/, 'Folder "$1" is now "$2" · 1 file moved.'], [/^Ordner „(.+)“ heißt jetzt „(.+)“ · (\d+) Dateien verschoben\.$/, 'Folder "$1" is now "$2" · $3 files moved.'],
@@ -1579,6 +1669,7 @@ window.I18N = (() => {
   <symbol id="i-export" viewBox="0 0 24 24"><path d="M12 4v12m-4-4 4 4 4-4M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></symbol>
   <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/></symbol>
   <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M12 4v16M4 12h16"/></symbol>
+  <symbol id="i-plug" viewBox="0 0 24 24"><path d="M5 8h14v6a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4zM9 8V4M15 8V4M12 18v3"/><path d="M9 12h1M14 12h1"/></symbol>
   <symbol id="i-network" viewBox="0 0 24 24"><path d="M7 7h10M7 17h10M12 7v10"/><circle cx="5" cy="7" r="2"/><circle cx="19" cy="7" r="2"/><circle cx="5" cy="17" r="2"/><circle cx="19" cy="17" r="2"/></symbol>
   <symbol id="i-smith" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M21 12a5 5 0 1 0-10 0 5 5 0 1 0 10 0ZM4.5 7.2A10 10 0 0 1 21 12 10 10 0 0 1 4.5 16.8"/></symbol>
   <symbol id="i-imp" viewBox="0 0 24 24"><path d="M2 12h4l2-4 3 8 3-8 2 4h6"/></symbol>
@@ -1696,6 +1787,7 @@ window.I18N = (() => {
     <nav class="tabs" role="tablist" aria-label="Analyseansichten">
       <button class="tab" type="button" id="tab-s" role="tab" aria-controls="panel" data-action="tab" data-value="s" aria-selected="true"><svg class="icon" aria-hidden="true"><use href="#i-wave"/></svg><span class="tab-long">S-Parameter</span><span class="tab-short">S</span></button>
       <button class="tab" type="button" id="tab-ports" role="tab" aria-controls="panel" data-action="tab" data-value="ports" aria-selected="false"><svg class="icon" aria-hidden="true"><use href="#i-network"/></svg><span class="tab-long">Ports &amp; Lasten</span><span class="tab-short">Ports</span></button>
+      <button class="tab" type="button" id="tab-connector" role="tab" aria-controls="panel" data-action="tab" data-value="connector" aria-selected="false" title="Steckverbinder, Magnetics und Portzuordnung"><svg class="icon" aria-hidden="true"><use href="#i-plug"/></svg><span>Connector</span></button>
       <button class="tab" type="button" id="tab-smith" role="tab" aria-controls="panel" data-action="tab" data-value="smith" aria-selected="false"><svg class="icon" aria-hidden="true"><use href="#i-smith"/></svg><span class="tab-long">Smith-Chart</span><span class="tab-short">Smith</span></button>
       <button class="tab" type="button" id="tab-z" role="tab" aria-controls="panel" data-action="tab" data-value="z" aria-selected="false" title="Impedanz und CISPR 17"><svg class="icon" aria-hidden="true"><use href="#i-imp"/></svg><span class="tab-long">Z</span><span class="tab-short">Z</span></button>
       <button class="tab" type="button" id="tab-cmc" role="tab" aria-controls="panel" data-action="tab" data-value="cmc" aria-selected="false"><svg class="icon" aria-hidden="true"><use href="#i-coil"/></svg><span class="tab-long">ESB-Modell</span><span class="tab-short">ESB</span></button>
@@ -1712,6 +1804,8 @@ window.I18N = (() => {
       </div>
       <p id="global-status" class="inline-notice" role="status" hidden></p>
       <div id="config-panel" hidden></div>
+      <div id="connector-panel" hidden></div>
+      <input type="file" id="cn-file" accept=".json,application/json" hidden>
       <div id="analysis-panel">
         <div id="view-controls" class="view-controls"></div>
         <p id="physics-warning" class="inline-notice" role="status" hidden></p>
@@ -2103,7 +2197,7 @@ This software is not released under the MIT, GPL, Apache, or any other open-sour
 'use strict';
 
 const RF = (() => {
-  const MAX_PORTS = 32;
+  const MAX_PORTS = 64;
   const MAX_CELLS = 4_000_000;
   const MAX_POINTS = 150_000;
   const TAU = 2 * Math.PI;
@@ -4723,6 +4817,571 @@ const Magnetic = (() => {
   return { VERSION, LABEL, SHORT, LABEL_EN, SHORT_EN, label, MAGNETIC, analyze, fingerprint, distance, categoryFromName, familyClass, fmtHz };
 })();
 </script>
+<script id="connector-core">
+'use strict';
+// Connector intelligence: versioned connector profiles, port mappings and their automatic estimation from the S-matrix.
+// Pure functions, no DOM. The data model keeps five things apart:
+//   contact  – a physical pin of the connector or part (e.g. USB-C A2, RJ45 contact 3, transformer pin TD+),
+//   node     – one electrical end of a contact in the measurement (contact on side 1 or side 2 for a thru measurement),
+//   port     – a column of the S-matrix in the file,
+//   channel  – a logical signal path made of contacts (a differential pair through the connector, a transformer channel),
+//   mode     – a modal port (D or C of one pair at one side), created by the analyzer from the pairs of the mapping.
+// A mapping assigns each measurement port to at most one node. Applying it produces the analyzer's port configuration
+// (pairs and terminations); the RF core is unchanged and the measured data are never modified.
+const Connector = (() => {
+  const SCHEMA = 'simonlation.connector-profile', MAP_SCHEMA = 'simonlation.port-map', VERSION = 1;
+
+  // ---------- Profiles ----------
+  // Texts carry an optional English variant (field `en`); `text(obj, key, lang)` picks it. German is the source language.
+  const USB_SOURCE = { title: 'USB Type-C Cable and Connector Specification, Release 2.4 (USB-IF, Oktober 2024)', ref: '3.2.3 Pin Assignments and Descriptions',
+    note: 'Identisch übernommen als IEC 62680-1-3:2026. Normative Signalnamen SSTXp1 … SSRXn2, Dp1/Dn1, Dp2/Dn2; gebräuchliche Kurznamen TX1+ … RX2− sind informell.',
+    en: { title: 'USB Type-C Cable and Connector Specification, Release 2.4 (USB-IF, October 2024)', note: 'Adopted unchanged as IEC 62680-1-3:2026. Normative signal names SSTXp1 … SSRXn2, Dp1/Dn1, Dp2/Dn2; the common short names TX1+ … RX2− are informal.' } };
+  const USB32_SOURCE = { title: 'Universal Serial Bus 3.2 Specification (USB-IF)', ref: 'Betriebsarten Gen 1×1, Gen 2×1, Gen 1×2, Gen 2×2',
+    note: 'x1 nutzt eine Lane (TX1/RX1 oder, je nach Steckorientierung, TX2/RX2); x2 nutzt beide.',
+    en: { ref: 'Operating modes Gen 1×1, Gen 2×1, Gen 1×2, Gen 2×2', note: 'x1 uses one lane (TX1/RX1 or, depending on plug orientation, TX2/RX2); x2 uses both.' } };
+  const ETH_SOURCE = { title: 'IEEE Std 802.3', ref: '40.8 MDI (1000BASE-T, Tabelle 40-12 Crossover); Klauseln 14 und 25 (10BASE-T, 100BASE-TX)',
+    note: 'Kontaktpaare 1/2, 3/6, 4/5, 7/8. MDI-X tauscht die Paare A↔B und C↔D.',
+    en: { ref: '40.8 MDI (1000BASE-T, Table 40-12 crossover); clauses 14 and 25 (10BASE-T, 100BASE-TX)', note: 'Contact pairs 1/2, 3/6, 4/5, 7/8. MDI-X swaps pairs A↔B and C↔D.' } };
+  const text = (obj, key, lang) => (lang === 'en' && obj?.en?.[key] !== undefined ? obj.en[key] : obj?.[key]) ?? '';
+
+  function usbC() {
+    const A = ['GND', 'SSTXp1', 'SSTXn1', 'VBUS', 'CC1', 'Dp1', 'Dn1', 'SBU1', 'VBUS', 'SSRXn2', 'SSRXp2', 'GND'];
+    const B = ['GND', 'SSTXp2', 'SSTXn2', 'VBUS', 'CC2', 'Dp2', 'Dn2', 'SBU2', 'VBUS', 'SSRXn1', 'SSRXp1', 'GND'];
+    const SHORT = { SSTXp1: 'TX1+', SSTXn1: 'TX1−', SSRXp1: 'RX1+', SSRXn1: 'RX1−', SSTXp2: 'TX2+', SSTXn2: 'TX2−', SSRXp2: 'RX2+', SSRXn2: 'RX2−',
+      Dp1: 'D+', Dn1: 'D−', Dp2: 'D+', Dn2: 'D−' };
+    const role = name => name === 'GND' ? 'ground' : name === 'VBUS' ? 'power' : /^CC/.test(name) ? 'config' : /^SBU/.test(name) ? 'sideband' : /^D[pn]/.test(name) ? 'usb2' : 'superspeed';
+    const contacts = [];
+    // Front view into the receptacle: row A on top from A1 (left) to A12, row B below from B12 (left) to B1.
+    A.forEach((name, k) => contacts.push({ id: 'A' + (k + 1), normative: name, label: SHORT[name] || name, role: role(name), x: k, y: 0 }));
+    B.forEach((name, k) => contacts.push({ id: 'B' + (k + 1), normative: name, label: SHORT[name] || name, role: role(name), x: 11 - k, y: 1.4 }));
+    const pairs = [
+      { id: 'TX1', plus: 'A2', minus: 'A3', name: 'SuperSpeed TX1', group: 'superspeed' }, { id: 'RX1', plus: 'B11', minus: 'B10', name: 'SuperSpeed RX1', group: 'superspeed' },
+      { id: 'TX2', plus: 'B2', minus: 'B3', name: 'SuperSpeed TX2', group: 'superspeed' }, { id: 'RX2', plus: 'A11', minus: 'A10', name: 'SuperSpeed RX2', group: 'superspeed' },
+      { id: 'D-A', plus: 'A6', minus: 'A7', name: 'USB 2.0 D± (Reihe A)', group: 'usb2', en: { name: 'USB 2.0 D± (row A)' } }, { id: 'D-B', plus: 'B6', minus: 'B7', name: 'USB 2.0 D± (Reihe B)', group: 'usb2', en: { name: 'USB 2.0 D± (row B)' } }
+    ];
+    const swap = id => (id[0] === 'A' ? 'B' : 'A') + id.slice(1), mirror = id => id[0] + (13 - Number(id.slice(1)));
+    return {
+      schema: SCHEMA, version: VERSION, id: 'usb-c-receptacle-thru', revision: '1.0.0', status: 'validated',
+      family: 'USB Type-C', name: 'USB-C Receptacle · 24 Kontakte, Durchgangsmessung', variant: 'Full-Featured Receptacle', gender: 'receptacle',
+      view: 'Steckseite, Blick in die Buchse; Zeichnung schematisch, nicht maßstäblich',
+      en: { name: 'USB-C receptacle · 24 contacts, thru measurement', view: 'Mating side, looking into the receptacle; schematic drawing, not to scale' },
+      contacts, pairs, sources: [USB_SOURCE, USB32_SOURCE],
+      // Internal connections a receptacle may or may not have; they are never assumed, only offered as information.
+      nets: [{ id: 'GND', contacts: ['A1', 'A12', 'B1', 'B12'], note: 'Masse; im Bauteil oft verbunden, in der Messung dann nicht unabhängig' },
+        { id: 'VBUS', contacts: ['A4', 'A9', 'B4', 'B9'], note: 'Versorgung; oft verbunden' }],
+      measurement: { kind: 'thru', sides: [1, 2], sideNames: ['Seite 1', 'Seite 2'], note: 'Ein Messport je Kontakt und Seite (z. B. Leiterplattenseite und Steckseite). Andere Messaufbauten passen nicht zu diesem Profil.',
+        en: { sideNames: ['Side 1', 'Side 2'], note: 'One measurement port per contact and side (e.g. board side and mating side). Other measurement set-ups do not fit this profile.' } },
+      configurations: [
+        { id: 'usb2', name: 'USB 2.0', pairs: ['D-A'] },
+        { id: 'gen1x1', name: 'USB 3.2 Gen 1×1 (5 Gb/s)', pairs: ['TX1', 'RX1'], note: 'Eine Lane; gedreht TX2/RX2.', en: { note: 'One lane; flipped TX2/RX2.' } },
+        { id: 'gen2x1', name: 'USB 3.2 Gen 2×1 (10 Gb/s)', pairs: ['TX1', 'RX1'], note: 'Eine Lane; gedreht TX2/RX2.', en: { note: 'One lane; flipped TX2/RX2.' } },
+        { id: 'gen1x2', name: 'USB 3.2 Gen 1×2 (10 Gb/s)', pairs: ['TX1', 'RX1', 'TX2', 'RX2'] },
+        { id: 'gen2x2', name: 'USB 3.2 Gen 2×2 (20 Gb/s)', pairs: ['TX1', 'RX1', 'TX2', 'RX2'] },
+        { id: 'all', name: 'Alle Paare (SuperSpeed und USB 2.0)', pairs: ['TX1', 'RX1', 'TX2', 'RX2', 'D-A', 'D-B'], en: { name: 'All pairs (SuperSpeed and USB 2.0)' } }
+      ],
+      symmetries: [
+        { id: 'flip', name: 'Steckorientierung gedreht (A↔B)', en: { name: 'Plug orientation flipped (A↔B)' }, map: Object.fromEntries(contacts.map(c => [c.id, swap(c.id)])) },
+        { id: 'mirror', name: 'Links/rechts gespiegelt', en: { name: 'Mirrored left/right' }, map: Object.fromEntries(contacts.map(c => [c.id, mirror(c.id)])) },
+        { id: 'flip-mirror', name: 'Gedreht und gespiegelt', en: { name: 'Flipped and mirrored' }, map: Object.fromEntries(contacts.map(c => [c.id, swap(mirror(c.id))])) }
+      ]
+    };
+  }
+
+  function rj45() {
+    const contacts = [1, 2, 3, 4, 5, 6, 7, 8].map(k => ({ id: String(k), label: String(k), normative: 'Kontakt ' + k, role: 'signal', x: (k - 1) * 1.02, y: 0 }));
+    const MDI = { 1: 'BI_DA+', 2: 'BI_DA−', 3: 'BI_DB+', 6: 'BI_DB−', 4: 'BI_DC+', 5: 'BI_DC−', 7: 'BI_DD+', 8: 'BI_DD−' };
+    contacts.forEach(c => { c.label = c.id + ' · ' + MDI[c.id]; c.normative = MDI[c.id]; });
+    const pairs = [
+      { id: 'A', plus: '1', minus: '2', name: 'Paar 1/2 · BI_DA (10/100: TX)', group: 'eth', en: { name: 'Pair 1/2 · BI_DA (10/100: TX)' } }, { id: 'B', plus: '3', minus: '6', name: 'Paar 3/6 · BI_DB (10/100: RX)', group: 'eth', en: { name: 'Pair 3/6 · BI_DB (10/100: RX)' } },
+      { id: 'C', plus: '4', minus: '5', name: 'Paar 4/5 · BI_DC', group: 'eth', en: { name: 'Pair 4/5 · BI_DC' } }, { id: 'D', plus: '7', minus: '8', name: 'Paar 7/8 · BI_DD', group: 'eth', en: { name: 'Pair 7/8 · BI_DD' } }
+    ];
+    return {
+      schema: SCHEMA, version: VERSION, id: 'rj45-8p8c-thru', revision: '1.0.0', status: 'validated',
+      family: 'RJ45 / 8P8C', name: 'RJ45 8P8C · 8 Kontakte, Durchgangsmessung', variant: 'Ethernet MDI', gender: 'receptacle',
+      view: 'Steckseite, Kontakte 1–8 von links; Zeichnung schematisch', contacts, pairs, sources: [ETH_SOURCE], nets: [],
+      en: { name: 'RJ45 8P8C · 8 contacts, thru measurement', view: 'Mating side, contacts 1–8 from the left; schematic drawing' },
+      measurement: { kind: 'thru', sides: [1, 2], sideNames: ['Seite 1', 'Seite 2'], note: 'Ein Messport je Kontakt und Seite. Ein Magnetics-Kanal ist ein anderes Messmodell (siehe LAN-Magnetics).',
+        en: { sideNames: ['Side 1', 'Side 2'], note: 'One measurement port per contact and side. A magnetics channel is a different measurement model (see LAN magnetics).' } },
+      configurations: [
+        { id: '10-100', name: '10BASE-T / 100BASE-TX (2 Paare)', pairs: ['A', 'B'], en: { name: '10BASE-T / 100BASE-TX (2 pairs)' } },
+        { id: '1000', name: '1000BASE-T (4 Paare)', pairs: ['A', 'B', 'C', 'D'], en: { name: '1000BASE-T (4 pairs)' } }
+      ],
+      symmetries: [{ id: 'mirror', name: 'Kontaktreihe gespiegelt (1↔8)', en: { name: 'Contact row mirrored (1↔8)' }, map: Object.fromEntries(contacts.map(c => [c.id, String(9 - Number(c.id))])) }]
+    };
+  }
+
+  // LAN magnetics: one port per pin, no sides. Channel = primary pair → secondary pair, optional centre taps.
+  function magnetics(channels, taps) {
+    const contacts = [], pairs = [], perSide = taps ? 3 : 2;
+    for (let c = 1; c <= channels; c++) {
+      const y0 = (c - 1) * (perSide + 1.2);
+      const side = (prefix, x) => (taps ? ['+', 'CT', '−'] : ['+', '−']).map((s, k) => ({ id: prefix + c + s, label: prefix + (channels > 1 ? c : '') + ' ' + s, normative: (prefix === 'P' ? 'Primär ' : 'Sekundär ') + s,
+        en: { normative: (prefix === 'P' ? 'Primary ' : 'Secondary ') + s }, role: s === 'CT' ? 'tap' : 'signal', x, y: y0 + k * (taps ? 1 : 2) }));
+      contacts.push(...side('P', 0), ...side('S', 4));
+      pairs.push({ id: 'P' + c, plus: 'P' + c + '+', minus: 'P' + c + '−', name: 'Kanal ' + c + ' primär', en: { name: 'Channel ' + c + ' primary' }, group: 'mag', channel: c, side: 'P' },
+        { id: 'S' + c, plus: 'S' + c + '+', minus: 'S' + c + '−', name: 'Kanal ' + c + ' sekundär', en: { name: 'Channel ' + c + ' secondary' }, group: 'mag', channel: c, side: 'S' });
+    }
+    const n = contacts.length;
+    return {
+      schema: SCHEMA, version: VERSION, id: 'lan-magnetics-' + n + 'p', revision: '1.0.0', status: 'validated',
+      family: 'LAN-Magnetics', name: 'LAN-Magnetics · S' + n + 'P · ' + channels + (channels > 1 ? ' Kanäle' : ' Kanal') + (taps ? ' mit Mittelanzapfungen' : ''),
+      variant: taps ? 'Übertrager mit Mittelanzapfung' : 'Übertrager ohne Mittelanzapfung', gender: 'device',
+      view: 'Schaltungssicht: primär links, sekundär rechts', contacts, pairs, nets: [],
+      en: { name: 'LAN magnetics · S' + n + 'P · ' + channels + (channels > 1 ? ' channels' : ' channel') + (taps ? ' with centre taps' : ''), family: 'LAN magnetics',
+        variant: taps ? 'Transformer with centre tap' : 'Transformer without centre tap', view: 'Circuit view: primary left, secondary right' },
+      sources: [{ title: 'Messmodell-Vorlage, keine Norm', ref: 'S4P: ein Kanal; S6P: ein Kanal mit zwei Mittelanzapfungen; S12P: zwei S6P-Kanäle', note: 'Topologie wird aus den Messdaten geprüft (galvanische Gruppen), nicht angenommen.',
+        en: { title: 'Measurement model template, not a standard', ref: 'S4P: one channel; S6P: one channel with two centre taps; S12P: two S6P channels', note: 'The topology is checked from the measured data (galvanic groups), not assumed.' } }],
+      measurement: { kind: 'pins', note: 'Ein Messport je Bauteilanschluss. Welche Seite primär heißt, folgt aus Metadaten oder der Portreihenfolge, nicht aus der Messung.',
+        en: { note: 'One measurement port per terminal of the part. Which side is called primary follows from metadata or the port order, not from the measurement.' } },
+      configurations: [{ id: 'all', name: 'Alle Kanäle', en: { name: 'All channels' }, pairs: pairs.map(p => p.id) }],
+      symmetries: [{ id: 'sides', name: 'Primär und sekundär vertauscht', en: { name: 'Primary and secondary swapped' }, map: Object.fromEntries(contacts.map(c => [c.id, (c.id[0] === 'P' ? 'S' : 'P') + c.id.slice(1)])) }],
+      magnetics: { channels, taps }
+    };
+  }
+
+  const PROFILES = [usbC(), rj45(), magnetics(1, false), magnetics(1, true), magnetics(2, true)];
+  const profile = id => PROFILES.find(p => p.id === id) || null;
+
+  // A profile is only offered as validated when it is complete and consistent.
+  function validateProfile(p) {
+    const errors = [], ids = new Set();
+    if (p.schema !== SCHEMA) errors.push('Schema fehlt oder ist falsch.');
+    if (!(p.version >= 1)) errors.push('Version fehlt.');
+    if (!p.sources?.length) errors.push('Quellen fehlen.');
+    for (const c of p.contacts || []) {
+      if (ids.has(c.id)) errors.push('Kontakt doppelt: ' + c.id);
+      ids.add(c.id);
+      if (!Number.isFinite(c.x) || !Number.isFinite(c.y)) errors.push('Position fehlt: ' + c.id);
+    }
+    const used = new Set();
+    for (const pair of p.pairs || []) {
+      for (const c of [pair.plus, pair.minus]) {
+        if (!ids.has(c)) errors.push('Paar ' + pair.id + ' nennt unbekannten Kontakt ' + c);
+        if (used.has(c)) errors.push('Kontakt ' + c + ' in mehreren Paaren');
+        used.add(c);
+      }
+    }
+    for (const conf of p.configurations || []) for (const id of conf.pairs) if (!p.pairs.some(x => x.id === id)) errors.push('Konfiguration ' + conf.id + ' nennt unbekanntes Paar ' + id);
+    for (const s of p.symmetries || []) {
+      const image = new Set(Object.values(s.map));
+      if (image.size !== ids.size || [...image].some(id => !ids.has(id))) errors.push('Symmetrie ' + s.id + ' ist keine Permutation der Kontakte');
+    }
+    if (!['thru', 'pins'].includes(p.measurement?.kind)) errors.push('Messmodell fehlt.');
+    return { ok: !errors.length, errors };
+  }
+
+  // ---------- Nodes and mappings ----------
+  const nodesOf = p => p.measurement.kind === 'thru' ? p.contacts.flatMap(c => p.measurement.sides.map(s => c.id + '@' + s)) : p.contacts.map(c => c.id);
+  const portCount = p => nodesOf(p).length;
+  const splitNode = node => { const [contact, side] = String(node).split('@'); return { contact, side: side ? Number(side) : null }; };
+  const nodeId = (contact, side) => side ? contact + '@' + side : contact;
+  const emptyMapping = (p, n) => ({ schema: MAP_SCHEMA, version: VERSION, profile: p.id, profileRevision: p.revision, ports: Array.from({ length: n }, () => null), source: Array.from({ length: n }, () => '') });
+
+  // Duplicates, unmeasured contacts, half-measured pairs and unknown nodes. Never repairs anything silently.
+  function validateMapping(p, mapping) {
+    const issues = [], seen = new Map(), nodes = new Set(nodesOf(p));
+    mapping.ports.forEach((node, port) => {
+      if (!node) return;
+      if (!nodes.has(node)) issues.push({ level: 'error', port, text: 'Port ' + (port + 1) + ' zeigt auf unbekannten Knoten ' + node });
+      if (seen.has(node)) issues.push({ level: 'error', port, text: 'Knoten ' + node + ' ist doppelt belegt: Port ' + (seen.get(node) + 1) + ' und Port ' + (port + 1) });
+      else seen.set(node, port);
+    });
+    const portOf = node => seen.get(node);
+    const sides = p.measurement.kind === 'thru' ? p.measurement.sides : [null];
+    for (const pair of p.pairs) for (const s of sides) {
+      const a = portOf(nodeId(pair.plus, s)), b = portOf(nodeId(pair.minus, s));
+      if ((a === undefined) !== (b === undefined)) issues.push({ level: 'warn', pair: pair.id, text: 'Paar ' + pair.id + (s ? ' Seite ' + s : '') + ' nur halb zugeordnet' });
+    }
+    const free = mapping.ports.filter(x => !x).length;
+    if (free) issues.push({ level: 'info', text: free + (free === 1 ? ' Port ist' : ' Ports sind') + ' keinem Kontakt zugeordnet; sie werden beim Übernehmen abgeschlossen.' });
+    return { ok: !issues.some(i => i.level === 'error'), issues, portOf };
+  }
+
+  // Pairs available with the current mapping: per pair and side the two ports, if both are mapped.
+  function mappedPairs(p, mapping) {
+    const { portOf } = validateMapping(p, mapping), out = [];
+    const sides = p.measurement.kind === 'thru' ? p.measurement.sides : [null];
+    for (const pair of p.pairs) for (const s of sides) {
+      const plus = portOf(nodeId(pair.plus, s)), minus = portOf(nodeId(pair.minus, s));
+      // channel: the signal path the pair belongs to; end: 1 or 2 along that path (thru: the side; magnetics: primary 1, secondary 2)
+      const channel = s ? pair.id : 'K' + (pair.channel ?? pair.id), end = s ?? (pair.side === 'S' ? 2 : 1);
+      if (plus !== undefined && minus !== undefined) out.push({ pair: pair.id, side: s, channel, end, plus, minus, name: pair.name + (s ? ' · ' + p.measurement.sideNames[s - 1] : '') });
+    }
+    return out;
+  }
+
+  // The analyzer configuration of a mapping: chosen pairs become mixed-mode pairs (ids in the order of the list), all other ports are
+  // terminated (matched to the reference by default, or left open/active). Centre taps of magnetics stay open unless asked otherwise.
+  function toConfig(p, mapping, n, { pairs = null, others = 'match', taps = 'open' } = {}) {
+    const chosen = mappedPairs(p, mapping).filter(x => !pairs || pairs.includes(x.pair));
+    const loads = Array.from({ length: n }, () => ({ type: others === 'active' ? 'active' : others }));
+    const config = { loads, pairs: [], ref: null }, channels = [];
+    chosen.forEach((x, i) => {
+      loads[x.plus] = { type: 'active' }; loads[x.minus] = { type: 'active' };
+      config.pairs.push({ p: x.plus, q: x.minus, id: i + 1 });
+      channels.push({ ...x, id: i + 1 });
+    });
+    mapping.ports.forEach((node, port) => {
+      if (!node) return;
+      const c = p.contacts.find(k => k.id === splitNode(node).contact);
+      if (c?.role === 'tap') loads[port] = { type: taps === 'active' ? 'active' : taps };
+    });
+    return { config, channels };
+  }
+
+  // ---------- Evidence from the S-matrix ----------
+  const mag = (s, n, i, j) => { const k = 2 * (i * n + j); return Math.hypot(s[k], s[k + 1]); };
+  // Mean |S_ij| over a frequency band (indices). Sparse sampling keeps 48-port files fast.
+  function bandMatrix(dataset, lo, hi, maxPoints = 24) {
+    const n = dataset.n, idx = [];
+    for (let i = 0; i < dataset.freq.length; i++) if (dataset.freq[i] >= lo && dataset.freq[i] <= hi && dataset.samples[i]) idx.push(i);
+    const step = Math.max(1, Math.ceil(idx.length / maxPoints)), use = idx.filter((_, k) => k % step === 0);
+    const m = new Float64Array(n * n);
+    for (const k of use) { const s = dataset.samples[k]; for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) m[i * n + j] += mag(s, n, i, j); }
+    if (use.length) for (let i = 0; i < m.length; i++) m[i] /= use.length;
+    return { m, points: use.length };
+  }
+  function bands(dataset) {
+    const f = dataset.freq.filter(x => x > 0), lo = f[0], hi = f.at(-1), r = hi / lo;
+    return { low: [lo, lo * r ** 0.2], high: [lo * r ** 0.5, hi], lo, hi };
+  }
+  // Thru paths: every port's strongest low-frequency partner; mutual best partners with a clear margin form a conductor.
+  function thruPaths(dataset) {
+    const n = dataset.n, b = bands(dataset), { m } = bandMatrix(dataset, ...b.low), best = [];
+    for (let i = 0; i < n; i++) {
+      let j1 = -1, v1 = -1, v2 = 0;
+      for (let j = 0; j < n; j++) if (j !== i) { const v = m[i * n + j]; if (v > v1) { v2 = v1; v1 = v; j1 = j; } else if (v > v2) v2 = v; }
+      best.push({ j: j1, v: v1, margin: v1 / Math.max(v2, 1e-6) });
+    }
+    const paths = [], used = new Set();
+    for (let i = 0; i < n; i++) {
+      const { j, v, margin } = best[i];
+      if (j > i && best[j].j === i && !used.has(i) && !used.has(j)) {
+        used.add(i); used.add(j);
+        paths.push({ a: i, b: j, mag: v, margin: Math.min(margin, best[j].margin), clear: v > 0.5 && Math.min(margin, best[j].margin) > 2 });
+      }
+    }
+    return { paths, unmatched: [...Array(n).keys()].filter(i => !used.has(i)), best };
+  }
+  const tokens = name => String(name || '').toUpperCase().replace(/[−–]/g, '-').split(/[^A-Z0-9+\-]+/).filter(Boolean);
+  // Port names from the file ("Port[k] = …") checked against contact ids and signal names. Returns per port the matching node or null.
+  function fromNames(p, dataset) {
+    const out = Array.from({ length: dataset.n }, () => null), names = dataset.portNames || [];
+    const byId = new Map(p.contacts.map(c => [c.id.toUpperCase(), c.id]));
+    const byName = new Map();
+    for (const c of p.contacts) for (const label of [c.normative, c.label]) {
+      const key = String(label || '').toUpperCase().replace(/[−–]/g, '-').replace(/\s+/g, '');
+      if (key && p.contacts.filter(k => [k.normative, k.label].some(l => String(l || '').toUpperCase().replace(/[−–]/g, '-').replace(/\s+/g, '') === key)).length === 1) byName.set(key, c.id);
+    }
+    names.forEach((name, port) => {
+      const t = tokens(name);
+      let contact = null, side = null;
+      for (const tok of t) {
+        if (!contact && byId.has(tok) && p.measurement.kind === 'thru' && /^[AB]\d+$|^\d+$/.test(tok) && p.contacts.length > 1) contact = byId.get(tok);
+        if (!contact && byName.has(tok)) contact = byName.get(tok);
+      }
+      const joined = String(name || '').toUpperCase();
+      const m = joined.match(/(?:SIDE|SEITE|S)\s*([12])\b|_([12])$|\b(NEAR|FAR|IN|OUT|L|R)\b/);
+      if (m) side = m[1] ? Number(m[1]) : m[2] ? Number(m[2]) : ['NEAR', 'IN', 'L'].includes(m[3]) ? 1 : 2;
+      if (contact && (p.measurement.kind !== 'thru' || side)) out[port] = nodeId(contact, p.measurement.kind === 'thru' ? side : null);
+    });
+    return out;
+  }
+
+  // Geometric neighbourhood of contacts (used only to rank placements, never as a measured fact).
+  function weights(p) {
+    const n = p.contacts.length, w = new Float64Array(n * n);
+    for (let a = 0; a < n; a++) for (let b = 0; b < n; b++) if (a !== b) {
+      const d = Math.hypot(p.contacts[a].x - p.contacts[b].x, p.contacts[a].y - p.contacts[b].y);
+      w[a * n + b] = d < 2.2 ? 1 / (d * d) : 0;
+    }
+    return w;
+  }
+  // Which end of each conductor lies on which side. Ends on the same side couple differently (near end) from ends on opposite
+  // sides (far end). For neighbouring conductors u, v compare same = |S(a_u,a_v)| + |S(b_u,b_v)| with cross = |S(a_u,b_v)| + |S(b_u,a_v)|;
+  // a maximum spanning tree over |ln(same/cross)| fixes the relative orientation. Which side is "1" stays open (a symmetry).
+  function orient(paths, hm, n) {
+    const K = paths.length, rel = [];
+    for (let u = 0; u < K; u++) for (let v = u + 1; v < K; v++) {
+      const a = paths[u], b = paths[v], same = hm[a.a * n + b.a] + hm[a.b * n + b.b], cross = hm[a.a * n + b.b] + hm[a.b * n + b.a];
+      if (same > 0 && cross > 0) rel.push({ u, v, flip: cross > same, w: Math.abs(Math.log(same / cross)) * Math.max(same, cross) });
+    }
+    rel.sort((x, y) => y.w - x.w);
+    const flip = new Array(K).fill(null), conf = new Array(K).fill(0);
+    const parent = [...Array(K).keys()], root = x => parent[x] === x ? x : (parent[x] = root(parent[x])), adj = Array.from({ length: K }, () => []);
+    for (const e of rel) { const a = root(e.u), b = root(e.v); if (a === b) continue; parent[a] = b; adj[e.u].push(e); adj[e.v].push(e); }
+    for (let start = 0; start < K; start++) {
+      if (flip[start] !== null) continue;
+      flip[start] = false; conf[start] = Infinity;
+      const queue = [start];
+      while (queue.length) {
+        const u = queue.shift();
+        for (const e of adj[u]) { const v = e.u === u ? e.v : e.u; if (flip[v] !== null) continue; flip[v] = flip[u] !== e.flip; conf[v] = Math.min(conf[u], e.w); queue.push(v); }
+      }
+    }
+    return paths.map((x, k) => ({ ...x, a: flip[k] ? x.b : x.a, b: flip[k] ? x.a : x.b, orientation: conf[k] }));
+  }
+  // Coupling between conductors (thru paths, already oriented): mean near-end coupling at both ends in the upper band, in log units.
+  function conductorCoupling(dataset, paths, hm) {
+    const n = dataset.n, k = paths.length, out = new Float64Array(k * k);
+    for (let u = 0; u < k; u++) for (let v = 0; v < k; v++) if (u !== v) {
+      const a = paths[u], b = paths[v];
+      const c = (hm[a.a * n + b.a] + hm[a.b * n + b.b]) / 2;
+      out[u * k + v] = Math.log10(Math.max(c, 1e-6)) + 6;   // ≥ 0, larger = stronger coupling
+    }
+    return out;
+  }
+  function pearson(x, y) {
+    const n = x.length; if (n < 3) return 0;
+    const mx = x.reduce((a, b) => a + b, 0) / n, my = y.reduce((a, b) => a + b, 0) / n;
+    let sxy = 0, sxx = 0, syy = 0;
+    for (let i = 0; i < n; i++) { sxy += (x[i] - mx) * (y[i] - my); sxx += (x[i] - mx) ** 2; syy += (y[i] - my) ** 2; }
+    return sxx > 0 && syy > 0 ? sxy / Math.sqrt(sxx * syy) : 0;
+  }
+
+  // How well a mapping agrees with the measured structure. thru: share of contacts whose two sides are a measured conductor.
+  // adjacency: correlation of measured coupling with geometric neighbourhood. names: share of named ports that agree.
+  function scoreMapping(p, mapping, ev) {
+    const n = mapping.ports.length, portOf = new Map();
+    mapping.ports.forEach((node, port) => node && portOf.set(node, port));
+    // only clear thru paths confirm a contact; a weak mutual best partner (e.g. an open contact) does not
+    const pathOf = new Map(); ev.thru.paths.filter(x => x.clear).forEach(x => { pathOf.set(x.a, x.b); pathOf.set(x.b, x.a); });
+    const result = { thru: null, adjacency: null, names: null, unconfirmed: [] };
+    if (p.measurement.kind === 'thru') {
+      let ok = 0, both = 0;
+      for (const c of p.contacts) {
+        const a = portOf.get(nodeId(c.id, 1)), b = portOf.get(nodeId(c.id, 2));
+        both++;                                   // every contact of the profile counts; an empty one is unconfirmed
+        if (a !== undefined && b !== undefined && pathOf.get(a) === b) ok++; else result.unconfirmed.push(c.id);
+      }
+      result.thru = both ? ok / both : 0;
+      const x = [], y = [], w = ev.weights, cs = p.contacts;
+      for (let i = 0; i < cs.length; i++) for (let j = i + 1; j < cs.length; j++) {
+        const a1 = portOf.get(nodeId(cs[i].id, 1)), b1 = portOf.get(nodeId(cs[j].id, 1)), a2 = portOf.get(nodeId(cs[i].id, 2)), b2 = portOf.get(nodeId(cs[j].id, 2));
+        if ([a1, b1, a2, b2].some(v => v === undefined)) continue;
+        x.push(Math.log10(Math.max(1e-6, (ev.high[a1 * n + b1] + ev.high[a2 * n + b2]) / 2)));
+        y.push(w[i * cs.length + j]);
+      }
+      result.adjacency = pearson(x, y);
+      // side consistency: for strongly coupled neighbours, the ends the mapping puts on the same side must couple as near ends
+      let agree = 0, total = 0;
+      for (let i = 0; i < cs.length; i++) for (let j = i + 1; j < cs.length; j++) {
+        if (w[i * cs.length + j] < 0.5) continue;
+        const a1 = portOf.get(nodeId(cs[i].id, 1)), b1 = portOf.get(nodeId(cs[j].id, 1)), a2 = portOf.get(nodeId(cs[i].id, 2)), b2 = portOf.get(nodeId(cs[j].id, 2));
+        if ([a1, b1, a2, b2].some(v => v === undefined)) continue;
+        const same = ev.high[a1 * n + b1] + ev.high[a2 * n + b2], cross = ev.high[a1 * n + b2] + ev.high[a2 * n + b1];
+        if (Math.abs(Math.log(same / cross)) < 0.05) continue;
+        total++; if (same > cross) agree++;
+      }
+      result.sides = total ? agree / total : null;
+    }
+    let named = 0, agree = 0;
+    ev.names.forEach((node, port) => { if (!node) return; named++; if (mapping.ports[port] === node) agree++; });
+    result.names = named ? agree / named : null;
+    result.total = (result.thru ?? 1) * 0.5 + Math.max(0, result.adjacency ?? 0) * 0.2 + (result.sides ?? 1) * 0.15 + (result.names ?? 0.5) * 0.15;
+    return result;
+  }
+  // The placement objective Σ near-end coupling × neighbourhood for any thru mapping; comparable with place().score.
+  function objective(p, mapping, ev) {
+    const n = mapping.ports.length, portOf = new Map(), cs = p.contacts, w = ev.weights;
+    mapping.ports.forEach((node, port) => node && portOf.set(node, port));
+    let sum = 0;
+    for (let i = 0; i < cs.length; i++) for (let j = i + 1; j < cs.length; j++) {
+      const wij = w[i * cs.length + j]; if (!wij) continue;
+      const a1 = portOf.get(nodeId(cs[i].id, 1)), b1 = portOf.get(nodeId(cs[j].id, 1)), a2 = portOf.get(nodeId(cs[i].id, 2)), b2 = portOf.get(nodeId(cs[j].id, 2));
+      if ([a1, b1, a2, b2].some(v => v === undefined)) continue;
+      sum += wij * (Math.log10(Math.max((ev.high[a1 * n + b1] + ev.high[a2 * n + b2]) / 2, 1e-6)) + 6);
+    }
+    return sum;
+  }
+  const applySymmetry = (mapping, sym) => ({ ...mapping, ports: mapping.ports.map(node => { if (!node) return node; const { contact, side } = splitNode(node); return nodeId(sym.map[contact] ?? contact, side); }) });
+  const swapSides = mapping => ({ ...mapping, ports: mapping.ports.map(node => { if (!node) return node; const { contact, side } = splitNode(node); return side ? nodeId(contact, 3 - side) : node; }) });
+
+  // Port-numbering conventions of thru measurements: one hypothesis each, judged by the data.
+  function conventions(p, n) {
+    const C = p.contacts.length, out = [];
+    if (p.measurement.kind !== 'thru' || n !== 2 * C) return out;
+    const make = (id, name, f) => { const m = emptyMapping(p, n); for (let port = 0; port < n; port++) { const [c, s] = f(port); m.ports[port] = nodeId(p.contacts[c].id, s); m.source[port] = 'convention'; } out.push({ id, name, mapping: m }); };
+    make('block', 'Ports 1–' + C + ' Seite 1 in Kontaktreihenfolge, ' + (C + 1) + '–' + n + ' Seite 2', port => [port % C, port < C ? 1 : 2]);
+    make('interleaved', 'Abwechselnd: ungerade Ports Seite 1, gerade Seite 2', port => [Math.floor(port / 2), port % 2 + 1]);
+    make('block-reverse', 'Seite 2 in umgekehrter Kontaktreihenfolge', port => [port < C ? port : 2 * C - 1 - port, port < C ? 1 : 2]);
+    return out;
+  }
+
+  // Data-driven placement of conductors onto contacts: maximise Σ coupling·neighbourhood by simulated annealing with
+  // deterministic restarts. Symmetric images of the connector score exactly the same – that ambiguity is reported, not hidden.
+  function place(p, ev) {
+    const K = ev.thru.paths.length, C = p.contacts.length;
+    if (K < 2 || K > C) return null;
+    const paths = orient(ev.thru.paths, ev.high, ev.dataset.n);
+    const cc = conductorCoupling(ev.dataset, paths, ev.high), w = ev.weights;
+    let seed = 12345; const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+    const score = perm => { let s = 0; for (let u = 0; u < K; u++) for (let v = u + 1; v < K; v++) s += cc[u * K + v] * w[perm[u] * C + perm[v]]; return s; };
+    const results = [];
+    for (let restart = 0; restart < 6; restart++) {
+      let perm = [...Array(C).keys()];
+      for (let i = C - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [perm[i], perm[j]] = [perm[j], perm[i]]; }
+      let cur = score(perm), best = perm.slice(), bestScore = cur, T = Math.max(cur, 1) * 0.05;
+      for (let it = 0; it < 6000; it++) {
+        const i = Math.floor(rnd() * C), j = Math.floor(rnd() * C);
+        if (i === j || (i >= K && j >= K)) continue;
+        [perm[i], perm[j]] = [perm[j], perm[i]];
+        const next = score(perm);
+        if (next >= cur || rnd() < Math.exp((next - cur) / T)) { cur = next; if (cur > bestScore) { bestScore = cur; best = perm.slice(); } }
+        else [perm[i], perm[j]] = [perm[j], perm[i]];
+        T *= 0.9993;
+      }
+      results.push({ perm: best, score: bestScore });
+    }
+    results.sort((a, b) => b.score - a.score);
+    const toMapping = perm => { const m = emptyMapping(p, ev.dataset.n); paths.forEach((x, u) => { const c = p.contacts[perm[u]].id; m.ports[x.a] = nodeId(c, 1); m.ports[x.b] = nodeId(c, 2); m.source[x.a] = m.source[x.b] = 'data'; }); return m; };
+    return { mapping: toMapping(results[0].perm), score: results[0].score, runnerUp: results.find(r => r.score < results[0].score * 0.999)?.score ?? null };
+  }
+
+  // ---------- Magnetics: galvanic groups, centre taps, channels, polarity ----------
+  // Within a winding |S_ij| rises towards low frequency (the winding becomes a short); across the isolation it falls (∝ ω).
+  function magneticsStructure(dataset) {
+    const n = dataset.n, f = dataset.freq, b = bands(dataset);
+    const lowIdx = Array.from(f, (x, i) => [x, i]).filter(([x]) => x > 0 && x <= b.lo * 3).map(([, i]) => i);
+    const i0 = lowIdx[0], i1 = lowIdx.at(-1) ?? i0;
+    if (i0 === undefined || i0 === i1) return { ok: false, reason: 'Zu wenige Punkte im untersten Frequenzbereich.' };
+    const s0 = dataset.samples[i0], s1 = dataset.samples[i1];
+    const galvanic = [];
+    for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) {
+      const a = mag(s0, n, i, j), c = mag(s1, n, i, j), slope = Math.log(c / a) / Math.log(f[i1] / f[i0]);
+      if (a > 0.3 && slope < 0.25) galvanic.push([i, j]);
+    }
+    const parent = [...Array(n).keys()], root = x => parent[x] === x ? x : (parent[x] = root(parent[x]));
+    for (const [i, j] of galvanic) parent[root(i)] = root(j);
+    const groups = new Map(); for (let i = 0; i < n; i++) { const r = root(i); if (!groups.has(r)) groups.set(r, []); groups.get(r).push(i); }
+    const list = [...groups.values()].sort((a, b) => a[0] - b[0]);
+    const tapOf = g => g.length !== 3 ? null : g.map(c => ({ c, v: Math.min(...g.filter(x => x !== c).map(x => mag(s0, n, c, x))) })).sort((a, b) => b.v - a.v)[0].c;
+    return { ok: true, groups: list.map(g => { const tap = tapOf(g); return { ports: g, tap, ends: g.filter(x => x !== tap) }; }), freq: [f[i0], f[i1]] };
+  }
+  // Differential transmission between two port pairs at a mid-band frequency (power waves, equal references).
+  function sdd21(s, n, [a, b], [c, d]) {
+    const g = (i, j) => [s[2 * (i * n + j)], s[2 * (i * n + j) + 1]];
+    const re = (g(c, a)[0] - g(c, b)[0] - g(d, a)[0] + g(d, b)[0]) / 2, im = (g(c, a)[1] - g(c, b)[1] - g(d, a)[1] + g(d, b)[1]) / 2;
+    return [re, im];
+  }
+  function detectMagnetics(p, dataset, ev) {
+    const st = magneticsStructure(dataset), notes = [], { channels, taps } = p.magnetics, per = taps ? 3 : 2;
+    if (!st.ok) return { candidates: [], notes: [st.reason] };
+    const sizes = st.groups.map(g => g.ports.length).sort().join(',');
+    if (st.groups.length !== 2 * channels || st.groups.some(g => g.ports.length !== per)) {
+      return { candidates: [], structure: st, notes: ['Die galvanischen Gruppen der Messung (' + st.groups.map(g => g.ports.map(x => 'P' + (x + 1)).join('/')).join(' · ') + ') passen nicht zu ' + channels + '×' + (taps ? '2×3' : '2×2') + ' Anschlüssen.'] };
+    }
+    // pair primary and secondary groups by differential transmission in mid band
+    const mid = dataset.freq.findIndex(f => f >= Math.sqrt(bands(dataset).lo * bands(dataset).hi)), s = dataset.samples[mid] || dataset.samples.find(Boolean), n = dataset.n;
+    const G = st.groups, used = new Set(), links = [];
+    for (let a = 0; a < G.length; a++) {
+      if (used.has(a)) continue;
+      let best = -1, bv = -1;
+      for (let b = 0; b < G.length; b++) if (b !== a && !used.has(b)) { const v = Math.hypot(...sdd21(s, n, G[a].ends, G[b].ends)); if (v > bv) { bv = v; best = b; } }
+      used.add(a); used.add(best); links.push([a, best, bv]);
+    }
+    const m = emptyMapping(p, n);
+    links.sort((x, y) => Math.min(...G[x[0]].ports) - Math.min(...G[y[0]].ports)).forEach(([a, b], k) => {
+      const [pri, sec] = Math.min(...G[a].ports) < Math.min(...G[b].ports) ? [G[a], G[b]] : [G[b], G[a]], c = k + 1;
+      const [pp, pm] = pri.ends.slice().sort((x, y) => x - y);
+      let [sp, sm] = sec.ends.slice().sort((x, y) => x - y);
+      const t = sdd21(s, n, [pp, pm], [sp, sm]);
+      if (t[0] < 0) [sp, sm] = [sm, sp];             // dot convention from the measured phase
+      m.ports[pp] = 'P' + c + '+'; m.ports[pm] = 'P' + c + '−'; m.ports[sp] = 'S' + c + '+'; m.ports[sm] = 'S' + c + '−';
+      m.source[pp] = m.source[pm] = 'convention'; m.source[sp] = m.source[sm] = 'data';
+      if (taps) { m.ports[pri.tap] = 'P' + c + 'CT'; m.ports[sec.tap] = 'S' + c + 'CT'; m.source[pri.tap] = m.source[sec.tap] = 'data'; }
+    });
+    notes.push('Galvanische Gruppen aus dem Verlauf zu tiefen Frequenzen (' + st.groups.map(g => g.ports.map(x => 'P' + (x + 1)).join('/')).join(' · ') + ').');
+    if (taps) notes.push('Mittelanzapfung je Gruppe: der Anschluss mit der stärksten Verbindung zu beiden anderen.');
+    notes.push('Gleichsinnige Polarität der Sekundärseite aus der Phase der Differenzübertragung (Punktkonvention aus der Messung).');
+    notes.push('Welche Seite „primär“ heißt und welcher Primäranschluss „+“ ist, folgt aus der Portreihenfolge, nicht aus der Messung.');
+    const named = ev.names.filter(Boolean).length, agree = ev.names.filter((node, port) => node && m.ports[port] === node).length;
+    const category = named === n && agree === n ? 'certain' : 'likely';
+    return { structure: st, notes, candidates: [{ id: 'magnetics', name: 'Aus der Messung: galvanische Gruppen und Phase', mapping: m, category, score: { thru: null, adjacency: null, names: named ? agree / named : null, total: 1 },
+      alternatives: [{ id: 'sides', name: 'Primär und sekundär vertauscht', equivalent: true }] }] };
+  }
+
+  // ---------- Main entry ----------
+  // Returns ranked candidates with a category: certain · likely · several · unresolved. A candidate is never "certain" unless
+  // independent evidence (port names in the file) agrees with the measured structure.
+  function detect(dataset, profileId) {
+    const p = typeof profileId === 'string' ? profile(profileId) : profileId;
+    if (!p) return { error: 'Unbekanntes Profil.' };
+    const n = dataset.n, need = portCount(p), notes = [];
+    if (n !== need) return { profile: p.id, candidates: [], status: 'mismatch', notes: ['Das Profil erwartet ' + need + ' Messports, die Datei hat ' + n + '. Diese Interpretation passt nicht.'] };
+    const b = bands(dataset);
+    const ev = { dataset, thru: thruPaths(dataset), names: fromNames(p, dataset), weights: weights(p), high: bandMatrix(dataset, ...b.high).m };
+    if (p.measurement.kind === 'pins') {
+      const r = detectMagnetics(p, dataset, ev);
+      const best = r.candidates[0];
+      return { profile: p.id, candidates: r.candidates, status: best ? best.category : 'unresolved', notes: r.notes, structure: r.structure };
+    }
+    const clear = ev.thru.paths.filter(x => x.clear).length;
+    notes.push(clear + ' von ' + p.contacts.length + ' Durchgängen eindeutig erkannt (|S| im unteren Band > 0,5 und mindestens doppelt so stark wie der nächste Kandidat).');
+    const candidates = [];
+    const named = ev.names.filter(Boolean).length;
+    if (named) {
+      const m = emptyMapping(p, n); ev.names.forEach((node, port) => { m.ports[port] = node; m.source[port] = node ? 'names' : ''; });
+      candidates.push({ id: 'names', name: 'Aus den Portnamen der Datei (' + named + ' von ' + n + ')', mapping: m });
+    }
+    for (const c of conventions(p, n)) candidates.push(c);
+    const placed = place(p, ev);
+    if (placed) candidates.push({ id: 'data', name: 'Aus den Messdaten: Durchgänge und Nachbarkopplung', mapping: placed.mapping, placement: placed });
+    const optimum = placed ? placed.score : null;
+    for (const c of candidates) {
+      c.score = scoreMapping(p, c.mapping, ev);
+      if (optimum) { c.objective = objective(p, c.mapping, ev); c.objectiveGap = (optimum - c.objective) / optimum; }
+      const v = validateMapping(p, c.mapping);
+      c.valid = v.ok;
+      // symmetric alternatives that the measurement cannot tell apart
+      c.alternatives = [...(p.symmetries || []).map(sym => ({ id: sym.id, name: sym.name, mapping: applySymmetry(c.mapping, sym) })), { id: 'sides', name: 'Seite 1 und 2 vertauscht', mapping: swapSides(c.mapping) }]
+        .map(alt => { const s = scoreMapping(p, alt.mapping, ev); return { id: alt.id, name: alt.name, score: s, equivalent: Math.abs(s.thru - c.score.thru) < 1e-9 && Math.abs((s.adjacency ?? 0) - (c.score.adjacency ?? 0)) < 0.02 && Math.abs((s.sides ?? 1) - (c.score.sides ?? 1)) < 0.02 }; });
+    }
+    const rank = c => c.valid ? c.score.total : -1;
+    candidates.sort((a, b) => rank(b) - rank(a));
+    const bestAdj = Math.max(...candidates.filter(c => c.valid).map(c => c.score.adjacency ?? -1)), bestSides = Math.max(...candidates.filter(c => c.valid).map(c => c.score.sides ?? 0));
+    for (const c of candidates) {
+      const structural = c.score.thru >= 0.9 && (c.score.adjacency ?? 0) > 0.3 && (c.score.sides ?? 1) > 0.9;
+      if (c.score.unconfirmed?.length && c.score.thru >= 0.9) c.conflict = (c.conflict ? c.conflict + ' ' : '') + 'Nicht durch einen eindeutigen Durchgang bestätigt: ' + c.score.unconfirmed.join(', ') + '.';
+      const ambiguous = c.alternatives.some(a => a.equivalent);
+      if (!c.valid || c.score.thru < 0.9) c.category = 'unresolved';
+      else if (c.score.names !== null && c.score.names > 0.999 && named === n && structural && c.score.thru > 0.999 && (c.score.adjacency ?? 0) >= bestAdj - 0.02 && (c.score.sides ?? 1) >= bestSides - 0.02 && !(c.objectiveGap > 0.003)) c.category = 'certain';
+      else if (c.id === 'names' && structural) { c.category = 'likely'; c.conflict = 'Die Portnamen widersprechen teilweise der gemessenen Nachbarkopplung; eine andere Belegung passt besser zu den Daten.'; }
+      else if (c.id !== 'data' && structural) c.category = 'likely';
+      else if (structural) c.category = ambiguous ? 'several' : 'likely';
+      else c.category = 'unresolved';
+      c.ambiguous = ambiguous;
+    }
+    // A data-only placement that disagrees with the best convention lowers that convention to "several".
+    const best = candidates[0];
+    if (best && best.id !== 'data' && best.category === 'likely') {
+      const data = candidates.find(c => c.id === 'data');
+      if (data && data.score.total > best.score.total + 0.02) best.category = 'several';
+    }
+    return { profile: p.id, candidates, status: best ? best.category : 'unresolved', notes, thru: ev.thru };
+  }
+
+  // ---------- Templates (port maps) ----------
+  function exportMap(p, mapping, meta = {}) {
+    return { schema: MAP_SCHEMA, version: VERSION, profile: { id: p.id, revision: p.revision }, ports: mapping.ports.length, map: mapping.ports.slice(), created: meta.created || null, name: meta.name || '', note: meta.note || '' };
+  }
+  function importMap(json) {
+    const data = typeof json === 'string' ? JSON.parse(json) : json;
+    if (data?.schema !== MAP_SCHEMA || !(data.version >= 1)) throw new Error('Keine Port-Zuordnung im SIMONLATION-Format.');
+    const p = profile(data.profile?.id);
+    if (!p) throw new Error('Unbekanntes Connector-Profil: ' + data.profile?.id);
+    if (!Array.isArray(data.map) || data.map.length !== data.ports) throw new Error('Zuordnung unvollständig.');
+    const nodes = new Set(nodesOf(p));
+    const m = emptyMapping(p, data.ports);
+    data.map.forEach((node, i) => { if (node && nodes.has(String(node))) { m.ports[i] = String(node); m.source[i] = 'template'; } });
+    return { profile: p, mapping: m, name: String(data.name || '').slice(0, 80) };
+  }
+
+  const CATEGORY = { certain: 'Eindeutig zugeordnet', likely: 'Wahrscheinlich zugeordnet', several: 'Mehrere mögliche Zuordnungen', unresolved: 'Nicht zuverlässig bestimmbar', mismatch: 'Profil passt nicht zur Portzahl' };
+  return { SCHEMA, MAP_SCHEMA, VERSION, PROFILES, CATEGORY, profile, text, validateProfile, nodesOf, portCount, splitNode, nodeId, emptyMapping, validateMapping, mappedPairs, toConfig,
+    thruPaths, magneticsStructure, fromNames, detect, scoreMapping, applySymmetry, swapSides, exportMap, importMap };
+})();
+</script>
 <script id="store-core">
 'use strict';
 // Storage core: ZIP reading/writing and the durable file store. No DOM access, so it can be reused in a desktop shell.
@@ -6515,7 +7174,7 @@ const Plot = (() => {
   const COLORS = ['#3266ce', '#008879', '#a26016', '#8a55b6', '#ca5260', '#4f842f', '#157eab', '#a04d7b', '#967234', '#5059a8', '#47616d', '#bb6235', '#007385', '#6b4d33', '#a32c63', '#6b7428'];
   const MAX_TRACES = COLORS.length;
   // "z" and "cispr" are two evaluation families inside the one main tab "Z"; settings saved with either key keep working.
-  const TABS = { s: 'S-Parameter', ports: 'Ports & Lasten', smith: 'Smith-Chart', z: 'Impedanz', cispr: 'CISPR 17', cmc: 'ESB-Modell' };
+  const TABS = { s: 'S-Parameter', ports: 'Ports & Lasten', connector: 'Connector', smith: 'Smith-Chart', z: 'Impedanz', cispr: 'CISPR 17', cmc: 'ESB-Modell' };
   const tabButton = tab => tab === 'cispr' ? 'z' : tab;
   const Z_EVALUATIONS = [
     ['z:reflection', 'Eingangsimpedanz · Reflexion Zᵢₙ'], ['z:zmatrix', 'Z-Matrix · Zᵢⱼ'], ['z:ymatrix', 'Y-Matrix · Yᵢⱼ'],
@@ -6557,7 +7216,7 @@ const Plot = (() => {
     cmc: { format: 'cap', band: null }, pairIn: 1, pairOut: 2,
     esb: { model: 'auto', fixture: 'auto', tFormat: 'ocl', eFormat: 'z', input: '', output: '', evalFreq: 100e3 },
     axes: {}, markers: [0, null, null, null], activeMarker: 0,
-    compare: { ids: [], delta: false }, profile: { name: '', source: 'default', score: null, matches: [], key: '' },
+    compare: { ids: [], delta: false }, profile: { name: '', source: 'default', score: null, matches: [], key: '' }, connector: null,
     viewMode: 0, hiddenTraces: new Set(), collapsed: mobile.matches, job: 0, importJob: 0,
     busy: false, error: '', memo: new Map(), view: null, dialogLoad: null, pairDraft: null, toastTimer: null
   };
@@ -6681,6 +7340,7 @@ const Plot = (() => {
     }
     state.dataset = dataset;
     state.config = config;
+    state.connector = cnBlank();
     state.pairDraft = null;
     state.basis = config.pairs.length ? 'mm' : 'se';
     state.sKeys = { se: null, mm: null };
@@ -7162,7 +7822,9 @@ const Plot = (() => {
     return JSON.parse(JSON.stringify({
       config: state.config, tab: state.tab, basis: state.basis, sFormat: state.sFormat, sKeys: state.sKeys,
       z: state.z, cispr: state.cispr, cmc: state.cmc, esb: state.esb, pairIn: state.pairIn, pairOut: state.pairOut,
-      markers: state.markers.map(i => i === null ? null : fs[i]), profileName: state.profile.name, axes: state.axes, zFamily: state.zFamily
+      markers: state.markers.map(i => i === null ? null : fs[i]), profileName: state.profile.name, axes: state.axes, zFamily: state.zFamily,
+      connector: state.connector?.profile && state.connector.mapping ? { profile: state.connector.profile, configuration: state.connector.configuration, ports: state.connector.mapping.ports,
+        source: state.connector.mapping.source, channels: state.connector.channels, applied: state.connector.applied || null } : null
     }));
   }
 
@@ -8283,7 +8945,7 @@ const Plot = (() => {
     const fs = state.dataset.freq;
     return {
       name: state.profile.name, pairs: state.config.pairs, loads: state.config.loads, ref: state.config.ref,
-      tab: state.tab === 'ports' ? 's' : state.tab, basis: state.basis, sFormat: state.sFormat, sKeys: state.sKeys,
+      tab: ['ports', 'connector'].includes(state.tab) ? 's' : state.tab, basis: state.basis, sFormat: state.sFormat, sKeys: state.sKeys,
       markers: state.markers.filter(i => i !== null).map(i => fs[i])
     };
   }
@@ -8297,7 +8959,7 @@ const Plot = (() => {
   function learnTemplate(silent = false) {
     const name = ($('profile-name')?.value ?? state.profile.name).trim() || defaultProfileName();
     try {
-      Templates.learn(name, state.dataset, state.config, { tab: state.tab === 'ports' ? 's' : state.tab, basis: state.basis, sFormat: state.sFormat, sKeys: state.sKeys });
+      Templates.learn(name, state.dataset, state.config, { tab: ['ports', 'connector'].includes(state.tab) ? 's' : state.tab, basis: state.basis, sFormat: state.sFormat, sKeys: state.sKeys });
     } catch (error) {
       toast(error.message);
       return false;
@@ -8597,6 +9259,15 @@ const Plot = (() => {
     if (saved.cispr?.method) state.cispr = { ...state.cispr, ...saved.cispr };
     if (Array.isArray(saved.cmc?.band) && saved.cmc.band.every(Number.isFinite)) state.cmc = { ...state.cmc, ...saved.cmc };
     if (saved.esb?.model) state.esb = { ...state.esb, ...saved.esb };
+    if (saved.connector?.profile) {
+      const cp = Connector.profile(saved.connector.profile), nodes = cp ? new Set(Connector.nodesOf(cp)) : null;
+      if (cp && Connector.portCount(cp) === n && Array.isArray(saved.connector.ports) && saved.connector.ports.length === n && saved.connector.ports.every(x => x === null || nodes.has(x))) {
+        const mapping = Connector.emptyMapping(cp, n);
+        mapping.ports = saved.connector.ports.slice(); mapping.source = Array.isArray(saved.connector.source) ? saved.connector.source.slice(0, n).map(String) : mapping.source;
+        state.connector = { ...cnBlank(), profile: cp.id, configuration: saved.connector.configuration || cp.configurations.at(-1).id, mapping,
+          channels: Array.isArray(saved.connector.channels) ? saved.connector.channels.filter(c => Number.isInteger(c.id)) : [], applied: saved.connector.applied || null };
+      }
+    }
     if (Number.isInteger(saved.pairIn)) state.pairIn = saved.pairIn;
     if (Number.isInteger(saved.pairOut)) state.pairOut = saved.pairOut;
     if (Array.isArray(saved.markers)) {
@@ -8855,6 +9526,7 @@ const Plot = (() => {
     }
     return {
       ports: 'Portpaare, physische Abschlüsse und Bezugsimpedanzen',
+      connector: 'Steckverbinder und Magnetics · Kontakte, Messports, Kanäle',
       smith: 'Komplexe Reflexion · normiert auf die gewählte Portreferenz',
       z: 'Eingangs-, Transfer- und Fixture-Impedanz',
       cispr: 'Indirekte Impedanzauswertung · CISPR 17:2011',
@@ -9012,6 +9684,340 @@ const Plot = (() => {
       '<p class="inline-notice" id="config-error" role="alert" hidden></p></form>';
   }
 
+  // ---------- Connector Studio: profile, mapping, pin view, channels and coupling matrix ----------
+  const CN_CATEGORY_CLASS = { certain: 'ok', likely: 'warn', several: 'warn', unresolved: 'bad', mismatch: 'bad' };
+  const CN_SOURCE = { names: 'Portname', convention: 'Konvention', data: 'Messdaten', manual: 'manuell', template: 'Vorlage', '': '–' };
+  const CN_ROLE = { ground: 'Masse', power: 'Versorgung', config: 'Konfiguration', sideband: 'Seitenband', usb2: 'USB 2.0', superspeed: 'SuperSpeed', signal: 'Signal', tap: 'Mittelanzapfung' };
+  const cnBlank = () => ({ profile: '', configuration: '', mapping: null, detection: null, candidate: '', selected: '', channels: [], zoom: 1, pan: [0, 0], freq: null, matrixModes: 'D' });
+  const cnProfile = () => Connector.profile(state.connector.profile);
+  const cnMatches = () => Connector.PROFILES.filter(p => Connector.portCount(p) === state.dataset.n);
+  // Profile texts come in German and English from the profile itself; they bypass the page translation.
+  const cnT = (obj, key) => Connector.text(obj, key, lang());
+  const cnSide = (p, side) => (lang() === 'en' && p.measurement.en?.sideNames ? p.measurement.en.sideNames : p.measurement.sideNames)[side - 1];
+  const cnSpan = text => '<span data-no-i18n>' + esc(text) + '</span>';
+
+  // Opening the tab picks the only fitting profile, or the built-in LAN detection when the file carries one.
+  function cnEnsure() {
+    const cn = state.connector;
+    if (cn.profile && Connector.profile(cn.profile) && Connector.portCount(cnProfile()) === state.dataset.n) {
+      if (!cn.mapping) cn.mapping = Connector.emptyMapping(cnProfile(), state.dataset.n);
+      return;
+    }
+    const matches = cnMatches();
+    cn.profile = matches.length === 1 ? matches[0].id : (state.dataset.profile && matches.find(p => p.measurement.kind === 'pins'))?.id || '';
+    cn.mapping = cn.profile ? Connector.emptyMapping(cnProfile(), state.dataset.n) : null;
+    cn.configuration = cn.profile ? cnProfile().configurations.at(-1).id : '';
+    cn.detection = null; cn.candidate = '';
+  }
+  function cnSetProfile(id) {
+    const cn = state.connector, p = Connector.profile(id);
+    cn.profile = p && Connector.portCount(p) === state.dataset.n ? id : '';
+    cn.mapping = cn.profile ? Connector.emptyMapping(p, state.dataset.n) : null;
+    cn.configuration = cn.profile ? p.configurations.at(-1).id : '';
+    cn.detection = null; cn.candidate = ''; cn.selected = ''; cn.channels = [];
+    persistSettings(); renderConnector();
+  }
+  function cnDetect() {
+    const cn = state.connector, p = cnProfile();
+    if (!p) return;
+    const t = performance.now();
+    cn.detection = Connector.detect(state.dataset, p);
+    cn.detection.ms = Math.round(performance.now() - t);
+    const best = cn.detection.candidates?.[0];
+    if (best && best.category !== 'unresolved') { cn.mapping = structuredClone(best.mapping); cn.candidate = best.id; }
+    renderConnector();
+    toast(best ? Connector.CATEGORY[best.category] + ' · ' + best.name : Connector.CATEGORY[cn.detection.status] || 'Keine Zuordnung gefunden.');
+    persistSettings();
+  }
+  function cnUseCandidate(id) {
+    const c = state.connector.detection?.candidates.find(x => x.id === id);
+    if (!c) return;
+    state.connector.mapping = structuredClone(c.mapping); state.connector.candidate = id;
+    persistSettings(); renderConnector();
+  }
+  function cnTransform(kind) {
+    const cn = state.connector, p = cnProfile();
+    if (!cn.mapping) return;
+    if (kind === 'sides') cn.mapping = Connector.swapSides(cn.mapping);
+    else { const sym = p.symmetries.find(s => s.id === kind); if (sym) cn.mapping = Connector.applySymmetry(cn.mapping, sym); }
+    cn.mapping.source = cn.mapping.source.map(s => s ? 'manual' : s);
+    cn.candidate = '';
+    persistSettings(); renderConnector();
+  }
+  // Assign a port to a node; the port's previous node and the node's previous port are freed (no double assignment).
+  function cnAssign(node, port) {
+    const m = state.connector.mapping;
+    if (!m) return;
+    m.ports.forEach((x, i) => { if (x === node) { m.ports[i] = null; m.source[i] = ''; } });
+    if (Number.isInteger(port) && port >= 0) { m.ports[port] = node; m.source[port] = 'manual'; }
+    state.connector.candidate = '';
+    persistSettings(); renderConnector();
+  }
+  // Swap the ports of + and − of a pair (on both sides), or exchange the ports of two pairs.
+  function cnSwapPair(pairId, otherId = '', only = null) {
+    const p = cnProfile(), m = state.connector.mapping, pair = p.pairs.find(x => x.id === pairId);
+    if (!pair || !m) return;
+    const sides = p.measurement.kind === 'thru' ? (only ? [only] : p.measurement.sides) : [null];
+    const swapNodes = (a, b) => m.ports.forEach((x, i) => { if (x === a) { m.ports[i] = b; m.source[i] = 'manual'; } else if (x === b) { m.ports[i] = a; m.source[i] = 'manual'; } });
+    if (!otherId) for (const s of sides) swapNodes(Connector.nodeId(pair.plus, s), Connector.nodeId(pair.minus, s));
+    else {
+      const other = p.pairs.find(x => x.id === otherId);
+      if (!other) return;
+      for (const s of sides) { swapNodes(Connector.nodeId(pair.plus, s), Connector.nodeId(other.plus, s)); swapNodes(Connector.nodeId(pair.minus, s), Connector.nodeId(other.minus, s)); }
+    }
+    state.connector.candidate = '';
+    persistSettings(); renderConnector();
+  }
+  function cnApply(form) {
+    const cn = state.connector, p = cnProfile(), data = new FormData(form);
+    const pairs = p.pairs.map(x => x.id).filter(id => data.get('pair-' + id));
+    if (!pairs.length) { toast('Wähle mindestens ein Paar.'); return; }
+    const v = Connector.validateMapping(p, cn.mapping);
+    if (!v.ok) { toast('Die Zuordnung hat Fehler: ' + v.issues.find(i => i.level === 'error').text); return; }
+    const { config, channels } = Connector.toConfig(p, cn.mapping, state.dataset.n, { pairs, others: String(data.get('others') || 'match'), taps: String(data.get('taps') || 'open') });
+    if (!config.pairs.length) { toast('Für die gewählten Paare sind nicht beide Ports zugeordnet.'); return; }
+    state.config = config;
+    cn.channels = channels.map(c => ({ id: c.id, pair: c.pair, side: c.side, channel: c.channel, end: c.end, name: c.name, plus: c.plus, minus: c.minus }));
+    cn.applied = { pairs, others: String(data.get('others') || 'match'), taps: String(data.get('taps') || 'open') };
+    state.basis = 'mm'; state.sKeys.mm = null; state.pairIn = 1; state.pairOut = Math.min(2, config.pairs.length);
+    state.pairDraft = null;
+    toast(plural(config.pairs.length, 'Paar', 'Paare') + ' aus der Zuordnung übernommen · übrige Ports ' + ({ match: 'angepasst abgeschlossen', open: 'offen', active: 'aktiv' }[cn.applied.others]) + '.');
+    refreshNetwork();
+  }
+  // Curves of one channel or one matrix cell in the S-parameter view (rows: response mode, columns: excitation mode).
+  function cnOpenCurves(keys) {
+    state.basis = 'mm'; state.sKeys.mm = keys; state.sFormat = 'db';
+    setTab('s');
+  }
+  async function cnSaveTemplate() {
+    const cn = state.connector, p = cnProfile();
+    if (!p || !cn.mapping?.ports.some(Boolean)) { toast('Keine Zuordnung zum Speichern.'); return; }
+    const name = (state.dataset.name || 'Zuordnung').replace(/\.[^.]+$/, '') + ' · ' + p.family;
+    const map = Connector.exportMap(p, cn.mapping, { name, created: new Date().toISOString() });
+    let list = [];
+    try { list = (await Store.getMeta('connector-maps')) || []; } catch { list = []; }
+    list = [map, ...list.filter(x => !(x.name === name && x.profile.id === p.id))].slice(0, 50);
+    try { await Store.setMeta('connector-maps', list); toast('Vorlage „' + name + '“ gespeichert.'); }
+    catch (error) { toast('Vorlage nicht gespeichert: ' + error.message); }
+    cn.templates = list; renderConnector();
+  }
+  async function cnLoadTemplates() {
+    try { state.connector.templates = (await Store.getMeta('connector-maps')) || []; } catch { state.connector.templates = []; }
+    if (state.tab === 'connector') renderConnector();
+  }
+  function cnUseTemplate(index) {
+    const cn = state.connector, t = cn.templates?.[Number(index)];
+    if (!t) return;
+    try {
+      const { profile, mapping, name } = Connector.importMap(t);
+      if (Connector.portCount(profile) !== state.dataset.n) throw new Error('Die Vorlage gilt für ' + Connector.portCount(profile) + ' Ports.');
+      cn.profile = profile.id; cn.mapping = mapping; cn.candidate = ''; cn.detection = null;
+      toast('Vorlage „' + name + '“ angewendet. Prüfe die Zuordnung, bevor du sie übernimmst.');
+      persistSettings(); renderConnector();
+    } catch (error) { toast(error.message); }
+  }
+  function cnExport() {
+    const p = cnProfile();
+    if (!p || !state.connector.mapping) return;
+    const map = Connector.exportMap(p, state.connector.mapping, { name: state.dataset.name, created: new Date().toISOString() });
+    saveBlob(new Blob([JSON.stringify(map, null, 2)], { type: 'application/json' }), (state.dataset.name || 'zuordnung').replace(/\.[^.]+$/, '') + '.port-map.json');
+  }
+  async function cnImport(file) {
+    try {
+      if (file.size > 1 << 20) throw new Error('Die Datei ist zu groß für eine Port-Zuordnung.');
+      const { profile, mapping, name } = Connector.importMap(await file.text());
+      if (Connector.portCount(profile) !== state.dataset.n) throw new Error('Die Zuordnung gilt für ' + Connector.portCount(profile) + ' Ports, die Datei hat ' + state.dataset.n + '.');
+      state.connector.profile = profile.id; state.connector.mapping = mapping; state.connector.candidate = ''; state.connector.detection = null;
+      toast('Zuordnung „' + (name || file.name) + '“ geladen.');
+      persistSettings(); renderConnector();
+    } catch (error) { toast(file.name + ' · ' + error.message); }
+  }
+
+  // Technical drawing of one side (thru) or of the part (pins). Generated from the profile, not a picture.
+  function cnDrawing(p, side, portOf, verdict) {
+    const xs = p.contacts.map(c => c.x), ys = p.contacts.map(c => c.y), pitch = p.measurement.kind === 'pins' ? 1 : 1;
+    const W = 46, H = 40, pad = 24, sx = c => pad + (c.x - Math.min(...xs)) * W * pitch, sy = c => pad + 18 + (c.y - Math.min(...ys)) * H;
+    const width = pad * 2 + (Math.max(...xs) - Math.min(...xs)) * W + 34, height = pad * 2 + 36 + (Math.max(...ys) - Math.min(...ys)) * H + 26;
+    const pairOf = new Map(); p.pairs.forEach((pair, k) => { pairOf.set(pair.plus, [pair, '+', k]); pairOf.set(pair.minus, [pair, '−', k]); });
+    const shapes = p.contacts.map(c => {
+      const node = Connector.nodeId(c.id, side), port = portOf.get(node), sel = state.connector.selected === node, [pair, sign, k] = pairOf.get(c.id) || [];
+      const color = pair ? 'var(--pair-' + (k % 8 + 1) + ', ' + PAIR_COLORS[k % PAIR_COLORS.length] + ')' : c.role === 'ground' ? 'var(--muted)' : c.role === 'power' ? '#b25f2c' : 'var(--ink-2, #555)';
+      const state_ = port === undefined ? 'free' : verdict.get(node) || 'ok';
+      const mark = { ok: '✓', unconfirmed: '?', conflict: '!', free: '' }[state_];
+      return '<g class="cn-pin is-' + state_ + (sel ? ' is-selected' : '') + '" data-node="' + esc(node) + '" role="button" tabindex="0" aria-pressed="' + sel + '" aria-label="' + esc(c.id + ' ' + c.label + (side ? ', ' + cnSide(p, side) : '') + (port !== undefined ? ', Port ' + (port + 1) : lang() === 'en' ? ', not assigned' : ', nicht zugeordnet')) + '">' +
+        '<rect x="' + (sx(c) - 17) + '" y="' + (sy(c) - 15) + '" width="34" height="30" rx="4" style="--pin:' + color + '"/>' +
+        '<text class="cn-pin-id" x="' + sx(c) + '" y="' + (sy(c) - 2) + '">' + esc(c.id) + '</text>' +
+        '<text class="cn-pin-port" x="' + sx(c) + '" y="' + (sy(c) + 10) + '">' + (port !== undefined ? 'P' + (port + 1) : '–') + '</text>' +
+        (mark ? '<text class="cn-pin-mark" x="' + (sx(c) + 14) + '" y="' + (sy(c) - 9) + '">' + mark + '</text>' : '') +
+        '<text class="cn-pin-label" x="' + sx(c) + '" y="' + (c.y > (Math.min(...ys) + Math.max(...ys)) / 2 || p.measurement.kind === 'pins' ? sy(c) + 27 : sy(c) - 21) + '">' + esc((sign ? c.label : c.label).replace(' · ', ' ')) + '</text></g>';
+    }).join('');
+    // differential pairs: a bracket between + and −
+    const brackets = p.pairs.map((pair, k) => {
+      const a = p.contacts.find(c => c.id === pair.plus), b = p.contacts.find(c => c.id === pair.minus);
+      if (Math.abs(a.y - b.y) > 0.1 && p.measurement.kind !== 'pins') return '';
+      const y = p.measurement.kind === 'pins' ? null : (a.y > (Math.min(...ys) + Math.max(...ys)) / 2 ? sy(a) + 36 : sy(a) - 34);
+      if (y === null) return '<line class="cn-pair-line" x1="' + (sx(a) - 22) + '" y1="' + sy(a) + '" x2="' + (sx(b) - 22) + '" y2="' + sy(b) + '" style="--pin:' + PAIR_COLORS[k % PAIR_COLORS.length] + '"/>';
+      return '<path class="cn-pair-line" d="M' + sx(a) + ' ' + y + 'H' + sx(b) + '" style="--pin:' + PAIR_COLORS[k % PAIR_COLORS.length] + '"/>';
+    }).join('');
+    const symbol = p.measurement.kind === 'pins' ? (() => {
+      // transformer symbol between primary (x = 0) and secondary (x = 4) pins of each channel
+      return p.pairs.filter(x => x.side === 'P').map(pp => {
+        const a = p.contacts.find(c => c.id === pp.plus), b = p.contacts.find(c => c.id === pp.minus), x1 = sx(a) + 30, x2 = sx(a) + 4 * W - 30, top = sy(a), bot = sy(b);
+        const coil = x => { let d = 'M' + x + ' ' + top; const n = 4, h = (bot - top) / n; for (let i = 0; i < n; i++) d += ' a' + (h / 2) + ' ' + (h / 2) + ' 0 0 ' + (x < x2 ? 1 : 0) + ' 0 ' + h; return '<path class="cn-coil" d="' + d + '"/>'; };
+        return coil(x1) + coil(x2) + '<line class="cn-core" x1="' + ((x1 + x2) / 2 - 3) + '" y1="' + top + '" x2="' + ((x1 + x2) / 2 - 3) + '" y2="' + bot + '"/><line class="cn-core" x1="' + ((x1 + x2) / 2 + 3) + '" y1="' + top + '" x2="' + ((x1 + x2) / 2 + 3) + '" y2="' + bot + '"/>' +
+          '<circle class="cn-dot" cx="' + (x1 + 8) + '" cy="' + (top + 4) + '" r="2.6"/><circle class="cn-dot" cx="' + (x2 - 8) + '" cy="' + (top + 4) + '" r="2.6"/>';
+      }).join('');
+    })() : '';
+    const title = side ? cnSide(p, side) : cnT(p, 'view');
+    return '<figure class="cn-figure"><figcaption>' + cnSpan(title) + '</figcaption><svg class="cn-svg" viewBox="0 0 ' + width + ' ' + height + '" style="max-width:' + Math.round(width * 1.35) + 'px;min-width:' + Math.min(560, Math.round(width)) + 'px" data-side="' + (side || 0) + '" role="group" data-no-i18n aria-label="' + esc(cnT(p, 'name') + ' · ' + title) + '">' +
+      '<g class="cn-zoom" transform="translate(' + state.connector.pan[0] + ' ' + state.connector.pan[1] + ') scale(' + state.connector.zoom + ')">' +
+      (p.measurement.kind === 'thru' ? '<rect class="cn-body" x="' + (pad - 26) + '" y="' + (pad - 10) + '" width="' + (width - 2 * pad + 52) + '" height="' + (height - 2 * pad + 22) + '" rx="12"/>' : '') +
+      symbol + brackets + shapes + '</g></svg></figure>';
+  }
+
+  function cnVerdicts(p, mapping) {
+    // ✓ the two sides of a contact are a measured conductor · ? not confirmed by the data · ! node or port assigned twice
+    const out = new Map(), v = Connector.validateMapping(p, mapping), seen = new Map();
+    mapping.ports.forEach((node, port) => { if (node) seen.set(node, (seen.get(node) || 0) + 1); });
+    const det = state.connector.detection, thru = det?.thru ?? Connector.thruPaths(state.dataset);
+    const partner = new Map(); thru.paths.forEach(x => { partner.set(x.a, x.b); partner.set(x.b, x.a); });
+    mapping.ports.forEach((node, port) => {
+      if (!node) return;
+      if (seen.get(node) > 1) { out.set(node, 'conflict'); return; }
+      if (p.measurement.kind === 'thru') {
+        const { contact, side } = Connector.splitNode(node), other = v.portOf(Connector.nodeId(contact, 3 - side));
+        out.set(node, other !== undefined && partner.get(port) === other ? 'ok' : 'unconfirmed');
+      } else out.set(node, mapping.source[port] === 'manual' ? 'unconfirmed' : 'ok');
+    });
+    return { verdict: out, validation: v };
+  }
+
+  function cnMatrix() {
+    const cn = state.connector, net = state.network, layout = state.layout;
+    if (!net || !cn.channels.length) return '';
+    const fs = state.dataset.freq, fi = Number.isInteger(cn.freq) && cn.freq < fs.length ? cn.freq : (state.markers[0] ?? Math.floor(fs.length / 2));
+    const s = net.mm[fi];
+    if (!s) return '';
+    const modes = layout.mmModes.filter(m => m.type === 'D' || (cn.matrixModes === 'DC' && m.type === 'C'));
+    const n = layout.mmModes.length, idx = mode => layout.mmModes.indexOf(mode);
+    const chOf = id => cn.channels.find(c => c.id === id);
+    const label = mode => { const c = chOf(mode.id); return mode.type + mode.id + (c ? ' · ' + c.pair + (c.side ? ' S' + c.side : '') : ''); };
+    const endOf = c => c.end ?? c.side, chanOf = c => c.channel ?? c.pair;
+    const KIND_EN = { Konversion: 'conversion', Kopplung: 'coupling' }, kindText = k => lang() === 'en' ? KIND_EN[k] || k : k;
+    const kind = (r, c) => {
+      const a = chOf(r.id), b = chOf(c.id);
+      if (!a || !b) return '';
+      // Labels from the mapping: the same channel end to end is insertion loss; between channels, the same end is NEXT and the other end FEXT.
+      if (r === c) return 'RL';
+      if (r.id === c.id) return 'Konversion';
+      if (chanOf(a) === chanOf(b)) return r.type === c.type ? (endOf(a) === endOf(b) ? '' : 'IL') : 'Konversion';
+      return endOf(a) === endOf(b) ? 'NEXT' : endOf(a) && endOf(b) ? 'FEXT' : 'Kopplung';
+    };
+    const db = (r, c) => { const k = 2 * (idx(r) * n + idx(c)); return 20 * Math.log10(Math.max(Math.hypot(s[k], s[k + 1]), 1e-12)); };
+    const shade = v => { const t = Math.max(0, Math.min(1, (v + 80) / 80)); return 'hsl(' + Math.round(210 - 190 * t) + ' 70% ' + Math.round(94 - 44 * t) + '%)'; };
+    const head = '<tr><th scope="col">Antwort ↓ · Anregung →</th>' + modes.map(m => '<th scope="col" class="mono">' + esc(label(m)) + '</th>').join('') + '</tr>';
+    const rows = modes.map(r => '<tr><th scope="row" class="mono">' + esc(label(r)) + '</th>' + modes.map(c => {
+      const v = db(r, c), k = kind(r, c);
+      return '<td><button type="button" class="cn-cell" data-action="cn-cell" data-value="' + esc(r.key + ':' + c.key) + '" style="background:' + shade(v) + '" title="' + esc('S ' + label(r) + ' ← ' + label(c) + (k ? ' · ' + kindText(k) : '') + ' · ' + v.toFixed(1) + ' dB') + '" data-no-i18n>' + v.toFixed(0) + (k ? '<small>' + esc(kindText(k)) + '</small>' : '') + '</button></td>';
+    }).join('') + '</tr>').join('');
+    return '<section class="config-card cn-matrix"><div class="config-head"><h2>Matrix · Übertragung und Kopplung</h2><p>|S| in dB bei ' + esc(hz(fs[fi])) +
+      '. NEXT: Anregung und Antwort auf derselben Seite, FEXT: auf verschiedenen Seiten, IL: dasselbe Paar durch den Connector. Die Bezeichnung folgt aus der Zuordnung, nicht aus der Portnummer. Ein Klick öffnet die Kurve.</p></div><div class="config-content">' +
+      '<div class="preset-row"><label class="control"><span>Frequenz</span><input type="range" id="cn-freq" min="0" max="' + (fs.length - 1) + '" value="' + fi + '" aria-label="Frequenz der Matrix"></label>' +
+      '<label class="control narrow"><span>Moden</span><select id="cn-modes"><option value="D"' + (cn.matrixModes === 'D' ? ' selected' : '') + '>Nur Differential</option><option value="DC"' + (cn.matrixModes === 'DC' ? ' selected' : '') + '>Differential und Gleichtakt</option></select></label></div>' +
+      '<div class="table-scroll"><table class="cn-heat">' + head + rows + '</table></div></div></section>';
+  }
+
+  function cnChannels() {
+    const cn = state.connector, net = state.network, layout = state.layout;
+    if (!net || !cn.channels.length) return '';
+    const fs = state.dataset.freq, fi = state.markers[0] ?? Math.floor(fs.length / 2), s = net.mm[fi], n = layout.mmModes.length;
+    const mode = key => layout.mmModes.findIndex(m => m.key === key);
+    const val = (r, c) => { const i = mode(r), j = mode(c); if (!s || i < 0 || j < 0) return NaN; const k = 2 * (i * n + j); return 20 * Math.log10(Math.max(Math.hypot(s[k], s[k + 1]), 1e-12)); };
+    const groups = new Map(); for (const c of cn.channels) { const k = c.channel ?? c.pair; if (!groups.has(k)) groups.set(k, []); groups.get(k).push(c); }
+    const rows = [...groups.values()].map(list => {
+      const a = list.find(c => (c.end ?? c.side) === 1) || list[0], b = list.find(c => c !== a);
+      const keys = b ? ['D' + b.id + ':D' + a.id, 'D' + a.id + ':D' + a.id, 'D' + b.id + ':D' + b.id, 'C' + b.id + ':D' + a.id] : ['D' + a.id + ':D' + a.id];
+      const cell = v => '<td class="mono">' + (Number.isFinite(v) ? v.toFixed(2) + ' dB' : '–') + '</td>';
+      const pa = cnProfile().pairs.find(x => x.id === a.pair), title = pa?.channel ? (lang() === 'en' ? 'Channel ' : 'Kanal ') + pa.channel + ' · ' + a.pair + (b ? ' → ' + b.pair : '') : cnT(pa, 'name') || a.pair;
+      return '<tr><th scope="row">' + cnSpan(title) + '</th><td class="mono">D' + a.id + (b ? ' → D' + b.id : '') + '</td>' +
+        (b ? cell(val('D' + b.id, 'D' + a.id)) + cell(val('D' + a.id, 'D' + a.id)) + cell(val('C' + b.id, 'D' + a.id)) : cell(NaN) + cell(val('D' + a.id, 'D' + a.id)) + cell(NaN)) +
+        '<td>' + actionButton('Kurven', 'cn-curves', keys.join(','), 'quiet-button') + '</td></tr>';
+    }).join('');
+    return '<section class="config-card"><div class="config-head"><h2>Kanäle</h2><p>Werte bei ' + esc(hz(fs[fi])) + ' (Marker 1). SDD21: Einfügedämpfung durch den Connector, SDD11: Reflexion, SCD21: Umwandlung Differential → Gleichtakt. Keine Grenzwerte: Für eine Konformitätsaussage fehlen Normversion und Messbedingungen.</p></div>' +
+      '<div class="config-content"><div class="table-scroll"><table class="ports-table"><thead><tr><th scope="col">Kanal</th><th scope="col">Moden</th><th scope="col">SDD21</th><th scope="col">SDD11</th><th scope="col">SCD21</th><th scope="col"></th></tr></thead><tbody>' + rows + '</tbody></table></div></div></section>';
+  }
+
+  function renderConnector() {
+    const box = $('connector-panel');
+    if (!box || state.tab !== 'connector') return;
+    cnEnsure();
+    const cn = state.connector, n = state.dataset.n, p = cnProfile();
+    if (!cn.templates) cnLoadTemplates();
+    const options = Connector.PROFILES.map(x => '<option value="' + x.id + '"' + (x.id === cn.profile ? ' selected' : '') + (Connector.portCount(x) !== n ? ' disabled' : '') + ' data-no-i18n>' +
+      esc(cnT(x, 'name') + (Connector.portCount(x) !== n ? (lang() === 'en' ? ' – expects ' : ' – erwartet ') + Connector.portCount(x) + ' Ports' : '')) + '</option>').join('');
+    let html = '<section class="config-card"><div class="config-head"><h2>Connector-Profil</h2><p>Wähle, was gemessen wurde. Ein Profil ist eine Interpretation der ' + n + ' Messports; die Software prüft, ob die Messdaten dazu passen. Die Originaldaten bleiben unverändert.</p></div>' +
+      '<div class="config-content"><div class="preset-row"><label class="control"><span>Profil</span><select id="cn-profile"><option value="">– kein Profil –</option>' + options + '</select></label>' +
+      (p ? '<label class="control"><span>Betriebsart</span><select id="cn-config">' + p.configurations.map(c => '<option value="' + c.id + '"' + (c.id === cn.configuration ? ' selected' : '') + ' data-no-i18n>' + esc(cnT(c, 'name')) + '</option>').join('') + '</select></label>' : '') + '</div>' +
+      (!cnMatches().length ? '<p class="inline-notice">Kein Profil passt zu ' + n + ' Ports. Unterstützt: USB-C mit 48 Ports (24 Kontakte, zwei Seiten), RJ45 mit 16 Ports, LAN-Magnetics mit 4, 6 oder 12 Ports.</p>' : '') +
+      (p ? '<dl class="cn-facts"><dt>Bauform</dt><dd>' + cnSpan(cnT(p, 'family') + ' · ' + cnT(p, 'variant')) + '</dd><dt>Ansicht</dt><dd>' + cnSpan(cnT(p, 'view')) + '</dd><dt>Messmodell</dt><dd>' + cnSpan(cnT(p.measurement, 'note')) + '</dd><dt>Profil</dt><dd>' + cnSpan(p.id + ' · rev. ' + p.revision + ' · schema ' + p.version) + '</dd></dl>' +
+        '<details class="cn-sources"><summary>Quellen</summary><ul data-no-i18n>' + p.sources.map(s => '<li><strong>' + esc(cnT(s, 'title')) + '</strong> · ' + esc(cnT(s, 'ref')) + (s.note ? '<br><small>' + esc(cnT(s, 'note')) + '</small>' : '') + '</li>').join('') + '</ul></details>' : '') +
+      '</div></section>';
+    if (!p) { box.innerHTML = html; return; }
+    const { verdict, validation } = cnVerdicts(p, cn.mapping);
+    const portOf = new Map(); cn.mapping.ports.forEach((node, port) => node && !portOf.has(node) && portOf.set(node, port));
+    // ---- mapping candidates
+    const det = cn.detection;
+    const scorePct = v => v === null || v === undefined ? '–' : Math.round(100 * v) + ' %';
+    const cands = det ? (det.candidates.length ? det.candidates.map(c => '<li class="cn-cand' + (c.id === cn.candidate ? ' is-current' : '') + '"><div><span class="cn-badge is-' + CN_CATEGORY_CLASS[c.category] + '">' + esc(Connector.CATEGORY[c.category]) + '</span> <strong>' + esc(c.name) + '</strong>' +
+      '<small>' + (c.score.thru !== null ? 'Durchgänge ' + scorePct(c.score.thru) + ' · ' : '') + (c.score.adjacency !== null ? 'Nachbarkopplung r = ' + (c.score.adjacency ?? 0).toFixed(2) + ' · ' : '') + (c.score.sides !== null && c.score.sides !== undefined ? 'Seiten ' + scorePct(c.score.sides) + ' · ' : '') + 'Portnamen ' + scorePct(c.score.names) + '</small>' +
+      (c.conflict ? '<small class="cn-warn">' + esc(c.conflict) + '</small>' : '') +
+      (c.alternatives?.some(a => a.equivalent) ? '<small><span>Aus den Daten gleichwertig:</span> ' + cnSpan(c.alternatives.filter(a => a.equivalent).map(a => cnT(p.symmetries.find(s => s.id === a.id), 'name') || (lang() === 'en' ? 'Sides 1 and 2 swapped' : a.name)).join(' · ')) + '</small>' : '') + '</div>' +
+      (c.id !== cn.candidate ? actionButton('Übernehmen', 'cn-candidate', c.id, 'quiet-button') : '<span class="cn-current">aktiv</span>') + '</li>').join('') : '') : '';
+    html += '<section class="config-card"><div class="config-head"><h2>Zuordnung</h2><p>Automatik in Stufen: Portnamen der Datei, Durchgänge (|S| bei tiefen Frequenzen), Nah-/Fernkopplung zwischen Nachbarn, Portreihenfolge-Konventionen. Eine unsichere Zuordnung wird nie als sicher übernommen.</p></div>' +
+      '<div class="config-content"><div class="preset-row">' + actionButton('Automatisch zuordnen', 'cn-detect', '', 'button primary', 'reset') + actionButton('Zuordnung leeren', 'cn-clear', '', 'button') +
+      (p.measurement.kind === 'thru' ? actionButton('Seiten tauschen', 'cn-transform', 'sides', 'button') : '') +
+      p.symmetries.map(s => actionButton(cnT(s, 'name'), 'cn-transform', s.id, 'button', '', ' data-no-i18n')).join('') + '</div>' +
+      (det ? '<p class="cn-status"><span class="cn-badge is-' + CN_CATEGORY_CLASS[det.status] + '">' + esc(Connector.CATEGORY[det.status] || det.status) + '</span> ' + (det.notes || []).map(x => '<span>' + esc(x) + '</span>').join(' ') + ' <small>(' + det.ms + ' ms)</small></p><ul class="cn-cands">' + cands + '</ul>' : '<p class="note">Noch keine automatische Zuordnung. Du kannst auch direkt in der Pinansicht oder der Tabelle zuordnen.</p>') +
+      (validation.issues.length ? '<ul class="cn-issues">' + validation.issues.map(i => '<li class="is-' + i.level + '">' + esc(i.text) + '</li>').join('') + '</ul>' : '') + '</div></section>';
+    // ---- pin view + inspector
+    const sel = cn.selected, selNode = sel ? Connector.splitNode(sel) : null, selContact = selNode ? p.contacts.find(c => c.id === selNode.contact) : null;
+    const selPair = selContact ? p.pairs.find(x => x.plus === selContact.id || x.minus === selContact.id) : null;
+    const portOptions = '<option value="-1">– keiner –</option>' + Array.from({ length: n }, (_, i) => '<option value="' + i + '"' + (portOf.get(sel) === i ? ' selected' : '') + '>' + esc('P' + (i + 1) + (state.dataset.portNames[i] ? ' · ' + state.dataset.portNames[i] : '') + (cn.mapping.ports[i] && cn.mapping.ports[i] !== sel ? ' (jetzt ' + cn.mapping.ports[i] + ')' : '')) + '</option>').join('');
+    const inspector = selContact ? '<div class="cn-inspector"><h3 data-no-i18n>' + esc(selContact.id + ' · ' + selContact.label) + '</h3><p><small>' + (selContact.normative !== selContact.label ? '<span>Normativ:</span> ' + cnSpan(cnT(selContact, 'normative')) + ' · ' : '') + '<span>' + esc(CN_ROLE[selContact.role] || selContact.role) + '</span>' + (selNode.side ? ' · ' + cnSpan(cnSide(p, selNode.side)) : '') + '</small></p>' +
+      '<label class="control"><span>Messport</span><select id="cn-port">' + portOptions + '</select></label>' +
+      (selPair ? '<div class="preset-row">' + (selNode.side ? actionButton('Polarität von ' + selPair.id + ' tauschen · nur ' + cnSide(p, selNode.side), 'cn-swap', selPair.id + '|' + selNode.side, 'button') +
+        actionButton('… beide Seiten', 'cn-swap', selPair.id, 'button') : actionButton('Polarität von ' + selPair.id + ' tauschen', 'cn-swap', selPair.id, 'button')) +
+        '<label class="control narrow"><span>Paar tauschen mit</span><select id="cn-move"><option value="">–</option>' + p.pairs.filter(x => x.id !== selPair.id).map(x => '<option value="' + x.id + '" data-no-i18n>' + esc(cnT(x, 'name')) + '</option>').join('') + '</select></label></div>' : '') + '</div>'
+      : '<div class="cn-inspector"><p class="note">Kontakt anklicken (oder mit Tab und Enter wählen), dann den Messport zuweisen. ✓ Durchgang durch die Messung bestätigt · ? nicht bestätigt · ! doppelt belegt.</p></div>';
+    const drawings = p.measurement.kind === 'thru' ? p.measurement.sides.map(s => cnDrawing(p, s, portOf, verdict)).join('') : cnDrawing(p, null, portOf, verdict);
+    html += '<section class="config-card cn-view"><div class="config-head"><h2>Pinansicht</h2><p>' + cnSpan(cnT(p, 'view') + '.') + ' <span>Farben: Differentialpaare; grau: Masse; braun: Versorgung.</span></p></div><div class="config-content">' +
+      '<div class="preset-row cn-zoombar">' + iconButton('Vergrößern', 'cn-zoom', 'in', 'plus') + actionButton('−', 'cn-zoom', 'out', 'icon-button', '', ' title="Verkleinern" aria-label="Verkleinern"') + actionButton('Ansicht zurücksetzen', 'cn-zoom', 'reset', 'quiet-button') + '</div>' +
+      '<div class="cn-drawings">' + drawings + '</div>' + inspector + '</div></section>';
+    // ---- port table
+    const thru = det?.thru ?? Connector.thruPaths(state.dataset), partner = new Map(); thru.paths.forEach(x => { partner.set(x.a, x); partner.set(x.b, x); });
+    const nodes = Connector.nodesOf(p);
+    html += '<section class="config-card"><div class="config-head"><h2>Messports</h2><p>Jeder Port lässt sich einzeln korrigieren. „Durchgang“ ist der gemessene Partnerport mit der stärksten Übertragung bei tiefen Frequenzen.</p></div><div class="config-content"><div class="table-scroll cn-ports"><table class="ports-table"><thead><tr><th scope="col">Port</th><th scope="col">Name in der Datei</th><th scope="col">Knoten</th><th scope="col">Quelle</th><th scope="col">Durchgang</th></tr></thead><tbody>' +
+      Array.from({ length: n }, (_, i) => {
+        const node = cn.mapping.ports[i], x = partner.get(i), other = x ? (x.a === i ? x.b : x.a) : null;
+        return '<tr class="' + (node && verdict.get(node) === 'conflict' ? 'is-conflict' : '') + '"><td><span class="port-id">P' + (i + 1) + '</span></td><td><small>' + esc(state.dataset.portNames[i] || '–') + '</small></td>' +
+          '<td><select class="cn-node" data-port="' + i + '" aria-label="Knoten für Port ' + (i + 1) + '"><option value="">–</option>' + nodes.map(id => '<option value="' + esc(id) + '"' + (id === node ? ' selected' : '') + '>' + esc(id.replace('@', ' · S')) + '</option>').join('') + '</select></td>' +
+          '<td><small>' + esc(CN_SOURCE[cn.mapping.source[i] || '']) + '</small></td><td class="mono"><small>' + (other !== null ? 'P' + (other + 1) + ' · ' + x.mag.toFixed(2) + (x.clear ? '' : ' ?') : '–') + '</small></td></tr>';
+      }).join('') + '</tbody></table></div></div></section>';
+    // ---- apply
+    const conf = p.configurations.find(c => c.id === cn.configuration) || p.configurations.at(-1);
+    const mapped = new Set(Connector.mappedPairs(p, cn.mapping).map(x => x.pair));
+    const applied = cn.applied || { others: 'match', taps: 'open' };
+    html += '<section class="config-card"><div class="config-head"><h2>In die Analyse übernehmen</h2><p>Die gewählten Paare werden Mixed-Mode-Paare (D/C je Seite). Alle anderen Ports werden abgeschlossen. Danach stehen alle Kurven im Tab S-Parameter, im Smith-Chart, in Z und im ESB-Modell zur Verfügung.</p></div><div class="config-content"><form id="cn-apply-form">' +
+      '<fieldset class="cn-pairs"><legend><span>Paare</span>' + (conf.note ? ' · ' + cnSpan(cnT(conf, 'note')) : '') + '</legend>' + p.pairs.map(x => '<label class="cn-check"><input type="checkbox" name="pair-' + x.id + '"' + (conf.pairs.includes(x.id) && mapped.has(x.id) ? ' checked' : '') + (mapped.has(x.id) ? '' : ' disabled') + '> ' + cnSpan(cnT(x, 'name')) + (mapped.has(x.id) ? '' : ' <small>(nicht zugeordnet)</small>') + '</label>').join('') + '</fieldset>' +
+      '<div class="preset-row"><label class="control"><span>Übrige Ports</span><select name="others"><option value="match"' + (applied.others === 'match' ? ' selected' : '') + '>angepasst abschließen (Bezugsimpedanz)</option><option value="open"' + (applied.others === 'open' ? ' selected' : '') + '>offen</option><option value="active"' + (applied.others === 'active' ? ' selected' : '') + '>aktiv lassen (Single Ended)</option></select></label>' +
+      (p.contacts.some(c => c.role === 'tap') ? '<label class="control"><span>Mittelanzapfungen</span><select name="taps"><option value="open"' + (applied.taps === 'open' ? ' selected' : '') + '>offen</option><option value="match"' + (applied.taps === 'match' ? ' selected' : '') + '>angepasst abschließen</option><option value="active"' + (applied.taps === 'active' ? ' selected' : '') + '>aktiv lassen</option></select></label>' : '') +
+      '<button class="button primary" type="submit">In Analyse übernehmen</button></div></form>' +
+      '<div class="preset-row">' + actionButton('Als Vorlage speichern', 'cn-save', '', 'button') + actionButton('Zuordnung exportieren', 'cn-export', '', 'button') + actionButton('Zuordnung importieren', 'cn-import', '', 'button') +
+      ((cn.templates || []).length ? '<label class="control"><span>Gespeicherte Vorlage</span><select id="cn-template"><option value="">–</option>' + cn.templates.map((t, i) => '<option value="' + i + '"' + (t.profile.id !== p.id || t.ports !== n ? ' disabled' : '') + '>' + esc(t.name + ' · ' + t.ports + ' Ports') + '</option>').join('') + '</select></label>' : '') + '</div></div></section>';
+    html += cnChannels() + cnMatrix();
+    insertHtml(box, html);
+  }
+
   function renderConfig() {
     const { dataset, config, layout } = state;
     const groupFor = port => config.pairs.find(p => p.p === port || p.q === port);
@@ -9105,14 +10111,15 @@ const Plot = (() => {
           (!state.layout.hasMixed ? ' title="Lege zuerst ein Portpaar an"' : ' title="Differential (D), Gleichtakt (C) und Modenkonversion"') +
           '><span class="basis-long">Mixed Mode</span><span class="basis-short">MM</span><span class="mode-dots" aria-hidden="true"><i style="background:var(--mode-d)"></i><i style="background:var(--mode-c)"></i><i style="background:var(--mode-dc)"></i><i style="background:var(--mode-cd)"></i></span></button></div>'
       : '';
-    const isConfig = state.tab === 'ports';
+    const isConfig = state.tab === 'ports', isConnector = state.tab === 'connector';
     $('config-panel').hidden = !isConfig;
-    $('analysis-panel').hidden = isConfig;
+    $('connector-panel').hidden = !isConnector;
+    $('analysis-panel').hidden = isConfig || isConnector;
     renderStatus();
-    if (isConfig) {
+    if (isConfig || isConnector) {
       state.view = null;
       Plot.set(null);
-      renderConfig();
+      isConfig ? renderConfig() : renderConnector();
     } else {
       renderControls();
       renderAnalysis();
@@ -11419,6 +12426,17 @@ const typed = state.tab === 's' && state.basis === 'mm' && ['cmc', 'lan'].includ
     },
     'remove-pair': value => commitPairs(state.config.pairs.filter(pair => pair.id !== Number(value))),
     'pair-preset': applyPairPreset,
+    'cn-detect': cnDetect,
+    'cn-clear': () => { state.connector.mapping = Connector.emptyMapping(cnProfile(), state.dataset.n); state.connector.candidate = ''; persistSettings(); renderConnector(); },
+    'cn-transform': cnTransform,
+    'cn-candidate': cnUseCandidate,
+    'cn-swap': value => { const [pair, side] = String(value).split('|'); cnSwapPair(pair, '', side ? Number(side) : null); },
+    'cn-zoom': value => { const cn = state.connector; cn.zoom = value === 'reset' ? 1 : Math.max(0.5, Math.min(4, cn.zoom * (value === 'in' ? 1.25 : 0.8))); if (value === 'reset') cn.pan = [0, 0]; renderConnector(); },
+    'cn-save': cnSaveTemplate,
+    'cn-export': cnExport,
+    'cn-import': () => $('cn-file').click(),
+    'cn-curves': value => cnOpenCurves(value.split(',')),
+    'cn-cell': value => cnOpenCurves([value]),
     'pairz-preset': pairImpedancePreset,
     'reset-ref': () => { state.config.ref = null; refreshNetwork(); },
     'edit-load': value => openLoad(Number(value), state.config.loads[Number(value)].type),
@@ -11525,7 +12543,7 @@ const typed = state.tab === 's' && state.basis === 'mm' && ['cmc', 'lan'].includ
 
   document.addEventListener('submit', event => {
     const handler = {
-      'pair-form': savePair, 'profile-form': saveProfile, 'sweep-form': applySweep, 'shelf-form': shelfStore, 'lib-new-form': libraryCreate, 'lib-edit-form': libraryEdit, 'model-form': modelApply, 'eval-form': form => setEvalFreq(parseHz(new FormData(form).get('eval'))), 'pairz-form': applyPairImpedance, 'reference-form': applyReference, 'fit-form': applyFit, 'axes-form': applyAxes, 'load-form': applyLoad
+      'pair-form': savePair, 'profile-form': saveProfile, 'cn-apply-form': cnApply, 'sweep-form': applySweep, 'shelf-form': shelfStore, 'lib-new-form': libraryCreate, 'lib-edit-form': libraryEdit, 'model-form': modelApply, 'eval-form': form => setEvalFreq(parseHz(new FormData(form).get('eval'))), 'pairz-form': applyPairImpedance, 'reference-form': applyReference, 'fit-form': applyFit, 'axes-form': applyAxes, 'load-form': applyLoad
     }[event.target.id];
     if (!handler) return;
     event.preventDefault();
@@ -11617,9 +12635,44 @@ const typed = state.tab === 's' && state.basis === 'mm' && ['cmc', 'lan'].includ
     renderSession();
   });
   document.addEventListener('input', event => { if (event.target.matches('.model-slider')) modelSlide(event.target, false); });
+  document.addEventListener('input', event => { if (event.target.id === 'cn-freq') { state.connector.freq = Number(event.target.value); renderConnector(); $('cn-freq')?.focus({ preventScroll: true }); } });
+  // Pin view: click or Enter/Space selects a contact node; wheel zooms, dragging pans.
+  document.addEventListener('click', event => {
+    const pin = event.target.closest?.('.cn-pin');
+    if (!pin || state.tab !== 'connector') return;
+    state.connector.selected = state.connector.selected === pin.dataset.node ? '' : pin.dataset.node;
+    renderConnector();
+    document.querySelector('.cn-pin[data-node="' + CSS.escape(pin.dataset.node) + '"]')?.focus({ preventScroll: true });
+  });
+  document.addEventListener('keydown', event => {
+    const pin = event.target.closest?.('.cn-pin');
+    if (!pin || !['Enter', ' '].includes(event.key)) return;
+    event.preventDefault(); pin.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  });
+  document.addEventListener('wheel', event => {
+    if (!event.target.closest?.('.cn-svg') || !event.ctrlKey && !event.altKey) return;
+    event.preventDefault();
+    const cn = state.connector; cn.zoom = Math.max(0.5, Math.min(4, cn.zoom * (event.deltaY < 0 ? 1.1 : 0.9))); renderConnector();
+  }, { passive: false });
+  let cnDrag = null;
+  document.addEventListener('pointerdown', event => { const svg = event.target.closest?.('.cn-svg'); if (svg && !event.target.closest('.cn-pin')) cnDrag = { x: event.clientX, y: event.clientY, pan: [...state.connector.pan] }; });
+  document.addEventListener('pointermove', event => {
+    if (!cnDrag) return;
+    state.connector.pan = [cnDrag.pan[0] + event.clientX - cnDrag.x, cnDrag.pan[1] + event.clientY - cnDrag.y];
+    document.querySelectorAll('.cn-zoom').forEach(g => g.setAttribute('transform', 'translate(' + state.connector.pan[0] + ' ' + state.connector.pan[1] + ') scale(' + state.connector.zoom + ')'));
+  });
+  document.addEventListener('pointerup', () => { cnDrag = null; });
   document.addEventListener('change', event => {
     const el = event.target;
     if (el.matches('.model-slider')) { modelSlide(el, true); return; }
+    if (el.id === 'cn-profile') { cnSetProfile(el.value); return; }
+    if (el.id === 'cn-config') { state.connector.configuration = el.value; persistSettings(); renderConnector(); return; }
+    if (el.id === 'cn-port') { cnAssign(state.connector.selected, Number(el.value)); return; }
+    if (el.id === 'cn-move') { if (el.value) cnSwapPair(Connector.profile(state.connector.profile).pairs.find(x => x.plus === Connector.splitNode(state.connector.selected).contact || x.minus === Connector.splitNode(state.connector.selected).contact)?.id, el.value); return; }
+    if (el.matches('select.cn-node')) { const port = Number(el.dataset.port), m = state.connector.mapping; if (el.value) cnAssign(el.value, port); else { m.ports[port] = null; m.source[port] = ''; persistSettings(); renderConnector(); } return; }
+    if (el.id === 'cn-template') { if (el.value !== '') cnUseTemplate(el.value); return; }
+    if (el.id === 'cn-modes') { state.connector.matrixModes = el.value; renderConnector(); return; }
+    if (el.id === 'cn-file') { const file = el.files?.[0]; el.value = ''; if (file) cnImport(file); return; }
     if (el.matches('.model-fix input')) {
       const em = currentElement(), key = el.name.slice(4);
       if (em) { em.edit.fixed = el.checked ? [...new Set([...em.edit.fixed, key])] : em.edit.fixed.filter(k => k !== key); persistSettings(); }
