@@ -7,7 +7,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { load, read, DATA } from './load.mjs';
-const { RF, Magnetic } = load(process.argv[2]);
+const { RF, Magnetic, Connector } = load(process.argv[2]);
 let pass = 0, fail = 0;
 const ok = (cond, name, detail = '') => { console.log((cond ? 'PASS ' : 'FAIL ') + name + (detail ? ' · ' + detail : '')); cond ? pass++ : fail++; };
 const find = re => DATA && fs.existsSync(DATA) ? fs.readdirSync(DATA).filter(f => re.test(f)).map(f => path.join(DATA, f))[0] : null;
@@ -53,6 +53,12 @@ else {
   ok(z1[1][0][1] > 0, 'LAN: Polarität gleichsinnig mit der Punktkonvention des Datenblatts (Pin 1 ↔ Pin 12)');
   const i0 = at(ds, 1e4), z0 = zd(i0), zk = C.sub(z0[0][0], RF.div(RF.mul(z0[0][1], z0[1][0]), z0[1][1]));
   ok(zk[0] / 2 <= 1.3, 'LAN: Wicklungswiderstand aus der Kurzschlussimpedanz (R₁ + R₂)/2 ≤ 1,3 Ω', fmt(zk[0] / 2, 'Ω'));
+  // Connector Studio, profile LAN magnetics S6P: structure from the measurement alone (galvanic groups, taps, dot convention)
+  const det = Connector.detect(ds, 'lan-magnetics-6p'), m = det.candidates[0]?.mapping.ports || [];
+  ok(JSON.stringify(m) === JSON.stringify(['P1+', 'P1CT', 'P1−', 'S1−', 'S1CT', 'S1+']), 'LAN · Connector: Mittelanzapfungen Pin 2/11, gleichsinnig Pin 1 ↔ Pin 12 allein aus der Messung', m.join(' ') + ' · ' + det.status);
+  const { config } = Connector.toConfig(Connector.profile('lan-magnetics-6p'), det.candidates[0].mapping, 6);
+  ok(JSON.stringify(config.pairs.map(x => [x.p, x.q])) === JSON.stringify(p.pairs.map(x => [x.p, x.q])) && JSON.stringify(config.loads.map(l => l.type)) === JSON.stringify(['active', 'open', 'active', 'active', 'open', 'active']),
+    'LAN · Connector: Analysekonfiguration identisch mit dem Profil aus dem Herstellerkopf');
 }
 
 console.log((fail ? 'FAIL' : 'PASS') + ' · Echte Daten · ' + pass + '/' + (pass + fail));

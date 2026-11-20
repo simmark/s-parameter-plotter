@@ -99,10 +99,10 @@ try {
     try {
       for (const f of ['index.html', 'sw.js', 'manifest.webmanifest', 'icons/app-192.png', 'icons/app-512.png', 'icons/maskable-512.png', 'icons/apple-180.png']) {
         fs.mkdirSync(path.dirname(path.join(oldRoot, f)), { recursive: true });
-        fs.writeFileSync(path.join(oldRoot, f), execFileSync('git', ['-C', ROOT, 'show', (process.env.SPA_OLD_REF || 'origin/main') + ':' + f], { maxBuffer: 64 * 1024 * 1024 }));
+        fs.writeFileSync(path.join(oldRoot, f), execFileSync('git', ['-C', ROOT, 'show', (process.env.SPA_OLD_REF || '5384472') + ':' + f], { maxBuffer: 64 * 1024 * 1024 }));
       }
     } catch { haveOld = false; }
-    if (!haveOld) report.check('Migration: alte Version aus Git lesbar (origin/main)', false, 'git show fehlgeschlagen – Test übersprungen');
+    if (!haveOld) report.check('Migration: alte Version 7 aus Git lesbar (5384472)', false, 'git show fehlgeschlagen – Test übersprungen');
     else {
       const srv = await serve(oldRoot), profile = tempDir('spa-st2-');
       let { context, page } = await start(profile);

@@ -30,7 +30,7 @@ try {
   await page.waitForFunction(() => document.getElementById('session-files').dataset.current === 'Drossel.s2p'); await ready();
 
   // ---- one main tab "Z" ----
-  report.equal('Es gibt einen Haupttab „Z“, keinen eigenen CISPR-Tab mehr', await page.$$eval('[role=tab]', n => n.map(t => t.id)), ['tab-s', 'tab-ports', 'tab-smith', 'tab-z', 'tab-cmc']);
+  report.equal('Es gibt einen Haupttab „Z“, keinen eigenen CISPR-Tab mehr', await page.$$eval('[role=tab]', n => n.map(t => t.id)), ['tab-s', 'tab-ports', 'tab-connector', 'tab-time', 'tab-smith', 'tab-z', 'tab-cmc']);
   await page.click('#tab-z'); await ready();
   const evals = await page.$$eval('#control-z-eval option', n => n.map(o => o.value));
   report.equal('Auswertungen im Z-Tab: Impedanz und CISPR 17', evals, ['z:reflection', 'z:zmatrix', 'z:ymatrix', 'z:txseries', 'z:txshunt', 'cispr:one', 'cispr:series', 'cispr:shunt', 'cispr:four']);

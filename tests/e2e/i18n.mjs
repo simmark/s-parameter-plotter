@@ -1,6 +1,7 @@
 // Englische Oberfläche: Alle neuen Texte (Sitzung, Bibliothek, Import, Speicher, Achsen, Z-Tab, ESB) müssen übersetzt sein.
 import fs from 'node:fs';
 import path from 'node:path';
+import { connectorCircuit, magneticsCircuit, touchstone as tsFixture, logf, USB_POSITIONS } from '../connector-fixture.mjs';
 import { serve, launch, tempDir, makeZip, touchstone, Report, logFreqs, capacitorZ, fixtureS2P, spiceTouchstone, REF_CMC, refTransformer, optimize } from './lib.mjs';
 
 const report = new Report('Englische Oberfläche');
@@ -116,7 +117,8 @@ try {
   await page.setInputFiles('#file-input', [{ name: 'cmc.s4p', mimeType: 'text/plain', buffer: Buffer.from(await spiceTouchstone(REF_CMC, { f1: 1e4, f2: 1e8, n: 201 })) }, { name: 'trafo.s4p', mimeType: 'text/plain', buffer: Buffer.from(await spiceTouchstone(refTransformer(), { f1: 1e4, f2: 3e7, n: 201 })) }]);
   await page.waitForFunction(() => document.getElementById('store-dialog').dataset.state !== 'running' && Number(document.getElementById('session-files').dataset.count) >= 15, null, { timeout: 60000 });
   for (const [name, id] of [['cmc.s4p', 'cmc-schematic'], ['trafo.s4p', 'transformer-schematic']]) {
-    await page.fill('#session-filter', name); await page.click('.session-open[data-key="' + name + '"]');
+    // wait for this very file: the session count alone may already be reached before the import has finished
+    await page.fill('#session-filter', name); await page.waitForSelector('.session-open[data-key="' + name + '"]', { timeout: 60000 }); await page.click('.session-open[data-key="' + name + '"]');
     await page.waitForFunction(k => document.getElementById('session-files').dataset.current === k, name); await ready();
     await page.click('#tab-ports'); await page.click('button[data-action="pair-preset"][data-value="adjacent"]'); await ready();
     await page.click('#tab-cmc'); await ready(); await page.waitForSelector('#' + id + ' svg');
@@ -139,6 +141,22 @@ try {
   await page.setInputFiles('#file-input', zip);
   await page.waitForSelector('#storage-notice [data-notice]', { timeout: 30000 });
   await german('Hinweis auf unterbrochenen Import', '#storage-notice');
+  // Connector Studio: profile, mapping, pin view, channels and matrix in English
+  await page.setInputFiles('#file-input', [{ name: 'usbc.s48p', mimeType: 'text/plain', buffer: Buffer.from(tsFixture(connectorCircuit(USB_POSITIONS), logf(1e6, 20e9, 41), [...Array(48).keys()])) },
+    { name: 'lanx.s6p', mimeType: 'text/plain', buffer: Buffer.from(tsFixture(magneticsCircuit(1), logf(1e4, 1e9, 61), [0, 1, 2, 3, 4, 5])) }]);
+  for (const name of ['usbc.s48p', 'lanx.s6p']) {
+    await page.waitForSelector('.session-open[data-key="' + name + '"]', { timeout: 60000 });
+    await page.click('.session-open[data-key="' + name + '"]'); await page.waitForFunction(k => document.getElementById('session-files').dataset.current === k, name); await ready();
+    await page.click('#tab-connector'); await page.waitForSelector('#cn-profile', { state: 'visible' });
+    await german('Connector ' + name + ': Profil und leere Zuordnung', '#connector-panel');
+    await page.click('#connector-panel button[data-action="cn-detect"]'); await page.waitForSelector('.cn-status');
+    await german('Connector ' + name + ': Kandidaten und Hinweise', '#connector-panel');
+    await page.click('.cn-pin'); await german('Connector ' + name + ': Inspektor', '.cn-inspector');
+    await page.click('#cn-apply-form button[type=submit]'); await ready(); await page.waitForSelector('.cn-matrix');
+    await german('Connector ' + name + ': Kanäle und Matrix', '#connector-panel');
+    await german('Connector ' + name + ': Meldung nach der Übernahme', '#toast');
+  }
+  report.check('Connector: Profilnamen kommen englisch aus dem Profil', /USB-C receptacle · 24 contacts|LAN magnetics · S6P/.test(await page.textContent('#cn-profile')));
   report.equal('Keine JavaScript-Fehler', errors, []);
 } catch (error) {
   report.check('Ablauf ohne Abbruch', false, String(error).slice(0, 500));
