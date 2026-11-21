@@ -1,0 +1,168 @@
+<header class="app-bar">
+  <button type="button" class="bar-button drawer-toggle" id="drawer-toggle" data-action="toggle-sidebar" aria-controls="sidebar" aria-expanded="false" title="Dateien und Bibliothek" aria-label="Dateien und Bibliothek"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5h4.2l2 2.2h8.8A1.5 1.5 0 0 1 21 8.7v8.8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.500z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+  <div class="app-brand">
+    <svg class="brand-logo" viewBox="0 0 512 512" aria-hidden="true">
+  <rect width="512" height="512" rx="112" fill="#1f1e1d"/>
+  <g fill="none" stroke="#f0eee6" stroke-linecap="round">
+    <g stroke-width="7" opacity=".38">
+      <circle cx="331" cy="256" r="75"/>
+      <circle cx="381" cy="256" r="25"/>
+      <path d="M106 256H406"/>
+      <path d="M406 256A150 150 0 0 1 256 106"/>
+      <path d="M406 256A150 150 0 0 0 256 406"/>
+    </g>
+    <circle cx="256" cy="256" r="150" stroke-width="13"/>
+  </g>
+  <path d="M118 338C196 338 196 168 258 168S322 330 394 214" fill="none" stroke="#d97757" stroke-width="24" stroke-linecap="round"/>
+  <circle cx="394" cy="214" r="21" fill="#d97757" stroke="#1f1e1d" stroke-width="9"/>
+</svg>
+    <span class="brand-name"><span class="brand-long">S-Parameter Analyzer</span><span class="brand-short">S-Analyzer</span></span>
+  </div>
+  <button type="button" class="file-chip" id="file-chip" data-action="toggle-sidebar" aria-label="Datei und Portschema"><svg class="icon" aria-hidden="true"><use href="#i-file"/></svg><span id="file-chip-name">—</span><svg class="icon chip-caret" aria-hidden="true"><use href="#i-down"/></svg></button>
+  <div class="file-nav" id="file-nav" hidden><button type="button" class="icon-button" data-action="session-step" data-value="-1" data-flip title="Vorherige Datei (Bild↑)" aria-label="Vorherige Datei"><svg class="icon" aria-hidden="true"><use href="#i-chevron"/></svg></button><span id="file-nav-count" class="mono"></span><button type="button" class="icon-button" data-action="session-step" data-value="1" title="Nächste Datei (Bild↓)" aria-label="Nächste Datei"><svg class="icon" aria-hidden="true"><use href="#i-chevron"/></svg></button></div>
+  <div class="bar-actions">
+    <button class="bar-button theme-button" type="button" id="theme-button" data-action="theme" title="Hell / Dunkel" aria-label="Darstellung hell oder dunkel"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18z" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="9" fill="none"/></svg></button>
+    <button class="bar-button lang-button" type="button" id="lang-button" data-action="lang" data-no-i18n title="Sprache: Deutsch / English" aria-label="Sprache wechseln"><span class="lang-code">EN</span></button>
+    <button class="bar-button" id="pwa-install" type="button" title="App installieren" aria-label="App installieren" hidden><svg class="icon" aria-hidden="true"><use href="#i-install"/></svg><span>Installieren</span></button>
+    <span class="offline-status" title="Die Messdaten bleiben im Browser"><span></span><strong id="pwa-status">Offline-Cache wird vorbereitet</strong></span>
+    <button class="bar-button packs-button" type="button" id="packs-button" data-action="packs" title="Vorlagen und Einstellungen sichern, laden, teilen" aria-label="Vorlagen und Einstellungen"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg><span>Vorlagen</span></button>
+    <button class="bar-button storage-button" type="button" id="storage-button" data-action="storage" title="Speicher prüfen, Bibliothek sichern und wiederherstellen" aria-label="Speicher und Sicherung"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg><span>Speicher</span></button>
+    <button class="bar-button" type="button" id="method-button" aria-label="Methodik"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg><span>Methodik</span></button>
+    <button class="bar-button export-button" type="button" id="export-button" aria-label="Export"><svg class="icon" aria-hidden="true"><use href="#i-export"/></svg><span>Export</span></button>
+    <button class="bar-button settings-button" type="button" id="settings-button" data-action="menu-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="settings-menu" title="Einstellungen" aria-label="Einstellungen"><svg class="icon" aria-hidden="true"><use href="#i-gear"/></svg></button>
+  </div>
+  <div class="settings-menu" id="settings-menu" role="menu" aria-label="Einstellungen" hidden>
+    <button type="button" role="menuitem" class="menu-item" data-action="menu-go" data-value="files"><svg class="icon" aria-hidden="true"><use href="#i-file"/></svg><span class="menu-text"><strong>Dateien &amp; Bibliothek</strong><small id="menu-file-name">—</small></span></button>
+    <button type="button" role="menuitem" class="menu-item" data-action="menu-go" data-value="packs"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg><span class="menu-text"><strong>Vorlagen &amp; Einstellungen</strong><small>Fingerabdrücke und Kurvenwahl laden, sichern</small></span></button>
+    <button type="button" role="menuitem" class="menu-item" data-action="menu-go" data-value="storage"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg><span class="menu-text"><strong>Speicher &amp; Sicherung</strong><small>Diagnose, Funktionstest, Sicherung der Bibliothek</small></span></button>
+    <button type="button" role="menuitem" class="menu-item" data-action="menu-go" data-value="lang"><svg class="icon" aria-hidden="true"><use href="#i-swap"/></svg><span class="menu-text"><strong>Sprache</strong><small>Deutsch / English</small></span><span class="menu-badge mono" id="menu-lang-code" data-no-i18n>EN</span></button>
+    <button type="button" role="menuitem" class="menu-item" data-action="menu-go" data-value="method"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg><span class="menu-text"><strong>Methodik &amp; Info</strong><small>Rechenwege, Formeln, Autor</small></span></button>
+    <button type="button" role="menuitem" class="menu-item" data-action="menu-go" data-value="license"><svg class="icon" aria-hidden="true"><use href="#i-file"/></svg><span class="menu-text"><strong>Lizenz</strong><small>© 2026 Simon Mark · proprietäre Software</small></span></button>
+    <button type="button" role="menuitem" class="menu-item" data-action="menu-go" data-value="export"><svg class="icon" aria-hidden="true"><use href="#i-export"/></svg><span class="menu-text"><strong>Export</strong><small>Bild, CSV, Touchstone, SPICE</small></span></button>
+    <button type="button" role="menuitem" class="menu-item" id="menu-install" data-action="menu-go" data-value="install" hidden><svg class="icon" aria-hidden="true"><use href="#i-install"/></svg><span class="menu-text"><strong>App installieren</strong><small>Offline am Startbildschirm</small></span></button>
+  </div>
+</header>
+
+<div class="app-layout" id="app-layout">
+  <div class="drawer-backdrop" id="drawer-backdrop" data-drawer-close></div>
+  <aside class="sidebar" id="sidebar" aria-label="Messdatei und Portschema">
+    <div class="sidebar-heading">
+      <h2><span class="heading-title">Messnetzwerk</span><span class="heading-drawer">Dateien &amp; Bibliothek</span><span class="heading-file" id="heading-file"></span></h2>
+      <div class="sidebar-actions">
+        <button class="icon-button drawer-close" id="drawer-close" type="button" data-action="drawer-close" title="Schließen" aria-label="Dateien und Bibliothek schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+        <button type="button" class="quiet-button mobile-open" data-action="open-file"><svg class="icon" aria-hidden="true"><use href="#i-upload"/></svg> Datei öffnen</button>
+        <button class="icon-button" id="sidebar-button" type="button" aria-expanded="true" title="Messnetzwerk einklappen" aria-label="Messnetzwerk einklappen"><svg class="icon" aria-hidden="true"><use href="#i-sidebar"/></svg></button>
+      </div>
+    </div>
+    <div class="sidebar-inner">
+      <div class="source-section">
+        <input type="file" id="file-input" multiple hidden>
+        <input type="file" id="folder-input" webkitdirectory multiple hidden>
+        <button id="dropzone" class="dropzone" type="button">
+          <span class="drop-icon"><svg class="icon" aria-hidden="true"><use href="#i-upload"/></svg></span>
+          <span><strong>Dateien öffnen</strong><small>Touchstone · SPICE .lib · ZIP</small></span>
+        </button>
+        <div id="dataset-summary" class="dataset-summary"></div>
+        <div class="source-actions">
+          <button type="button" class="quiet-button" data-action="open-zip">ZIP importieren</button>
+          <button type="button" class="quiet-button" data-action="open-folder">Ordner öffnen</button>
+          <button type="button" class="quiet-button" data-action="demo" data-value="4">CMC-Beispiel</button>
+          <button type="button" class="quiet-button" data-action="demo" data-value="8">8-Port-Beispiel</button>
+        </div>
+        <div id="storage-notice" class="storage-notice" hidden></div>
+        <div id="session-files" class="session-files" hidden></div>
+        <div id="shelf" class="session-files shelf" hidden></div>
+        <p id="import-notice" class="inline-notice" role="alert" hidden></p>
+      </div>
+      <div class="network-section">
+        <div class="side-section-title">
+          <h3>Portschema</h3>
+          <button class="icon-button" type="button" data-action="tab" data-value="ports" title="Ports bearbeiten" aria-label="Ports bearbeiten"><svg class="icon" aria-hidden="true"><use href="#i-edit"/></svg></button>
+        </div>
+        <div id="topology"></div>
+        <div id="network-summary" class="network-summary"></div>
+      </div>
+      <p class="credit side-credit">S-Parameter Analyzer · von <strong>Simon Mark</strong><br><a href="mailto:info.simonlation@gmail.com">info.simonlation@gmail.com</a></p>
+    </div>
+    <div class="sidebar-rail">
+      <button class="icon-button" data-action="open-file" title="Datei öffnen" aria-label="Datei öffnen"><svg class="icon" aria-hidden="true"><use href="#i-upload"/></svg></button>
+      <button class="icon-button" data-action="tab" data-value="ports" title="Ports bearbeiten" aria-label="Ports bearbeiten"><svg class="icon" aria-hidden="true"><use href="#i-network"/></svg></button>
+    </div>
+  </aside>
+
+  <main class="main" id="main">
+    <nav class="tabs" role="tablist" aria-label="Analyseansichten">
+      <button class="tab" type="button" id="tab-s" role="tab" aria-controls="panel" data-action="tab" data-value="s" aria-selected="true"><svg class="icon" aria-hidden="true"><use href="#i-wave"/></svg><span class="tab-long">S-Parameter</span><span class="tab-short">S</span></button>
+      <button class="tab" type="button" id="tab-ports" role="tab" aria-controls="panel" data-action="tab" data-value="ports" aria-selected="false"><svg class="icon" aria-hidden="true"><use href="#i-network"/></svg><span class="tab-long">Ports &amp; Lasten</span><span class="tab-short">Ports</span></button>
+      <button class="tab" type="button" id="tab-connector" role="tab" aria-controls="panel" data-action="tab" data-value="connector" aria-selected="false" title="Steckverbinder, Magnetics und Portzuordnung"><svg class="icon" aria-hidden="true"><use href="#i-plug"/></svg><span>Connector</span></button>
+      <button class="tab" type="button" id="tab-time" role="tab" aria-controls="panel" data-action="tab" data-value="time" aria-selected="false" title="Sprungantwort, TDR und Augendiagramm"><svg class="icon" aria-hidden="true"><use href="#i-pulse"/></svg><span class="tab-long">Zeitbereich</span><span class="tab-short">Zeit</span></button>
+      <button class="tab" type="button" id="tab-smith" role="tab" aria-controls="panel" data-action="tab" data-value="smith" aria-selected="false"><svg class="icon" aria-hidden="true"><use href="#i-smith"/></svg><span class="tab-long">Smith-Chart</span><span class="tab-short">Smith</span></button>
+      <button class="tab" type="button" id="tab-z" role="tab" aria-controls="panel" data-action="tab" data-value="z" aria-selected="false" title="Impedanz und CISPR 17"><svg class="icon" aria-hidden="true"><use href="#i-imp"/></svg><span class="tab-long">Z</span><span class="tab-short">Z</span></button>
+      <button class="tab" type="button" id="tab-cmc" role="tab" aria-controls="panel" data-action="tab" data-value="cmc" aria-selected="false"><svg class="icon" aria-hidden="true"><use href="#i-coil"/></svg><span class="tab-long">ESB-Modell</span><span class="tab-short">ESB</span></button>
+    </nav>
+
+    <section id="panel" class="main-body" role="tabpanel" aria-labelledby="tab-s">
+      <div class="page-head">
+        <button type="button" class="icon-button drawer-button" data-action="toggle-sidebar" title="Dateien und Bibliothek" aria-label="Dateien und Bibliothek"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5h4.2l2 2.2h8.8A1.5 1.5 0 0 1 21 8.7v8.8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.500z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+        <div class="page-titles">
+          <h1 id="page-title">S-Parameter</h1>
+          <p id="page-context"></p>
+        </div>
+        <div id="basis-control"></div>
+      </div>
+      <p id="global-status" class="inline-notice" role="status" hidden></p>
+      <div id="config-panel" hidden></div>
+      <div id="connector-panel" hidden></div>
+      <div id="time-panel" hidden></div>
+      <input type="file" id="cn-file" accept=".json,application/json" hidden>
+      <div id="analysis-panel">
+        <div id="view-controls" class="view-controls"></div>
+        <p id="physics-warning" class="inline-notice" role="status" hidden></p>
+        <div id="empty-panel" class="empty-panel" hidden></div>
+        <section id="chart-card" class="chart-card" aria-labelledby="plot-heading">
+          <div class="chart-head">
+            <div>
+              <h2 id="plot-heading">Frequenzgang</h2>
+              <p id="plot-caption" class="plot-caption"></p>
+            </div>
+            <div class="chart-tools" id="chart-tools">
+              <div class="segment axis-segment" aria-label="Frequenzachse">
+                <span class="segment-label" aria-hidden="true">X</span>
+                <button type="button" data-action="x-scale" data-value="log" aria-pressed="true">Log</button>
+                <button type="button" data-action="x-scale" data-value="linear" aria-pressed="false">Lin</button>
+              </div>
+              <div class="segment axis-segment" id="y-scale-segment" aria-label="Vertikale Achse">
+                <span class="segment-label" aria-hidden="true">Y</span>
+                <button type="button" data-action="y-scale" data-value="log" aria-pressed="false">Log</button>
+                <button type="button" data-action="y-scale" data-value="symlog" aria-pressed="false" title="Symmetrisch logarithmisch: zeigt positive und negative Werte samt Resonanzspitzen" hidden>±Log</button>
+                <button type="button" data-action="y-scale" data-value="linear" aria-pressed="true">Lin</button>
+              </div>
+              <button class="icon-button" id="axes-button" type="button" data-action="axes" title="Achsen einstellen" aria-label="Achsen einstellen"><svg class="icon" aria-hidden="true"><use href="#i-sliders"/></svg></button>
+              <button class="icon-button" type="button" data-action="view-mode" aria-pressed="false" title="Ansicht: normal · reduziert · Vollbild (Esc beendet)" aria-label="Ansicht umschalten: normal, reduziert, Vollbild"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <button class="icon-button" type="button" data-action="reset-plot" title="Ansicht zurücksetzen" aria-label="Ansicht zurücksetzen"><svg class="icon" aria-hidden="true"><use href="#i-reset"/></svg></button>
+            </div>
+          </div>
+          <div class="plot-layout">
+            <div class="plot-surface">
+              <canvas id="plot" tabindex="0" aria-label="Interaktives Diagramm. Pfeiltasten blättern durch die Dateien, Umschalt und Pfeiltasten verschieben den Marker.">
+                Die Diagrammwerte am Marker stehen in der Tabelle.
+              </canvas>
+              <span id="plot-hint" class="plot-hint"></span>
+              <div class="file-pager" id="file-pager" hidden>
+                <button type="button" class="pager-button" data-action="session-step" data-value="-1" data-flip title="Vorherige Datei" aria-label="Vorherige Datei"><svg class="icon" aria-hidden="true"><use href="#i-chevron"/></svg></button>
+                <span class="pager-label"><span id="file-pager-name" class="pager-name"></span><span id="file-pager-count" class="pager-count mono"></span></span>
+                <button type="button" class="pager-button" data-action="session-step" data-value="1" title="Nächste Datei" aria-label="Nächste Datei"><svg class="icon" aria-hidden="true"><use href="#i-chevron"/></svg></button>
+              </div>
+            </div>
+            <aside class="trace-panel" id="trace-panel" aria-label="Kurven"></aside>
+          </div>
+          <div id="marker-panel" class="marker-panel"></div>
+        </section>
+        <div id="analysis-details" class="analysis-details"></div>
+      </div>
+    </section>
+    <footer class="status-bar" id="status-bar"></footer>
+    <p class="legal-line"><span data-no-i18n>© 2026 Simon Mark · All rights reserved · Proprietary software</span> · <button type="button" class="link-button" data-action="license">Lizenz</button></p>
+  </main>
+</div>
+

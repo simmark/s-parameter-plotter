@@ -1,0 +1,11 @@
+/* ---------- v8: batch dialog ---------- */
+.batch-progress { font-size: 12px; color: var(--muted); }
+.batch-summary { font-size: 13px; margin: 8px 0; }
+.batch-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; max-height: 46vh; overflow: auto; }
+.batch-open { display: grid; grid-template-columns: 78px minmax(0, 1fr); column-gap: 8px; width: 100%; text-align: left; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); font-size: 12.5px; }
+.batch-open small { grid-column: 2; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.batch-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.batch-state { font-weight: 700; font-size: 11px; align-self: center; grid-row: span 2; }
+.batch-row.is-learned .batch-state { color: #1e7f78; } .batch-row.is-known .batch-state { color: #3266ce; } .batch-row.is-unknown .batch-state { color: #a26016; } .batch-row.is-error .batch-state { color: #b3261e; }
+html[data-theme="dark"] .batch-row.is-learned .batch-state { color: #5cc9bf; } html[data-theme="dark"] .batch-row.is-known .batch-state { color: #8fb0ff; } html[data-theme="dark"] .batch-row.is-unknown .batch-state { color: #e0a85c; } html[data-theme="dark"] .batch-row.is-error .batch-state { color: #ff8a80; }
+
