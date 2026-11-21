@@ -1,0 +1,30 @@
+/* v4: sweep form, theme button */
+.sweep-form { display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr) auto; gap: 5px; align-items: center; margin-top: 8px; font-size: 11px; color: var(--muted); }
+.sweep-form .field-input { min-height: 28px; padding: 2px 6px; font: 500 11px var(--mono); min-width: 0; }
+.theme-button .icon { stroke: currentColor; stroke-width: 1.8; }
+html[data-theme="dark"] .topology svg, html[data-theme="dark"] .cmc-schematic svg, html[data-theme="dark"] .port-schematic svg { filter: invert(1) hue-rotate(180deg); }
+html[data-theme="dark"] { color-scheme: dark; }
+html[data-theme="dark"] .export-button, html[data-theme="dark"] .export-button * { color: #1d1c1a !important; }
+html[data-theme="dark"] .theme-button { color: #e9e7df !important; }
+html[data-theme="dark"] .marker-name, html[data-theme="dark"] .mk-dot { filter: invert(1) hue-rotate(180deg); }
+html[data-theme="dark"] .marker-name { color: #ffffff !important; }
+
+/* v5: library, drawer button, view modes */
+.shelf-form { display: grid; gap: 6px; margin: 4px 0 8px; padding: 8px; border: 1px solid var(--accent-line); border-radius: 7px; background: var(--accent-soft); }
+.shelf-form-actions { display: flex; gap: 6px; align-items: center; }
+.shelf-list { display: grid; gap: 2px; max-height: 220px; overflow: auto; }
+.shelf-confirm { background: #b3261e; border-color: #b3261e; color: #ffffff; }
+.drawer-button { display: none; flex: none; width: 36px; height: 36px; margin-right: 6px; }
+@media (max-width: 760px) { .drawer-button { display: inline-grid; place-items: center; } .page-head { align-items: center; } }
+[data-action="view-mode"][aria-pressed="true"] { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+body.view-focus .sidebar, body.view-focus .tabs, body.view-focus .page-head, body.view-focus #view-controls, body.view-focus #analysis-details, body.view-focus .app-bar > :not(.file-chip):not(.file-nav) { display: none !important; }
+body.view-focus .app-bar { min-height: 0; padding-block: 4px; }
+body.view-focus .file-chip { display: inline-flex !important; max-width: 60vw; border: 0; background: none; pointer-events: none; }
+body.view-focus .file-chip .chip-caret { display: none; }
+body.view-focus .app-layout { display: block; }
+body.view-focus .main-body { padding-top: 6px; }
+body.view-full .app-bar, body.view-full .trace-panel, body.view-full .marker-tools, body.view-full .chart-head > div:first-child, body.view-full #global-status { display: none !important; }
+body.view-focus #plot { height: clamp(300px, 60vh, 900px) !important; }
+body.view-full .plot-surface canvas { height: calc(100vh - 150px) !important; min-height: 240px; }
+body.view-full .chart-card { margin: 0; border-radius: 0; }
+body.view-full .main-body { padding: 0; }

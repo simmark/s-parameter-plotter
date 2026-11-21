@@ -153,7 +153,7 @@ Alle Berechnungen laufen lokal auf dem Gerät. Messdateien werden nicht hochgela
 ## Tests
 
 ```
-node tests/static.mjs            # Lizenz, Cache-Version, Syntax
+node tests/static.mjs            # Lizenz, index.html passt zu src/, Cache-Version, Syntax
 node tests/magnetic.unit.mjs     # Bauteil-Erkennung
 node tests/rf.reference.mjs      # RF-Mathematik gegen Referenznetzwerke und gegen main
 node tests/multiport.mjs         # Port-Map, Kanalprüfung, Übersprechen, Skew, 0/α/β (analytisch)
@@ -214,7 +214,7 @@ Settings → Pages → *Deploy from a branch* → `main` / `(root)`.
 
 ## Aktualisieren
 
-`python3 tools/build.py` schreibt die Cache-Version (Hash der App-Dateien) direkt in `sw.js`. Das muss vor jedem Commit laufen, der die App ändert: Ohne neue Version zeigt eine installierte App weiter die alte `index.html` aus dem Cache. `python3 tools/build.py --check` prüft das, `node tests/static.mjs` ebenfalls. Installierte Apps zeigen beim nächsten Öffnen „Neue Version verfügbar → Neu laden“. Gespeicherte Dateien bleiben bei einem Update erhalten.
+Der Quelltext liegt in `src/`, `index.html` ist daraus erzeugt (Aufbau: `docs/aufbau.md`). Nach jeder Änderung läuft `python3 tools/build.py`: Es schreibt `index.html` aus `src/` und die Cache-Version (Hash der App-Dateien) in `sw.js`. Das muss vor jedem Commit laufen, der die App ändert: Ohne neue Version zeigt eine installierte App weiter die alte `index.html` aus dem Cache. `python3 tools/build.py --check` prüft beides, `node tests/static.mjs` ebenfalls. Installierte Apps zeigen beim nächsten Öffnen „Neue Version verfügbar → Neu laden“. Gespeicherte Dateien bleiben bei einem Update erhalten.
 
 ---
 
