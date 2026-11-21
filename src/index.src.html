@@ -24,6 +24,11 @@
 </script>
 <style>
 @@include css/basis.css@@
+@@include css/module/connector-studio.css@@
+@@include css/module/zeitbereich.css@@
+@@include css/minidiagramm.css@@
+@@include css/ports.css@@
+@@include css/dialoge.css@@
 @@include css/claude-schicht.css@@
 @@include css/telefon-layout.css@@
 @@include css/sitzung-profil.css@@
@@ -72,27 +77,7 @@
 <script>
 'use strict';
 
-(() => {
-@@include app/01-grundlagen.js@@
-@@include app/02-vorlagen.js@@
-@@include app/03-kurvenvorlieben.js@@
-@@include app/04-sitzung.js@@
-@@include app/05-spice-bibliotheken.js@@
-@@include app/06-import.js@@
-@@include app/07-quellen-und-sitzungsliste.js@@
-@@include app/08-bibliothek.js@@
-@@include app/09-speicher.js@@
-@@include app/10-ansicht-und-vergleich.js@@
-@@include app/11-portprofil.js@@
-@@include app/12-physik-erkennung.js@@
-@@include app/13-connector-studio.js@@
-@@include app/14-zeitbereich-und-augendiagramm.js@@
-@@include app/15-schaltbilder.js@@
-@@include app/16-esb.js@@
-@@include app/17-modelleditor.js@@
-@@include app/18-packs.js@@
-@@include app/19-batch-und-bedienung.js@@
-})();
+@@bundle app@@
 </script>
 @@include html/pwa.html@@
 <script>

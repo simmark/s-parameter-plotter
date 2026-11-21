@@ -1,0 +1,11 @@
+{
+  "name": "s-parameter-analyzer-dev",
+  "private": true,
+  "description": "Nur für Entwicklung und Tests. Die App selbst braucht keine Pakete.",
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "devDependencies": {
+    "acorn": "8.18.0",
+    "eslint-scope": "8.4.0",
+    "playwright": "1.63.0"
+  }
+}

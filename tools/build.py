@@ -4,7 +4,8 @@
   python3 tools/build.py --check    exits with 1 if index.html does not match src/ or sw.js does not carry the current hash
   python3 tools/build.py . dist     additionally copies the app to dist/
 
-The source lives in src/: index.src.html is the page skeleton, every line '@@include path@@' is replaced by the file src/path.
+The source lives in src/: index.src.html is the page skeleton, every line '@@include path@@' is replaced by the file src/path,
+the line '@@bundle app@@' by the ES modules in src/app/ bundled into one script (tools/bundle.py, rules there).
 index.html stays a committed, generated file because GitHub Pages serves it as it is. Edit src/, never index.html.
 An installed app only updates when sw.js changes. Without a new hash it keeps showing the cached old index.html.
 """
@@ -16,12 +17,21 @@ args = [a for a in sys.argv[1:] if not a.startswith('--')]
 src = pathlib.Path(args[0]) if args else pathlib.Path(__file__).resolve().parent.parent
 
 INCLUDE = re.compile(r'^@@include (\S+)@@\n?$')
+BUNDLE = re.compile(r'^@@bundle (\S+)@@\n?$')
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+import bundle as bundler
 
 def assemble(src):
     """index.html as text, built from src/index.src.html. Fails on a missing file or on a file nothing includes."""
     base = src / 'src'
     used, out = set(), []
     for line in re.findall(r'[^\n]*\n|[^\n]+', (base / 'index.src.html').read_bytes().decode('utf-8')):
+        b = BUNDLE.match(line)
+        if b:
+            text, _ = bundler.bundle(base / b.group(1))
+            out.append(text)
+            used.update(str(p.relative_to(base)) for p in (base / b.group(1)).rglob('*.js'))
+            continue
         m = INCLUDE.match(line)
         if not m:
             out.append(line)

@@ -1,0 +1,59 @@
+/* Connector Studio: Panel, Pin-Ansicht, Kanäle, Kopplungsmatrix */
+#connector-panel .control { min-width: 0; max-width: 100%; }
+#connector-panel select { max-width: 100%; min-width: 0; }
+#connector-panel .preset-row { flex-wrap: wrap; }
+.cn-facts { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 3px 12px; margin: 10px 0 0; font-size: 12.5px; }
+.cn-facts dt { color: var(--muted); }
+.cn-facts dd { margin: 0; }
+.cn-sources { margin-top: 8px; font-size: 12.5px; }
+.cn-sources ul { margin: 6px 0 0; padding-left: 18px; }
+.cn-badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; border: 1px solid var(--line-dark); background: var(--tint); }
+.cn-badge.is-ok { color: var(--mode-c); border-color: var(--mode-c-line); background: var(--mode-c-soft); }
+.cn-badge.is-warn { color: var(--warn-ink); border-color: var(--warn-line); background: var(--warn-bg); }
+.cn-badge.is-bad { color: var(--mode-cd); border-color: #efb9c3; background: var(--mode-cd-soft); }
+.cn-status { margin: 10px 0 6px; font-size: 13px; }
+.cn-cands { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.cn-cand { display: flex; justify-content: space-between; gap: 10px; align-items: center; padding: 8px 10px; border: 1px solid var(--line); border-radius: 7px; }
+.cn-cand.is-current { border-color: var(--accent-line); background: var(--accent-soft); }
+.cn-cand small { display: block; color: var(--muted); margin-top: 3px; }
+.cn-cand small.cn-warn, .cn-issues .is-error { color: var(--mode-cd); }
+.cn-current { font-size: 12px; color: var(--muted); }
+.cn-issues { margin: 10px 0 0; padding-left: 18px; font-size: 12.5px; }
+.cn-issues .is-warn { color: var(--warn-ink); }
+.cn-drawings { display: grid; gap: 10px; overflow: auto; }
+.cn-figure { margin: 0; border: 1px solid var(--line); border-radius: 8px; background: var(--tint); }
+.cn-figure figcaption { padding: 6px 10px; font-size: 12px; font-weight: 600; color: var(--muted); border-bottom: 1px solid var(--line); }
+.cn-svg { display: block; width: 100%; height: auto; touch-action: none; cursor: grab; }
+.cn-body { fill: var(--surface); stroke: var(--line-dark); }
+.cn-pin { cursor: pointer; outline: none; }
+.cn-pin rect { fill: color-mix(in srgb, var(--pin) 14%, var(--surface)); stroke: var(--pin); stroke-width: 1.4; }
+.cn-pin.is-free rect { fill: var(--surface); stroke-dasharray: 3 2; }
+.cn-pin.is-conflict rect { stroke: var(--mode-cd); stroke-width: 2.4; }
+.cn-pin.is-selected rect, .cn-pin:focus-visible rect { stroke: var(--select); stroke-width: 2.6; }
+.cn-pin text { text-anchor: middle; font-family: var(--mono); fill: var(--ink); pointer-events: none; }
+.cn-pin-id { font-size: 9.5px; font-weight: 600; }
+.cn-pin-port { font-size: 9px; fill: var(--muted) !important; }
+.cn-pin-label { font-size: 9px; font-family: var(--ui) !important; }
+.cn-pin-mark { font-size: 10px; font-weight: 700; }
+.cn-pin.is-ok .cn-pin-mark { fill: var(--mode-c); }
+.cn-pin.is-unconfirmed .cn-pin-mark { fill: var(--warn-ink); }
+.cn-pin.is-conflict .cn-pin-mark { fill: var(--mode-cd); }
+.cn-pair-line { fill: none; stroke: var(--pin); stroke-width: 3; stroke-linecap: round; }
+.cn-coil { fill: none; stroke: var(--ink); stroke-width: 1.6; }
+.cn-core { stroke: var(--ink); stroke-width: 1.4; }
+.cn-dot { fill: var(--ink); }
+.cn-inspector { margin-top: 10px; padding: 10px; border: 1px solid var(--line); border-radius: 8px; }
+.cn-inspector h3 { margin: 0 0 4px; font-size: 14px; }
+.cn-ports { max-height: 420px; }
+.cn-ports select { width: 9.5em; max-width: 150px; font: inherit; font-size: 12px; }
+.cn-ports tr.is-conflict td { background: var(--mode-cd-soft); }
+.cn-pairs { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; margin: 0 0 10px; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 4px 12px; }
+.cn-pairs legend { font-size: 12px; color: var(--muted); padding: 0 4px; }
+.cn-check { display: flex; gap: 6px; align-items: center; font-size: 13px; min-height: 32px; }
+.cn-heat { border-collapse: collapse; font-size: 11px; }
+.cn-heat th { padding: 4px 6px; font-weight: 600; white-space: nowrap; text-align: left; }
+.cn-heat td { padding: 1px; }
+.cn-cell { width: 58px; min-height: 38px; border: 0; border-radius: 4px; font: 600 11px var(--mono); color: #1f1e1d; cursor: pointer; display: grid; place-items: center; }
+.cn-cell small { font: 500 9px var(--ui); }
+.cn-cell:focus-visible { outline: 2px solid var(--select); }
+@media (max-width: 760px) { .cn-cand { flex-direction: column; align-items: stretch; } }

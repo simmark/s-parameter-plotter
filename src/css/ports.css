@@ -1,0 +1,64 @@
+/* Tab „Ports & Lasten“: Paare, Portzuordnung, Lasten */
+.pair-card { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 7px; border: 1px solid color-mix(in srgb, var(--pc) 35%, var(--line)); border-left: 5px solid var(--pc); border-radius: 7px; background: color-mix(in srgb, var(--pc) 6%, #ffffff); }
+.pair-name { display: grid; place-items: center; min-width: 52px; min-height: 32px; padding: 3px 6px; color: var(--ink); background: #ffffff; border: 1px solid color-mix(in srgb, var(--pc) 40%, var(--line)); border-radius: 5px; font: 650 10px var(--mono); }
+.pair-chip { display: inline-flex; align-items: center; gap: 5px; font: 650 11px var(--mono); }
+.pair-chip::before { content: ""; width: 9px; height: 9px; border-radius: 3px; background: var(--pc); }
+.pairz-table input { width: 100%; min-width: 74px; max-width: 120px; height: 30px; }
+.pairz-table tr { box-shadow: inset 4px 0 0 var(--pc); }
+.pair-badge { background: color-mix(in srgb, var(--pc) 14%, #ffffff); color: color-mix(in srgb, var(--pc) 75%, #201f1c); border: 1px solid color-mix(in srgb, var(--pc) 45%, #ffffff); }
+.net-group.is-pair .net-chip { border-color: color-mix(in srgb, var(--pc) 55%, #ffffff); background: color-mix(in srgb, var(--pc) 12%, #ffffff); color: color-mix(in srgb, var(--pc) 70%, #201f1c); }
+.net-group.is-pair { --wire: var(--pc); }
+.pc-dot { display: inline-block; width: 7px; height: 7px; border-radius: 2px; background: var(--pc); margin-right: 4px; }
+.detect-note { display: flex; align-items: center; gap: 6px; margin: 2px 0 10px; font-size: 12px; color: var(--ink); }
+.detect-note .icon { width: 15px; height: 15px; color: var(--accent); }
+.pair-card strong, .port-id { font: 650 11.5px var(--mono); }
+.pair-card small { display: block; color: var(--muted); font-size: 10px; margin-top: 2px; }
+.pair-buttons { display: flex; gap: 3px; }
+.pair-buttons .icon-button { height: 34px; width: 34px; }
+.pair-editor-head h3 { font-size: 13px; }
+.pair-targets, .pair-editor-actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-block: 8px; }
+.pair-targets .button { min-height: 38px; flex: 1 0 105px; justify-content: flex-start; }
+.pair-target[aria-pressed="true"] { background: var(--select); border-color: var(--select); color: #ffffff; }
+.assign-ports { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 6px; }
+.assign-port {
+  display: grid; align-content: center; position: relative; min-width: 0; min-height: 48px; padding: 6px;
+  border: 1px solid var(--line-dark); border-radius: 6px; color: var(--ink); background: #fbfbf8; text-align: left;
+}
+.assign-port:hover { border-color: #999689; background: #f7f5ef; }
+.assign-port.is-paired { border-left: 4px solid var(--pc); }
+.assign-port.is-paired .assign-role { color: var(--pc); }
+.assign-port.is-taken { background: #f4f2e9; border-color: #dedcd2; border-left-color: color-mix(in srgb, var(--pc) 55%, #dedcd2); color: #8d8a7c; }
+.assign-port.is-taken strong { color: #8d8a7c; }
+.assign-port.is-taken .assign-role { color: color-mix(in srgb, var(--pc) 60%, #8d8a7c); }
+.assign-port.is-taken:hover { background: #efecdf; color: var(--ink); }
+.assign-port[aria-pressed="true"] { border-color: var(--pc, var(--accent)); background: color-mix(in srgb, var(--pc, var(--accent)) 12%, #ffffff); box-shadow: inset 0 0 0 1.5px var(--pc, var(--accent)); color: var(--ink); }
+.assign-port[aria-pressed="true"] .assign-selection { background: var(--pc, var(--accent-dark)); }
+.assign-port-line { display: flex; gap: 3px; align-items: center; justify-content: space-between; min-width: 0; }
+.assign-port-line strong { font: 700 13px var(--mono); }
+.assign-role { color: var(--muted); font-size: 10px; font-weight: 650; overflow-wrap: anywhere; text-align: right; }
+.assign-role.paired { color: var(--accent-dark); }
+.assign-role.terminated { color: var(--warn-ink); }
+.assign-port small { margin-top: 2px; color: var(--muted); font-size: 10px; line-height: 1.2; overflow-wrap: anywhere; }
+.assign-selection { position: absolute; top: -5px; left: -4px; display: grid; place-items: center; width: 15px; height: 15px; border-radius: 50%; background: var(--accent-dark); color: white; font: 700 11px var(--mono); }
+.pair-impact { margin-top: 7px; color: var(--warn-ink); font-size: 11px; }
+.port-schematic { margin-top: 9px; }
+.port-schematic summary { cursor: pointer; color: var(--accent-dark); font-size: 12px; font-weight: 650; }
+.port-schematic .topology-board { margin-top: 7px; }
+.preset-row { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin-top: 8px; }
+.preset-row > span { color: var(--muted); font-size: 11px; margin-right: 2px; }
+.preset-row button { font-size: 11px; min-height: 26px; padding: 4px 6px; }
+.reference-form { display: flex; gap: 7px; align-items: end; flex-wrap: wrap; }
+.reference-form .control { width: 114px; }
+.ports-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.ports-table th { text-align: left; padding: 8px 9px; color: #6b685d; background: #f9f8f3; font-size: 11px; font-weight: 670; }
+.ports-table td { padding: 7px 9px; border-top: 1px solid #f3f1e8; }
+.ports-table th:first-child, .ports-table td:first-child { padding-left: 13px; }
+.ports-table th:last-child, .ports-table td:last-child { padding-right: 13px; }
+.ports-table select { width: 118px; min-height: 28px; height: 28px; }
+.ports-table small { display: block; font-size: 10px; color: var(--muted); max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.load-cell { display: flex; align-items: center; gap: 5px; }
+.load-cell .icon-button { width: 28px; height: 28px; min-height: 28px; }
+.port-ref { font: 500 11px var(--mono); white-space: nowrap; }
+.config-card .note { padding: 8px 13px 11px; }
+.config-content .note { padding: 8px 0 0; }
+
