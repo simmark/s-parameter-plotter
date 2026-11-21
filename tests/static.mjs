@@ -1,4 +1,4 @@
-// Statische Prüfungen ohne Browser: Lizenztext, Urheberhinweise, Cache-Version, Skript-Syntax, keine Herstellerdaten im Repository.
+// Statische Prüfungen ohne Browser: Lizenztext, Urheberhinweise, Zusammenbau aus src/, Cache-Version, Skript-Syntax, keine Herstellerdaten im Repository.
 import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
@@ -31,7 +31,7 @@ check('Speicherkern greift nicht auf die Oberfläche zu (kein document, kein win
 
 let current = false;
 try { execFileSync('python3', [path.join(root, 'tools/build.py'), '--check'], { stdio: 'pipe' }); current = true; } catch { current = false; }
-check('sw.js trägt die aktuelle Cache-Version (sonst aktualisiert sich die installierte App nicht)', current, current ? '' : 'python3 tools/build.py ausführen');
+check('index.html entspricht src/ und sw.js trägt die aktuelle Cache-Version (sonst fehlen Änderungen oder die installierte App aktualisiert sich nicht)', current, current ? '' : 'python3 tools/build.py ausführen');
 
 // Only synthetic reference data may be published.
 let tracked = [];

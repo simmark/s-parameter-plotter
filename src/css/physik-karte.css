@@ -1,0 +1,16 @@
+/* ---------- physics card (Bauteil-Erkennung) ---------- */
+.physics-verdict { font-weight: 650; }
+.physics-verdict.is-good { color: #1e7f78; } .physics-verdict.is-warn { color: #a26016; }
+html[data-theme="dark"] .physics-verdict.is-good { color: #5cc9bf; } html[data-theme="dark"] .physics-verdict.is-warn { color: #e0a85c; }
+.physics-card .metric-grid { margin: 4px 0 10px; }
+.physics-actions { margin: 4px 0 6px; }
+.physics-why summary { cursor: pointer; font-weight: 650; color: var(--accent-dark); margin: 6px 0; }
+.evidence-list { margin: 6px 0; padding-left: 18px; display: grid; gap: 6px; font-size: 12.5px; }
+.evidence-list li { display: flex; flex-wrap: wrap; gap: 6px; justify-content: space-between; }
+.evidence-list.warn li { color: var(--warn-ink); }
+.ev-scores { display: inline-flex; gap: 4px; flex-wrap: wrap; }
+.ev-score { font-size: 11px; padding: 1px 6px; border-radius: 10px; border: 1px solid var(--line); white-space: nowrap; }
+.ev-score.pro { color: #1e7f78; border-color: #9fd3cd; } .ev-score.con { color: #a43b2b; border-color: #e3b1a8; }
+html[data-theme="dark"] .ev-score.pro { color: #5cc9bf; border-color: #2c5f5a; } html[data-theme="dark"] .ev-score.con { color: #ff9a8a; border-color: #6a3a33; }
+.physics-modes td, .physics-modes th { text-align: right; } .physics-modes td:first-child, .physics-modes th:first-child { text-align: left; }
+

@@ -150,10 +150,18 @@ Alle Berechnungen laufen lokal auf dem Gerät. Messdateien werden nicht hochgela
 - Behoben: Einstellungen einer Datei gingen verloren, wenn innerhalb von 0,3 s zu einer anderen Datei gewechselt wurde.
 - Methode, Prüfungen und Grenzen: `docs/multiport-zeitbereich.md`.
 
+## Version 11: Modularer Aufbau
+
+- Der Quelltext liegt in `src/`, die App in `src/app/` als ES-Module mit eigenem Gültigkeitsbereich, in Schichten: `basis/`, `dateien/`, `analyse/`, `module/` (Fachmodule), `oberflaeche/`. `python3 tools/build.py` bündelt sie zu einer einzigen `index.html`, ohne fremde Werkzeuge.
+- Fachmodule (Ports & Lasten, Connector Studio, Zeitbereich, ESB, Packs) melden Tabs, Knöpfe, Formulare, Auswahllisten und ihren Zustand pro Datei über `basis/erweiterung.js` an. Ein neuer Tab ist eine neue Datei.
+- `tests/module.mjs` prüft Modulgrenzen und Schichten, `tests/e2e/erweiterung.mjs` baut die App mit einem Probemodul. Am Verhalten der App ändert sich nichts.
+- Aufbau, Regeln und Anleitung für ein neues Modul: `docs/aufbau.md`.
+
 ## Tests
 
 ```
-node tests/static.mjs            # Lizenz, Cache-Version, Syntax
+node tests/static.mjs            # Lizenz, index.html passt zu src/, Cache-Version, Syntax
+node tests/module.mjs            # Modulgrenzen und Schichten in src/app
 node tests/magnetic.unit.mjs     # Bauteil-Erkennung
 node tests/rf.reference.mjs      # RF-Mathematik gegen Referenznetzwerke und gegen main
 node tests/multiport.mjs         # Port-Map, Kanalprüfung, Übersprechen, Skew, 0/α/β (analytisch)
@@ -161,11 +169,12 @@ node tests/timedomain.mjs        # Zeitbereich und Auge gegen analytische Fälle
 SPA_PACK=/pfad node tests/pack.mjs   # synthetisches Testpaket (21 Dateien, nicht im Repository), mit NumPy-Gegenrechnung
 node tests/e2e/run.mjs           # alles: dazu Browser-Abläufe A–D, ZIP, Speicher, Achsen, ESB, Englisch (braucht Playwright und Chrome)
 node tests/e2e/run.mjs --fast    # nur die Gruppen ohne Browser
+node tests/e2e/erweiterung.mjs   # ein Probemodul klinkt sich nur über die Erweiterungspunkte ein
 node tests/e2e/perf.mjs          # Zeitmessung mit 100 und 1000 Dateien
 SPA_PRIVATE_DATA=/pfad node tests/real.data.mjs   # echte Herstellerdaten gegen das Datenblatt (Dateien nicht im Repository)
 ```
 
-Die Browser-Tests brauchen einmalig `npm install playwright` (oder `CHROME_PATH=/pfad/zu/chrome`). Alle Testdaten sind synthetisch und werden zur Laufzeit erzeugt. Was nur am echten Gerät geprüft werden kann, steht in [docs/geraetetests.md](docs/geraetetests.md). Aufbau des Speichers: [docs/speicher.md](docs/speicher.md).
+Tests und Werkzeuge brauchen einmalig `npm install` (Playwright, acorn, eslint-scope; die App selbst braucht keine Pakete). Die Browser-Tests (oder `CHROME_PATH=/pfad/zu/chrome`). Alle Testdaten sind synthetisch und werden zur Laufzeit erzeugt. Was nur am echten Gerät geprüft werden kann, steht in [docs/geraetetests.md](docs/geraetetests.md). Aufbau des Speichers: [docs/speicher.md](docs/speicher.md).
 
 ## Bauteil-Erkennung (Physik)
 
@@ -214,7 +223,7 @@ Settings → Pages → *Deploy from a branch* → `main` / `(root)`.
 
 ## Aktualisieren
 
-`python3 tools/build.py` schreibt die Cache-Version (Hash der App-Dateien) direkt in `sw.js`. Das muss vor jedem Commit laufen, der die App ändert: Ohne neue Version zeigt eine installierte App weiter die alte `index.html` aus dem Cache. `python3 tools/build.py --check` prüft das, `node tests/static.mjs` ebenfalls. Installierte Apps zeigen beim nächsten Öffnen „Neue Version verfügbar → Neu laden“. Gespeicherte Dateien bleiben bei einem Update erhalten.
+Der Quelltext liegt in `src/`, `index.html` ist daraus erzeugt (Aufbau: `docs/aufbau.md`). Nach jeder Änderung läuft `python3 tools/build.py`: Es schreibt `index.html` aus `src/` und die Cache-Version (Hash der App-Dateien) in `sw.js`. Das muss vor jedem Commit laufen, der die App ändert: Ohne neue Version zeigt eine installierte App weiter die alte `index.html` aus dem Cache. `python3 tools/build.py --check` prüft beides, `node tests/static.mjs` ebenfalls. Installierte Apps zeigen beim nächsten Öffnen „Neue Version verfügbar → Neu laden“. Gespeicherte Dateien bleiben bei einem Update erhalten.
 
 ---
 

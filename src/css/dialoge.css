@@ -1,0 +1,52 @@
+/* Dialoge, Kurvenmatrix, Export und Hinweise */
+.dialog { border: 1px solid #cecbbc; border-radius: 9px; color: var(--ink); width: min(500px, calc(100% - 26px)); padding: 0; max-height: min(86dvh, 900px); box-shadow: 0 15px 55px #13283747; }
+.dialog::backdrop { background: #13283877; }
+.wide-dialog { width: min(800px, calc(100% - 26px)); }
+.dialog-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: #ffffff; z-index: 2; }
+.dialog-head h2 { font-size: 17px; letter-spacing: -.02em; }
+.dialog-head p { font-size: 12px; color: var(--muted); margin-top: 3px; }
+.dialog-body { padding: 14px 16px; }
+.dialog-foot { display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 10px 16px; border-top: 1px solid var(--line); background: #fbfbf8; }
+.dialog-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+.form-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.form-note { font-size: 12px; color: var(--muted); margin: 9px 0 0; }
+.checkbox-line { display: flex; gap: 6px; align-items: center; color: var(--muted); font-size: 12px; margin-bottom: 7px; }
+.axis-group + .axis-group { margin-top: 14px; }
+.axis-group h3 { margin-bottom: 8px; font-size: 13px; }
+.matrix-actions { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 9px; }
+.matrix-actions .button { min-height: 28px; font-size: 11px; }
+.matrix-scroll { max-height: 55vh; overflow: auto; border: 1px solid var(--line); border-radius: 5px; }
+.matrix-table { border-collapse: separate; border-spacing: 0; width: 100%; font: 550 11px var(--mono); }
+.matrix-table th { position: sticky; background: #f6f4ed; color: #636056; z-index: 1; padding: 6px 7px; }
+.matrix-table thead th { top: 0; }
+.matrix-table tbody th, .matrix-table thead th:first-child { left: 0; }
+.matrix-table thead th:first-child { z-index: 2; }
+.matrix-table td { padding: 2px; border: solid #f5f3ec; border-width: 0 1px 1px 0; min-width: 49px; }
+.matrix-cell { --c: #777467; --soft: #faf9f5; background: var(--soft); border: 1px solid transparent; border-radius: 3px; width: 100%; min-height: 30px; color: #595851; font: inherit; }
+.matrix-cell.fam-dd { --c: var(--mode-d); --soft: var(--mode-d-soft); color: #234b8f; }
+.matrix-cell.fam-cc { --c: var(--mode-c); --soft: var(--mode-c-soft); color: #13603f; }
+.matrix-cell.fam-dc { --c: var(--mode-dc); --soft: var(--mode-dc-soft); color: #8a4a06; }
+.matrix-cell.fam-cd { --c: var(--mode-cd); --soft: var(--mode-cd-soft); color: #8e1f35; }
+.matrix-cell.fam-p { --c: var(--mode-p); --soft: var(--mode-p-soft); color: #563590; }
+.matrix-cell.is-reflection { font-style: italic; }
+.matrix-cell:hover { border-color: var(--c); }
+.matrix-cell[aria-pressed="true"] { background: var(--c); border-color: var(--c); color: #ffffff; font-weight: 750; font-style: normal; box-shadow: 0 1px 3px color-mix(in srgb, var(--c) 45%, transparent); }
+.matrix-cell[aria-pressed="true"]::before { content: "✓ "; }
+.matrix-table td.block-start, .matrix-table th.block-start { border-left: 2px solid #b5b2a9; }
+.matrix-table tr.block-start > * { border-top: 2px solid #b5b2a9; }
+.matrix-table th .mode-tag { min-width: 26px; }
+.matrix-legend { margin: 0 0 9px; }
+.matrix-meta { color: var(--muted); font-size: 11px; margin-top: 7px; }
+.methods { display: grid; gap: 13px; }
+.methods h3 { font-size: 14px; margin-bottom: 5px; }
+.methods section + section { border-top: 1px solid var(--line); padding-top: 11px; }
+.methods p { color: #5c5a53; font-size: 12px; margin-bottom: 5px; }
+.methods code { font: 500 11px var(--mono); color: #3a3934; overflow-wrap: anywhere; }
+.export-content { display: grid; gap: 7px; }
+.export-item { text-align: left; display: grid; grid-template-columns: 19px minmax(0, 1fr); align-items: center; gap: 9px; border: 1px solid var(--line); border-radius: 6px; padding: 9px; background: #fcfcfa; }
+.export-item:hover:not(:disabled) { border-color: var(--accent-line); background: var(--accent-soft); }
+.export-item strong, .export-item small { display: block; }
+.export-item strong { font-size: 12px; }
+.export-item small { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.toast { position: fixed; right: 17px; bottom: 16px; z-index: 12; max-width: min(370px, calc(100% - 34px)); background: #183747; color: #ffffff; box-shadow: 0 5px 18px #13283738; border-radius: 6px; padding: 9px 12px; font-size: 12px; }
+

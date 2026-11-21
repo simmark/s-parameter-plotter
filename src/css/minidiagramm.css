@@ -1,0 +1,8 @@
+/* Kleines Liniendiagramm (analyse/minidiagramm.js) */
+.mini-chart { width: 100%; height: auto; display: block; font: 11px var(--mono); }
+.mini-chart .grid { stroke: var(--line, #e8e5dc); stroke-width: 1; }
+.mini-chart .axis { fill: var(--muted, #6b6a64); }
+.mini-chart .series { fill: none; stroke-width: 1.8; }
+.mini-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; margin: 6px 0 0; padding: 0; list-style: none; }
+.mini-legend i { display: inline-block; width: 14px; height: 3px; margin-right: 6px; vertical-align: middle; background: var(--c); }
+.mini-legend i.dashed { background: repeating-linear-gradient(90deg, var(--c) 0 4px, transparent 4px 7px); }
