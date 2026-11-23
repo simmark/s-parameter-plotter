@@ -9,12 +9,18 @@ the line '@@bundle app@@' by the ES modules in src/app/ bundled into one script 
 index.html stays a committed, generated file because GitHub Pages serves it as it is. Edit src/, never index.html.
 An installed app only updates when sw.js changes. Without a new hash it keeps showing the cached old index.html.
 """
-import hashlib, pathlib, re, shutil, sys
+import base64, hashlib, pathlib, re, shutil, sys
 
 FILES = ['index.html', 'manifest.webmanifest', 'icons/app-192.png', 'icons/app-512.png', 'icons/maskable-512.png', 'icons/apple-180.png']
 PATTERN = re.compile(r"const CACHE_VERSION = '([^']*)';")
 args = [a for a in sys.argv[1:] if not a.startswith('--')]
 src = pathlib.Path(args[0]) if args else pathlib.Path(__file__).resolve().parent.parent
+
+FONT_URL = re.compile(r"url\('(?P<path>assets/sl/fonts/[a-z0-9-]+\.woff2)'\)")
+FONT_LICENSES = (
+    'assets/sl/fonts/LICENSE-IBM-Plex-OFL.txt',
+    'assets/sl/fonts/LICENSE-Source-Serif-4-OFL.txt',
+)
 
 INCLUDE = re.compile(r'^@@include (\S+)@@\n?$')
 BUNDLE = re.compile(r'^@@bundle (\S+)@@\n?$')
@@ -40,7 +46,16 @@ def assemble(src):
         if name in used:
             raise SystemExit('src/%s wird mehrfach eingebunden' % name)
         used.add(name)
-        out.append((base / name).read_bytes().decode('utf-8'))
+        content = (base / name).read_bytes().decode('utf-8')
+        if name == 'css/simonlation-fonts.css':
+            # Keep the generated Analyzer self-contained when opened directly as a file.
+            licenses = '\n'.join((src / f).read_text(encoding='utf-8') for f in FONT_LICENSES)
+            content = '/* SIMONLATION font licenses\n' + licenses + '\n*/\n' + FONT_URL.sub(
+                lambda match: "url('data:font/woff2;base64," +
+                base64.b64encode((src / match['path']).read_bytes()).decode('ascii') + "')",
+                content,
+            )
+        out.append(content)
     unused = sorted(str(p.relative_to(base)) for p in base.rglob('*') if p.is_file() and p.name != 'index.src.html' and str(p.relative_to(base)) not in used)
     if unused:
         raise SystemExit('Dateien in src/, die index.src.html nicht einbindet: ' + ', '.join(unused))

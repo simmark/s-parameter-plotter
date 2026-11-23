@@ -1,0 +1,121 @@
+/* Apply the SIMONLATION palette to the Analyzer chrome. Plot traces and port colors
+   keep their established meaning across the analysis views. */
+html[data-theme] {
+  --ink: var(--sl-text);
+  --muted: var(--sl-muted);
+  --subtle: var(--sl-muted);
+  --line: var(--sl-line);
+  --line-dark: var(--sl-line-2);
+  --canvas: var(--sl-bg);
+  --surface: var(--sl-panel);
+  --tint: var(--sl-sage-2);
+  --ivory: var(--sl-bg);
+  --accent: var(--sl-accent);
+  --accent-dark: var(--sl-accent-text);
+  --accent-soft: color-mix(in srgb, var(--sl-accent) 12%, var(--sl-panel));
+  --accent-line: color-mix(in srgb, var(--sl-accent) 45%, var(--sl-line));
+  --ui: var(--sl-font-sans);
+  --mono: var(--sl-font-mono);
+  --serif: var(--sl-font-serif);
+  --workbench-primary: var(--sl-green);
+  --workbench-primary-hover: var(--sl-green-2);
+  --workbench-primary-text: #FFFEFA;
+  --radius: var(--sl-radius);
+}
+
+html[data-theme="light"] {
+  --select: var(--sl-green);
+}
+
+html[data-theme="dark"] {
+  --workbench-primary: var(--sl-orange);
+  --workbench-primary-hover: #EB8C69;
+  --workbench-primary-text: #1A1210;
+}
+
+html[data-theme] :focus-visible {
+  outline-color: var(--sl-focus);
+}
+
+html[data-theme] .app-bar {
+  background: var(--sl-panel);
+  border-color: var(--sl-line);
+  color: var(--sl-text);
+}
+
+.app-bar .app-brand {
+  display: grid;
+  align-content: center;
+  gap: 2px;
+  flex: 0 0 auto;
+}
+
+.workbench-home {
+  display: block;
+  width: max-content;
+  border-radius: var(--sl-radius-s);
+}
+
+.workbench-wordmark {
+  display: block;
+  height: 22px;
+  width: auto;
+}
+
+.workbench-wordmark--dark,
+html[data-theme="dark"] .workbench-wordmark--light {
+  display: none;
+}
+
+html[data-theme="dark"] .workbench-wordmark--dark {
+  display: block;
+}
+
+.workbench-tool {
+  color: var(--sl-muted);
+  font: 400 10.5px/1.2 var(--sl-font-mono);
+  letter-spacing: .055em;
+  text-transform: uppercase;
+}
+
+html[data-theme] .app-bar .bar-button {
+  color: var(--sl-text);
+  border-radius: var(--sl-radius-s);
+}
+
+html[data-theme] .app-bar .bar-button:hover {
+  color: var(--sl-text);
+  background: var(--sl-sage-2);
+}
+
+html[data-theme] .app-bar .export-button,
+html[data-theme] .button.primary {
+  background: var(--workbench-primary);
+  border-color: var(--workbench-primary);
+  color: var(--workbench-primary-text);
+}
+
+html[data-theme] .app-bar .export-button:hover,
+html[data-theme] .button.primary:hover:not(:disabled) {
+  background: var(--workbench-primary-hover);
+  border-color: var(--workbench-primary-hover);
+  color: var(--workbench-primary-text);
+}
+
+html[data-theme] .offline-status { color: var(--sl-muted); }
+html[data-theme] :is(.offline-status > span, .status-dot) { background: var(--sl-ok); }
+html[data-theme] :is(.sidebar, .trace-panel, .metric) { background: var(--sl-panel); }
+html[data-theme] .tabs { background: var(--sl-bg); }
+html[data-theme] .tab { color: var(--sl-muted); }
+html[data-theme] .tab:hover { background: var(--sl-sage-2); color: var(--sl-text); }
+html[data-theme] .tab[aria-selected="true"] { color: var(--sl-text); }
+html[data-theme] :is(.chart-card, .config-card, .detail-card, .empty-panel) {
+  background: var(--sl-panel);
+  border-color: var(--sl-line);
+  border-radius: var(--sl-radius);
+  box-shadow: var(--sl-shadow);
+}
+
+@media (max-width: 1050px) {
+  .app-bar .offline-status { display: none; }
+}

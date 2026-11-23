@@ -1,12 +1,12 @@
-// Theme: follows the system unless chosen by hand. Neutral colours are mirrored in lightness, curve colours stay.
+// Default to the light workbench. Keep the last manually selected theme.
 window.Theme = (() => {
-  const KEY = 'spa-theme', media = matchMedia('(prefers-color-scheme: dark)'), cache = new Map();
-  let pref = 'auto';
-  try { pref = localStorage.getItem(KEY) || 'auto'; } catch { pref = 'auto'; }
-  const dark = () => pref === 'dark' || (pref === 'auto' && media.matches);
+  const KEY = 'spa-theme', cache = new Map();
+  let pref = 'light';
+  try { if (localStorage.getItem(KEY) === 'dark') pref = 'dark'; } catch { /* storage unavailable */ }
+  const dark = () => pref === 'dark';
   function apply() {
     document.documentElement.dataset.theme = dark() ? 'dark' : 'light';
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark() ? '#1d1c1a' : '#faf9f5');
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark() ? '#121A18' : '#F4F1E9');
   }
   function shift(r, g, b) {
     const max = Math.max(r, g, b) / 255, min = Math.min(r, g, b) / 255, l = (max + min) / 2, d = max - min;
@@ -34,7 +34,6 @@ window.Theme = (() => {
     cache.set(color, out);
     return out;
   }
-  media.addEventListener('change', apply);
   apply();
   return { map, dark, toggle() { pref = dark() ? 'light' : 'dark'; try { localStorage.setItem(KEY, pref); } catch { /* not persisted */ } apply(); } };
 })();

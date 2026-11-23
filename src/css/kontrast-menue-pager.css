@@ -9,10 +9,6 @@ html[data-theme="dark"] .session-compare[aria-pressed="true"] { background: var(
 html[data-theme="dark"] .quiet-button { color: var(--accent-dark); }
 html[data-theme="dark"] .quiet-button:hover { background: #3a2c26; }
 html[data-theme="dark"] a { color: var(--accent-dark); }
-html[data-theme="dark"][data-theme="dark"][data-theme="dark"] .export-button, html[data-theme="dark"][data-theme="dark"][data-theme="dark"] .export-button * { color: #1b1b1b !important; }
-html[data-theme="dark"][data-theme="dark"][data-theme="dark"] .export-button { background: #d5d3d2; border-color: #d5d3d2; }
-html[data-theme="dark"][data-theme="dark"][data-theme="dark"] .export-button:hover { background: #ffffff; }
-html[data-theme="dark"][data-theme="dark"][data-theme="dark"] .theme-button, html[data-theme="dark"][data-theme="dark"][data-theme="dark"] .settings-button { color: #d5d3d2 !important; }
 html[data-theme="dark"] .app-bar .bar-button:hover { background: #3a382f; color: #ffffff; }
 
 .settings-button { display: none; }

@@ -6,7 +6,7 @@
   .page-head .drawer-button { display: none; }
   .app-layout .sidebar, .app-layout.sidebar-collapsed .sidebar { position: fixed; z-index: 40; top: 0; left: 0; bottom: 0; width: min(88vw, 380px); height: 100dvh; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
     border-right: 1px solid var(--line-dark); border-bottom: 0; box-shadow: 0 0 40px #1f1e1d40; transform: translateX(-105%); visibility: hidden; transition: transform .2s ease, visibility 0s linear .2s; touch-action: pan-y; }
-  .app-layout:not(.sidebar-collapsed) .sidebar { transform: none; visibility: visible; transition: transform .2s ease; }
+  body.drawer-open .app-layout:not(.sidebar-collapsed) .sidebar { transform: none; visibility: visible; transition: transform .2s ease; }
   .app-layout .sidebar-heading, .app-layout.sidebar-collapsed .sidebar-heading { display: flex; position: sticky; top: 0; z-index: 3; min-height: 54px; padding: 0 8px 0 14px; justify-content: space-between; background: var(--ivory); }
   .app-layout .sidebar-heading h2, .app-layout.sidebar-collapsed .sidebar-heading h2 { display: block; font-size: 15px; }
   .app-layout .heading-title, .app-layout .heading-file, .app-layout .mobile-open, .app-layout #sidebar-button, .app-layout .sidebar-rail { display: none !important; }
@@ -16,7 +16,7 @@
   .app-layout .source-section { border-right: 0; border-bottom: 1px solid var(--line); padding: 12px 14px; }
   .app-layout .network-section { padding: 12px 14px; }
   .drawer-backdrop { display: block; position: fixed; inset: 0; z-index: 39; background: #1f1e1d73; opacity: 0; pointer-events: none; transition: opacity .2s ease; }
-  .app-layout:not(.sidebar-collapsed) .drawer-backdrop { opacity: 1; pointer-events: auto; }
+  body.drawer-open .app-layout:not(.sidebar-collapsed) .drawer-backdrop { opacity: 1; pointer-events: auto; }
   body.drawer-open { overflow: hidden; }
   .source-actions { gap: 6px; }
   .source-actions .quiet-button { min-height: 40px; padding: 8px 10px; }

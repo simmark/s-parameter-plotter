@@ -1,0 +1,62 @@
+/* SIMONLATION design tokens · v1.0
+   One source for the website, the launcher and every tool.
+   Light "paper" theme is the default; [data-theme="dark"] is the workbench theme for tool UIs. */
+:root{
+  /* brand */
+  --sl-green:#203A34;      /* deep green: wordmark, primary buttons, dark bands */
+  --sl-green-2:#2E5248;    /* hover / secondary green */
+  --sl-terra:#BB5031;      /* terracotta: accent, lower half of the O, the N */
+  --sl-terra-text:#A3432A; /* terracotta for small text on paper (AA contrast) */
+  --sl-orange:#E07A55;     /* accent on dark surfaces */
+  --sl-sage:#DCE5DB;       /* soft green surfaces, icon tiles */
+  --sl-sage-2:#E9EEE6;
+
+  /* surfaces & text (light) */
+  --sl-bg:#F4F1E9;         /* paper */
+  --sl-bg-2:#ECE8DD;       /* recessed paper */
+  --sl-panel:#FFFEFA;      /* cards, inputs */
+  --sl-text:#24302E;       /* ink */
+  --sl-muted:#56645E;      /* secondary text */
+  --sl-faint:#7A8780;      /* captions, disabled */
+  --sl-line:#D6DACF;       /* hairlines */
+  --sl-line-2:#C4CABF;     /* stronger borders */
+  --sl-accent:var(--sl-terra);
+  --sl-accent-text:var(--sl-terra-text);
+  --sl-focus:#BB5031;
+
+  /* status (always paired with a text label, never colour alone) */
+  --sl-st-stable:#2F6B4F;  --sl-st-stable-bg:#E2EEE5;
+  --sl-st-beta:#8A5A0B;    --sl-st-beta-bg:#F6EAD2;
+  --sl-st-preview:#38597A; --sl-st-preview-bg:#E1E9F1;
+  --sl-st-proto:#6A4F78;   --sl-st-proto-bg:#ECE4F0;
+  --sl-st-dev:#56645E;     --sl-st-dev-bg:#E7E9E3;
+  --sl-ok:#2F6B4F; --sl-warn:#8A5A0B; --sl-error:#A3332A;
+
+  /* data colours for charts (validated against paper and panel) */
+  --sl-data-1:#BB5031; --sl-data-2:#2E6F8E; --sl-data-3:#5E8C3A; --sl-data-4:#8A5A9E; --sl-data-5:#B88A1B; --sl-data-6:#203A34;
+
+  /* type */
+  --sl-font-serif:'SL Serif',Georgia,'Times New Roman',serif;
+  --sl-font-sans:'SL Sans','Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;
+  --sl-font-mono:'SL Mono','Cascadia Code',Consolas,'SFMono-Regular',monospace;
+
+  /* shape & space */
+  --sl-radius-s:6px; --sl-radius:10px; --sl-radius-l:16px;
+  --sl-shadow:0 1px 2px rgba(32,58,52,.06),0 8px 24px -12px rgba(32,58,52,.18);
+  --sl-shadow-l:0 2px 4px rgba(32,58,52,.05),0 24px 60px -28px rgba(32,58,52,.35);
+  --sl-space-1:4px; --sl-space-2:8px; --sl-space-3:12px; --sl-space-4:16px; --sl-space-5:24px; --sl-space-6:32px; --sl-space-7:48px; --sl-space-8:72px; --sl-space-9:112px;
+  --sl-ease:cubic-bezier(.2,.7,.2,1); --sl-dur:180ms;
+  --sl-touch:44px;
+  color-scheme:light;
+}
+[data-theme="dark"]{
+  --sl-bg:#121A18; --sl-bg-2:#0D1412; --sl-panel:#1A2522; --sl-text:#E8EDE8; --sl-muted:#A3B3AC; --sl-faint:#7C8D86;
+  --sl-line:#2A3834; --sl-line-2:#36463F; --sl-sage:#22322D; --sl-sage-2:#1E2B27;
+  --sl-accent:var(--sl-orange); --sl-accent-text:#EE9473; --sl-focus:#EE9473;
+  --sl-st-stable:#86C9A4; --sl-st-stable-bg:#1D3329; --sl-st-beta:#E8B964; --sl-st-beta-bg:#3A2E16;
+  --sl-st-preview:#93B8DA; --sl-st-preview-bg:#1D2B38; --sl-st-proto:#C3A6D3; --sl-st-proto-bg:#2E2436; --sl-st-dev:#A3B3AC; --sl-st-dev-bg:#25302C;
+  --sl-ok:#86C9A4; --sl-warn:#E8B964; --sl-error:#F08C80;
+  --sl-data-1:#EE8A63; --sl-data-2:#6FB3D6; --sl-data-3:#9CCB6E; --sl-data-4:#C49BDB; --sl-data-5:#E3C05C; --sl-data-6:#D8E2DC;
+  --sl-shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -12px rgba(0,0,0,.5);
+  color-scheme:dark;
+}
