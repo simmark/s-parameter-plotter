@@ -10,6 +10,8 @@ import { addZip } from '../dateien/quellen.js';
 import { ZIP_NAME, addItems, blankProfile, configKey, entrySource, handleDesc, importFile, openItem, session } from '../dateien/sitzung.js';
 import { renderSession, renderStorageNotice } from '../dateien/sitzungsliste.js';
 import { expandModels } from '../dateien/spice.js';
+import { setTab } from './rahmen.js';
+
 
 function loadDemo(n) {
   state.importJob++;
@@ -97,7 +99,9 @@ async function boot() {
   if (!state.dataset) loadDemo(4);
 }
 
-boot();
+boot().then(() => {
+  if ((location.hash === '#quelltext' || document.documentElement.dataset.startView === 'source') && state.dataset) setTab('source');
+});
 
 registerActions({
   demo: value => loadDemo(Number(value)),

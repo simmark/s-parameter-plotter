@@ -271,7 +271,24 @@ const RF = (() => {
     return { pairs, inverse, refs: modeRefs };
   }
 
-  function parseTouchstone(text, name) {
+  // Converts a fresh file-basis matrix into the analyzer's physical S-parameter basis.
+  function sourceToSingleEnded(data, n, kind, version, optionRef, waveRefs, inverse) {
+    if (kind !== 'S') {
+      if (version.startsWith('1.')) {
+        if (kind === 'Z' || kind === 'Y') {
+          const factor = kind === 'Z' ? optionRef : 1 / optionRef;
+          for (let j = 0; j < data.length; j++) data[j] *= factor;
+        } else {
+          const factor = kind === 'H' ? optionRef : 1 / optionRef;
+          data[0] *= factor; data[1] *= factor; data[6] /= factor; data[7] /= factor;
+        }
+      }
+      data = ['H', 'G'].includes(kind) ? fromHybrid(data, waveRefs, kind) : fromZY(data, waveRefs, kind);
+    }
+    return data && inverse ? project(data, n, inverse) : data;
+  }
+
+  function parseTouchstone(text, name, source = null) {
     const suffix = name.match(/\.s(\d+)p$/i);
     const portNames = new Map(), warnings = [];
     const packagePins = new Map(), sketchRows = new Map();
@@ -286,7 +303,10 @@ const RF = (() => {
     let expected = null, noiseCount = 0, noiseLast = -Infinity, vendorRefsDiffer = false;
     let unknownVendorRefs = false;
     let lineNumber = 0, spa = null, spaOpen = false;
-    const fail = message => { throw new Error('Zeile ' + lineNumber + ' · ' + message); };
+    const fail = (message, column, length) => {
+      if (source) source.diagnostic = { line: lineNumber, column, length };
+      throw new Error('Zeile ' + lineNumber + ' · ' + message);
+    };
 
     function readOptions(line) {
       if (optionFound) fail('Mehr als eine Optionszeile.');
@@ -343,6 +363,9 @@ const RF = (() => {
         if (!modern || !['S', 'Y', 'Z'].includes(options.kind)) fail('Mixed-Mode-Import erfordert Touchstone 2.x mit S, Y oder Z.');
         fileModes = readModeOrder(header['mixed-mode order'], n, refs);
       }
+      if (source) Object.assign(source, { positions, labels: header['mixed-mode order']?.toUpperCase().replace(/\s*,\s*/g, ',').trim().split(/\s+/),
+        refs: fileModes?.refs || refs, unit: options.unit, format: options.format, kind: options.kind,
+        version, optionRef: options.refs[0], inverse: fileModes?.inverse });
       buffer = new Float64Array(1 + 2 * positions.length);
       if (Object.hasOwn(header, 'number of frequencies')) {
         expected = Number(header['number of frequencies']);
@@ -372,25 +395,10 @@ const RF = (() => {
         put(data, n, row, col, value);
         if (positions.length !== n * n && row !== col) put(data, n, col, row, value);
       });
-      if (options.kind !== 'S') {
-        if (version.startsWith('1.')) {
-          const r = options.refs[0];
-          if (options.kind === 'Z' || options.kind === 'Y') {
-            const k = options.kind === 'Z' ? r : 1 / r;
-            for (let j = 0; j < data.length; j++) data[j] *= k;
-          } else {
-            const k = options.kind === 'H' ? r : 1 / r;
-            data[0] *= k; data[1] *= k; data[6] /= k; data[7] /= k;
-          }
-        }
-        const waveRefs = fileModes ? fileModes.refs : refs;
-        data = ['H', 'G'].includes(options.kind)
-          ? fromHybrid(data, waveRefs, options.kind)
-          : fromZY(data, waveRefs, options.kind);
-        if (!data) fail('Die Umrechnung nach S ist bei ' + f + ' Hz singulär.');
-      }
+      data = sourceToSingleEnded(data, n, options.kind, version, options.refs[0], fileModes?.refs || refs, fileModes?.inverse);
+      if (!data) fail('Die Umrechnung nach S ist bei ' + f + ' Hz singulär.');
       freq.push(f);
-      samples.push(fileModes ? project(data, n, fileModes.inverse) : data);
+      samples.push(data);
       fill = 0;
     }
 
@@ -451,6 +459,7 @@ const RF = (() => {
       if (state === 'end') fail('Daten nach [End].');
       if (line.startsWith('#')) {
         if (sawNetwork) fail('Optionszeile nach Netzwerkdaten.');
+        if (source) source.optionLine = lineNumber;
         readOptions(line);
         continue;
       }
@@ -490,9 +499,12 @@ const RF = (() => {
         state = 'noise';
         readNoise(tokens);
       } else {
+        if (source) source.rows.push([lineNumber, freq.length * buffer.length + fill, tokens.length]);
+        let offset = 0;
         for (const token of tokens) {
           const value = parseNum(token);
-          if (Number.isNaN(value)) fail('Ungültige Zahl: ' + token.slice(0, 40));
+          if (Number.isNaN(value)) fail('Ungültige Zahl: ' + token.slice(0, 40), fullLine.indexOf(token, offset), token.length);
+          if (source) offset = fullLine.indexOf(token, offset) + token.length;
           buffer[fill++] = value;
           if (fill === buffer.length) finishPoint();
         }
@@ -535,6 +547,18 @@ const RF = (() => {
       portNames: indices(n).map(i => portNames.get(i) || ''), sourcePairs: fileModes?.pairs || [],
       profile, embedded: spa, vendor, warnings: [...new Set(warnings)], noiseCount, demo: false
     };
+  }
+
+  // Index the original tokens through exactly the same matrix order and block boundaries as import.
+  function inspectSource(text, name) {
+    const source = { rows: [] };
+    try {
+      const d = parseTouchstone(text, name, source);
+      return { ...source, freq: d.freq, n: d.n, warnings: d.warnings,
+        physicalRefs: d.refs, sourcePairs: d.sourcePairs, embedded: d.embedded };
+    } catch (error) {
+      return { error: error.message, diagnostic: source.diagnostic, rows: [] };
+    }
   }
 
   function loadGamma(load, ref, f) {
@@ -1968,7 +1992,7 @@ const RF = (() => {
 
   return {
     MAX_PORTS, TAU, RAD, abs, add, sub, mul, scale, div, get, put, matrix, indices, solve, submatrix,
-    changeRef, toZY, fromZY, project, parseTouchstone, loadGamma, terminate, prepareNetwork, processPoint,
+    changeRef, toZY, fromZY, project, parseTouchstone, inspectSource, sourceToSingleEnded, loadGamma, terminate, prepareNetwork, processPoint,
     reflection, twoPort, transmission, cispr, cmcNatural, fitCMC, demoNetwork, exportTouchstone,
     plateau, crossing, peakFreq, lcFit, transformerPoint, analyzeTransformer, analyzeElement, classify4, median, profileLines, annotate, fitResonant, tankImpedance, resonantNetlist, joinPorts, joinInfo,
     modelImpedance, modelParams, modelWith, modelQuality, fitModel, fitCapacitor, modelNetlist,

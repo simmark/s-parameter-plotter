@@ -78,8 +78,8 @@ const Connector = (() => {
     return {
       schema: SCHEMA, version: VERSION, id: 'rj45-8p8c-thru', revision: '1.0.0', status: 'validated',
       family: 'RJ45 / 8P8C', name: 'RJ45 8P8C · 8 Kontakte, Durchgangsmessung', variant: 'Ethernet MDI', gender: 'receptacle',
-      view: 'Steckseite, Kontakte 1–8 von links; Zeichnung schematisch', contacts, pairs, sources: [ETH_SOURCE], nets: [],
-      en: { name: 'RJ45 8P8C · 8 contacts, thru measurement', view: 'Mating side, contacts 1–8 from the left; schematic drawing' },
+      view: 'Steckseite der Buchse, Pin 8 links und Pin 1 rechts; Zeichnung schematisch', contacts, pairs, sources: [ETH_SOURCE], nets: [],
+      en: { name: 'RJ45 8P8C · 8 contacts, thru measurement', view: 'Jack mating side, pin 8 at left and pin 1 at right; schematic drawing' },
       measurement: { kind: 'thru', sides: [1, 2], sideNames: ['Seite 1', 'Seite 2'], note: 'Ein Messport je Kontakt und Seite. Ein Magnetics-Kanal ist ein anderes Messmodell (siehe LAN-Magnetics).',
         en: { sideNames: ['Side 1', 'Side 2'], note: 'One measurement port per contact and side. A magnetics channel is a different measurement model (see LAN magnetics).' } },
       configurations: [
@@ -124,10 +124,20 @@ const Connector = (() => {
   const CUSTOM = new Map();
   const profile = id => PROFILES.find(p => p.id === id) || CUSTOM.get(id) || null;
   const customProfiles = () => [...CUSTOM.values()];
-  function register(p) {
+  const canonical = value => Array.isArray(value) ? value.map(canonical) :
+    value && typeof value === 'object' ? Object.fromEntries(Object.keys(value).sort().map(k => [k, canonical(value[k])])) : value;
+  function checkRegistration(p) {
     const v = validateProfile(p);
     if (!v.ok) throw new Error('Profil ungültig: ' + v.errors.slice(0, 3).join(' · '));
+    if (p.status !== 'file') throw new Error('Eine eingebettete Profildefinition muss ein Dateiprofil sein.');
     if (PROFILES.some(x => x.id === p.id)) throw new Error('Die Kennung ' + p.id + ' gehört zu einem eingebauten Profil.');
+    const existing = CUSTOM.get(p.id);
+    if (existing && JSON.stringify(canonical(existing)) !== JSON.stringify(canonical(p))) {
+      throw new Error('Konflikt für Connector-Profil ' + p.id + ' · Revision ' + p.revision);
+    }
+  }
+  function register(p) {
+    checkRegistration(p);
     CUSTOM.set(p.id, p);
     return p;
   }
@@ -141,7 +151,8 @@ const Connector = (() => {
     if (!SIDECAR_SCHEMA.test(String(d?.schema || ''))) throw new Error('Keine Port-Map-Datei (schema simonlation.portmap.v1).');
     const ports = Array.isArray(d.ports) ? d.ports : [];
     if (!ports.length || ports.length > 64) throw new Error('Die Port-Map nennt keine oder zu viele Ports.');
-    if (ports.some((x, i) => Number(x.port) !== i + 1)) throw new Error('Die Ports der Port-Map sind nicht lückenlos 1…N nummeriert.');
+    if (d.number_of_ports !== undefined && d.number_of_ports !== ports.length) throw new Error('Die deklarierte Portzahl stimmt nicht mit der Portliste überein.');
+    if (ports.some((x, i) => Number(x?.port) !== i + 1)) throw new Error('Die Ports der Port-Map sind nicht lückenlos 1…N nummeriert.');
     if (n !== null && ports.length !== n) throw new Error('Die Port-Map gilt für ' + ports.length + ' Ports, die Datei hat ' + n + '.');
     const clean = v => String(v ?? '').replace(/[<>&"']/g, '').slice(0, 40);
     const sides = [...new Set(ports.map(x => clean(x.side) || '–'))];
@@ -157,17 +168,17 @@ const Connector = (() => {
       const k = sides.indexOf(clean(x.side) || '–'), i = perSide[k]++;
       const id = idOf(x);
       if (contacts.some(c => c.id === id)) throw new Error('Pin ' + id + ' kommt in der Port-Map doppelt vor.');
-      contacts.push({ id, label: clean(x.signal) || clean(x.pin), normative: clean(x.signal), role: ROLE[String(x.role || '').toLowerCase()] || 'signal',
+      contacts.push({ id, pin: clean(x.pin) || String(x.port), label: clean(x.signal) || clean(x.pin), normative: clean(x.signal), role: ROLE[String(x.role || '').toLowerCase()] || 'signal',
         x: 0.6 + colOffset[k] + Math.floor(i / rowsPerColumn) * 2.6, y: (i % rowsPerColumn) * 1.35, side: sides[k] });
     }
-    const pairs = [], pairSides = [];
+    const pairs = [];
     for (const dp of Array.isArray(d.differential_pairs) ? d.differential_pairs : []) {
       const a = ports[Number(dp.positive_port) - 1], b = ports[Number(dp.negative_port) - 1];
       if (!a || !b || a === b) throw new Error('Differenzpaar ' + clean(dp.pair) + ' nennt ungültige Ports.');
       const side = clean(dp.side) || clean(a.side) || '–', name = clean(dp.pair) || ('P' + (pairs.length + 1));
-      if (!pairSides.includes(side)) pairSides.push(side);
+      if (side !== (clean(a.side) || '–') || side !== (clean(b.side) || '–')) throw new Error('Ein Differenzpaar muss auf derselben Messseite liegen.');
       pairs.push({ id: name + (sides.length > 1 ? '·' + (sides.indexOf(side) + 1) : ''), plus: idOf(a), minus: idOf(b), name: name + ' · ' + side, en: { name: name + ' · ' + side },
-        group: 'file', channel: name, channelKey: name, end: pairSides.indexOf(side) + 1 });
+        group: 'file', channel: name, channelKey: name, end: sides.indexOf(side) + 1 });
     }
     if (new Set(pairs.map(p => p.id)).size !== pairs.length) throw new Error('Ein Differenzpaar kommt auf derselben Seite doppelt vor.');
     const model = clean(d.model) || 'Port-Map';
@@ -182,17 +193,108 @@ const Connector = (() => {
       configurations: [{ id: 'all', name: 'Alle Paare der Datei', en: { name: 'All pairs of the file' }, pairs: pairs.map(x => x.id) }],
       symmetries: [], sidecar: { model, synthetic: !!d.synthetic, sides }
     };
+    p.faces = connectorFaces(p).map(face => ({
+      ...face, gender: d.connectorGender?.[face.side] === 'plug' ? 'plug' : 'receptacle'
+    }));
+    if (d.polarityReference !== undefined) p.polarityReference = d.polarityReference;
     const m = emptyMapping(p, ports.length);
     ports.forEach((x, i) => { m.ports[i] = idOf(x); m.source[i] = 'file'; });
+    const v = validateProfile(p);
+    if (!v.ok) throw new Error(v.errors.join(' · '));
+    if (d.paths !== undefined) m.links = validateLinks(p, d.paths);
     return { profile: p, mapping: m, name: model };
   }
 
-  // Per channel (pairs with the same channel name at different ends): |SDD| between the ends and the polarity. At the lowest
-  // frequency where the transmission reaches 90 % of its maximum, a correctly poled path has a phase near 0° (thru) or follows the
-  // dot convention (magnetics); near 180° means + and − are swapped at one end. Between ±60° and ±120° the sign stays open.
-  // Pairs whose channel has no second end in the file (fan-out, transformer PRI/SEC) are linked by the measurement when the
-  // differential transmission exceeds −10 dB; such links are marked as found in the data.
-  function checkChannels(p, mapping, dataset) {
+  function connectorFaces(p) {
+    const faces = [];
+    for (const side of p.sidecar.sides) {
+      const contacts = p.contacts.filter(c => c.side === side);
+      const has = pins => pins.every(pin => contacts.some(c => c.pin === String(pin)));
+      const pairPins = (a, b) => p.pairs.some(pair => contacts.some(c => c.id === pair.plus && c.pin === String(a)) &&
+        contacts.some(c => c.id === pair.minus && c.pin === String(b)));
+      if (has(Array.from({ length: 19 }, (_, i) => i + 1)) && [[1,3],[4,6],[7,9],[10,12]].every(([a,b]) => pairPins(a,b) || pairPins(b,a))) {
+        for (const c of contacts) {
+          const pin = Number(c.pin);
+          if ([2,5,8,11].includes(pin)) c.role = 'shield';
+          if (pin === 17) c.role = 'ground';
+          if (pin === 18) c.role = 'power';
+          if ([13,14,15,16,19].includes(pin)) c.role = 'sideband';
+        }
+        faces.push({ kind: 'hdmi', side, gender: 'receptacle', reference: 'Haivision Makito X Decoder · HDMI Type A (mating face)' });
+      } else if (p.sidecar.model.includes('7499110124') && has(Array.from({ length: 8 }, (_, i) => 'J' + (i + 1)))) {
+        faces.push({ kind: 'magjack', side, gender: 'receptacle', reference: 'Würth Elektronik 7499110124 · front view' });
+      } else if (contacts.length === 8 && [[1,2],[3,6],[4,5],[7,8]].every(([a,b]) => pairPins(a,b) || pairPins(b,a))) {
+        faces.push({ kind: 'rj45', side, gender: 'receptacle', reference: 'Amphenol P-RJHSE-338X · schematic mating face' });
+      }
+    }
+    return faces;
+  }
+
+  // Existing sessions store their imported sidecar profile. Recreate only the display fields
+  // that predate this extension, so reopening the original sidecar compares the same definition.
+  function migrateFileProfile(p) {
+    if (p?.status !== 'file' || p.faces !== undefined || !Array.isArray(p.sidecar?.sides) ||
+        !Array.isArray(p.contacts) || !Array.isArray(p.pairs)) return p;
+    const sides = p.sidecar.sides;
+    const contacts = p.contacts.map(c => {
+      const prefix = (sides.indexOf(c.side) + 1) + '·';
+      return { ...c, pin: c.pin ?? (sides.length > 1 && c.id.startsWith(prefix) ? c.id.slice(prefix.length) : c.id) };
+    });
+    const sidesByContact = new Map(contacts.map(c => [c.id,c.side]));
+    const pairs = p.pairs.map(pair => ({ ...pair, end: sides.indexOf(sidesByContact.get(pair.plus)) + 1 }));
+    const migrated = { ...p, contacts, pairs };
+    migrated.faces = connectorFaces(migrated);
+    return migrated;
+  }
+
+  const pairKey = (pair, side) => JSON.stringify([pair, side ?? null]);
+  const pathId = (fromKey, toKey) => JSON.stringify([fromKey, toKey]);
+  function validateLinks(p, links) {
+    const sides = p.measurement.kind === 'thru' ? p.measurement.sides : [null];
+    const keys = new Set(p.pairs.flatMap(pair => sides.map(side => pairKey(pair.id, side))));
+    const seen = new Set();
+    if (!Array.isArray(links)) throw new Error('Signalwege müssen als Liste vorliegen.');
+    return links.map(link => {
+      if (!keys.has(link?.fromKey) || !keys.has(link?.toKey) || link.fromKey === link.toKey) throw new Error('Signalweg nennt ein unbekanntes Paar oder dieselbe Quelle und dasselbe Ziel.');
+      const id = pathId(link.fromKey, link.toKey);
+      if (seen.has(id)) throw new Error('Signalweg ist doppelt vorhanden.');
+      seen.add(id);
+      return { fromKey: link.fromKey, toKey: link.toKey, ...(link.fromData ? { fromData: true } : {}) };
+    });
+  }
+
+  function directedPaths(channels, links = null) {
+    const byKey = new Map(channels.map(c => [pairKey(c.pair, c.side), c]));
+    let sourceLinks = links;
+    if (!sourceLinks) {
+      // Restore older two-end configurations and their fan-out without choosing a single destination.
+      sourceLinks = channels.flatMap(a => channels.filter(b => a.channel === b.channel && a.end < b.end)
+        .map(b => ({ fromKey: pairKey(a.pair, a.side), toKey: pairKey(b.pair, b.side) })));
+    }
+    const paths = new Map();
+    for (const { fromKey, toKey } of sourceLinks) {
+      const a = byKey.get(fromKey), b = byKey.get(toKey);
+      if (!a || !b || a === b) continue;
+      for (const reverse of [false, true]) {
+        const source = reverse ? b : a, target = reverse ? a : b;
+        const id = reverse ? pathId(toKey, fromKey) : pathId(fromKey, toKey);
+        const channel = a.channel === b.channel ? a.channel : a.channel + ' → ' + b.channel;
+        if (!paths.has(id)) paths.set(id, { id, channel, a: source, b: target, reverse });
+      }
+    }
+    for (const path of paths.values()) {
+      const { a, b } = path;
+      const end = a.end ?? a.side;
+      // Excitations are physical differential ports. A shared source (fan-out) is counted only once.
+      const shared = new Set([...paths.values()].filter(k => k.a === a || k.b === b || k.a === b || k.b === a).flatMap(k => [k.a.id, k.b.id]));
+      const atEnd = e => channels.filter(c => (c.end ?? c.side) === e && !shared.has(c.id)).map(c => c.id);
+      path.aggressors = { near: atEnd(end), far: atEnd(b.end ?? b.side) };
+    }
+    return [...paths.values()];
+  }
+
+  // A phase sample only proves polarity in the presence of a separately established phase reference.
+  function checkChannels(p, mapping, dataset, reference = p.polarityReference) {
     const pairs = mappedPairs(p, mapping), out = [], n = dataset.n;
     const sddOf = (a, b) => dataset.samples.map(s => {
       if (!s) return null;
@@ -201,12 +303,27 @@ const Connector = (() => {
       return [re, im];
     });
     const judge = (channel, a, b, fromData) => {
-      const sdd = sddOf(a, b), mags = sdd.map(v => v ? Math.hypot(v[0], v[1]) : 0), max = Math.max(...mags);
-      const k = mags.findIndex(v => v >= 0.9 * max);
-      const phase = k >= 0 && max > 0 ? Math.atan2(sdd[k][1], sdd[k][0]) * 180 / Math.PI : NaN;
-      const polarity = !(max > 0.1) ? 'none' : Math.abs(phase) <= 60 ? 'ok' : Math.abs(phase) >= 120 ? 'inverted' : 'open';
-      return { channel, from: a.pair, to: b.pair, maxDb: 20 * Math.log10(Math.max(max, 1e-12)), freq: k >= 0 ? dataset.freq[k] : NaN, phase, polarity, fromData };
+      const sdd = sddOf(a, b), mags = sdd.map(v => v ? Math.hypot(v[0], v[1]) : 0);
+      const max = mags.reduce((m, v) => Math.max(m, v), 0);
+      const strong = v => v > 0.1 && v >= 0.9 * max;
+      const anchored = goodReference(reference) ? mags.findIndex((v, i) => strong(v) &&
+        dataset.freq[i] >= 0 && dataset.freq[i] <= reference.maxFrequencyHz &&
+        360 * dataset.freq[i] * reference.maxDelaySeconds <= 30) : -1;
+      const k = anchored >= 0 ? anchored : mags.findIndex(strong);
+      const phase = k >= 0 ? Math.atan2(sdd[k][1], sdd[k][0]) * 180 / Math.PI : NaN;
+      const polarity = !(max > 0.1) ? 'none' : anchored < 0 ? 'open' :
+        Math.abs(phase) <= 60 ? 'ok' : Math.abs(phase) >= 120 ? 'inverted' : 'open';
+      return { channel, from: a.pair, to: b.pair, fromKey: pairKey(a.pair, a.side), toKey: pairKey(b.pair, b.side),
+        maxDb: 20 * Math.log10(Math.max(max, 1e-12)), freq: k >= 0 ? dataset.freq[k] : NaN, phase, polarity, fromData,
+        reference: anchored >= 0 ? reference.source : null };
     };
+    if (mapping.links) {
+      const byKey = new Map(pairs.map(x => [pairKey(x.pair, x.side), x]));
+      return mapping.links.flatMap(({ fromKey, toKey, fromData }) => {
+        const a = byKey.get(fromKey), b = byKey.get(toKey);
+        return a && b ? [judge(a.channel === b.channel ? a.channel : a.channel + ' → ' + b.channel, a, b, !!fromData)] : [];
+      });
+    }
     const groups = new Map(); for (const x of pairs) { if (!groups.has(x.channel)) groups.set(x.channel, []); groups.get(x.channel).push(x); }
     const single = [];
     for (const [channel, list] of groups) {
@@ -219,7 +336,7 @@ const Connector = (() => {
       let best = null, bestMax = 0;
       for (const a of single) {
         if (!(a.end < b.end)) continue;
-        const mags = sddOf(a, b).map(v => v ? Math.hypot(v[0], v[1]) : 0), max = Math.max(...mags);
+        const max = sddOf(a, b).reduce((m, v) => v ? Math.max(m, Math.hypot(...v)) : m, 0);
         if (max > bestMax) { bestMax = max; best = a; }
       }
       if (best && bestMax > 0.316) out.push(judge(best.channel + ' → ' + b.channel, best, b, true));
@@ -228,30 +345,48 @@ const Connector = (() => {
   }
 
   // A profile is only offered as validated when it is complete and consistent.
+  const goodReference = r => typeof r?.source === 'string' && !!r.source.trim() &&
+    Number.isFinite(r.maxDelaySeconds) && r.maxDelaySeconds >= 0 &&
+    Number.isFinite(r.maxFrequencyHz) && r.maxFrequencyHz > 0 && r.response === 'noninverting-baseband';
   function validateProfile(p) {
     const errors = [], ids = new Set();
+    if (typeof p?.id !== 'string' || !p.id || typeof p.revision !== 'string' || !p.revision ||
+        !Array.isArray(p.contacts) || !p.contacts.length || p.contacts.length > 64 ||
+        !Array.isArray(p.pairs) || !Array.isArray(p.configurations) || !p.configurations.length ||
+        !Array.isArray(p.sources) || !Array.isArray(p.symmetries)) return { ok: false, errors: ['Profilstruktur unvollständig.'] };
+    if (p.polarityReference !== undefined && !goodReference(p.polarityReference)) errors.push('Ungültige Polaritätsreferenz.');
+    if (p.faces !== undefined && (!Array.isArray(p.faces) || p.faces.some(f =>
+      !['hdmi', 'magjack', 'rj45'].includes(f?.kind) || typeof f.side !== 'string' || !['receptacle', 'plug'].includes(f.gender) ||
+      typeof f.reference !== 'string' || !p.contacts.some(c => c?.side === f.side)))) errors.push('Ungültiges Steckgesicht.');
     if (p.schema !== SCHEMA) errors.push('Schema fehlt oder ist falsch.');
     if (!(p.version >= 1)) errors.push('Version fehlt.');
     if (!p.sources?.length) errors.push('Quellen fehlen.');
     for (const c of p.contacts || []) {
+      if (typeof c?.id !== 'string' || !c.id || c.id.includes('@') || typeof c.label !== 'string') { errors.push('Ungültiger Kontakt.'); continue; }
       if (ids.has(c.id)) errors.push('Kontakt doppelt: ' + c.id);
       ids.add(c.id);
       if (!Number.isFinite(c.x) || !Number.isFinite(c.y)) errors.push('Position fehlt: ' + c.id);
     }
-    const used = new Set();
-    for (const pair of p.pairs || []) {
+    const used = new Set(), pairIds = new Set();
+    for (const pair of p.pairs) {
+      if (typeof pair?.id !== 'string' || !pair.id || pairIds.has(pair.id)) { errors.push('Ungültige oder doppelte Paar-ID.'); continue; }
+      pairIds.add(pair.id);
       for (const c of [pair.plus, pair.minus]) {
         if (!ids.has(c)) errors.push('Paar ' + pair.id + ' nennt unbekannten Kontakt ' + c);
         if (used.has(c)) errors.push('Kontakt ' + c + ' in mehreren Paaren');
         used.add(c);
       }
     }
-    for (const conf of p.configurations || []) for (const id of conf.pairs) if (!p.pairs.some(x => x.id === id)) errors.push('Konfiguration ' + conf.id + ' nennt unbekanntes Paar ' + id);
+    for (const conf of p.configurations) {
+      if (typeof conf?.id !== 'string' || !Array.isArray(conf.pairs) || conf.pairs.some(id => !pairIds.has(id))) errors.push('Ungültige Profilkonfiguration.');
+    }
     for (const s of p.symmetries || []) {
+      if (!s?.map || Object.keys(s.map).some(id => !ids.has(id))) { errors.push('Ungültige Symmetrie.'); continue; }
       const image = new Set(Object.values(s.map));
       if (image.size !== ids.size || [...image].some(id => !ids.has(id))) errors.push('Symmetrie ' + s.id + ' ist keine Permutation der Kontakte');
     }
     if (!['thru', 'pins'].includes(p.measurement?.kind)) errors.push('Messmodell fehlt.');
+    if (p.measurement?.kind === 'thru' && (p.measurement.sides?.join(',') !== '1,2' || p.measurement.sideNames?.length !== 2 || p.contacts.length > 32)) errors.push('Ungültige Messseiten.');
     return { ok: !errors.length, errors };
   }
 
@@ -263,19 +398,32 @@ const Connector = (() => {
   const emptyMapping = (p, n) => ({ schema: MAP_SCHEMA, version: VERSION, profile: p.id, profileRevision: p.revision, ports: Array.from({ length: n }, () => null), source: Array.from({ length: n }, () => '') });
 
   // Duplicates, unmeasured contacts, half-measured pairs and unknown nodes. Never repairs anything silently.
-  function validateMapping(p, mapping) {
+  function validateMapping(p, mapping, n = portCount(p)) {
     const issues = [], seen = new Map(), nodes = new Set(nodesOf(p));
-    mapping.ports.forEach((node, port) => {
-      if (!node) return;
+    const ports = mapping?.ports;
+    if (!Array.isArray(ports) || ports.length !== n || n !== portCount(p)) {
+      return { ok: false, issues: [{ level: 'error', text: 'Zuordnung, Profil und Messdatei müssen dieselbe Portzahl haben.' }], portOf: () => undefined };
+    }
+    Array.from(ports).forEach((node, port) => {
+      if (node === null) return;
       if (!nodes.has(node)) issues.push({ level: 'error', port, text: 'Port ' + (port + 1) + ' zeigt auf unbekannten Knoten ' + node });
       if (seen.has(node)) issues.push({ level: 'error', port, text: 'Knoten ' + node + ' ist doppelt belegt: Port ' + (seen.get(node) + 1) + ' und Port ' + (port + 1) });
       else seen.set(node, port);
     });
     const portOf = node => seen.get(node);
     const sides = p.measurement.kind === 'thru' ? p.measurement.sides : [null];
+    const ends = new Map();
     for (const pair of p.pairs) for (const s of sides) {
       const a = portOf(nodeId(pair.plus, s)), b = portOf(nodeId(pair.minus, s));
       if ((a === undefined) !== (b === undefined)) issues.push({ level: 'warn', pair: pair.id, text: 'Paar ' + pair.id + (s ? ' Seite ' + s : '') + ' nur halb zugeordnet' });
+      const channel = s ? pair.id : pair.channelKey ?? pair.channel ?? pair.id;
+      if (!ends.has(channel)) ends.set(channel, []);
+      ends.get(channel).push({ end: s ?? pair.end ?? (pair.side === 'S' ? 2 : 1), complete: a !== undefined && b !== undefined });
+    }
+    for (const [channel, entries] of ends) {
+      if (new Set(entries.map(e => e.end)).size > 1 && entries.some(e => e.complete) && entries.some(e => !e.complete)) {
+        issues.push({ level: 'warn', text: 'Signalweg ' + channel + ' unvollständig · mindestens ein Paarende fehlt.' });
+      }
     }
     const free = mapping.ports.filter(x => !x).length;
     if (free) issues.push({ level: 'info', text: free + (free === 1 ? ' Port ist' : ' Ports sind') + ' keinem Kontakt zugeordnet; sie werden beim Übernehmen abgeschlossen.' });
@@ -298,6 +446,8 @@ const Connector = (() => {
   // The analyzer configuration of a mapping: chosen pairs become mixed-mode pairs (ids in the order of the list), all other ports are
   // terminated (matched to the reference by default, or left open/active). Centre taps of magnetics stay open unless asked otherwise.
   function toConfig(p, mapping, n, { pairs = null, others = 'match', taps = 'open' } = {}) {
+    const validation = validateMapping(p, mapping, n);
+    if (!validation.ok) throw new Error(validation.issues.find(i => i.level === 'error').text);
     const chosen = mappedPairs(p, mapping).filter(x => !pairs || pairs.includes(x.pair));
     const loads = Array.from({ length: n }, () => ({ type: others === 'active' ? 'active' : others }));
     const config = { loads, pairs: [], ref: null }, channels = [];
@@ -676,35 +826,37 @@ const Connector = (() => {
   // PSNEXT at an end: Σ |S(D_v, D_k)|² over aggressors at the same end; PSFEXT: Σ |S(D_v@b, D_k@a)|² (excited at end 1, seen at end 2).
   // Delay: group delay of SDD21 (TD.groupDelay, guided unwrapping is reported). Intra-pair skew: τ(S b+←a+) − τ(S b−←a−) from the
   // single-ended matrix. Medians over the band where the transmission is above −6 dB (delay) or |S| > 0.3 (skew). No limits.
-  function crosstalk({ freq, mm, se, modes, active, channels }) {
+  function crosstalk({ freq, mm, se, modes, active, channels, paths }) {
     const nm = modes.length, ns = active.length, F = freq.length;
     const modeIdx = id => modes.findIndex(m => m.key === 'D' + id), cIdx = id => modes.findIndex(m => m.key === 'C' + id);
     const cplx = (mats, n, i, j) => mats.map(s => s && i >= 0 && j >= 0 ? [s[2 * (i * n + j)], s[2 * (i * n + j) + 1]] : null);
     const p2 = v => v ? v[0] * v[0] + v[1] * v[1] : NaN;
     const db = x => 10 * Math.log10(Math.max(x, 1e-30));
     const median = a => { const b = a.filter(Number.isFinite).sort((x, y) => x - y); return b.length ? b[Math.floor(b.length / 2)] : NaN; };
-    const groups = new Map(); for (const c of channels) { const k = c.channel ?? c.pair; if (!groups.has(k)) groups.set(k, []); groups.get(k).push(c); }
-    const list = [...groups.entries()].map(([key, cs]) => { const a = cs.find(c => (c.end ?? c.side) === 1) || cs[0]; return { key, a, b: cs.find(c => c !== a && (c.end ?? c.side) !== (a.end ?? a.side)) || null }; });
+    const list = paths ?? directedPaths(channels).filter(p => !p.reverse);
     const out = [];
     for (const v of list) {
-      const va = modeIdx(v.a.id), vb = v.b ? modeIdx(v.b.id) : -1;
-      const r = { channel: v.key, a: v.a, b: v.b, next1: new Float64Array(F), next2: new Float64Array(F), fext: new Float64Array(F), worstNext: null, worstFext: null };
-      const aggr = list.filter(x => x !== v);
-      for (const k of aggr) {
-        const ka = modeIdx(k.a.id), kb = k.b ? modeIdx(k.b.id) : -1;
-        const terms = [['next1', va, ka], ['next2', vb, kb], ['fext', vb, ka]];
-        for (const [name, i, j] of terms) {
-          if (i < 0 || j < 0) continue;
-          const series = cplx(mm, nm, i, j).map(p2);
+      const va = modeIdx(v.a.id), vb = modeIdx(v.b.id);
+      if (va < 0 || vb < 0) continue;
+      const r = { id: v.id, channel: v.channel, reverse: v.reverse, a: v.a, b: v.b, worstNext: null, worstFext: null };
+      const sum = (ids, receiver, kind, end) => {
+        const indices = ids.map(modeIdx).filter(i => i >= 0);
+        if (!indices.length) return null;
+        const power = new Float64Array(F);
+        for (const i of indices) {
+          const series = cplx(mm, nm, receiver, i).map(p2);
           let peak = -Infinity, at = -1;
-          series.forEach((x, f) => { r[name][f] += x; if (x > peak) { peak = x; at = f; } });
-          const kind = name === 'fext' ? 'worstFext' : 'worstNext';
-          if (!r[kind] || peak > r[kind].p2) r[kind] = { p2: peak, db: db(peak), freq: freq[at], aggressor: k.key, end: name === 'next2' ? 2 : 1 };
+          series.forEach((x, f) => { power[f] += x; if (x > peak) { peak = x; at = f; } });
+          if (at >= 0 && (!r[kind] || peak > r[kind].p2)) {
+            const c = channels.find(ch => modeIdx(ch.id) === i);
+            r[kind] = { p2: peak, db: db(peak), freq: freq[at], aggressor: c?.channel, end };
+          }
         }
-      }
-      r.psnext1 = Array.from(r.next1, db); r.psnext2 = v.b ? Array.from(r.next2, db) : null; r.psfext = v.b ? Array.from(r.fext, db) : null;
-      if (!aggr.length) { r.psnext1 = null; r.psnext2 = null; r.psfext = null; }
-      delete r.next1; delete r.next2; delete r.fext;
+        return Array.from(power, db);
+      };
+      r.psnext1 = sum(v.aggressors.near, va, 'worstNext', 1);
+      r.psnext2 = sum(v.aggressors.far, vb, 'worstNext', 2);
+      r.psfext = sum(v.aggressors.near, vb, 'worstFext', 1);
       if (vb >= 0) {
         const sdd = cplx(mm, nm, vb, va), il = sdd.map(x => db(p2(x)));
         const gd = TD ? TD.groupDelay(freq, sdd) : null;
@@ -722,29 +874,44 @@ const Connector = (() => {
       }
       out.push(r);
     }
-    const delays = out.map(r => r.delay).filter(Number.isFinite), mean = delays.length ? delays.reduce((x, y) => x + y, 0) / delays.length : NaN;
-    for (const r of out) r.laneSkew = Number.isFinite(r.delay) ? r.delay - mean : NaN;
+    for (const reverse of [false, true]) {
+      const rows = out.filter(r => !!r.reverse === reverse), delays = rows.map(r => r.delay).filter(Number.isFinite);
+      const mean = delays.length ? delays.reduce((x, y) => x + y, 0) / delays.length : NaN;
+      for (const r of rows) r.laneSkew = r.delay - mean;
+    }
     return out;
   }
 
   // ---------- Templates (port maps) ----------
   function exportMap(p, mapping, meta = {}) {
-    return { schema: MAP_SCHEMA, version: VERSION, profile: { id: p.id, revision: p.revision }, ports: mapping.ports.length, map: mapping.ports.slice(), created: meta.created || null, name: meta.name || '', note: meta.note || '' };
+    const v = validateMapping(p, mapping);
+    if (!v.ok) throw new Error(v.issues.find(i => i.level === 'error').text);
+    return { schema: MAP_SCHEMA, version: VERSION, profile: { id: p.id, revision: p.revision },
+      ...(PROFILES.some(b => b.id === p.id) ? {} : { profileDefinition: p }),
+      ports: mapping.ports.length, map: mapping.ports.slice(), ...(mapping.links ? { paths: validateLinks(p,mapping.links) } : {}),
+      ...(meta.selectedPath ? { selectedPath: meta.selectedPath } : {}),
+      created: meta.created || null, name: meta.name || '', note: meta.note || '' };
   }
-  function importMap(json) {
+  function importMap(json, n = null) {
     const data = typeof json === 'string' ? JSON.parse(json) : json;
-    if (data?.schema !== MAP_SCHEMA || !(data.version >= 1)) throw new Error('Keine Port-Zuordnung im SIMONLATION-Format.');
-    const p = profile(data.profile?.id);
-    if (!p) throw new Error('Unbekanntes Connector-Profil: ' + data.profile?.id);
-    if (!Array.isArray(data.map) || data.map.length !== data.ports) throw new Error('Zuordnung unvollständig.');
-    const nodes = new Set(nodesOf(p));
+    if (data?.schema !== MAP_SCHEMA || data.version !== VERSION) throw new Error('Keine unterstützte Port-Zuordnung im SIMONLATION-Format.');
+    const p = migrateFileProfile(data.profileDefinition ?? profile(data.profile?.id));
+    if (!p) throw new Error('Unbekanntes Connector-Profil: ' + data.profile?.id + '. Lade die ursprüngliche Port-Map mit Profildefinition.');
+    if (p.id !== data.profile?.id || p.revision !== data.profile?.revision) throw new Error('Profil-ID oder Revision stimmt nicht überein.');
+    if (data.profileDefinition) checkRegistration(p);
+    if (!Number.isInteger(data.ports) || data.ports !== portCount(p) || (n !== null && data.ports !== n) ||
+        !Array.isArray(data.map) || data.map.length !== data.ports) throw new Error('Zuordnung, Profil und Messdatei müssen dieselbe Portzahl haben.');
     const m = emptyMapping(p, data.ports);
-    data.map.forEach((node, i) => { if (node && nodes.has(String(node))) { m.ports[i] = String(node); m.source[i] = 'template'; } });
-    return { profile: p, mapping: m, name: String(data.name || '').slice(0, 80) };
+    m.ports = data.map.slice();
+    m.source = m.ports.map(node => node === null ? '' : 'template');
+    const v = validateMapping(p,m);
+    if (!v.ok) throw new Error(v.issues.find(i => i.level === 'error').text);
+    if (data.paths !== undefined) m.links = validateLinks(p, data.paths);
+    return { profile: p, mapping: m, selectedPath: typeof data.selectedPath === 'string' ? data.selectedPath : '', name: String(data.name || '').slice(0, 80) };
   }
 
   const CATEGORY = { certain: 'Eindeutig zugeordnet', likely: 'Wahrscheinlich zugeordnet', several: 'Mehrere mögliche Zuordnungen', unresolved: 'Nicht zuverlässig bestimmbar', mismatch: 'Profil passt nicht zur Portzahl' };
   return { SCHEMA, MAP_SCHEMA, VERSION, PROFILES, CATEGORY, profile, text, validateProfile, nodesOf, portCount, splitNode, nodeId, emptyMapping, validateMapping, mappedPairs, toConfig,
     thruPaths, magneticsStructure, fromNames, detect, scoreMapping, applySymmetry, swapSides, exportMap, importMap,
-    register, customProfiles, fromSidecar, checkChannels, crosstalk };
+    register, customProfiles, fromSidecar, checkChannels, crosstalk, directedPaths, pairKey };
 })();

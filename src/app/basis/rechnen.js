@@ -91,7 +91,7 @@ function computeWorker() {
           se.push(a); mm.push(b); if (!a || !b) gaps++;
         }
         let xt = null;
-        if (m.channels?.length) xt = Connector.crosstalk({ freq: ds.freq, mm, se, modes: layout.mmModes, active: layout.active, channels: m.channels });
+        if (m.channels?.length) xt = Connector.crosstalk({ freq: ds.freq, mm, se, modes: layout.mmModes, active: layout.active, channels: m.channels, paths: m.paths });
         // one buffer per basis instead of one per point (thousands of transfers cost the page more than one copy here);
         // this also leaves the cached dataset intact (without loads a point is the dataset's own matrix)
         const pack = list => {
@@ -153,12 +153,12 @@ function computeDataset(dataset) {
   }
   return id;
 }
-async function networkInWorker(dataset, config, lane, channels) {
+async function networkInWorker(dataset, config, lane, channels, paths) {
   if (!computeWorker()) return undefined;
   for (let attempt = 0; attempt < 2; attempt++) {
     const id = computeDataset(dataset);
     try {
-      const r = await computeCall({ type: 'network', id, config, lane, channels: channels?.length ? channels : null });
+      const r = await computeCall({ type: 'network', id, config, lane, channels: channels?.length ? channels : null, paths });
       if (r) compute.stats.worker++;
       return r;
     } catch (error) {

@@ -34,13 +34,13 @@ document.addEventListener('keydown', event => {
     enterMarker(event.target);
     return;
   }
-  if (['PageDown', 'PageUp'].includes(event.key) && session.items.length > 1 && !event.target.closest('input, select, textarea, dialog') && !document.querySelector('dialog[open]')) {
+  if (['PageDown', 'PageUp'].includes(event.key) && session.items.length > 1 && !event.target.closest('input, select, textarea, [contenteditable], dialog') && !document.querySelector('dialog[open]')) {
     event.preventDefault();
     stepSession(event.key === 'PageDown' ? 1 : -1);
     return;
   }
   if (['ArrowLeft', 'ArrowRight'].includes(event.key) && session.items.length > 1 && !event.altKey && !event.ctrlKey && !event.metaKey &&
-    !event.target.closest('input, select, textarea, dialog, [role="tab"], summary') && !document.querySelector('dialog[open]')) {
+    !event.target.closest('input, select, textarea, [contenteditable], dialog, [role="tab"], summary') && !document.querySelector('dialog[open]')) {
     event.preventDefault();
     stepSession(event.key === 'ArrowRight' ? 1 : -1);
     return;

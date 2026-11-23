@@ -8,13 +8,13 @@ import { applySettings } from '../dateien/einstellungen.js';
 import { render } from '../oberflaeche/rahmen.js';
 
 // ---- Comparison: the same curves of other files, resampled onto the frequency grid of the open file. ----
-async function computeNetwork(dataset, config, layout, alive, lane = 'main', channels = null) {
-  const viaWorker = await networkInWorker(dataset, config, lane, channels);
+async function computeNetwork(dataset, config, layout, alive, lane = 'main', channels = null, paths = null) {
+  const viaWorker = await networkInWorker(dataset, config, lane, channels, paths);
   if (viaWorker === null || !alive()) return null;
   if (viaWorker) {
     const unpack = p => Array.from(p.mask, (ok, i) => ok ? p.data.subarray(i * p.len, (i + 1) * p.len) : null);
     const se = unpack(viaWorker.se), mm = viaWorker.mm ? unpack(viaWorker.mm) : se;
-    return { layout, se, mm, gaps: viaWorker.gaps, xt: viaWorker.xt, xtChannels: channels, worker: true };
+    return { layout, se, mm, gaps: viaWorker.gaps, xt: viaWorker.xt, xtChannels: channels, xtPaths: paths, worker: true };
   }
   compute.stats.page++;
   let start = performance.now();
@@ -57,7 +57,7 @@ async function refreshNetwork() {
     render();
     await nextTick();
     const channels = state.connector?.channels?.length ? state.connector.channels : null;
-    const network = await computeNetwork(dataset, config, state.layout, () => id === state.job, 'main', channels);
+    const network = await computeNetwork(dataset, config, state.layout, () => id === state.job, 'main', channels, state.connector?.paths);
     if (!network || id !== state.job) return;
     state.network = network;
   } catch (error) {

@@ -57,3 +57,8 @@
 .cn-cell small { font: 500 9px var(--ui); }
 .cn-cell:focus-visible { outline: 2px solid var(--select); }
 @media (max-width: 760px) { .cn-cand { flex-direction: column; align-items: stretch; } }
+
+.cn-pin-one { fill: var(--ink); }
+.cn-paths { margin-top: 10px; }
+.cn-path { white-space: normal; text-align: left; }
+.cn-path[aria-pressed="true"] { border-color: var(--accent-line); background: var(--accent-soft); }

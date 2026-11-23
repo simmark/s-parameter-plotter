@@ -1,6 +1,10 @@
 'use strict';
 
 (() => {
+  if (document.documentElement.dataset.startView === 'source') {
+    document.getElementById('pwa-status').textContent = 'Lokale Testdatei';
+    return;
+  }
   if (!('serviceWorker' in navigator)) return;
   const button = document.getElementById('pwa-install');
   const status = document.getElementById('pwa-status');
