@@ -146,7 +146,7 @@ try {
   report.check('CMC: „Automatik“ stellt die Werte der Auswertung wieder her', !s.edited && near(await value('m'), 990e-6, 0.01) && await page.locator('#schematic-edited').count() === 0 && !(await page.isChecked('input[name="fix-cg"]')));
   await page.selectOption('#control-cmc-format', 'zfit'); await ready();
   report.equal('CMC: Darstellung „je Mode bis 2. Resonanz“ zeigt ihr eigenes Modell, keinen Vierpol-Editor', await page.locator('#model-editor').count(), 0);
-  await page.selectOption('#control-cmc-format', 'ind'); await ready();
+  await page.selectOption('#control-cmc-format', 'modes'); await ready();
   data = await csv();
   report.check('CMC: Induktivitäts-Darstellung zeigt Modell L+M und L−M', ['Modell L+M', 'Modell L−M'].every(n => col(n) >= 0) && (() => { const r = data.rows.find(r => r[0] >= 5e4); return near(r[col('Modell L+M')], r[col('L+M')], 0.02) && near(r[col('Modell L−M')], r[col('L−M')], 0.03); })(), data.head.join(' | '));
 

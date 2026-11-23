@@ -79,8 +79,16 @@ function elementPhysics() {
 
 function windingPhysics() {
   const physics = physicsOf(state.dataset);
-  return physics?.kind === 'four-port' && physics.status === 'candidate' && physics.windings?.confidence === 'sicher' && physics.mappings?.length &&
-    Magnetic.MAGNETIC.includes(physics.verdict?.category) ? physics : null;
+  if (physics?.kind !== 'four-port' || physics.status !== 'candidate' ||
+      physics.windings?.confidence !== 'sicher' || !physics.mappings?.length) return null;
+  if (Magnetic.MAGNETIC.includes(physics.verdict?.category)) return physics;
+  // A matching manufacturer header can suggest the ESB family when the winding paths
+  // are established and the physical ranking agrees. The assignment still needs a click.
+  if (!physics.verdict?.category && physics.manufacturer?.category === 'cmc' &&
+      physics.verdict?.ranked?.[0]?.category === 'cmc' && physics.recommended === 'line') {
+    return { ...physics, verdict: { ...physics.verdict, category:'cmc' } };
+  }
+  return null;
 }
 
 function detectModel() {

@@ -75,7 +75,7 @@ function updatePlot(preserveHover = false) {
   if (!state.view) return;
   const a = axis();
   Plot.set({
-    ...state.view, f: state.dataset.freq, xScale: a.x, xRange: a.xRange, yScale: effectiveY(), yRange: (effectiveY() === a.y ? a.yRange : null) ?? (effectiveY() === 'linear' && state.view.focus?.every(Number.isFinite) && state.view.focus[0] < state.view.focus[1] ? state.view.focus : null),
+    ...state.view, f: state.dataset.freq, xScale: a.x, xRange: a.xRange, xUnit:a.xUnit, axisFont:a.font, yScale: effectiveY(), yRange: (effectiveY() === a.y ? a.yRange : null) ?? (effectiveY() === 'linear' && state.view.focus?.every(Number.isFinite) && state.view.focus[0] < state.view.focus[1] ? state.view.focus : null),
     markers: state.markers, activeMarker: state.activeMarker, onMarker: index => setMarker(state.activeMarker, index),
     onMarkerDrag: (i, index) => setMarker(i, index), onMarkerSelect: i => { if (i !== state.activeMarker) switchMarker(i); },
     onZoom: range => { axis().xRange = range; updatePlot(true); persistSettings(); },

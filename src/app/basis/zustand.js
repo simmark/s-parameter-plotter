@@ -16,7 +16,7 @@ const state = {
   sFormat: 'db', sKeys: { se: null, mm: null }, smith: '',
   z: { method: 'reflection', format: 'mag', input: '', output: '' },
   cispr: { method: 'four', format: 'mag', input: '', output: '' },
-  cmc: { format: 'cap', band: null }, pairIn: 1, pairOut: 2,
+  cmc: { format: 'ind', band: null }, pairIn: 1, pairOut: 2,
   esb: { model: 'auto', fixture: 'auto', tFormat: 'ocl', eFormat: 'z', input: '', output: '', evalFreq: 100e3 },
   axes: {}, markers: [0, null, null, null], activeMarker: 0,
   compare: { ids: [], delta: false }, profile: { name: '', source: 'default', score: null, matches: [], key: '' }, connector: null, time: null,

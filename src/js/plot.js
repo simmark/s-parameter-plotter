@@ -278,7 +278,11 @@ const Plot = (() => {
 
   function drawXY(w, h) {
     const small = w < 470;
-    const right = w - (small ? 14 : 24);
+    const phaseLines = model.phases?.length ? model.phases : [];
+    const xUnitFactor = {Hz:1,kHz:1e3,MHz:1e6,GHz:1e9}[model.xUnit];
+    const big = model.axisFont?.includes('large'), bold = model.axisFont?.includes('bold');
+    const axisFont = (bold ? '700 ' : '') + (big ? small ? 12 : 14 : small ? 9.5 : 10.5) + 'px ' + monoFont;
+    const right = w - (phaseLines.length ? (big ? 53 : 46) : small ? 14 : 24);
     const top = 27, bottom = h - 46;
     const full = domain();
     const [xlo, xhi] = model.xRange || [full.lo, full.hi];
@@ -291,7 +295,7 @@ const Plot = (() => {
     const symC = ySym ? symThreshold(rangeStart, rangeEnd) : 1;
     const yticks = ySym ? symTicks(ylo, yhi, symC, bottom - top) : yLog ? logTicks(ylo, yhi, bottom - top, true) : linearTicks(ylo, yhi, Math.max(4, (bottom - top) / 44));
     // The left margin grows with the widest tick label so the axis title never overlaps the numbers.
-    ctx.font = (small ? '9.5px ' : '10.5px ') + monoFont;
+    ctx.font = axisFont;
     const labelWidth = yticks.reduce((max, tick) => tick.major ? Math.max(max, ctx.measureText(formatNumber(tick.value)).width) : max, 0);
     const left = Math.round(Math.max(small ? 53 : 75, labelWidth + (small ? 30 : 38)));
     const logOrigin = Math.log(xlo);
@@ -320,7 +324,7 @@ const Plot = (() => {
       }
     }
     const xticks = xLog ? logTicks(xlo, xhi, right - left, false) : linearTicks(xlo, xhi, (right - left) / (small ? 69 : 92));
-    ctx.font = (small ? '9.5px ' : '10.5px ') + monoFont;
+    ctx.font = axisFont;
     ctx.textBaseline = 'middle'; ctx.textAlign = 'right'; ctx.fillStyle = axisInk;
     for (const tick of yticks) {
       const yy = y(tick.value);
@@ -333,7 +337,7 @@ const Plot = (() => {
       const xx = x(tick.value);
       line(xx, top, xx, bottom, tick.major ? grid : minorGrid);
       if (!tick.major) continue;
-      const label = formatFreq(tick.value);
+      const label = xUnitFactor ? formatNumber(tick.value / xUnitFactor) : formatFreq(tick.value);
       const half = ctx.measureText(label).width / 2;
       const textX = Math.max(half + 3, Math.min(w - half - 3, xx));
       if (label === lastLabel || textX - half < lastLabelRight + 5) continue;
@@ -344,19 +348,44 @@ const Plot = (() => {
     ctx.strokeStyle = '#d6d2c6'; ctx.lineWidth = 1; ctx.strokeRect(left, top, right - left, bottom - top);
     ctx.font = '600 11px ' + uiFont;
     ctx.fillStyle = ink; ctx.textBaseline = 'middle'; ctx.textAlign = 'center';
-    ctx.fillText(tr('Frequenz'), (left + right) / 2, h - 11);
+    ctx.fillText(tr('Frequenz') + (xUnitFactor ? ' [' + model.xUnit + ']' : ''), (left + right) / 2, h - 11);
     ctx.save();
     ctx.translate(small ? 10 : 17, (top + bottom) / 2);
     ctx.rotate(-Math.PI / 2);
     ctx.fillText(tr(model.yLabel), 0, 0);
     ctx.restore();
 
+    const phaseY = degrees => bottom - (degrees + 180) / 360 * (bottom - top);
+    if (phaseLines.length) {
+      ctx.font = axisFont; ctx.textAlign = 'left'; ctx.fillStyle = axisInk;
+      for (const degrees of [180, 90, 0, -90, -180]) {
+        const yy = phaseY(degrees);
+        line(right, yy, right + 4, yy, axisInk);
+        ctx.fillText(degrees + '°', right + 6, yy);
+      }
+    }
     ctx.save();
     ctx.beginPath(); ctx.rect(left, top, right - left, bottom - top); ctx.clip();
     const start = Math.max(xLog && model.f[0] === 0 ? 1 : 0, rangeStart - 1);
     const end = Math.min(model.f.length, rangeEnd + 1);
     for (const trace of model.traces) {
       if (trace.visible) tracePath(trace, start, end, x, y);
+    }
+    for (const trace of phaseLines) {
+      ctx.strokeStyle = trace.color;
+      ctx.lineWidth = 1.25;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      let previous = NaN;
+      for (let i = start; i < end; i++) {
+        const degrees = trace.values[i], xx = x(model.f[i]);
+        if (!Number.isFinite(degrees) || !Number.isFinite(xx)) { previous = NaN; continue; }
+        if (!Number.isFinite(previous) || Math.abs(previous - degrees) > 180) ctx.moveTo(xx, phaseY(degrees));
+        else ctx.lineTo(xx, phaseY(degrees));
+        previous = degrees;
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
     }
     // Extracted ESB values as dashed reference lines.
     for (const ref of model.refLines || []) {

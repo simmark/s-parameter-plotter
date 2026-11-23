@@ -8,7 +8,7 @@ import { ROOT, serve, launch, tempDir, touchstone, waitIdle, Report } from './li
 
 const report = new Report('Erweiterungspunkte');
 const app = tempDir('spa-ext-app-'), profile = tempDir('spa-ext-'), work = tempDir('spa-ext-files-');
-for (const item of ['src', 'tools', 'icons', 'index.html', 'sw.js', 'manifest.webmanifest', 'LICENSE.txt']) fs.cpSync(path.join(ROOT, item), path.join(app, item), { recursive: true });
+for (const item of ['src', 'tools', 'icons', 'assets', 'index.html', 'sw.js', 'manifest.webmanifest', 'LICENSE.txt']) fs.cpSync(path.join(ROOT, item), path.join(app, item), { recursive: true });
 fs.writeFileSync(path.join(app, 'src/app/module/probe.js'), `// module/probe – nur für den Test: ein neues Fachmodul ohne Änderung an anderen Dateien.
 import { $ } from '../basis/dom.js';
 import { registerActions, registerChanges, registerFileState, registerSlot, registerView } from '../basis/erweiterung.js';

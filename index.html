@@ -1739,6 +1739,36 @@ window.I18N = (() => {
   let lang = 'de';
   try { lang = localStorage.getItem('spa-lang') || ((navigator.language || 'de').toLowerCase().startsWith('de') ? 'de' : 'en'); } catch { /* default */ }
   const EXACT = new Map(Object.entries({
+    "Induktivität je Wicklung": "Inductance per winding",
+    "Streuinduktivität Lσ": "Leakage inductance Lσ",
+    "Modale Induktivitäten L±M": "Modal inductances L±M",
+    "L · je Wicklung": "L · per winding",
+    "Modell L · je Wicklung": "Model L · per winding",
+    "Lσ = L−M · je Wicklung": "Lσ = L−M · per winding",
+    "Modell Lσ = L−M · je Wicklung": "Model Lσ = L−M · per winding",
+    "Impedanzphase (°)": "Impedance phase (°)",
+    "Frequenzeinheit": "Frequency unit",
+    "Achsenbeschriftung": "Axis labels",
+    "Größer": "Larger",
+    "Fett": "Bold",
+    "Größer und fett": "Larger and bold",
+    "Symmetrische Wicklungen · L = [(L+M) + (L−M)] / 2": "Symmetric windings · L = [(L+M) + (L−M)] / 2",
+    "Cw + Cx · Kopplung je Seite": "Cw + Cx · coupling per side",
+    "Cw + Cx · je Seite": "Cw + Cx · per side",
+    "Ct + Cx · aus H": "Ct + Cx · from H",
+    "Modell Ct + Cx": "Model Ct + Cx",
+    "Modell Cw + Cx": "Model Cw + Cx",
+    "Modell Cw · einzeln": "Model Cw · individual branch",
+    "Modell Ct · einzeln": "Model Ct · individual branch",
+    "L · Modell je Wicklung bei tiefer Frequenz": "L · low-frequency model per winding",
+    "Lσ · Modell je Wicklung": "Lσ · model per winding",
+    "φ Z Kopplung": "φ coupling Z",
+    "φ Z gegen Masse": "φ Z to ground",
+    "φ Z Kurzschluss": "φ short-circuit Z",
+    "φ L · je Wicklung": "φ L · per winding",
+    "φ Lσ = L−M · je Wicklung": "φ Lσ = L−M · per winding",
+    "Kein stabiles Kapazitätsplateau nahe −90° gefunden.": "No stable capacitance plateau near −90°.",
+    "Bei virtueller Drehung bilden die beiden Wicklungen die Ports. Der Gleichtakt-Transfer liefert Cw + Cx je Seite. Einzelne Modellzweige erfordern die Auswertung weiterer Moden.": "The virtual rotation treats each winding as a port. Common-mode transfer gives Cw + Cx per side. Separating model branches requires additional modes.",
     'Hell / Dunkel': 'Light / dark', 'Darstellung hell oder dunkel': 'Light or dark appearance', 'Für Modell speichern': 'Save for model',
     'Startfrequenz': 'Start frequency', 'Stoppfrequenz': 'Stop frequency', 'Rechnen': 'Compute', 'Gib einen positiven, aufsteigenden Frequenzbereich ein.': 'Enter a positive, ascending frequency range.',
     'Als SPICE-Modell öffnen': 'Open as SPICE model', 'SPICE .lib speichern': 'Save SPICE .lib', 'Bibliothek': 'Library', 'Ablegen': 'Store', 'Ordner': 'Folder', 'Umfang': 'Scope',
@@ -2087,6 +2117,9 @@ window.I18N = (() => {
     "Enthaltene Drittkomponenten und ihre Lizenztexte": "Included third-party components and their license texts", "Touchstone-Datei als Text · bearbeiten, prüfen, als neue Analyse öffnen": "Touchstone file as text · edit, check, open as a new analysis", "Touchstone-Datei als Text, Messwerttabelle und Matrix": "Touchstone file as text, value table and matrix"
   }));
   const PATTERNS = [
+    [/^L · Messwert je Wicklung bei (.+)$/, 'L · measured per winding at $1'],
+    [/^Lσ · Messwert bei (.+)$/, 'Lσ · measured at $1'],
+    [/^Kopplungsplateau · (.*)$/, 'Coupling plateau · $1'],
     [/^Im gewählten Fit-Band nicht bestimmbar \(der Fit liefert einen negativen Wert\): (.+)\. Wähle ein Band, in dem dieses Element die Kurve prägt – für Kapazitäten reicht es meist, das Band zu höheren Frequenzen zu erweitern\.$/, (m, a) => 'Not determinable in the chosen fit band (the fit returns a negative value): ' + a.split(', ').map(t).join(', ') + '. Choose a band in which this element shapes the curve – for capacitances it usually helps to extend the band to higher frequencies.'],
     [/^Die Streuung aus dem Kopplungsfaktor weicht um (\d+) % von der Kurzschlussmessung ab\. Bei hoher Kopplung ist k sehr empfindlich; die Kurzschlussmessung ist verlässlicher und steht im Bild\.$/, 'The leakage from the coupling factor differs by $1 % from the short-circuit measurement. At high coupling k is very sensitive; the short-circuit measurement is more reliable and is the one shown.'],
     [/^Die Streuung aus dem Kopplungsfaktor stimmt mit der Kurzschlussmessung auf (\d+) % überein\.$/, 'The leakage from the coupling factor agrees with the short-circuit measurement to within $1 %.'],
@@ -2283,7 +2316,7 @@ window.I18N = (() => {
     'Sek. offen': 'sec. open', 'Prim. offen': 'prim. open', 'Sek. kurzgeschl.': 'sec. shorted', 'Prim.↔Sek.': 'prim.↔sec.', ' · T-Ersatzschaltbild': ' · T equivalent circuit', ' · Modell aus dem Editor gepunktet': ' · model from the editor dotted',
     ' · Ersatzschaltbild': ' · equivalent circuit', 'Serienbauteil': 'Series component', 'Shuntbauteil': 'Shunt component', 'Z Serie': 'Z series',
     ' · Fit-Band grün hinterlegt': ' · fit band shaded', ' · Darstellungsgrenze −180 dB': ' · display floor −180 dB', 'Darstellungsgrenze': 'display floor',
-    'L+M ': 'L+M ', ' · Ct aus D ': ' · Ct from D ', ' · Fitrest H/D ': ' · fit residual H/D ', ' · Modenkopplung im Y-Modell ': ' · mode coupling in Y model ',
+    'L+M ': 'L+M ', ' · Ct − Cx aus D ': ' · Ct − Cx from D ', ' · Fitrest H/D ': ' · fit residual H/D ', ' · Modenkopplung im Y-Modell ': ' · mode coupling in Y model ',
     ' Punkte': ' points', 'gewählt für Plus': 'selected for plus', 'gewählt für Minus': 'selected for minus', 'Einzeln': 'Single',
     'Frequenz_Hz': 'Frequency_Hz', '_Wert': '_value', 'Mixed-Mode': 'mixed mode', 'Reduzierte S-Matrix · ': 'Reduced S matrix · ',
     'Ungültige ': 'Invalid ', 'Ungültiger ': 'Invalid ', 'Ungültiges ': 'Invalid ', 'fehlt': 'missing', 'Datei': 'file',
@@ -4382,6 +4415,7 @@ const RF = (() => {
     if (y && w > 0) {
       const y11 = get(y, 2, 0, 0), y22 = get(y, 2, 1, 1), y12 = get(y, 2, 0, 1), y21 = get(y, 2, 1, 0);
       out.cww = -(y12[1] + y21[1]) / 2 / w;
+      out.couplingZ = div(one, scale(add(y12, y21), -0.5));
       out.c1g = (y11[1] + y12[1]) / w;
       out.c2g = (y22[1] + y21[1]) / w;
     }
@@ -8092,7 +8126,11 @@ const Plot = (() => {
 
   function drawXY(w, h) {
     const small = w < 470;
-    const right = w - (small ? 14 : 24);
+    const phaseLines = model.phases?.length ? model.phases : [];
+    const xUnitFactor = {Hz:1,kHz:1e3,MHz:1e6,GHz:1e9}[model.xUnit];
+    const big = model.axisFont?.includes('large'), bold = model.axisFont?.includes('bold');
+    const axisFont = (bold ? '700 ' : '') + (big ? small ? 12 : 14 : small ? 9.5 : 10.5) + 'px ' + monoFont;
+    const right = w - (phaseLines.length ? (big ? 53 : 46) : small ? 14 : 24);
     const top = 27, bottom = h - 46;
     const full = domain();
     const [xlo, xhi] = model.xRange || [full.lo, full.hi];
@@ -8105,7 +8143,7 @@ const Plot = (() => {
     const symC = ySym ? symThreshold(rangeStart, rangeEnd) : 1;
     const yticks = ySym ? symTicks(ylo, yhi, symC, bottom - top) : yLog ? logTicks(ylo, yhi, bottom - top, true) : linearTicks(ylo, yhi, Math.max(4, (bottom - top) / 44));
     // The left margin grows with the widest tick label so the axis title never overlaps the numbers.
-    ctx.font = (small ? '9.5px ' : '10.5px ') + monoFont;
+    ctx.font = axisFont;
     const labelWidth = yticks.reduce((max, tick) => tick.major ? Math.max(max, ctx.measureText(formatNumber(tick.value)).width) : max, 0);
     const left = Math.round(Math.max(small ? 53 : 75, labelWidth + (small ? 30 : 38)));
     const logOrigin = Math.log(xlo);
@@ -8134,7 +8172,7 @@ const Plot = (() => {
       }
     }
     const xticks = xLog ? logTicks(xlo, xhi, right - left, false) : linearTicks(xlo, xhi, (right - left) / (small ? 69 : 92));
-    ctx.font = (small ? '9.5px ' : '10.5px ') + monoFont;
+    ctx.font = axisFont;
     ctx.textBaseline = 'middle'; ctx.textAlign = 'right'; ctx.fillStyle = axisInk;
     for (const tick of yticks) {
       const yy = y(tick.value);
@@ -8147,7 +8185,7 @@ const Plot = (() => {
       const xx = x(tick.value);
       line(xx, top, xx, bottom, tick.major ? grid : minorGrid);
       if (!tick.major) continue;
-      const label = formatFreq(tick.value);
+      const label = xUnitFactor ? formatNumber(tick.value / xUnitFactor) : formatFreq(tick.value);
       const half = ctx.measureText(label).width / 2;
       const textX = Math.max(half + 3, Math.min(w - half - 3, xx));
       if (label === lastLabel || textX - half < lastLabelRight + 5) continue;
@@ -8158,19 +8196,44 @@ const Plot = (() => {
     ctx.strokeStyle = '#d6d2c6'; ctx.lineWidth = 1; ctx.strokeRect(left, top, right - left, bottom - top);
     ctx.font = '600 11px ' + uiFont;
     ctx.fillStyle = ink; ctx.textBaseline = 'middle'; ctx.textAlign = 'center';
-    ctx.fillText(tr('Frequenz'), (left + right) / 2, h - 11);
+    ctx.fillText(tr('Frequenz') + (xUnitFactor ? ' [' + model.xUnit + ']' : ''), (left + right) / 2, h - 11);
     ctx.save();
     ctx.translate(small ? 10 : 17, (top + bottom) / 2);
     ctx.rotate(-Math.PI / 2);
     ctx.fillText(tr(model.yLabel), 0, 0);
     ctx.restore();
 
+    const phaseY = degrees => bottom - (degrees + 180) / 360 * (bottom - top);
+    if (phaseLines.length) {
+      ctx.font = axisFont; ctx.textAlign = 'left'; ctx.fillStyle = axisInk;
+      for (const degrees of [180, 90, 0, -90, -180]) {
+        const yy = phaseY(degrees);
+        line(right, yy, right + 4, yy, axisInk);
+        ctx.fillText(degrees + '°', right + 6, yy);
+      }
+    }
     ctx.save();
     ctx.beginPath(); ctx.rect(left, top, right - left, bottom - top); ctx.clip();
     const start = Math.max(xLog && model.f[0] === 0 ? 1 : 0, rangeStart - 1);
     const end = Math.min(model.f.length, rangeEnd + 1);
     for (const trace of model.traces) {
       if (trace.visible) tracePath(trace, start, end, x, y);
+    }
+    for (const trace of phaseLines) {
+      ctx.strokeStyle = trace.color;
+      ctx.lineWidth = 1.25;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      let previous = NaN;
+      for (let i = start; i < end; i++) {
+        const degrees = trace.values[i], xx = x(model.f[i]);
+        if (!Number.isFinite(degrees) || !Number.isFinite(xx)) { previous = NaN; continue; }
+        if (!Number.isFinite(previous) || Math.abs(previous - degrees) > 180) ctx.moveTo(xx, phaseY(degrees));
+        else ctx.lineTo(xx, phaseY(degrees));
+        previous = degrees;
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
     }
     // Extracted ESB values as dashed reference lines.
     for (const ref of model.refLines || []) {
@@ -9202,7 +9265,7 @@ const state = {
   sFormat: 'db', sKeys: { se: null, mm: null }, smith: '',
   z: { method: 'reflection', format: 'mag', input: '', output: '' },
   cispr: { method: 'four', format: 'mag', input: '', output: '' },
-  cmc: { format: 'cap', band: null }, pairIn: 1, pairOut: 2,
+  cmc: { format: 'ind', band: null }, pairIn: 1, pairOut: 2,
   esb: { model: 'auto', fixture: 'auto', tFormat: 'ocl', eFormat: 'z', input: '', output: '', evalFreq: 100e3 },
   axes: {}, markers: [0, null, null, null], activeMarker: 0,
   compare: { ids: [], delta: false }, profile: { name: '', source: 'default', score: null, matches: [], key: '' }, connector: null, time: null,
@@ -9530,6 +9593,93 @@ const Prefs = (() => {
 })();
 
 return { Prefs };
+})();
+// ===== src/app/module/esb/cmc-capacitance.js =====
+const __modul_module_esb_cmc_capacitance = (() => {
+// Symmetric four-terminal CMC topology: each Cw and Cx is one branch, Ct is per winding.
+// Resonance gives the *modal* capacitance; the other modes are needed to separate branches.
+function estimateCmcCapacitances({ fdm, leakage, cg, line, across }) {
+  if (![fdm, leakage].every(x => Number.isFinite(x) && x > 0)) return { available: false, reason: 'resonance' };
+  const modal = 1 / ((2 * Math.PI * fdm) ** 2 * leakage);
+  if (![cg, line, across].every(Number.isFinite)) return { available: false, reason: 'modes', fdm, leakage, modal };
+  const turn = modal - cg / 2; // Ct + Cw for the per-winding leakage convention
+  const cw = (line + turn - across) / 2;
+  const cx = (line + across - turn) / 2;
+  const ct = (across + turn - line) / 2;
+  if (![cw, cx, ct].every(x => Number.isFinite(x) && x >= 0)) return { available: false, reason: 'inconsistent', fdm, leakage, modal };
+  return { available: true, fdm, leakage, modal, cw, cx, ct, cg };
+}
+return { estimateCmcCapacitances };
+})();
+// ===== src/app/module/esb/magnetikgroessen.js =====
+const __modul_module_esb_magnetikgroessen = (() => {
+const { COLORS } = __modul_basis_farben;
+const { omega } = __modul_basis_format;
+// Display quantities reuse the analyzer's modal impedances and the model's physical branch values.
+
+const phase = z => z && RF.abs(z) > 0 ? Math.atan2(z[1], z[0]) / RF.RAD : NaN;
+const inverse = y => y && RF.div([1, 0], y);
+const windingZ = (cm, dm) => cm && dm && RF.add(cm, RF.scale(dm, 0.25));
+
+function inductanceUnit(value, fallback = 'µH') {
+  if (!Number.isFinite(value) || value <= 0) return { unit: fallback, factor: fallback === 'nH' ? 1e-9 : fallback === 'mH' ? 1e-3 : 1e-6 };
+  return value >= 1e-3 ? { unit: 'mH', factor: 1e-3 } : value >= 1e-6 ? { unit: 'µH', factor: 1e-6 } : { unit: 'nH', factor: 1e-9 };
+}
+
+function cmcQuantities(freq, cm, dm, modelZ, natural, model, format) {
+  const zcm = i => cm[i]?.z, zdm = i => dm[i]?.z;
+  const l = (z, f) => z && f > 0 ? z[1] / omega(f) : NaN;
+  const degree = (fn, color, label) => ({ color, label, values: Float64Array.from(freq, (_, i) => phase(fn(i))) });
+  const winding = i => windingZ(zcm(i), zdm(i));
+  const modalPlus = i => zcm(i) && RF.scale(zcm(i), 2);
+  const modalMinus = i => zdm(i) && RF.scale(zdm(i), 0.5);
+  const modelWinding = i => windingZ(modelZ?.[i]?.cm, modelZ?.[i]?.dm);
+  const at10k = freq[0] <= 1e4 && freq.at(-1) >= 1e4 ? Plot.nearest(freq, 1e4, true) : -1;
+  const windingReference = l(winding(at10k), freq[at10k]);
+  const leakReference = l(modalMinus(at10k), freq[at10k]);
+  const reference = format === 'leak' ? leakReference : windingReference;
+  const inductance = (label, color, pick, factor) => [label, color, (i, f) => l(pick(i), f) / factor];
+  if (format === 'cap') {
+    // Rearrange the terminals by winding. The common-to-common transfer admittance
+    // of that virtual two-port equals Y_mode1 - Y_mode0 in the symmetric projection.
+    const couplingZ = i => natural[i] && inverse(RF.sub(natural[i].y[1], natural[i].y[0]));
+    const groundZ = i => natural[i] && inverse(natural[i].y[0]);
+    const turnZ = i => natural[i] && inverse(natural[i].h);
+    const values = Float64Array.from(freq, (_, i) => {
+      const p = phase(couplingZ(i));
+      return Math.abs(p + 90) <= 15 ? natural[i].cw : NaN;
+    });
+    const plateau = RF.plateau(freq, values, 0, freq.at(-1), 0.15);
+    return {
+      unit:'pF', plateau,
+      list: [['Cw + Cx · je Seite', COLORS[1], i => natural[i]?.cw * 1e12],
+        ['Cg · je Anschluss', COLORS[0], i => natural[i]?.cg * 1e12],
+        ['Ct + Cx · aus H', COLORS[2], (i,f) => natural[i] && Math.abs(phase(turnZ(i))+90)<=15 ?
+          0.5e12 * (natural[i].h[1]/omega(f)-natural[i].cg) : NaN]],
+      extra: model ? [['Modell Cw + Cx', COLORS[1], () => (model.cw+(model.cx||0))*1e12],
+        ['Modell Cg', COLORS[0], () => model.cg*1e12],
+        ['Modell Ct + Cx', COLORS[2], () => (model.ct+(model.cx||0))*1e12],
+        ['Modell Cw · einzeln', COLORS[3], () => model.cw*1e12],
+        ['Modell Ct · einzeln', COLORS[4], () => model.ct*1e12]] : [],
+      phases:[degree(couplingZ,COLORS[1],'φ Z Kopplung'),degree(groundZ,COLORS[0],'φ Z gegen Masse'),degree(turnZ,COLORS[2],'φ Z H')]
+    };
+  }
+  const {unit,factor}=inductanceUnit(reference > 0 ? reference :
+    format==='leak' ? model?.ls : model && model.ls+RF.coreSections(model).reduce((sum,[m])=>sum+m,0));
+  const configs = {
+    ind: [['L · je Wicklung',COLORS[1],winding,modelWinding]],
+    leak: [['Lσ = L−M · je Wicklung',COLORS[0],modalMinus,i=>modelZ?.[i]?.dm && RF.scale(modelZ[i].dm,0.5)]],
+    modes: [['L+M',COLORS[1],modalPlus,i=>modelZ?.[i]?.cm && RF.scale(modelZ[i].cm,2)],
+      ['L−M',COLORS[0],modalMinus,i=>modelZ?.[i]?.dm && RF.scale(modelZ[i].dm,0.5)]]
+  };
+  const items=configs[format] || configs.ind;
+  return {unit, at10k, windingReference, leakReference,
+    list:items.map(([label,color,pick])=>inductance(label,color,pick,factor)),
+    extra:modelZ ? items.map(([label,color,,pick])=>inductance('Modell '+label,color,pick,factor)) : [],
+    phases:items.map(([label,color,pick])=>degree(pick,color,'φ '+label))};
+}
+
+return { cmcQuantities, inductanceUnit, phase };
 })();
 // ===== src/app/module/quelltext/codeeditor.js =====
 const __modul_module_quelltext_codeeditor = (() => {
@@ -10097,7 +10247,11 @@ function openAxes() {
     '<div class="axis-group"><h3>Frequenzachse</h3>' +
     '<label class="control"><span>Skala</span><select name="x-scale">' +
     options(state.dataset.freq.at(-1) > 0 ? [['log', 'Logarithmisch'], ['linear', 'Linear']] : [['linear', 'Linear']], a.x) +
-    '</select></label><div class="dialog-grid">' +
+    '</select></label><div class="dialog-grid"><label class="control"><span>Frequenzeinheit</span><select name="x-unit">' +
+    options([['auto','Automatisch'], ...['Hz','kHz','MHz','GHz'].map(u => [u,u])], a.xUnit ?? 'auto') +
+    '</select></label><label class="control"><span>Achsenbeschriftung</span><select name="axis-font">' +
+    options([['normal','Normal'],['large','Größer'],['bold','Fett'],['large-bold','Größer und fett']], a.font ?? 'normal') +
+    '</select></label></div><div class="dialog-grid">' +
     textField('Von', 'x-start', a.xRange ? freqInput(a.xRange[0]) : '', 'Automatisch') +
     textField('Bis', 'x-stop', a.xRange ? freqInput(a.xRange[1]) : '', 'Automatisch') +
     '</div></div><div class="axis-group"><h3>Vertikale Achse</h3>' +
@@ -10126,7 +10280,11 @@ function applyAxes(form) {
     formError(form, 'Gib zwei aufsteigende Y-Grenzen ein. Bei Log-Skalierung müssen beide positiv sein.');
     return;
   }
-  Object.assign(axis(), { x, xRange: xr, y, yRange: yr });
+  const a = axis();
+  Object.assign(a, { x, xRange: xr, y, yRange: yr });
+  const unit = data.get('x-unit'), font = data.get('axis-font');
+  if (unit === 'auto') delete a.xUnit; else a.xUnit = unit;
+  if (font === 'normal') delete a.font; else a.font = font;
   $('axes-dialog').close();
   renderAnalysis();
 }
@@ -10524,7 +10682,7 @@ function updatePlot(preserveHover = false) {
   if (!state.view) return;
   const a = axis();
   Plot.set({
-    ...state.view, f: state.dataset.freq, xScale: a.x, xRange: a.xRange, yScale: effectiveY(), yRange: (effectiveY() === a.y ? a.yRange : null) ?? (effectiveY() === 'linear' && state.view.focus?.every(Number.isFinite) && state.view.focus[0] < state.view.focus[1] ? state.view.focus : null),
+    ...state.view, f: state.dataset.freq, xScale: a.x, xRange: a.xRange, xUnit:a.xUnit, axisFont:a.font, yScale: effectiveY(), yRange: (effectiveY() === a.y ? a.yRange : null) ?? (effectiveY() === 'linear' && state.view.focus?.every(Number.isFinite) && state.view.focus[0] < state.view.focus[1] ? state.view.focus : null),
     markers: state.markers, activeMarker: state.activeMarker, onMarker: index => setMarker(state.activeMarker, index),
     onMarkerDrag: (i, index) => setMarker(i, index), onMarkerSelect: i => { if (i !== state.activeMarker) switchMarker(i); },
     onZoom: range => { axis().xRange = range; updatePlot(true); persistSettings(); },
@@ -10662,8 +10820,16 @@ function elementPhysics() {
 
 function windingPhysics() {
   const physics = physicsOf(state.dataset);
-  return physics?.kind === 'four-port' && physics.status === 'candidate' && physics.windings?.confidence === 'sicher' && physics.mappings?.length &&
-    Magnetic.MAGNETIC.includes(physics.verdict?.category) ? physics : null;
+  if (physics?.kind !== 'four-port' || physics.status !== 'candidate' ||
+      physics.windings?.confidence !== 'sicher' || !physics.mappings?.length) return null;
+  if (Magnetic.MAGNETIC.includes(physics.verdict?.category)) return physics;
+  // A matching manufacturer header can suggest the ESB family when the winding paths
+  // are established and the physical ranking agrees. The assignment still needs a click.
+  if (!physics.verdict?.category && physics.manufacturer?.category === 'cmc' &&
+      physics.verdict?.ranked?.[0]?.category === 'cmc' && physics.recommended === 'line') {
+    return { ...physics, verdict: { ...physics.verdict, category:'cmc' } };
+  }
+  return null;
 }
 
 function detectModel() {
@@ -11253,7 +11419,10 @@ function renderMarker(rebuild = false) {
       '</span></td>' + used.map(i => '<td' + (i === state.activeMarker ? ' class="is-active-col"' : '') + '>' + esc(valueWith(traceValue(t, state.markers[i]), view.unit)) + '</td>').join('') +
       (showDelta ? '<td>' + esc(valueWith(delta, view.unit)) + '</td>' : '') +
       (view.smith ? '<td>' + esc(complexText(raw?.every(Number.isFinite) ? RF.reflection(raw, view.smithRef) : null, 'Ω')) + '</td>' : '') + '</tr>';
-  }).join('');
+  }).join('') + (view.phases || []).map(trace => '<tr><td><span class="trace-dot is-dashed" style="--trace:' +
+    trace.color + '"></span>' + esc(trace.label) + '</td>' +
+    used.map(i => '<td>' + esc(valueWith(trace.values[state.markers[i]], '°')) + '</td>').join('') +
+    (showDelta ? '<td>—</td>' : '') + '</tr>').join('');
   if (!rows) {
     $('marker-data').innerHTML = '<p class="marker-notice">Für die Markerwerte muss mindestens eine Kurve sichtbar sein.</p>';
     return;
@@ -11447,7 +11616,7 @@ function initDataset(dataset, saved = null) {
   const start = fs[0] > 0 ? fs[0] : fs[1] ?? 0;
   const end = fs.at(-1);
   state.zFamily = 'z';
-  state.cmc = { format: 'cap', band: dataset.demo ? [1e6, 100e6] : [start, end] };
+  state.cmc = { format: 'ind', band: dataset.demo ? [1e6, 100e6] : [start, end] };
   state.esb = { model: 'auto', fixture: 'auto', tFormat: 'ocl', eFormat: 'z', input: '', output: '', evalFreq: 100e3 };
   state.pairIn = config.pairs[0]?.id ?? 1;
   state.pairOut = config.pairs[1]?.id ?? 2;
@@ -12234,7 +12403,9 @@ function applySettings(dataset, saved) {
     const range = r => Array.isArray(r) && r.length === 2 && r.every(Number.isFinite) && r[0] < r[1] ? [r[0], r[1]] : null;
     for (const [tab, a] of Object.entries(saved.axes)) {
       if (!hasView(tab) || !a || typeof a !== 'object') continue;
-      state.axes[tab] = { ...defaultAxes(tab), ...(a.x === 'log' || a.x === 'linear' ? { x: a.x } : {}), ...(Y_SCALES.includes(a.y) ? { y: a.y } : {}), xRange: range(a.xRange), yRange: range(a.yRange) };
+      state.axes[tab] = { ...defaultAxes(tab), ...(a.x === 'log' || a.x === 'linear' ? { x: a.x } : {}), ...(Y_SCALES.includes(a.y) ? { y: a.y } : {}), xRange: range(a.xRange), yRange: range(a.yRange),
+        ...(['Hz','kHz','MHz','GHz'].includes(a.xUnit) ? {xUnit:a.xUnit} : {}),
+        ...(['large','bold','large-bold'].includes(a.font) ? {font:a.font} : {}) };
     }
   }
 }
@@ -14662,11 +14833,12 @@ const { chooseMode, controlsPairs, renderControls } = __modul_analyse_steuerung;
 const { $, actionButton, esc, help, icon, selectField, textField, toast } = __modul_basis_dom;
 const { registerActions, registerChanges, registerForms, registerView } = __modul_basis_erweiterung;
 const { MODE_PALETTE, REFLECTION_DASH } = __modul_basis_farben;
-const { display, freqInput, hz, omega, parseHz, portName, valueWith } = __modul_basis_format;
+const { display, freqInput, hz, omega, parseHz, portName, valueWith, si, metricText } = __modul_basis_format;
 const { tx } = __modul_basis_sprache;
 const { axis, state } = __modul_basis_zustand;
 const { ingest, newBag } = __modul_dateien_import;
 const { fileDesc } = __modul_dateien_sitzung;
+const { inductanceUnit, phase } = __modul_module_esb_magnetikgroessen;
 const { saveBlob } = __modul_oberflaeche_export;
 const currentElement = (...args) => __modul_module_esb_modelleditor.currentElement(...args);
 const elementView = (...args) => __modul_module_esb_modelleditor.elementView(...args);
@@ -14713,19 +14885,19 @@ function fitDetails(fit, band, resonance = {}) {
   return '<section class="detail-card"><div class="fit-summary"><h3>Ersatzschaltbild · Fit</h3><small>' +
     esc(hz(band[0]) + ' – ' + hz(band[1]) + ' · ' + fit.count + ' Punkte') + '</small></div>' +
     (fit.count < 3 ? '<p class="inline-notice">Im Fit-Band sind mindestens drei gültige positive Frequenzpunkte nötig.</p>' :
-      '<div class="metric-grid">' + metric('Cw · Koppelkapazität je Seite', fit.cw * 1e12, 'pF') +
-      metric('Ct · Wicklung (H-Mode)', fit.ctH * 1e12, 'pF') + metric('Cg · je Anschluss', fit.cg * 1e12, 'pF') +
-      metric('L · je Wicklung', fit.l * 1e6, 'µH') + metric('M · Gegeninduktivität', fit.m * 1e6, 'µH') +
+      '<div class="metric-grid">' + metric('Cw + Cx · Kopplung je Seite', fit.cw * 1e12, 'pF') +
+      metric('Ct + Cx · aus H', fit.ctH * 1e12, 'pF') + metric('Cg · je Anschluss', fit.cg * 1e12, 'pF') +
+      metricText('L · je Wicklung', si(fit.l, 'H')) + metricText('M · Gegeninduktivität', si(fit.m, 'H')) +
       metric('k · M/L', fit.k, '') +
       '<div class="metric"><strong>' + esc(Number.isFinite(resonance.cm) ? hz(resonance.cm) : '—') + '</strong><span>Eigenresonanz CM · H-Mode</span></div>' +
       '<div class="metric"><strong>' + esc(Number.isFinite(resonance.dm) ? hz(resonance.dm) : '—') + '</strong><span>Eigenresonanz DM · D-Mode</span></div>' +
       '</div><p class="diagnostics">' +
-      esc('L+M ' + valueWith(fit.lcm * 1e6, 'µH') + ' · L−M ' + valueWith(fit.ldm * 1e6, 'µH') +
-        ' · Ct aus D ' + valueWith(fit.ctD * 1e12, 'pF') + ' · Fitrest H/D ' +
+      esc('L+M ' + si(fit.lcm, 'H') + ' · L−M ' + si(fit.ldm, 'H') +
+        ' · Ct − Cx aus D ' + valueWith(fit.ctD * 1e12, 'pF') + ' · Fitrest H/D ' +
         valueWith(100 * fit.hError, '%') + ' / ' + valueWith(100 * fit.dError, '%') +
         ' · Modenkopplung im Y-Modell ' + valueWith(100 * fit.coupling, '%')) + '</p>') +
     (fit.count >= 3 && (unphysical || missing) ?
-      '<p class="inline-notice">Der Fit liefert für dieses Band negative Kapazitäten oder keine gültige Induktivität. Prüfe Portpolarität, DUT-Symmetrie und Fit-Band.</p>' : '') +
+      '<p class="inline-notice" id="cmc-fit-warning">Der Fit liefert für dieses Band negative Kapazitäten oder keine gültige Induktivität. Prüfe Portpolarität, DUT-Symmetrie und Fit-Band.</p>' : '') +
     '</section>';
 }
 
@@ -14785,7 +14957,7 @@ function transformerData(pairs) {
     const low = k => RF.median(head.map(i => RF.get(zs[i], 2, k, k)[0]));
     let rfe = NaN;
     if (Number.isFinite(result.fres) && valid.length) { const at = valid.reduce((best, i) => Math.abs(fs[i] - result.fres) < Math.abs(fs[best] - result.fres) ? i : best, valid[0]); rfe = RF.get(zs[at], 2, 0, 0)[0]; }
-    return { ...result, r1: low(0), r2: low(1), rfe, z: zs };
+    return { ...result, points, r1: low(0), r2: low(1), rfe, z: zs };
   });
 }
 
@@ -14794,23 +14966,31 @@ function transformerView(pairs) {
   const mk = (key, label, color, values, dash = null) => ({
     key: 'tr:' + key, label, color, values, dash, visible: !state.hiddenTraces.has('tr:' + key)
   });
-  let traces, unit, yLabel, refLines = [], focus = null;
+  let traces, unit, yLabel, refLines = [], focus = null, phases = [];
   const em = multiElement('transformer'), fs = state.dataset.freq;
   const mzs = em ? Array.from(fs, f => f > 0 ? RF.trafoModelZ(em.model, f) : null) : null;
   const zsc = z => RF.sub(RF.get(z, 2, 0, 0), RF.div(RF.mul(RF.get(z, 2, 0, 1), RF.get(z, 2, 1, 0)), RF.get(z, 2, 1, 1)));
   const model = (key, label, pick) => mzs ? [mk(key, label, '#c4622d', Float64Array.from(mzs, (z, i) => z ? pick(z, omega(fs[i])) : NaN), [2, 3])] : [];
+  const phaseLines = (curves) => curves.map(([label,color,pick]) => ({
+    label,color,values:Float64Array.from(t.z,(z,i) => z ? phase(pick(z,i)) : NaN)
+  }));
   if (fmt === 'ocl') {
-    traces = [mk('l11', 'L₁₁ · Sek. offen', MODE_PALETTE.dd[0], scaled(sr.l11, 1e-6)), mk('l22', 'L₂₂ · Prim. offen', MODE_PALETTE.dd[1], scaled(sr.l22, 1e-6), REFLECTION_DASH),
-      ...model('ml11', 'Modell L₁₁', (z, w) => 1e6 * RF.get(z, 2, 0, 0)[1] / w), ...model('ml22', 'Modell L₂₂', (z, w) => 1e6 * RF.get(z, 2, 1, 1)[1] / w)];
-    unit = 'µH'; yLabel = 'Induktivität [µH]';
-    refLines = [{ value: t.ocl0 / 1e-6, color: '#c4622d', label: 'OCL₀ ' + display(t.ocl0 / 1e-6) + ' µH' }];
-    focus = t.ocl0 > 0 ? [-t.ocl0 / 1e-6, 2 * t.ocl0 / 1e-6] : null;
+    const {unit: u, factor} = inductanceUnit(t.ocl0 > 0 ? t.ocl0 : t.ocl);
+    phases = phaseLines([['φ Z₁₁',MODE_PALETTE.dd[0],z=>RF.get(z,2,0,0)],['φ Z₂₂',MODE_PALETTE.dd[1],z=>RF.get(z,2,1,1)]]);
+    traces = [mk('l11', 'L₁₁ · Sek. offen', MODE_PALETTE.dd[0], scaled(sr.l11, factor)), mk('l22', 'L₂₂ · Prim. offen', MODE_PALETTE.dd[1], scaled(sr.l22, factor), REFLECTION_DASH),
+      ...model('ml11', 'Modell L₁₁', (z, w) => RF.get(z, 2, 0, 0)[1] / w / factor), ...model('ml22', 'Modell L₂₂', (z, w) => RF.get(z, 2, 1, 1)[1] / w / factor)];
+    unit = u; yLabel = 'Induktivität [' + unit + ']';
+    refLines = [{ value: t.ocl0 / factor, color: '#c4622d', label: 'OCL₀ ' + si(t.ocl0,'H') }];
+    focus = t.ocl0 > 0 ? [-t.ocl0 / factor, 2 * t.ocl0 / factor] : null;
   } else if (fmt === 'leak') {
-    traces = [mk('lsc', 'Lσ · Sek. kurzgeschl.', MODE_PALETTE.dc[0], scaled(sr.lsc, 1e-9)), ...model('mlsc', 'Modell Lσ', (z, w) => 1e9 * zsc(z)[1] / w)];
-    unit = 'nH'; yLabel = 'Streuinduktivität [nH]';
-    refLines = [{ value: t.leak / 1e-9, color: '#c4622d', label: 'Lσ ' + display(t.leak / 1e-9) + ' nH' }];
-    focus = t.leak > 0 ? [-t.leak / 1e-9, 3 * t.leak / 1e-9] : null;
+    const {unit: u, factor} = inductanceUnit(t.leak, 'nH');
+    phases = phaseLines([['φ Z Kurzschluss',MODE_PALETTE.dc[0],zsc]]);
+    traces = [mk('lsc', 'Lσ · Sek. kurzgeschl.', MODE_PALETTE.dc[0], scaled(sr.lsc, factor)), ...model('mlsc', 'Modell Lσ', (z, w) => zsc(z)[1] / w / factor)];
+    unit = u; yLabel = 'Streuinduktivität [' + unit + ']';
+    refLines = [{ value: t.leak / factor, color: '#c4622d', label: 'Lσ ' + si(t.leak,'H') }];
+    focus = t.leak > 0 ? [-t.leak / factor, 3 * t.leak / factor] : null;
   } else if (fmt === 'cap') {
+    phases = phaseLines([['φ Z Kopplung',MODE_PALETTE.cc[0],(_,i)=>t.points[i]?.couplingZ],['φ Z₁₁',MODE_PALETTE.dd[0],z=>RF.get(z,2,0,0)]]);
     traces = [mk('cww', 'Cww · Prim.↔Sek.', MODE_PALETTE.cc[0], scaled(sr.cww, 1e-12)), mk('cpar', 'C_par(f) = 1/(ω²L) − 1/(ωX₁₁)', MODE_PALETTE.dd[0], scaled(sr.cpar, 1e-12))];
     unit = 'pF'; yLabel = 'Kapazität [pF]';
     refLines = [{ value: t.cww / 1e-12, color: '#c4622d', label: 'Cww ' + display(t.cww / 1e-12) + ' pF' },
@@ -14826,10 +15006,10 @@ function transformerView(pairs) {
   const k = Math.abs(t.k);
   const details = () => '<section class="detail-card"><div class="fit-summary"><h3>Übertrager · Ersatzschaltbild</h3><small>' +
     esc('Paar ' + pairs[0].id + ' → Paar ' + pairs[1].id + ' · OCL bei ' + hz(t.fEval)) + '</small></div><div class="metric-grid">' +
-    metric('OCL · L₁₁ bei ' + hz(t.fEval), t.ocl * 1e6, 'µH') + metric('OCL₀ · LC-Fit unterhalb f_res', t.ocl0 * 1e6, 'µH') +
-    metric('L₂₂ · Sekundär', t.l22 * 1e6, 'µH') + metric('n · √(L₂₂/L₁₁)', t.n, '') +
+    metricText('OCL · L₁₁ bei ' + hz(t.fEval), si(t.ocl,'H')) + metricText('OCL₀ · LC-Fit unterhalb f_res', si(t.ocl0,'H')) +
+    metricText('L₂₂ · Sekundär', si(t.l22,'H')) + metric('n · √(L₂₂/L₁₁)', t.n, '') +
     metric('|k| · M/√(L₁₁L₂₂)' + (t.k < 0 ? ' · Polarität invertiert' : ''), k, '') +
-    metric('Lσ · Streuung, Sek. kurzgeschl.', t.leak * 1e9, 'nH') + metric('Cww · Wicklung↔Wicklung', t.cww * 1e12, 'pF') +
+    metricText('Lσ · Streuung, Sek. kurzgeschl.', si(t.leak,'H')) + metric('Cww · Wicklung↔Wicklung', t.cww * 1e12, 'pF') +
     metric('R · Prim.+Sek. bei tiefer f', t.rdc, 'Ω') +
     '<div class="metric"><strong>' + esc(Number.isFinite(t.fres) ? hz(t.fres) : '—') + '</strong><span>f_res · Leerlauf-Eigenresonanz</span></div>' +
     metric('C_par · Wicklungskapazität (Fit)', t.cpar * 1e12, 'pF') + metric('C_res · Thomson 1/((2π·f_res)²·L)', t.cres * 1e12, 'pF') + '</div>' +
@@ -14841,7 +15021,7 @@ function transformerView(pairs) {
       rfe: em.model.rfe, cpar: em.model.cp, cp2: em.model.cp2, cres: NaN, cww: (em.model.cwa || 0) + (em.model.cwx || 0) } : t, !!em?.edited) +
     (em ? modelEditor(em) : '<section class="detail-card" id="model-missing"><div class="fit-summary"><h3>Modell-Editor</h3><small>Für das Modell fehlen positive Werte für OCL, Streuung oder Übersetzung.</small></div></section>');
   return { traces, unit, yLabel, title: 'Übertrager', caption: 'Paar ' + pairs[0].id + ' → Paar ' + pairs[1].id + ' · T-Ersatzschaltbild' + (em ? ' · Modell aus dem Editor gepunktet' : ''), native: '', positive: fmt === 'z', signed: fmt !== 'z' && fmt !== 'r', refLines, focus, details,
-    fitBand: em && fmt !== 'cap' ? em.band : null };
+    fitBand: em && fmt !== 'cap' ? em.band : null, phases:state.esb.phase ? phases : [] };
 }
 
 function elementData(kind) {
@@ -14914,8 +15094,11 @@ function esbControls() {
       (fixture === 'reflection' ? '' : selectField('Ausgang', 'esb-output', modeOptions(), state.esb.output)) +
       selectField('Darstellung', 'esb-eformat', model === 'series' ? SERIES_FORMATS : SHUNT_FORMATS, state.esb.eFormat);
   } else {
-    html += controlsPairs() + selectField('Darstellung', 'cmc-format', [['cap', 'Kapazitäten'], ['ind', 'Induktivitäten'], ['zesb', 'Impedanz · Ersatzschaltbild (Editor)'], ['zfit', 'Impedanz · je Mode bis 2. Resonanz']], state.cmc.format);
+    html += controlsPairs() + selectField('Darstellung', 'cmc-format', [['ind', 'Induktivität je Wicklung'], ['leak', 'Streuinduktivität Lσ'], ['modes', 'Modale Induktivitäten L±M'], ['cap', 'Kapazitäten'], ['zesb', 'Impedanz · Ersatzschaltbild (Editor)'], ['zfit', 'Impedanz · je Mode bis 2. Resonanz']], state.cmc.format);
   }
+  const phaseView = model === 'cmc' ? ['ind', 'leak', 'modes', 'cap'].includes(state.cmc.format) :
+    model === 'transformer' && ['ocl', 'leak', 'cap'].includes(state.esb.tFormat);
+  if (phaseView) html += selectField('Impedanzphase (°)', 'esb-phase', [['off', 'Aus'], ['on','Ein']], state.esb.phase ? 'on' : 'off');
   if (model === 'cmc' && state.config.pairs.length >= 2) {
     html += '<form class="fit-fields" id="fit-form">' + textField('Fit ab', 'start', freqInput(state.cmc.band[0])) +
       textField('Fit bis', 'stop', freqInput(state.cmc.band[1])) + '<button class="button" type="submit">Fit anwenden</button></form>';
@@ -14949,6 +15132,7 @@ registerView({
 });
 
 registerChanges({
+  'esb-phase': value => { state.esb.phase = value === 'on'; },
   'cmc-format': value => { axis().yRange = null; state.cmc.format = value; },
   'esb-model': value => { state.esb.model = value; axis().yRange = null; },
   'esb-fixture': value => { state.esb.fixture = value; axis().yRange = null; },
@@ -14986,9 +15170,11 @@ const { registerActions, registerChanges, registerForms } = __modul_basis_erweit
 const { MODE_PALETTE, REFLECTION_DASH } = __modul_basis_farben;
 const { display, freqInput, hz, omega, parseHz, si } = __modul_basis_format;
 const { rfJob } = __modul_basis_rechnen;
+const { tx } = __modul_basis_sprache;
 const { state } = __modul_basis_zustand;
 const { persistSettings } = __modul_dateien_einstellungen;
 const { FIXTURE_NAME, LEVEL_NAME, elementData, esbModel, esbView, metric, naturalData, scaled, selfResonance, transformerData } = __modul_module_esb_esb;
+const { estimateCmcCapacitances } = __modul_module_esb_cmc_capacitance;
 const cmcLoss = (...args) => __modul_module_esb_schaltbilder.cmcLoss(...args);
 const focusAround = (...args) => __modul_module_esb_schaltbilder.focusAround(...args);
 // module/esb/modelleditor – Modell-Editor: Werte eingeben, ziehen, fixieren, fitten.
@@ -15045,7 +15231,7 @@ function elementModel(kind, data) {
 // core loses inductance towards its resonance, so a wide LC fit is no good guide); the modal capacitances from the
 // common mode well above its resonance, from the differential resonance and from the two purely capacitive modes.
 // The four modal capacitances then give C_g, C_w, C_t and C_x without any of them having to turn negative.
-function cmcStart(pairs, loss, need) {
+function cmcStart(pairs, loss, need, report) {
   const fs = state.dataset.freq, natural = naturalData(pairs), ok = v => Number.isFinite(v) && v > 0;
   const fcm = selfResonance(natural, 'h'), fdm = selfResonance(natural, 'd'), last = fs.at(-1);
   const within = (lo, hi, pick) => RF.median(Array.from(fs, (f, i) => f >= lo && f <= hi && natural[i] ? pick(natural[i], omega(f)) : NaN));
@@ -15057,6 +15243,7 @@ function cmcStart(pairs, loss, need) {
   const cg = within(capLo, capHi, n => n.cg), line = within(capLo, capHi, n => n.cw);           // line = C_w + C_x
   const across = (within(capLo, capHi, (n, w) => n.h[1] / w) - cg) / 2;                          // C_t + C_x
   const turn = ok(fdm) ? (2 / (omega(fdm) ** 2 * ls) - cg) / 2 : NaN;                            // C_t + C_w
+  Object.assign(report, estimateCmcCapacitances({ fdm, leakage: ls, cg, line, across }));
   let cw = (line + turn - across) / 2, cx = (line + across - turn) / 2, ct = (across + turn - line) / 2;
   if (![cw, cx, ct].every(ok)) { cx = NaN; cw = line; ct = [across, turn - line].find(ok) ?? NaN; }
   // Series resistance from the differential mode far below its resonance (where ωLσ is small), R_σ from the rise of the
@@ -15079,11 +15266,12 @@ function multiData(kind, pairs) {
         cm: cmB.map(b => b?.z ?? null), dm: dmB.map(b => b?.z ?? null), refCm: cmB.find(Boolean)?.ref ?? 25, refDm: dmB.find(Boolean)?.ref ?? 100 };
       const fit = cache('fit:' + id + ':' + band.join(':'), () => RF.fitCMC(freq, naturalData(pairs), ...band)), loss = cmcLoss(pairs);
       const need = (key, value, fallback) => { if (value > 0 && Number.isFinite(value)) return value; guessed.push(key); return fallback; };
-      const auto = cmcStart(pairs, loss, need);
+      const capacitanceEstimate = {};
+      const auto = cmcStart(pairs, loss, need, capacitanceEstimate);
       const valid = Array.from(freq, (f, i) => f > 0 && meas.y[i] ? f : NaN).filter(Number.isFinite);
       // The lumped model holds up to somewhat above the differential-mode resonance; above it further resonances follow.
       const fdm = selfResonance(nat, 'd'), top = Number.isFinite(fdm) ? 2 * fdm : Infinity;
-      return { meas, auto, guessed, prior: {}, span: [valid[0], valid.at(-1)], natural: [Math.max(band[0], valid[0] ?? band[0]), Math.min(band[1], valid.at(-1) ?? band[1], top)] };
+      return { meas, auto, guessed, capacitanceEstimate, prior: {}, span: [valid[0], valid.at(-1)], natural: [Math.max(band[0], valid[0] ?? band[0]), Math.min(band[1], valid.at(-1) ?? band[1], top)] };
     });
   }
   const t = transformerData(pairs);
@@ -15190,6 +15378,14 @@ function spreadBadge(spread, key) {
   const text = kind === 'fixed' ? 'fest' : Number.isFinite(s) ? '± ' + (s >= 9.995 ? '>999' : display(Number((100 * s).toPrecision(2)))) + ' %' : '± ∞';
   return '<span class="model-spread spread-' + kind + '" data-spread="' + kind + '" title="' + esc(SPREAD_TEXT[kind] + (kind === 'fixed' ? '' : ': so weit kann sich der Wert ändern, während die übrigen ausgleichen. Richtwert, kein Vertrauensintervall.')) + '">' + esc(text) + '</span>';
 }
+function cmcCapacitanceNote(em) {
+  const e = em.data.capacitanceEstimate || {};
+  const values = e.available
+    ? tx('Resonanz-Schätzung: ', 'Resonance estimate: ') + 'Ct = ' + si(e.ct, 'F') + ' · Cw = ' + si(e.cw, 'F') + ' · Cx = ' + si(e.cx, 'F') + '.'
+    : tx('Eine getrennte Resonanz-Schätzung ist mit diesen Messdaten nicht zuverlässig möglich', 'A reliable separate resonance estimate is not possible with these measurements') + (e.reason === 'inconsistent' ? tx(': Die berechneten Einzelwerte wären teilweise negativ.', ': Some calculated branch values would be negative.') : tx(': Resonanz oder benötigte Moden fehlen.', ': The resonance or required modes are missing.'));
+  const resonance = Number.isFinite(e.modal) ? ' D-Mode: fᵣ = ' + hz(e.fdm) + ', Lσ = ' + si(e.leakage, 'H') + ', Ceff = 1 / ((2πfᵣ)² · Lσ) = ' + si(e.modal, 'F') + '.' : '';
+  return '<p class="note" id="model-capacitance-estimate">' + esc(tx('Ct bezeichnet die Kapazität über einer Wicklung; Cw die Koppelkapazität zwischen gleichnamigen Anschlüssen je Seite und Cx die diagonale Koppelkapazität. ', 'Ct is the capacitance across one winding; Cw is the coupling capacitance between corresponding terminals at each end, and Cx is the diagonal coupling capacitance. ') + values + resonance + tx(' Die Einzelwerte sind Schätzungen für das symmetrische Ersatzschaltbild, keine direkten Einzelmessungen. Ceff = Ct + Cw + Cg/2: Erst zusammen mit den weiteren Moden lassen sich Ct, Cw und Cx trennen. Verluste, frequenzabhängige Induktivität und weitere Resonanzen können die Thomson-Näherung verfälschen. Die Werte unten zeigen das aktuelle Modell und können nach Optimierung abweichen.', ' The individual values are estimates for the symmetric equivalent circuit, not direct individual measurements. Ceff = Ct + Cw + Cg/2: Ct, Cw and Cx can only be separated using the other modes as well. Losses, frequency-dependent inductance and additional resonances can distort the Thomson approximation. The values below show the current model and may differ after optimization.')) + '</p>';
+}
 function modelEditor(em) {
   const base = Object.fromEntries(RF.modelParams(em.auto).map(p => [p.key, p.value])), spread = modelSpread(em);
   const rows = RF.modelParams(em.model).map(({ key, value }) => {
@@ -15211,7 +15407,7 @@ function modelEditor(em) {
       ' · Cww = Cwa + Cwx = ' + si((em.model.cwa || 0) + (em.model.cwx || 0), 'F') + ' · Polarität ' + (em.model.flip ? 'invertiert' : 'gleichsinnig')) + '</p>' : '';
   return '<section class="detail-card model-editor" id="model-editor"><div class="fit-summary"><h3>Modell-Editor</h3><small>' + esc(modelStructure(em.model)) + '</small></div>' +
     '<p class="diagnostics" id="model-summary" data-err="' + em.quality.err + '" data-phase="' + em.quality.phase + '" data-edited="' + (em.edited ? '1' : '0') + '">' + esc(modelSummary(em)) + '</p>' +
-    (em.multi ? guessed + hint + derived + spreadNote(em, spread) : elementSchematic(em.model)) +
+    (em.multi ? guessed + hint + derived + (em.model.type === 'cmc' ? cmcCapacitanceNote(em) : '') + spreadNote(em, spread) : elementSchematic(em.model)) +
     '<form id="model-form" class="model-form">' + rows +
     '<div class="model-window"><label class="control"><span class="field-label">Fitfenster von</span><input class="field-input mono" name="from" value="' + esc(freqInput(em.band[0])) + '" autocomplete="off"></label>' +
     '<label class="control"><span class="field-label">bis</span><input class="field-input mono" name="to" value="' + esc(freqInput(em.band[1])) + '" autocomplete="off"></label>' +
@@ -15509,9 +15705,11 @@ const { cache, selectedPairs } = __modul_analyse_daten;
 const { $, actionButton, esc, help } = __modul_basis_dom;
 const { registerActions } = __modul_basis_erweiterung;
 const { COLORS } = __modul_basis_farben;
-const { display, hz, metricText, omega, portName, si } = __modul_basis_format;
+const { display, hz, metricText, portName, si } = __modul_basis_format;
+const { tx } = __modul_basis_sprache;
 const { state } = __modul_basis_zustand;
 const { fitDetails, naturalData, selfResonance } = __modul_module_esb_esb;
+const { cmcQuantities } = __modul_module_esb_magnetikgroessen;
 const { modelEditor, multiElement } = __modul_module_esb_modelleditor;
 // module/esb/schaltbilder – Schaltbilder mit den Werten des Fits.
 
@@ -15589,12 +15787,13 @@ function cmcSchematic([input, output], fit = {}, loss = {}, edited = false) {
     '. Wähle ein Band, in dem dieses Element die Kurve prägt – für Kapazitäten reicht es meist, das Band zu höheren Frequenzen zu erweitern.</p>' : '';
   const table = (edited ? EDITED_NOTE : '') + warn + '<div class="metric-grid">' + metricText('L · Induktivität je Wicklung', val(fit.l, 'H')) + metricText('M · Gegeninduktivität', val(fit.m, 'H')) +
     metricText('k = M/L', Number.isFinite(fit.k) ? display(fit.k) : '—') + metricText('Lσ = L − M · Streuung je Wicklung', val(leak, 'H')) +
-    metricText(edited ? 'R_w · je Wicklung' : 'R_w · je Wicklung, aus R₀ von Z DM / 2', val(loss.rw, 'Ω')) + (loss.sections?.length > 1 ? loss.sections.map(([m, r], k) => metricText('Kernglied ' + (k + 1) + ' · M ∥ R_Fe', si(m, 'H') + ' ∥ ' + val(r, 'Ω'))).join('') + metricText('M · Summe der Kernglieder, im Bild als ein Glied', val(fit.m, 'H'))
-      : metricText(edited ? 'R_Fe · je Wicklung' : 'R_Fe · je Wicklung, aus der CM-Resonanz × 2', val(loss.rfe, 'Ω'))) +
-    (edited && fit.cx > 0 ? metricText('Cx · diagonal, im Bild nicht gezeichnet', si(fit.cx, 'F')) : '') +
-    (edited && loss.rls > 0 ? metricText('R_σ · parallel zu Lσ, im Bild nicht gezeichnet', si(loss.rls, 'Ω')) : '') + '</div>' +
-    '<p class="note">Normierung: Im Gleichtakt liegen beide Wicklungen parallel, Z CM = jω(L + M)/2 an 25 Ω. Im Gegentakt liegen sie in Reihe, Z DM = j2ω(L − M) = j2ωLσ an 100 Ω. ' +
-    'L, M, Cw, Cg und Ct stammen aus dem Fit im gewählten Band. R_w und R_Fe stammen aus dem Modell bis zur 2. Resonanz und sind Näherungen: R_Fe gilt nur nahe der Gleichtakt-Resonanz, Kernverluste sind frequenzabhängig.</p>';
+    metricText(loss.fromModel ? 'R_w · je Wicklung' : 'R_w · je Wicklung, aus R₀ von Z DM / 2', val(loss.rw, 'Ω')) + (loss.sections?.length > 1 ? loss.sections.map(([m, r], k) => metricText('Kernglied ' + (k + 1) + ' · M ∥ R_Fe', si(m, 'H') + ' ∥ ' + val(r, 'Ω'))).join('') + metricText('M · Summe der Kernglieder, im Bild als ein Glied', val(fit.m, 'H'))
+      : metricText(loss.fromModel ? 'R_Fe · je Wicklung' : 'R_Fe · je Wicklung, aus der CM-Resonanz × 2', val(loss.rfe, 'Ω'))) +
+    (fit.cx > 0 ? metricText('Cx · diagonal, im Bild nicht gezeichnet', si(fit.cx, 'F')) : '') +
+    (loss.rls > 0 ? metricText('R_σ · parallel zu Lσ, im Bild nicht gezeichnet', si(loss.rls, 'Ω')) : '') + '</div>' +
+    '<p class="note">' + esc(tx(
+      'Normierung: Im Gleichtakt liegen beide Wicklungen parallel, Z CM = jω(L + M)/2 an 25 Ω. Im Gegentakt liegen sie in Reihe, Z DM = j2ω(L − M) = j2ωLσ an 100 Ω. Das Schaltbild zeigt die Parameter des Ersatzschaltbilds. Die Messkurven zeigen frequenzabhängige Größen. Kernverluste sind frequenzabhängig.',
+      'Normalization: The windings are in parallel in common mode, Z CM = jω(L + M)/2 at 25 Ω. They are in series in differential mode, Z DM = j2ω(L − M) = j2ωLσ at 100 Ω. The schematic shows equivalent-circuit parameters. The measured curves and core losses depend on frequency.')) + '</p>';
   return schematicFigure('cmc-schematic', 'Ersatzschaltbild mit Werten', 'CMC zwischen ' + portName(input.p) + '/' + portName(input.q) + ' und ' + portName(output.p) + '/' + portName(output.q),
     620, 362, strokes.join(''), texts.join(''), 'Je Wicklung: R_w und Streuung Lσ in Reihe mit dem gekoppelten Teil M · R_Fe parallel zum gekoppelten Teil · Ct parallel je Wicklung · Cw je Seite zwischen den Wicklungen · Cg je Anschluss gegen Masse', table);
 }
@@ -15681,49 +15880,46 @@ function cmcView() {
   const key = pairs.map(p => p.id).join(':');
   const fit = cache('fit:' + key + ':' + band.join(':'), () => RF.fitCMC(dataset.freq, natural, ...band));
   const resonance = cache('srf:' + key, () => ({ cm: selfResonance(natural, 'h'), dm: selfResonance(natural, 'd') }));
-  const isCap = state.cmc.format === 'cap', isZ = state.cmc.format === 'zesb', unit = isZ ? 'Ω' : isCap ? 'pF' : 'µH';
+  const format = state.cmc.format, isCap = format === 'cap', isZ = format === 'zesb';
   const em = multiElement('cmc'), [cmZ, dmZ] = modalCispr(pairs).blocks;
   const mz = em ? Array.from(dataset.freq, f => f > 0 ? RF.cmcModelZ(em.model, f, em.data.meas.refCm, em.data.meas.refDm) : null) : null;
   const mag = z => z ? Math.hypot(z[0], z[1]) : NaN;
-  let list, extra = [];
-  if (isZ) {
-    list = [['|Z CM|', COLORS[1], i => mag(cmZ[i]?.z)], ['|Z DM|', COLORS[0], i => mag(dmZ[i]?.z)]];
-    if (mz) extra = [['Modell CM', COLORS[1], i => mag(mz[i]?.cm)], ['Modell DM', COLORS[0], i => mag(mz[i]?.dm)]];
-  } else if (isCap) {
-    if (em) extra = [['Modell Cw', COLORS[1], () => em.model.cw * 1e12], ['Modell Cg', COLORS[0], () => em.model.cg * 1e12], ['Modell Ct', COLORS[2], () => em.model.ct * 1e12]];
-    list = [
-      ['Cw', COLORS[1], i => natural[i]?.cw * 1e12],
-      ['Cg', COLORS[0], i => natural[i]?.cg * 1e12],
-      ['Ct (H)', COLORS[2], (i, f) => {
-        const h = natural[i]?.h;
-        if (!h || !Number.isFinite(fit.lcm) || !Number.isFinite(fit.cg)) return NaN;
-        return ((h[1] + 2 / (omega(f) * fit.lcm)) / omega(f) - fit.cg) * 0.5e12;
-      }]
-    ];
-  } else {
-    const [cm, dm] = modalCispr(pairs).blocks;
-    list = [
-      ['L+M', COLORS[1], (i, f) => Number.isFinite(cm[i]?.z?.[1]) && f > 0 ? 2e6 * cm[i].z[1] / omega(f) : NaN],
-      ['L−M', COLORS[0], (i, f) => Number.isFinite(dm[i]?.z?.[1]) && f > 0 ? 0.5e6 * dm[i].z[1] / omega(f) : NaN]
-    ];
-    if (mz) extra = [['Modell L+M', COLORS[1], (i, f) => mz[i]?.cm ? 2e6 * mz[i].cm[1] / omega(f) : NaN], ['Modell L−M', COLORS[0], (i, f) => mz[i]?.dm ? 0.5e6 * mz[i].dm[1] / omega(f) : NaN]];
-  }
+  const quantities = isZ ? {
+    unit: 'Ω',
+    list: [['|Z CM|', COLORS[1], i => mag(cmZ[i]?.z)], ['|Z DM|', COLORS[0], i => mag(dmZ[i]?.z)]],
+    extra: mz ? [['Modell CM', COLORS[1], i => mag(mz[i]?.cm)], ['Modell DM', COLORS[0], i => mag(mz[i]?.dm)]] : []
+  } : cmcQuantities(dataset.freq, cmZ, dmZ, mz, natural, em?.model, format);
+  const { unit, list, extra, plateau } = quantities;
   const traces = [...list.map(item => [...item, null]), ...extra.map(item => [...item, [2, 3]])].map(([label, color, fn, dash]) => ({
     key: 'cmc:' + label, label, color, dash, values: Float64Array.from(dataset.freq, (f, i) => fn(i, f)),
     visible: !state.hiddenTraces.has('cmc:' + label)
   }));
-  const coreM = em?.edited ? RF.coreSections(em.model).reduce((sum, [m]) => sum + m, 0) : NaN;
-  const shown = em?.edited ? { l: coreM + em.model.ls, m: coreM, k: coreM / (coreM + em.model.ls), ctH: em.model.ct, ctD: em.model.ct, cw: em.model.cw, cg: em.model.cg, cx: em.model.cx } : fit;
+  const coreM = em ? RF.coreSections(em.model).reduce((sum, [m]) => sum + m, 0) : NaN;
+  const shown = em ? { l: coreM + em.model.ls, m: coreM, k: coreM / (coreM + em.model.ls), ctH: em.model.ct, ctD: em.model.ct, cw: em.model.cw, cg: em.model.cg, cx: em.model.cx } : { ...fit, cw:NaN, ctH:NaN, ctD:NaN };
+  const overview = () => {
+    if (isZ) return '';
+    const at10k = quantities.at10k;
+    const f = at10k >= 0 ? hz(dataset.freq[at10k]) : '';
+    const winding = f ? metricText('L · Messwert je Wicklung bei ' + f, si(quantities.windingReference,'H')) +
+      metricText('Lσ · Messwert bei ' + f, si(quantities.leakReference,'H')) : '';
+    const circuit = em ? metricText('L · Modell je Wicklung bei tiefer Frequenz', si(shown.l,'H')) +
+      metricText('Lσ · Modell je Wicklung', si(em.model.ls,'H')) : '';
+    const coupling = isCap ? '<p class="note">' + esc(plateau.stable ?
+      'Kopplungsplateau · ' + hz(plateau.band[0]) + ' – ' + hz(plateau.band[1]) + ' · Cw + Cx = ' + si(plateau.value,'F') :
+      'Kein stabiles Kapazitätsplateau nahe −90° gefunden.') + '</p>' +
+      '<p class="note">Bei virtueller Drehung bilden die beiden Wicklungen die Ports. Der Gleichtakt-Transfer liefert Cw + Cx je Seite. Einzelne Modellzweige erfordern die Auswertung weiterer Moden.</p>' : '';
+    return '<section class="detail-card"><div class="metric-grid">' + winding + circuit + '</div>' + coupling + '</section>';
+  };
   return {
     traces, unit, yLabel: (isZ ? 'Impedanz' : isCap ? 'Kapazität' : 'Induktivität') + ' [' + unit + ']', signed: !isZ, positive: isZ,
     focus: isCap ? focusAround([fit.cw * 1e12, fit.cg * 1e12], 0.5, 1.5) : null,
-    title: isZ ? 'CMC · Impedanz und Ersatzschaltbild' : isCap ? 'Parasitärkapazitäten' : 'Wirksame Induktivitäten',
-    caption: isZ ? 'Z CM und Z DM nach CISPR 17 · Modell aus dem Editor gepunktet' : isCap ? 'Projektion der Vierport-Y-Matrix auf die natürlichen CMC-Moden' : 'Aus dem Imaginärteil von Z CM und Z DM · je Wicklung',
-    native: '', fitBand: em ? em.band : band,
-    details: () => fitDetails(fit, band, resonance) + cmcSchematic(pairs, shown, em?.edited ? { rw: em.model.rw, rfe: em.model.rfe, rls: em.model.rls, sections: RF.coreSections(em.model) } : cmcLoss(pairs), !!em?.edited) +
+    title: isZ ? 'CMC · Impedanz und Ersatzschaltbild' : isCap ? 'Parasitärkapazitäten' : format === 'ind' ? 'Induktivität je Wicklung' : format === 'leak' ? 'Streuinduktivität Lσ' : 'Modale Induktivitäten L±M',
+    caption: isZ ? 'Z CM und Z DM nach CISPR 17 · Modell aus dem Editor gepunktet' : isCap ? 'Projektion der Vierport-Y-Matrix auf die natürlichen CMC-Moden' : 'Symmetrische Wicklungen · L = [(L+M) + (L−M)] / 2',
+    native: '', fitBand: em ? em.band : band, phases: state.esb.phase ? quantities.phases : [],
+    details: () => overview() + cmcSchematic(pairs, shown, em ? { fromModel:true, rw: em.model.rw, rfe: em.model.rfe, rls: em.model.rls, sections: RF.coreSections(em.model) } : cmcLoss(pairs), !!em?.edited) +
       (em ? modelEditor(em) : '<section class="detail-card" id="model-missing"><div class="fit-summary"><h3>Modell-Editor</h3><small>Für das Modell fehlen positive Werte für L und M. Prüfe Portpolarität und Fit-Band.</small></div></section>') +
-      '<p class="note">Cw und Cg sind Modellwerte für eine möglichst symmetrische CMC. Übrige aktive Ports sind mit Z₀ abgeschlossen. ' +
-      help + '</p>'
+      fitDetails(fit, band, resonance) +
+      '<p class="note">Cw und Cg sind Modellwerte für eine möglichst symmetrische CMC. Übrige aktive Ports sind mit Z₀ abgeschlossen. ' + help + '</p>'
   };
 }
 

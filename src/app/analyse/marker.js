@@ -49,7 +49,10 @@ function renderMarker(rebuild = false) {
       '</span></td>' + used.map(i => '<td' + (i === state.activeMarker ? ' class="is-active-col"' : '') + '>' + esc(valueWith(traceValue(t, state.markers[i]), view.unit)) + '</td>').join('') +
       (showDelta ? '<td>' + esc(valueWith(delta, view.unit)) + '</td>' : '') +
       (view.smith ? '<td>' + esc(complexText(raw?.every(Number.isFinite) ? RF.reflection(raw, view.smithRef) : null, 'Ω')) + '</td>' : '') + '</tr>';
-  }).join('');
+  }).join('') + (view.phases || []).map(trace => '<tr><td><span class="trace-dot is-dashed" style="--trace:' +
+    trace.color + '"></span>' + esc(trace.label) + '</td>' +
+    used.map(i => '<td>' + esc(valueWith(trace.values[state.markers[i]], '°')) + '</td>').join('') +
+    (showDelta ? '<td>—</td>' : '') + '</tr>').join('');
   if (!rows) {
     $('marker-data').innerHTML = '<p class="marker-notice">Für die Markerwerte muss mindestens eine Kurve sichtbar sein.</p>';
     return;

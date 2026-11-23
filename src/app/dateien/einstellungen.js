@@ -130,7 +130,9 @@ function applySettings(dataset, saved) {
     const range = r => Array.isArray(r) && r.length === 2 && r.every(Number.isFinite) && r[0] < r[1] ? [r[0], r[1]] : null;
     for (const [tab, a] of Object.entries(saved.axes)) {
       if (!hasView(tab) || !a || typeof a !== 'object') continue;
-      state.axes[tab] = { ...defaultAxes(tab), ...(a.x === 'log' || a.x === 'linear' ? { x: a.x } : {}), ...(Y_SCALES.includes(a.y) ? { y: a.y } : {}), xRange: range(a.xRange), yRange: range(a.yRange) };
+      state.axes[tab] = { ...defaultAxes(tab), ...(a.x === 'log' || a.x === 'linear' ? { x: a.x } : {}), ...(Y_SCALES.includes(a.y) ? { y: a.y } : {}), xRange: range(a.xRange), yRange: range(a.yRange),
+        ...(['Hz','kHz','MHz','GHz'].includes(a.xUnit) ? {xUnit:a.xUnit} : {}),
+        ...(['large','bold','large-bold'].includes(a.font) ? {font:a.font} : {}) };
     }
   }
 }

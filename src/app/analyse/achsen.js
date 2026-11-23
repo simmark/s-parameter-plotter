@@ -19,7 +19,11 @@ function openAxes() {
     '<div class="axis-group"><h3>Frequenzachse</h3>' +
     '<label class="control"><span>Skala</span><select name="x-scale">' +
     options(state.dataset.freq.at(-1) > 0 ? [['log', 'Logarithmisch'], ['linear', 'Linear']] : [['linear', 'Linear']], a.x) +
-    '</select></label><div class="dialog-grid">' +
+    '</select></label><div class="dialog-grid"><label class="control"><span>Frequenzeinheit</span><select name="x-unit">' +
+    options([['auto','Automatisch'], ...['Hz','kHz','MHz','GHz'].map(u => [u,u])], a.xUnit ?? 'auto') +
+    '</select></label><label class="control"><span>Achsenbeschriftung</span><select name="axis-font">' +
+    options([['normal','Normal'],['large','Größer'],['bold','Fett'],['large-bold','Größer und fett']], a.font ?? 'normal') +
+    '</select></label></div><div class="dialog-grid">' +
     textField('Von', 'x-start', a.xRange ? freqInput(a.xRange[0]) : '', 'Automatisch') +
     textField('Bis', 'x-stop', a.xRange ? freqInput(a.xRange[1]) : '', 'Automatisch') +
     '</div></div><div class="axis-group"><h3>Vertikale Achse</h3>' +
@@ -48,7 +52,11 @@ function applyAxes(form) {
     formError(form, 'Gib zwei aufsteigende Y-Grenzen ein. Bei Log-Skalierung müssen beide positiv sein.');
     return;
   }
-  Object.assign(axis(), { x, xRange: xr, y, yRange: yr });
+  const a = axis();
+  Object.assign(a, { x, xRange: xr, y, yRange: yr });
+  const unit = data.get('x-unit'), font = data.get('axis-font');
+  if (unit === 'auto') delete a.xUnit; else a.xUnit = unit;
+  if (font === 'normal') delete a.font; else a.font = font;
   $('axes-dialog').close();
   renderAnalysis();
 }

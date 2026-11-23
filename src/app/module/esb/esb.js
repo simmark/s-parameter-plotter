@@ -7,12 +7,13 @@ import { chooseMode, controlsPairs, renderControls } from '../../analyse/steueru
 import { $, actionButton, esc, help, icon, selectField, textField, toast } from '../../basis/dom.js';
 import { registerActions, registerChanges, registerForms, registerView } from '../../basis/erweiterung.js';
 import { MODE_PALETTE, REFLECTION_DASH } from '../../basis/farben.js';
-import { display, freqInput, hz, omega, parseHz, portName, valueWith } from '../../basis/format.js';
+import { display, freqInput, hz, omega, parseHz, portName, valueWith, si, metricText } from '../../basis/format.js';
 import { tx } from '../../basis/sprache.js';
 import { axis, state } from '../../basis/zustand.js';
 import { ingest, newBag } from '../../dateien/import.js';
 import { fileDesc } from '../../dateien/sitzung.js';
 import { currentElement, elementView, modelApply, modelEditor, multiElement, trafoLowLeak } from './modelleditor.js';
+import { inductanceUnit, phase } from './magnetikgroessen.js';
 import { cmcView, focusAround, transformerSchematic } from './schaltbilder.js';
 import { saveBlob } from '../../oberflaeche/export.js';
 
@@ -50,19 +51,19 @@ function fitDetails(fit, band, resonance = {}) {
   return '<section class="detail-card"><div class="fit-summary"><h3>Ersatzschaltbild · Fit</h3><small>' +
     esc(hz(band[0]) + ' – ' + hz(band[1]) + ' · ' + fit.count + ' Punkte') + '</small></div>' +
     (fit.count < 3 ? '<p class="inline-notice">Im Fit-Band sind mindestens drei gültige positive Frequenzpunkte nötig.</p>' :
-      '<div class="metric-grid">' + metric('Cw · Koppelkapazität je Seite', fit.cw * 1e12, 'pF') +
-      metric('Ct · Wicklung (H-Mode)', fit.ctH * 1e12, 'pF') + metric('Cg · je Anschluss', fit.cg * 1e12, 'pF') +
-      metric('L · je Wicklung', fit.l * 1e6, 'µH') + metric('M · Gegeninduktivität', fit.m * 1e6, 'µH') +
+      '<div class="metric-grid">' + metric('Cw + Cx · Kopplung je Seite', fit.cw * 1e12, 'pF') +
+      metric('Ct + Cx · aus H', fit.ctH * 1e12, 'pF') + metric('Cg · je Anschluss', fit.cg * 1e12, 'pF') +
+      metricText('L · je Wicklung', si(fit.l, 'H')) + metricText('M · Gegeninduktivität', si(fit.m, 'H')) +
       metric('k · M/L', fit.k, '') +
       '<div class="metric"><strong>' + esc(Number.isFinite(resonance.cm) ? hz(resonance.cm) : '—') + '</strong><span>Eigenresonanz CM · H-Mode</span></div>' +
       '<div class="metric"><strong>' + esc(Number.isFinite(resonance.dm) ? hz(resonance.dm) : '—') + '</strong><span>Eigenresonanz DM · D-Mode</span></div>' +
       '</div><p class="diagnostics">' +
-      esc('L+M ' + valueWith(fit.lcm * 1e6, 'µH') + ' · L−M ' + valueWith(fit.ldm * 1e6, 'µH') +
-        ' · Ct aus D ' + valueWith(fit.ctD * 1e12, 'pF') + ' · Fitrest H/D ' +
+      esc('L+M ' + si(fit.lcm, 'H') + ' · L−M ' + si(fit.ldm, 'H') +
+        ' · Ct − Cx aus D ' + valueWith(fit.ctD * 1e12, 'pF') + ' · Fitrest H/D ' +
         valueWith(100 * fit.hError, '%') + ' / ' + valueWith(100 * fit.dError, '%') +
         ' · Modenkopplung im Y-Modell ' + valueWith(100 * fit.coupling, '%')) + '</p>') +
     (fit.count >= 3 && (unphysical || missing) ?
-      '<p class="inline-notice">Der Fit liefert für dieses Band negative Kapazitäten oder keine gültige Induktivität. Prüfe Portpolarität, DUT-Symmetrie und Fit-Band.</p>' : '') +
+      '<p class="inline-notice" id="cmc-fit-warning">Der Fit liefert für dieses Band negative Kapazitäten oder keine gültige Induktivität. Prüfe Portpolarität, DUT-Symmetrie und Fit-Band.</p>' : '') +
     '</section>';
 }
 
@@ -122,7 +123,7 @@ function transformerData(pairs) {
     const low = k => RF.median(head.map(i => RF.get(zs[i], 2, k, k)[0]));
     let rfe = NaN;
     if (Number.isFinite(result.fres) && valid.length) { const at = valid.reduce((best, i) => Math.abs(fs[i] - result.fres) < Math.abs(fs[best] - result.fres) ? i : best, valid[0]); rfe = RF.get(zs[at], 2, 0, 0)[0]; }
-    return { ...result, r1: low(0), r2: low(1), rfe, z: zs };
+    return { ...result, points, r1: low(0), r2: low(1), rfe, z: zs };
   });
 }
 
@@ -131,23 +132,31 @@ function transformerView(pairs) {
   const mk = (key, label, color, values, dash = null) => ({
     key: 'tr:' + key, label, color, values, dash, visible: !state.hiddenTraces.has('tr:' + key)
   });
-  let traces, unit, yLabel, refLines = [], focus = null;
+  let traces, unit, yLabel, refLines = [], focus = null, phases = [];
   const em = multiElement('transformer'), fs = state.dataset.freq;
   const mzs = em ? Array.from(fs, f => f > 0 ? RF.trafoModelZ(em.model, f) : null) : null;
   const zsc = z => RF.sub(RF.get(z, 2, 0, 0), RF.div(RF.mul(RF.get(z, 2, 0, 1), RF.get(z, 2, 1, 0)), RF.get(z, 2, 1, 1)));
   const model = (key, label, pick) => mzs ? [mk(key, label, '#c4622d', Float64Array.from(mzs, (z, i) => z ? pick(z, omega(fs[i])) : NaN), [2, 3])] : [];
+  const phaseLines = (curves) => curves.map(([label,color,pick]) => ({
+    label,color,values:Float64Array.from(t.z,(z,i) => z ? phase(pick(z,i)) : NaN)
+  }));
   if (fmt === 'ocl') {
-    traces = [mk('l11', 'L₁₁ · Sek. offen', MODE_PALETTE.dd[0], scaled(sr.l11, 1e-6)), mk('l22', 'L₂₂ · Prim. offen', MODE_PALETTE.dd[1], scaled(sr.l22, 1e-6), REFLECTION_DASH),
-      ...model('ml11', 'Modell L₁₁', (z, w) => 1e6 * RF.get(z, 2, 0, 0)[1] / w), ...model('ml22', 'Modell L₂₂', (z, w) => 1e6 * RF.get(z, 2, 1, 1)[1] / w)];
-    unit = 'µH'; yLabel = 'Induktivität [µH]';
-    refLines = [{ value: t.ocl0 / 1e-6, color: '#c4622d', label: 'OCL₀ ' + display(t.ocl0 / 1e-6) + ' µH' }];
-    focus = t.ocl0 > 0 ? [-t.ocl0 / 1e-6, 2 * t.ocl0 / 1e-6] : null;
+    const {unit: u, factor} = inductanceUnit(t.ocl0 > 0 ? t.ocl0 : t.ocl);
+    phases = phaseLines([['φ Z₁₁',MODE_PALETTE.dd[0],z=>RF.get(z,2,0,0)],['φ Z₂₂',MODE_PALETTE.dd[1],z=>RF.get(z,2,1,1)]]);
+    traces = [mk('l11', 'L₁₁ · Sek. offen', MODE_PALETTE.dd[0], scaled(sr.l11, factor)), mk('l22', 'L₂₂ · Prim. offen', MODE_PALETTE.dd[1], scaled(sr.l22, factor), REFLECTION_DASH),
+      ...model('ml11', 'Modell L₁₁', (z, w) => RF.get(z, 2, 0, 0)[1] / w / factor), ...model('ml22', 'Modell L₂₂', (z, w) => RF.get(z, 2, 1, 1)[1] / w / factor)];
+    unit = u; yLabel = 'Induktivität [' + unit + ']';
+    refLines = [{ value: t.ocl0 / factor, color: '#c4622d', label: 'OCL₀ ' + si(t.ocl0,'H') }];
+    focus = t.ocl0 > 0 ? [-t.ocl0 / factor, 2 * t.ocl0 / factor] : null;
   } else if (fmt === 'leak') {
-    traces = [mk('lsc', 'Lσ · Sek. kurzgeschl.', MODE_PALETTE.dc[0], scaled(sr.lsc, 1e-9)), ...model('mlsc', 'Modell Lσ', (z, w) => 1e9 * zsc(z)[1] / w)];
-    unit = 'nH'; yLabel = 'Streuinduktivität [nH]';
-    refLines = [{ value: t.leak / 1e-9, color: '#c4622d', label: 'Lσ ' + display(t.leak / 1e-9) + ' nH' }];
-    focus = t.leak > 0 ? [-t.leak / 1e-9, 3 * t.leak / 1e-9] : null;
+    const {unit: u, factor} = inductanceUnit(t.leak, 'nH');
+    phases = phaseLines([['φ Z Kurzschluss',MODE_PALETTE.dc[0],zsc]]);
+    traces = [mk('lsc', 'Lσ · Sek. kurzgeschl.', MODE_PALETTE.dc[0], scaled(sr.lsc, factor)), ...model('mlsc', 'Modell Lσ', (z, w) => zsc(z)[1] / w / factor)];
+    unit = u; yLabel = 'Streuinduktivität [' + unit + ']';
+    refLines = [{ value: t.leak / factor, color: '#c4622d', label: 'Lσ ' + si(t.leak,'H') }];
+    focus = t.leak > 0 ? [-t.leak / factor, 3 * t.leak / factor] : null;
   } else if (fmt === 'cap') {
+    phases = phaseLines([['φ Z Kopplung',MODE_PALETTE.cc[0],(_,i)=>t.points[i]?.couplingZ],['φ Z₁₁',MODE_PALETTE.dd[0],z=>RF.get(z,2,0,0)]]);
     traces = [mk('cww', 'Cww · Prim.↔Sek.', MODE_PALETTE.cc[0], scaled(sr.cww, 1e-12)), mk('cpar', 'C_par(f) = 1/(ω²L) − 1/(ωX₁₁)', MODE_PALETTE.dd[0], scaled(sr.cpar, 1e-12))];
     unit = 'pF'; yLabel = 'Kapazität [pF]';
     refLines = [{ value: t.cww / 1e-12, color: '#c4622d', label: 'Cww ' + display(t.cww / 1e-12) + ' pF' },
@@ -163,10 +172,10 @@ function transformerView(pairs) {
   const k = Math.abs(t.k);
   const details = () => '<section class="detail-card"><div class="fit-summary"><h3>Übertrager · Ersatzschaltbild</h3><small>' +
     esc('Paar ' + pairs[0].id + ' → Paar ' + pairs[1].id + ' · OCL bei ' + hz(t.fEval)) + '</small></div><div class="metric-grid">' +
-    metric('OCL · L₁₁ bei ' + hz(t.fEval), t.ocl * 1e6, 'µH') + metric('OCL₀ · LC-Fit unterhalb f_res', t.ocl0 * 1e6, 'µH') +
-    metric('L₂₂ · Sekundär', t.l22 * 1e6, 'µH') + metric('n · √(L₂₂/L₁₁)', t.n, '') +
+    metricText('OCL · L₁₁ bei ' + hz(t.fEval), si(t.ocl,'H')) + metricText('OCL₀ · LC-Fit unterhalb f_res', si(t.ocl0,'H')) +
+    metricText('L₂₂ · Sekundär', si(t.l22,'H')) + metric('n · √(L₂₂/L₁₁)', t.n, '') +
     metric('|k| · M/√(L₁₁L₂₂)' + (t.k < 0 ? ' · Polarität invertiert' : ''), k, '') +
-    metric('Lσ · Streuung, Sek. kurzgeschl.', t.leak * 1e9, 'nH') + metric('Cww · Wicklung↔Wicklung', t.cww * 1e12, 'pF') +
+    metricText('Lσ · Streuung, Sek. kurzgeschl.', si(t.leak,'H')) + metric('Cww · Wicklung↔Wicklung', t.cww * 1e12, 'pF') +
     metric('R · Prim.+Sek. bei tiefer f', t.rdc, 'Ω') +
     '<div class="metric"><strong>' + esc(Number.isFinite(t.fres) ? hz(t.fres) : '—') + '</strong><span>f_res · Leerlauf-Eigenresonanz</span></div>' +
     metric('C_par · Wicklungskapazität (Fit)', t.cpar * 1e12, 'pF') + metric('C_res · Thomson 1/((2π·f_res)²·L)', t.cres * 1e12, 'pF') + '</div>' +
@@ -178,7 +187,7 @@ function transformerView(pairs) {
       rfe: em.model.rfe, cpar: em.model.cp, cp2: em.model.cp2, cres: NaN, cww: (em.model.cwa || 0) + (em.model.cwx || 0) } : t, !!em?.edited) +
     (em ? modelEditor(em) : '<section class="detail-card" id="model-missing"><div class="fit-summary"><h3>Modell-Editor</h3><small>Für das Modell fehlen positive Werte für OCL, Streuung oder Übersetzung.</small></div></section>');
   return { traces, unit, yLabel, title: 'Übertrager', caption: 'Paar ' + pairs[0].id + ' → Paar ' + pairs[1].id + ' · T-Ersatzschaltbild' + (em ? ' · Modell aus dem Editor gepunktet' : ''), native: '', positive: fmt === 'z', signed: fmt !== 'z' && fmt !== 'r', refLines, focus, details,
-    fitBand: em && fmt !== 'cap' ? em.band : null };
+    fitBand: em && fmt !== 'cap' ? em.band : null, phases:state.esb.phase ? phases : [] };
 }
 
 function elementData(kind) {
@@ -251,8 +260,11 @@ function esbControls() {
       (fixture === 'reflection' ? '' : selectField('Ausgang', 'esb-output', modeOptions(), state.esb.output)) +
       selectField('Darstellung', 'esb-eformat', model === 'series' ? SERIES_FORMATS : SHUNT_FORMATS, state.esb.eFormat);
   } else {
-    html += controlsPairs() + selectField('Darstellung', 'cmc-format', [['cap', 'Kapazitäten'], ['ind', 'Induktivitäten'], ['zesb', 'Impedanz · Ersatzschaltbild (Editor)'], ['zfit', 'Impedanz · je Mode bis 2. Resonanz']], state.cmc.format);
+    html += controlsPairs() + selectField('Darstellung', 'cmc-format', [['ind', 'Induktivität je Wicklung'], ['leak', 'Streuinduktivität Lσ'], ['modes', 'Modale Induktivitäten L±M'], ['cap', 'Kapazitäten'], ['zesb', 'Impedanz · Ersatzschaltbild (Editor)'], ['zfit', 'Impedanz · je Mode bis 2. Resonanz']], state.cmc.format);
   }
+  const phaseView = model === 'cmc' ? ['ind', 'leak', 'modes', 'cap'].includes(state.cmc.format) :
+    model === 'transformer' && ['ocl', 'leak', 'cap'].includes(state.esb.tFormat);
+  if (phaseView) html += selectField('Impedanzphase (°)', 'esb-phase', [['off', 'Aus'], ['on','Ein']], state.esb.phase ? 'on' : 'off');
   if (model === 'cmc' && state.config.pairs.length >= 2) {
     html += '<form class="fit-fields" id="fit-form">' + textField('Fit ab', 'start', freqInput(state.cmc.band[0])) +
       textField('Fit bis', 'stop', freqInput(state.cmc.band[1])) + '<button class="button" type="submit">Fit anwenden</button></form>';
@@ -286,6 +298,7 @@ registerView({
 });
 
 registerChanges({
+  'esb-phase': value => { state.esb.phase = value === 'on'; },
   'cmc-format': value => { axis().yRange = null; state.cmc.format = value; },
   'esb-model': value => { state.esb.model = value; axis().yRange = null; },
   'esb-fixture': value => { state.esb.fixture = value; axis().yRange = null; },

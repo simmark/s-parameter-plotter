@@ -42,18 +42,17 @@ try {
   report.check('Cw = 2 pF je Seite, Cg = 0,5 pF an allen vier Anschlüssen, Ct = 4 pF je Wicklung', l.Cw.length === 2 && l.Cw.every(v => near(v, 2e-12, 0.03)) && l.Cg.length === 4 && l.Cg.every(v => near(v, 0.5e-12, 0.05)) && l.Ct.length === 2 && l.Ct.every(v => near(v, 4e-12, 0.05)), [l.Cw[0], l.Cg[0], l.Ct.join('/')].join(' · '));
   report.check('Werte im Bild und in der Tabelle sind dieselben (L − M)', near(m['Lσ = L − M · Streuung je Wicklung'], num(l['Lσ'][0]), 1e-6) && Math.abs(num(m['L · Induktivität je Wicklung']) - num(m['M · Gegeninduktivität']) - num(l['Lσ'][0])) / 1e-5 < 0.05, JSON.stringify(m));
   report.check('Normierung CM/DM mit Faktoren ist erklärt', /Z CM = jω\(L \+ M\)\/2 an 25 Ω/.test(await page.textContent('#cmc-schematic')) && /Z DM = j2ω\(L − M\)/.test(await page.textContent('#cmc-schematic')));
-  // the drawing follows the fit: a different fit band changes the values in the drawing
+  // The selected band changes the modal estimate. The schematic follows the model editor.
   const before = l.Ct.join('|');
   await page.fill('#fit-form input[name=start]', '20 kHz'); await page.fill('#fit-form input[name=stop]', '300 kHz');
-  await page.click('#fit-form button[type=submit]'); await ready(); await page.waitForTimeout(200);
+  await page.click('#fit-form button[type=submit]'); await ready();
   l = await labels('cmc-schematic');
-  report.check('Bild ist mit dem Fit verbunden: anderes Fit-Band, neu bestimmte Werte', near(l.Ct[0], 4e-12, 0.08) && near(l['Lσ'][0], 10e-6, 0.05) && l.Ct.join('|') !== before, before + ' → ' + l.Ct.join('|'));
-  // 20 … 300 kHz cannot determine the turn capacitance from the differential mode (the fit returns a negative value)
-  report.check('Unphysikalischer Fitwert wird nicht als Ergebnis gezeigt, sondern als „nicht bestimmbar“ benannt', l.Ct[1] === 'n. b.' && /nicht bestimmbar.*negativen Wert.*Ct \(aus dem Gegentakt\)/.test(await page.textContent('#cmc-unphysical')), l.Ct[1] + ' · ' + (await page.textContent('#cmc-unphysical')).slice(0, 110));
+  report.equal('Schaltbild folgt weiterhin dem Editor nach einer Änderung des Fit-Bands', l.Ct.join('|'), before);
+  report.check('Ein unphysikalischer modaler Fit bleibt als Diagnose beim Fit sichtbar',
+    /negative Kapazitäten/.test(await page.textContent('#cmc-fit-warning')) && l.Ct.every(v=>num(v)>0));
   await page.fill('#fit-form input[name=start]', '1 MHz'); await page.fill('#fit-form input[name=stop]', '50 MHz');
-  await page.click('#fit-form button[type=submit]'); await ready(); await page.waitForTimeout(200);
-  l = await labels('cmc-schematic');
-  report.check('Mit passendem Band (1 … 50 MHz) sind alle Werte wieder bestimmt und der Hinweis ist weg', l.Ct.every(v => near(v, 4e-12, 0.08)) && await page.locator('#cmc-unphysical').count() === 0, l.Ct.join('|'));
+  await page.click('#fit-form button[type=submit]'); await ready();
+  report.check('Mit passendem Band verschwindet die Warnung', await page.locator('#cmc-fit-warning').count() === 0);
   // zoom
   const box = '#cmc-schematic .schematic-box';
   const w0 = await page.$eval(box + ' svg', el => el.getBoundingClientRect().width);

@@ -1179,6 +1179,7 @@ const RF = (() => {
     if (y && w > 0) {
       const y11 = get(y, 2, 0, 0), y22 = get(y, 2, 1, 1), y12 = get(y, 2, 0, 1), y21 = get(y, 2, 1, 0);
       out.cww = -(y12[1] + y21[1]) / 2 / w;
+      out.couplingZ = div(one, scale(add(y12, y21), -0.5));
       out.c1g = (y11[1] + y12[1]) / w;
       out.c2g = (y22[1] + y21[1]) / w;
     }

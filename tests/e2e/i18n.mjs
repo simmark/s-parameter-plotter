@@ -122,7 +122,7 @@ try {
     await page.waitForFunction(k => document.getElementById('session-files').dataset.current === k, name); await ready();
     await page.click('#tab-ports'); await page.click('button[data-action="pair-preset"][data-value="adjacent"]'); await ready();
     await page.click('#tab-cmc'); await ready(); await page.waitForSelector('#' + id + ' svg');
-    if (name === 'cmc.s4p') { await page.fill('#fit-form input[name=start]', '20 kHz'); await page.fill('#fit-form input[name=stop]', '300 kHz'); await page.click('#fit-form button[type=submit]'); await ready(); await page.waitForSelector('#cmc-unphysical'); }
+    if (name === 'cmc.s4p') { await page.fill('#fit-form input[name=start]', '20 kHz'); await page.fill('#fit-form input[name=stop]', '300 kHz'); await page.click('#fit-form button[type=submit]'); await ready(); await page.waitForSelector('#cmc-fit-warning'); }
     await german('Schaltbild ' + name + ': Bild, Tabelle und Hinweise', '#' + id);
     await german('Auswahlfelder ' + name, '#view-controls');
     if (name === 'cmc.s4p') { await page.fill('#fit-form input[name=start]', '10 kHz'); await page.fill('#fit-form input[name=stop]', '100 MHz'); await page.click('#fit-form button[type=submit]'); await ready(); await page.selectOption('#control-cmc-format', 'zesb'); await ready(); }

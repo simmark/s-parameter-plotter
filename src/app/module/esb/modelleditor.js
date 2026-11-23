@@ -10,11 +10,13 @@ import { registerActions, registerChanges, registerForms } from '../../basis/erw
 import { MODE_PALETTE, REFLECTION_DASH } from '../../basis/farben.js';
 import { display, freqInput, hz, omega, parseHz, si } from '../../basis/format.js';
 import { rfJob } from '../../basis/rechnen.js';
+import { tx } from '../../basis/sprache.js';
 import { state } from '../../basis/zustand.js';
 import { persistSettings } from '../../dateien/einstellungen.js';
 import { FIXTURE_NAME, LEVEL_NAME, elementData, esbModel, esbView, metric, naturalData, scaled, selfResonance,
   transformerData } from './esb.js';
 import { cmcLoss, focusAround } from './schaltbilder.js';
+import { estimateCmcCapacitances } from './cmc-capacitance.js';
 
 // ---- Model editor: the automatic fit is the start. Values can be typed, dragged, fixed, taken from a marker and
 // re-optimised inside a fit window. The measurement itself is never changed; only the model moves. ----
@@ -68,7 +70,7 @@ function elementModel(kind, data) {
 // core loses inductance towards its resonance, so a wide LC fit is no good guide); the modal capacitances from the
 // common mode well above its resonance, from the differential resonance and from the two purely capacitive modes.
 // The four modal capacitances then give C_g, C_w, C_t and C_x without any of them having to turn negative.
-function cmcStart(pairs, loss, need) {
+function cmcStart(pairs, loss, need, report) {
   const fs = state.dataset.freq, natural = naturalData(pairs), ok = v => Number.isFinite(v) && v > 0;
   const fcm = selfResonance(natural, 'h'), fdm = selfResonance(natural, 'd'), last = fs.at(-1);
   const within = (lo, hi, pick) => RF.median(Array.from(fs, (f, i) => f >= lo && f <= hi && natural[i] ? pick(natural[i], omega(f)) : NaN));
@@ -80,6 +82,7 @@ function cmcStart(pairs, loss, need) {
   const cg = within(capLo, capHi, n => n.cg), line = within(capLo, capHi, n => n.cw);           // line = C_w + C_x
   const across = (within(capLo, capHi, (n, w) => n.h[1] / w) - cg) / 2;                          // C_t + C_x
   const turn = ok(fdm) ? (2 / (omega(fdm) ** 2 * ls) - cg) / 2 : NaN;                            // C_t + C_w
+  Object.assign(report, estimateCmcCapacitances({ fdm, leakage: ls, cg, line, across }));
   let cw = (line + turn - across) / 2, cx = (line + across - turn) / 2, ct = (across + turn - line) / 2;
   if (![cw, cx, ct].every(ok)) { cx = NaN; cw = line; ct = [across, turn - line].find(ok) ?? NaN; }
   // Series resistance from the differential mode far below its resonance (where ωLσ is small), R_σ from the rise of the
@@ -102,11 +105,12 @@ function multiData(kind, pairs) {
         cm: cmB.map(b => b?.z ?? null), dm: dmB.map(b => b?.z ?? null), refCm: cmB.find(Boolean)?.ref ?? 25, refDm: dmB.find(Boolean)?.ref ?? 100 };
       const fit = cache('fit:' + id + ':' + band.join(':'), () => RF.fitCMC(freq, naturalData(pairs), ...band)), loss = cmcLoss(pairs);
       const need = (key, value, fallback) => { if (value > 0 && Number.isFinite(value)) return value; guessed.push(key); return fallback; };
-      const auto = cmcStart(pairs, loss, need);
+      const capacitanceEstimate = {};
+      const auto = cmcStart(pairs, loss, need, capacitanceEstimate);
       const valid = Array.from(freq, (f, i) => f > 0 && meas.y[i] ? f : NaN).filter(Number.isFinite);
       // The lumped model holds up to somewhat above the differential-mode resonance; above it further resonances follow.
       const fdm = selfResonance(nat, 'd'), top = Number.isFinite(fdm) ? 2 * fdm : Infinity;
-      return { meas, auto, guessed, prior: {}, span: [valid[0], valid.at(-1)], natural: [Math.max(band[0], valid[0] ?? band[0]), Math.min(band[1], valid.at(-1) ?? band[1], top)] };
+      return { meas, auto, guessed, capacitanceEstimate, prior: {}, span: [valid[0], valid.at(-1)], natural: [Math.max(band[0], valid[0] ?? band[0]), Math.min(band[1], valid.at(-1) ?? band[1], top)] };
     });
   }
   const t = transformerData(pairs);
@@ -213,6 +217,14 @@ function spreadBadge(spread, key) {
   const text = kind === 'fixed' ? 'fest' : Number.isFinite(s) ? '± ' + (s >= 9.995 ? '>999' : display(Number((100 * s).toPrecision(2)))) + ' %' : '± ∞';
   return '<span class="model-spread spread-' + kind + '" data-spread="' + kind + '" title="' + esc(SPREAD_TEXT[kind] + (kind === 'fixed' ? '' : ': so weit kann sich der Wert ändern, während die übrigen ausgleichen. Richtwert, kein Vertrauensintervall.')) + '">' + esc(text) + '</span>';
 }
+function cmcCapacitanceNote(em) {
+  const e = em.data.capacitanceEstimate || {};
+  const values = e.available
+    ? tx('Resonanz-Schätzung: ', 'Resonance estimate: ') + 'Ct = ' + si(e.ct, 'F') + ' · Cw = ' + si(e.cw, 'F') + ' · Cx = ' + si(e.cx, 'F') + '.'
+    : tx('Eine getrennte Resonanz-Schätzung ist mit diesen Messdaten nicht zuverlässig möglich', 'A reliable separate resonance estimate is not possible with these measurements') + (e.reason === 'inconsistent' ? tx(': Die berechneten Einzelwerte wären teilweise negativ.', ': Some calculated branch values would be negative.') : tx(': Resonanz oder benötigte Moden fehlen.', ': The resonance or required modes are missing.'));
+  const resonance = Number.isFinite(e.modal) ? ' D-Mode: fᵣ = ' + hz(e.fdm) + ', Lσ = ' + si(e.leakage, 'H') + ', Ceff = 1 / ((2πfᵣ)² · Lσ) = ' + si(e.modal, 'F') + '.' : '';
+  return '<p class="note" id="model-capacitance-estimate">' + esc(tx('Ct bezeichnet die Kapazität über einer Wicklung; Cw die Koppelkapazität zwischen gleichnamigen Anschlüssen je Seite und Cx die diagonale Koppelkapazität. ', 'Ct is the capacitance across one winding; Cw is the coupling capacitance between corresponding terminals at each end, and Cx is the diagonal coupling capacitance. ') + values + resonance + tx(' Die Einzelwerte sind Schätzungen für das symmetrische Ersatzschaltbild, keine direkten Einzelmessungen. Ceff = Ct + Cw + Cg/2: Erst zusammen mit den weiteren Moden lassen sich Ct, Cw und Cx trennen. Verluste, frequenzabhängige Induktivität und weitere Resonanzen können die Thomson-Näherung verfälschen. Die Werte unten zeigen das aktuelle Modell und können nach Optimierung abweichen.', ' The individual values are estimates for the symmetric equivalent circuit, not direct individual measurements. Ceff = Ct + Cw + Cg/2: Ct, Cw and Cx can only be separated using the other modes as well. Losses, frequency-dependent inductance and additional resonances can distort the Thomson approximation. The values below show the current model and may differ after optimization.')) + '</p>';
+}
 function modelEditor(em) {
   const base = Object.fromEntries(RF.modelParams(em.auto).map(p => [p.key, p.value])), spread = modelSpread(em);
   const rows = RF.modelParams(em.model).map(({ key, value }) => {
@@ -234,7 +246,7 @@ function modelEditor(em) {
       ' · Cww = Cwa + Cwx = ' + si((em.model.cwa || 0) + (em.model.cwx || 0), 'F') + ' · Polarität ' + (em.model.flip ? 'invertiert' : 'gleichsinnig')) + '</p>' : '';
   return '<section class="detail-card model-editor" id="model-editor"><div class="fit-summary"><h3>Modell-Editor</h3><small>' + esc(modelStructure(em.model)) + '</small></div>' +
     '<p class="diagnostics" id="model-summary" data-err="' + em.quality.err + '" data-phase="' + em.quality.phase + '" data-edited="' + (em.edited ? '1' : '0') + '">' + esc(modelSummary(em)) + '</p>' +
-    (em.multi ? guessed + hint + derived + spreadNote(em, spread) : elementSchematic(em.model)) +
+    (em.multi ? guessed + hint + derived + (em.model.type === 'cmc' ? cmcCapacitanceNote(em) : '') + spreadNote(em, spread) : elementSchematic(em.model)) +
     '<form id="model-form" class="model-form">' + rows +
     '<div class="model-window"><label class="control"><span class="field-label">Fitfenster von</span><input class="field-input mono" name="from" value="' + esc(freqInput(em.band[0])) + '" autocomplete="off"></label>' +
     '<label class="control"><span class="field-label">bis</span><input class="field-input mono" name="to" value="' + esc(freqInput(em.band[1])) + '" autocomplete="off"></label>' +

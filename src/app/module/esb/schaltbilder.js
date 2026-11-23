@@ -4,9 +4,11 @@ import { cache, selectedPairs } from '../../analyse/daten.js';
 import { $, actionButton, esc, help } from '../../basis/dom.js';
 import { registerActions } from '../../basis/erweiterung.js';
 import { COLORS } from '../../basis/farben.js';
-import { display, hz, metricText, omega, portName, si } from '../../basis/format.js';
+import { display, hz, metricText, portName, si } from '../../basis/format.js';
+import { tx } from '../../basis/sprache.js';
 import { state } from '../../basis/zustand.js';
 import { fitDetails, naturalData, selfResonance } from './esb.js';
+import { cmcQuantities } from './magnetikgroessen.js';
 import { modelEditor, multiElement } from './modelleditor.js';
 
 // ---- Circuit drawings whose labels carry the values of the fit. Strokes use the text colour, so they work in both themes. ----
@@ -83,12 +85,13 @@ function cmcSchematic([input, output], fit = {}, loss = {}, edited = false) {
     '. Wähle ein Band, in dem dieses Element die Kurve prägt – für Kapazitäten reicht es meist, das Band zu höheren Frequenzen zu erweitern.</p>' : '';
   const table = (edited ? EDITED_NOTE : '') + warn + '<div class="metric-grid">' + metricText('L · Induktivität je Wicklung', val(fit.l, 'H')) + metricText('M · Gegeninduktivität', val(fit.m, 'H')) +
     metricText('k = M/L', Number.isFinite(fit.k) ? display(fit.k) : '—') + metricText('Lσ = L − M · Streuung je Wicklung', val(leak, 'H')) +
-    metricText(edited ? 'R_w · je Wicklung' : 'R_w · je Wicklung, aus R₀ von Z DM / 2', val(loss.rw, 'Ω')) + (loss.sections?.length > 1 ? loss.sections.map(([m, r], k) => metricText('Kernglied ' + (k + 1) + ' · M ∥ R_Fe', si(m, 'H') + ' ∥ ' + val(r, 'Ω'))).join('') + metricText('M · Summe der Kernglieder, im Bild als ein Glied', val(fit.m, 'H'))
-      : metricText(edited ? 'R_Fe · je Wicklung' : 'R_Fe · je Wicklung, aus der CM-Resonanz × 2', val(loss.rfe, 'Ω'))) +
-    (edited && fit.cx > 0 ? metricText('Cx · diagonal, im Bild nicht gezeichnet', si(fit.cx, 'F')) : '') +
-    (edited && loss.rls > 0 ? metricText('R_σ · parallel zu Lσ, im Bild nicht gezeichnet', si(loss.rls, 'Ω')) : '') + '</div>' +
-    '<p class="note">Normierung: Im Gleichtakt liegen beide Wicklungen parallel, Z CM = jω(L + M)/2 an 25 Ω. Im Gegentakt liegen sie in Reihe, Z DM = j2ω(L − M) = j2ωLσ an 100 Ω. ' +
-    'L, M, Cw, Cg und Ct stammen aus dem Fit im gewählten Band. R_w und R_Fe stammen aus dem Modell bis zur 2. Resonanz und sind Näherungen: R_Fe gilt nur nahe der Gleichtakt-Resonanz, Kernverluste sind frequenzabhängig.</p>';
+    metricText(loss.fromModel ? 'R_w · je Wicklung' : 'R_w · je Wicklung, aus R₀ von Z DM / 2', val(loss.rw, 'Ω')) + (loss.sections?.length > 1 ? loss.sections.map(([m, r], k) => metricText('Kernglied ' + (k + 1) + ' · M ∥ R_Fe', si(m, 'H') + ' ∥ ' + val(r, 'Ω'))).join('') + metricText('M · Summe der Kernglieder, im Bild als ein Glied', val(fit.m, 'H'))
+      : metricText(loss.fromModel ? 'R_Fe · je Wicklung' : 'R_Fe · je Wicklung, aus der CM-Resonanz × 2', val(loss.rfe, 'Ω'))) +
+    (fit.cx > 0 ? metricText('Cx · diagonal, im Bild nicht gezeichnet', si(fit.cx, 'F')) : '') +
+    (loss.rls > 0 ? metricText('R_σ · parallel zu Lσ, im Bild nicht gezeichnet', si(loss.rls, 'Ω')) : '') + '</div>' +
+    '<p class="note">' + esc(tx(
+      'Normierung: Im Gleichtakt liegen beide Wicklungen parallel, Z CM = jω(L + M)/2 an 25 Ω. Im Gegentakt liegen sie in Reihe, Z DM = j2ω(L − M) = j2ωLσ an 100 Ω. Das Schaltbild zeigt die Parameter des Ersatzschaltbilds. Die Messkurven zeigen frequenzabhängige Größen. Kernverluste sind frequenzabhängig.',
+      'Normalization: The windings are in parallel in common mode, Z CM = jω(L + M)/2 at 25 Ω. They are in series in differential mode, Z DM = j2ω(L − M) = j2ωLσ at 100 Ω. The schematic shows equivalent-circuit parameters. The measured curves and core losses depend on frequency.')) + '</p>';
   return schematicFigure('cmc-schematic', 'Ersatzschaltbild mit Werten', 'CMC zwischen ' + portName(input.p) + '/' + portName(input.q) + ' und ' + portName(output.p) + '/' + portName(output.q),
     620, 362, strokes.join(''), texts.join(''), 'Je Wicklung: R_w und Streuung Lσ in Reihe mit dem gekoppelten Teil M · R_Fe parallel zum gekoppelten Teil · Ct parallel je Wicklung · Cw je Seite zwischen den Wicklungen · Cg je Anschluss gegen Masse', table);
 }
@@ -175,49 +178,46 @@ function cmcView() {
   const key = pairs.map(p => p.id).join(':');
   const fit = cache('fit:' + key + ':' + band.join(':'), () => RF.fitCMC(dataset.freq, natural, ...band));
   const resonance = cache('srf:' + key, () => ({ cm: selfResonance(natural, 'h'), dm: selfResonance(natural, 'd') }));
-  const isCap = state.cmc.format === 'cap', isZ = state.cmc.format === 'zesb', unit = isZ ? 'Ω' : isCap ? 'pF' : 'µH';
+  const format = state.cmc.format, isCap = format === 'cap', isZ = format === 'zesb';
   const em = multiElement('cmc'), [cmZ, dmZ] = modalCispr(pairs).blocks;
   const mz = em ? Array.from(dataset.freq, f => f > 0 ? RF.cmcModelZ(em.model, f, em.data.meas.refCm, em.data.meas.refDm) : null) : null;
   const mag = z => z ? Math.hypot(z[0], z[1]) : NaN;
-  let list, extra = [];
-  if (isZ) {
-    list = [['|Z CM|', COLORS[1], i => mag(cmZ[i]?.z)], ['|Z DM|', COLORS[0], i => mag(dmZ[i]?.z)]];
-    if (mz) extra = [['Modell CM', COLORS[1], i => mag(mz[i]?.cm)], ['Modell DM', COLORS[0], i => mag(mz[i]?.dm)]];
-  } else if (isCap) {
-    if (em) extra = [['Modell Cw', COLORS[1], () => em.model.cw * 1e12], ['Modell Cg', COLORS[0], () => em.model.cg * 1e12], ['Modell Ct', COLORS[2], () => em.model.ct * 1e12]];
-    list = [
-      ['Cw', COLORS[1], i => natural[i]?.cw * 1e12],
-      ['Cg', COLORS[0], i => natural[i]?.cg * 1e12],
-      ['Ct (H)', COLORS[2], (i, f) => {
-        const h = natural[i]?.h;
-        if (!h || !Number.isFinite(fit.lcm) || !Number.isFinite(fit.cg)) return NaN;
-        return ((h[1] + 2 / (omega(f) * fit.lcm)) / omega(f) - fit.cg) * 0.5e12;
-      }]
-    ];
-  } else {
-    const [cm, dm] = modalCispr(pairs).blocks;
-    list = [
-      ['L+M', COLORS[1], (i, f) => Number.isFinite(cm[i]?.z?.[1]) && f > 0 ? 2e6 * cm[i].z[1] / omega(f) : NaN],
-      ['L−M', COLORS[0], (i, f) => Number.isFinite(dm[i]?.z?.[1]) && f > 0 ? 0.5e6 * dm[i].z[1] / omega(f) : NaN]
-    ];
-    if (mz) extra = [['Modell L+M', COLORS[1], (i, f) => mz[i]?.cm ? 2e6 * mz[i].cm[1] / omega(f) : NaN], ['Modell L−M', COLORS[0], (i, f) => mz[i]?.dm ? 0.5e6 * mz[i].dm[1] / omega(f) : NaN]];
-  }
+  const quantities = isZ ? {
+    unit: 'Ω',
+    list: [['|Z CM|', COLORS[1], i => mag(cmZ[i]?.z)], ['|Z DM|', COLORS[0], i => mag(dmZ[i]?.z)]],
+    extra: mz ? [['Modell CM', COLORS[1], i => mag(mz[i]?.cm)], ['Modell DM', COLORS[0], i => mag(mz[i]?.dm)]] : []
+  } : cmcQuantities(dataset.freq, cmZ, dmZ, mz, natural, em?.model, format);
+  const { unit, list, extra, plateau } = quantities;
   const traces = [...list.map(item => [...item, null]), ...extra.map(item => [...item, [2, 3]])].map(([label, color, fn, dash]) => ({
     key: 'cmc:' + label, label, color, dash, values: Float64Array.from(dataset.freq, (f, i) => fn(i, f)),
     visible: !state.hiddenTraces.has('cmc:' + label)
   }));
-  const coreM = em?.edited ? RF.coreSections(em.model).reduce((sum, [m]) => sum + m, 0) : NaN;
-  const shown = em?.edited ? { l: coreM + em.model.ls, m: coreM, k: coreM / (coreM + em.model.ls), ctH: em.model.ct, ctD: em.model.ct, cw: em.model.cw, cg: em.model.cg, cx: em.model.cx } : fit;
+  const coreM = em ? RF.coreSections(em.model).reduce((sum, [m]) => sum + m, 0) : NaN;
+  const shown = em ? { l: coreM + em.model.ls, m: coreM, k: coreM / (coreM + em.model.ls), ctH: em.model.ct, ctD: em.model.ct, cw: em.model.cw, cg: em.model.cg, cx: em.model.cx } : { ...fit, cw:NaN, ctH:NaN, ctD:NaN };
+  const overview = () => {
+    if (isZ) return '';
+    const at10k = quantities.at10k;
+    const f = at10k >= 0 ? hz(dataset.freq[at10k]) : '';
+    const winding = f ? metricText('L · Messwert je Wicklung bei ' + f, si(quantities.windingReference,'H')) +
+      metricText('Lσ · Messwert bei ' + f, si(quantities.leakReference,'H')) : '';
+    const circuit = em ? metricText('L · Modell je Wicklung bei tiefer Frequenz', si(shown.l,'H')) +
+      metricText('Lσ · Modell je Wicklung', si(em.model.ls,'H')) : '';
+    const coupling = isCap ? '<p class="note">' + esc(plateau.stable ?
+      'Kopplungsplateau · ' + hz(plateau.band[0]) + ' – ' + hz(plateau.band[1]) + ' · Cw + Cx = ' + si(plateau.value,'F') :
+      'Kein stabiles Kapazitätsplateau nahe −90° gefunden.') + '</p>' +
+      '<p class="note">Bei virtueller Drehung bilden die beiden Wicklungen die Ports. Der Gleichtakt-Transfer liefert Cw + Cx je Seite. Einzelne Modellzweige erfordern die Auswertung weiterer Moden.</p>' : '';
+    return '<section class="detail-card"><div class="metric-grid">' + winding + circuit + '</div>' + coupling + '</section>';
+  };
   return {
     traces, unit, yLabel: (isZ ? 'Impedanz' : isCap ? 'Kapazität' : 'Induktivität') + ' [' + unit + ']', signed: !isZ, positive: isZ,
     focus: isCap ? focusAround([fit.cw * 1e12, fit.cg * 1e12], 0.5, 1.5) : null,
-    title: isZ ? 'CMC · Impedanz und Ersatzschaltbild' : isCap ? 'Parasitärkapazitäten' : 'Wirksame Induktivitäten',
-    caption: isZ ? 'Z CM und Z DM nach CISPR 17 · Modell aus dem Editor gepunktet' : isCap ? 'Projektion der Vierport-Y-Matrix auf die natürlichen CMC-Moden' : 'Aus dem Imaginärteil von Z CM und Z DM · je Wicklung',
-    native: '', fitBand: em ? em.band : band,
-    details: () => fitDetails(fit, band, resonance) + cmcSchematic(pairs, shown, em?.edited ? { rw: em.model.rw, rfe: em.model.rfe, rls: em.model.rls, sections: RF.coreSections(em.model) } : cmcLoss(pairs), !!em?.edited) +
+    title: isZ ? 'CMC · Impedanz und Ersatzschaltbild' : isCap ? 'Parasitärkapazitäten' : format === 'ind' ? 'Induktivität je Wicklung' : format === 'leak' ? 'Streuinduktivität Lσ' : 'Modale Induktivitäten L±M',
+    caption: isZ ? 'Z CM und Z DM nach CISPR 17 · Modell aus dem Editor gepunktet' : isCap ? 'Projektion der Vierport-Y-Matrix auf die natürlichen CMC-Moden' : 'Symmetrische Wicklungen · L = [(L+M) + (L−M)] / 2',
+    native: '', fitBand: em ? em.band : band, phases: state.esb.phase ? quantities.phases : [],
+    details: () => overview() + cmcSchematic(pairs, shown, em ? { fromModel:true, rw: em.model.rw, rfe: em.model.rfe, rls: em.model.rls, sections: RF.coreSections(em.model) } : cmcLoss(pairs), !!em?.edited) +
       (em ? modelEditor(em) : '<section class="detail-card" id="model-missing"><div class="fit-summary"><h3>Modell-Editor</h3><small>Für das Modell fehlen positive Werte für L und M. Prüfe Portpolarität und Fit-Band.</small></div></section>') +
-      '<p class="note">Cw und Cg sind Modellwerte für eine möglichst symmetrische CMC. Übrige aktive Ports sind mit Z₀ abgeschlossen. ' +
-      help + '</p>'
+      fitDetails(fit, band, resonance) +
+      '<p class="note">Cw und Cg sind Modellwerte für eine möglichst symmetrische CMC. Übrige aktive Ports sind mit Z₀ abgeschlossen. ' + help + '</p>'
   };
 }
 
