@@ -1,0 +1,91 @@
+<!doctype html>
+<!--
+  S-Parameter Analyzer · © 2026 Simon Mark · info.simonlation@gmail.com
+  All rights reserved · Proprietary software · Lizenzbedingungen / license terms: LICENSE.txt
+  Alle Rechte vorbehalten. Kein Open Source: Kopieren, Verändern oder Weiterverwenden des Quelltexts, auch in Teilen,
+  nur mit schriftlicher Zustimmung des Autors.
+  All rights reserved. Not open source: copying, modifying or reusing this source code, in whole or in part,
+  requires the written permission of the author.
+-->
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="description" content="Offline-Analyse von Touchstone-Netzwerken, Mixed Mode, Impedanzen und Common Mode Chokes.">
+<title>S-Parameter Analyzer</title>
+<meta name="theme-color" content="#faf9f5">
+<meta name="author" content="Simon Mark">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/app-192.png">
+<link rel="apple-touch-icon" href="./icons/apple-180.png">
+<script>
+@@include js/theme.js@@
+</script>
+<style>
+@@include css/basis.css@@
+@@include css/module/connector-studio.css@@
+@@include css/module/zeitbereich.css@@
+@@include css/module/quelltext.css@@
+@@include css/minidiagramm.css@@
+@@include css/ports.css@@
+@@include css/dialoge.css@@
+@@include css/claude-schicht.css@@
+@@include css/telefon-layout.css@@
+@@include css/sitzung-profil.css@@
+@@include css/sweep-bibliothek-ansichten.css@@
+@@include css/dark.css@@
+@@include css/kontrast-menue-pager.css@@
+@@include css/packs.css@@
+@@include css/batch.css@@
+@@include css/physik-karte.css@@
+@@include css/speicher-bibliothek.css@@
+@@include css/telefon-dateischublade.css@@
+</style>
+<script>
+@@include js/i18n.js@@
+</script>
+</head>
+<body>
+@@include html/symbole.html@@
+@@include html/kopf-und-arbeitsbereich.html@@
+@@include html/dialoge.html@@
+@@include html/dialog-methodik.html@@
+@@include html/dialoge-speicher-lizenz.html@@
+
+<div id="toast" class="toast" role="status" hidden></div>
+<script id="fremd-codemirror">
+@@include js/fremd/codemirror.js@@
+</script>
+<script id="rf-core">
+@@include js/kerne/rf-core.js@@
+</script>
+<script id="spice-core">
+@@include js/kerne/spice-core.js@@
+</script>
+<script id="magnetic-core">
+@@include js/kerne/magnetic-core.js@@
+</script>
+<script id="td-core">
+@@include js/kerne/td-core.js@@
+</script>
+<script id="connector-core">
+@@include js/kerne/connector-core.js@@
+</script>
+<script id="store-core">
+@@include js/kerne/store-core.js@@
+</script>
+<script>
+@@include js/plot.js@@
+</script>
+<script>
+'use strict';
+
+@@bundle app@@
+</script>
+@@include html/pwa.html@@
+<script>
+@@include js/pwa.js@@
+</script>
+</body>
+</html>

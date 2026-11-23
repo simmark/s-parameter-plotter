@@ -67,13 +67,14 @@ console.log('Port-Maps und Kanalprüfung');
     for (const c of Connector.checkChannels(p, mapping, data.get(m.model))) {
       chans++;
       const open = m.model === 'USB2_TypeC_full_48p' && /^(TX|RX)/.test(c.channel);
-      if (open ? c.polarity !== 'none' : c.polarity !== 'ok') bad.push(m.model + ':' + c.channel + ':' + c.polarity);
+      // without a polarity reference in the port map the sign stays open; a missing thru path is still detected
+      if (open ? c.polarity !== 'none' : c.polarity !== 'open' || !(c.maxDb > -10)) bad.push(m.model + ':' + c.channel + ':' + c.polarity);
     }
   }
   check('Alle 21 Port-Maps importierbar und gültig', ok === 21, bad.join(' '));
-  check(chans + ' Kanäle richtig gepolt; offene SuperSpeed-Lanes der USB2-C-Datei ohne Durchgang', !bad.length, bad.slice(0, 5).join(' '));
+  check(chans + ' Kanäle mit Durchgang (Polarität ohne Phasenbezug offen); offene SuperSpeed-Lanes der USB2-C-Datei ohne Durchgang', !bad.length, bad.slice(0, 5).join(' '));
   const ta = Connector.checkChannels(...(r => [r.profile, r.mapping])(Connector.fromSidecar(map(byName('USB2_TypeA_to_TypeC_full_28p')), 28)), data.get('USB2_TypeA_to_TypeC_full_28p'));
-  check('Typ A → C: USB2 wird aus der Messung mit beiden C-Paaren verknüpft (Fan-out)', ta.length === 2 && ta.every(c => c.fromData && c.polarity === 'ok'), ta.map(c => c.channel + ' ' + c.maxDb.toFixed(1) + ' dB').join(', '));
+  check('Typ A → C: USB2 wird aus der Messung mit beiden C-Paaren verknüpft (Fan-out)', ta.length === 2 && ta.every(c => c.fromData && c.polarity === 'open' && c.maxDb > -6), ta.map(c => c.channel + ' ' + c.maxDb.toFixed(1) + ' dB').join(', '));
 }
 
 console.log('Dreileiter-Drossel und Zeitbereich');

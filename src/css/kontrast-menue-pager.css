@@ -1,0 +1,51 @@
+/* ---------- v6: dark-mode contrast fixes, compact phone header, settings menu, file pager ---------- */
+html[data-theme="dark"] { --accent-dark: #e39274; }
+html[data-theme="dark"] .button.primary { background: var(--accent); border-color: var(--accent); color: #1b1b1b; }
+html[data-theme="dark"] .button.primary:hover:not(:disabled) { background: #e08a69; border-color: #e08a69; color: #1b1b1b; }
+html[data-theme="dark"] .button.primary:disabled { background: #3a2c26; border-color: #4d403a; color: #8c7a71; }
+html[data-theme="dark"] .button[aria-pressed="true"], html[data-theme="dark"] .icon-button[aria-pressed="true"],
+html[data-theme="dark"] .pair-target[aria-pressed="true"], html[data-theme="dark"] .compare-chip .button[aria-pressed="true"] { background: var(--select); border-color: var(--select); color: #1b1b1b; }
+html[data-theme="dark"] .session-compare[aria-pressed="true"] { background: var(--fc, var(--select)); border-color: var(--fc, var(--select)); color: #1b1b1b; }
+html[data-theme="dark"] .quiet-button { color: var(--accent-dark); }
+html[data-theme="dark"] .quiet-button:hover { background: #3a2c26; }
+html[data-theme="dark"] a { color: var(--accent-dark); }
+html[data-theme="dark"][data-theme="dark"][data-theme="dark"] .export-button, html[data-theme="dark"][data-theme="dark"][data-theme="dark"] .export-button * { color: #1b1b1b !important; }
+html[data-theme="dark"][data-theme="dark"][data-theme="dark"] .export-button { background: #d5d3d2; border-color: #d5d3d2; }
+html[data-theme="dark"][data-theme="dark"][data-theme="dark"] .export-button:hover { background: #ffffff; }
+html[data-theme="dark"][data-theme="dark"][data-theme="dark"] .theme-button, html[data-theme="dark"][data-theme="dark"][data-theme="dark"] .settings-button { color: #d5d3d2 !important; }
+html[data-theme="dark"] .app-bar .bar-button:hover { background: #3a382f; color: #ffffff; }
+
+.settings-button { display: none; }
+.settings-menu { position: absolute; top: calc(100% + 6px); right: 10px; z-index: 30; width: min(330px, calc(100vw - 20px)); padding: 6px; display: grid; gap: 2px; background: var(--surface); color: var(--ink); border: 1px solid var(--line-dark); border-radius: 12px; box-shadow: 0 10px 30px #00000038; }
+.settings-menu[hidden] { display: none; }
+.menu-item { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 50px; padding: 8px 10px; border: 0; border-radius: 8px; background: transparent; color: var(--ink); text-align: left; font: inherit; }
+.menu-item:hover, .menu-item:focus-visible { background: var(--accent-soft); }
+.menu-item[hidden] { display: none; }
+.menu-item .icon { width: 20px; height: 20px; color: var(--accent-dark); }
+.menu-text { display: grid; gap: 1px; min-width: 0; flex: 1; }
+.menu-text strong { font-size: 14px; font-weight: 650; }
+.menu-text small { font-size: 11.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.menu-badge { font-size: 11px; font-weight: 700; padding: 3px 8px; border: 1px solid var(--line-dark); border-radius: 6px; color: var(--ink); }
+
+.file-pager { display: none; }
+@media (max-width: 850px) {
+  .app-bar { position: relative; }
+  .file-chip, .file-nav, .app-bar .packs-button, .app-bar .storage-button, .app-bar .lang-button, .app-bar #method-button, .app-bar #export-button, .app-bar #pwa-install, .app-bar .offline-status { display: none !important; }
+  .app-bar .theme-button, .app-bar .settings-button { display: inline-flex !important; width: 40px; height: 40px; padding: 0; justify-content: center; align-items: center; border: 1px solid var(--line-dark); border-radius: 10px; }
+  .app-bar .bar-actions { gap: 8px; margin-left: auto; }
+  .app-bar .bar-button .icon { width: 20px; height: 20px; }
+  .app-bar .brand-short { display: inline; }
+  .app-bar .brand-long { display: none; }
+  body.view-focus .app-bar { display: none !important; }
+  .file-pager { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 8px 8px; }
+  .file-pager[hidden] { display: none; }
+  .pager-button { width: 52px; height: 40px; display: inline-grid; place-items: center; border: 1px solid var(--line-dark); border-radius: 10px; background: var(--surface); color: var(--ink); }
+  .pager-button[data-flip] .icon { transform: scaleX(-1); }
+  .pager-button .icon { width: 22px; height: 22px; }
+  .pager-button:disabled { opacity: .35; }
+  .pager-button:active:not(:disabled) { background: var(--accent-soft); }
+  .pager-label { display: flex; flex-direction: column; align-items: center; min-width: 0; flex: 1; line-height: 1.25; }
+  .pager-name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11.5px; color: var(--muted); }
+  .pager-count { font-size: 12px; font-weight: 650; color: var(--ink); }
+}
+

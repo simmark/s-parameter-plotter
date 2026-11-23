@@ -1,0 +1,60 @@
+<dialog id="matrix-dialog" class="dialog wide-dialog" aria-labelledby="matrix-title">
+  <div class="dialog-head">
+    <div><h2 id="matrix-title">Kurven wählen</h2><p>Zeile = Antwort · Spalte = Anregung</p></div>
+    <button class="icon-button" type="button" data-action="close-dialog" aria-label="Schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+  </div>
+  <div id="matrix-content" class="dialog-body"></div>
+  <div class="dialog-foot"><button class="button primary" type="button" data-action="close-dialog">Fertig</button></div>
+</dialog>
+
+<dialog id="pack-dialog" class="dialog wide-dialog" aria-labelledby="pack-title">
+  <div class="dialog-head">
+    <div><h2 id="pack-title">Vorlagen &amp; Einstellungen</h2><p>Fingerabdrücke und Kurvenwahl sichern, teilen und laden</p></div>
+    <button class="icon-button" type="button" data-action="close-dialog" aria-label="Schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+  </div>
+  <div id="pack-content" class="dialog-body"></div>
+  <div class="dialog-foot"><button class="button primary" type="button" data-action="close-dialog">Fertig</button></div>
+</dialog>
+
+<dialog id="batch-dialog" class="dialog wide-dialog" aria-labelledby="batch-title">
+  <div class="dialog-head">
+    <div><h2 id="batch-title">Stapel analysieren</h2><p>Fingerabdrücke aus allen geladenen Dateien lernen und Bekanntes erkennen</p></div>
+    <button class="icon-button" type="button" data-action="close-dialog" aria-label="Schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+  </div>
+  <div id="batch-content" class="dialog-body"></div>
+  <div class="dialog-foot"><button class="button primary" type="button" data-action="close-dialog">Fertig</button></div>
+</dialog>
+
+<dialog id="axes-dialog" class="dialog" aria-labelledby="axes-title">
+  <div class="dialog-head">
+    <div><h2 id="axes-title">Achsen einstellen</h2></div>
+    <button class="icon-button" type="button" data-action="close-dialog" aria-label="Schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+  </div>
+  <form id="axes-form">
+    <div id="axes-content" class="dialog-body"></div>
+    <div class="dialog-foot"><button class="button primary" type="submit">Anwenden</button></div>
+  </form>
+</dialog>
+
+<dialog id="load-dialog" class="dialog" aria-labelledby="load-title">
+  <div class="dialog-head">
+    <div><h2 id="load-title">Portabschluss</h2><p id="load-subtitle"></p></div>
+    <button class="icon-button" type="button" data-action="close-dialog" aria-label="Schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+  </div>
+  <form id="load-form">
+    <div id="load-content" class="dialog-body"></div>
+    <div class="dialog-foot">
+      <button class="button" type="button" data-action="close-dialog">Abbrechen</button>
+      <button class="button primary" type="submit">Übernehmen</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="export-dialog" class="dialog" aria-labelledby="export-title">
+  <div class="dialog-head">
+    <div><h2 id="export-title">Export</h2></div>
+    <button class="icon-button" type="button" data-action="close-dialog" aria-label="Schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+  </div>
+  <div id="export-content" class="dialog-body export-content"></div>
+</dialog>
+

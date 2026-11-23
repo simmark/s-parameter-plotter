@@ -1,0 +1,147 @@
+<dialog id="method-dialog" class="dialog wide-dialog" aria-labelledby="method-title">
+  <div class="dialog-head">
+    <div><h2 id="method-title">Methodik</h2></div>
+    <button class="icon-button" type="button" data-action="close-dialog" aria-label="Schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+  </div>
+  <div class="dialog-body methods">
+    <div class="lang-de" data-no-i18n>
+    <section class="about">
+      <div class="about-row"><svg class="about-logo" viewBox="0 0 512 512" aria-hidden="true">
+  <rect width="512" height="512" rx="112" fill="#1f1e1d"/>
+  <g fill="none" stroke="#f0eee6" stroke-linecap="round">
+    <g stroke-width="7" opacity=".38">
+      <circle cx="331" cy="256" r="75"/>
+      <circle cx="381" cy="256" r="25"/>
+      <path d="M106 256H406"/>
+      <path d="M406 256A150 150 0 0 1 256 106"/>
+      <path d="M406 256A150 150 0 0 0 256 406"/>
+    </g>
+    <circle cx="256" cy="256" r="150" stroke-width="13"/>
+  </g>
+  <path d="M118 338C196 338 196 168 258 168S322 330 394 214" fill="none" stroke="#d97757" stroke-width="24" stroke-linecap="round"/>
+  <circle cx="394" cy="214" r="21" fill="#d97757" stroke="#1f1e1d" stroke-width="9"/>
+</svg>
+        <div><h3>S-Parameter Analyzer</h3><p>Entwickelt von <strong>Simon Mark</strong> · <a href="mailto:info.simonlation@gmail.com">info.simonlation@gmail.com</a></p>
+        <p>Alle Berechnungen laufen lokal im Browser. Messdateien verlassen das Gerät nicht.</p>
+        <p>© 2026 Simon Mark · Alle Rechte vorbehalten · Proprietäre Software, kein Open Source. <button type="button" class="link-button" data-action="license">Lizenzbedingungen anzeigen</button></p></div>
+      </div>
+    </section>
+    <section>
+      <h3>Touchstone und Portreferenzen</h3>
+      <p>Import für 1 bis 32 Ports in RI, MA und DB. Touchstone 1.0, 1.1, 2.0 und 2.1 mit S, Y und Z sowie H und G bei zwei Ports. Unterstützt werden Full, Upper, Lower, [Reference] und [Mixed-Mode Order]. Zweitor-Rauschdaten werden separat erkannt. Die Anzeige verwendet die Netzwerkdaten.</p>
+      <p>Je Datei sind 150.000 Frequenzpunkte, 4 Mio. komplexe Matrixeinträge und 100 MiB möglich.</p>
+      <p>Die Wellenreferenzen sind positiv, reell und frequenzunabhängig. Bei proprietären, abweichenden Wellenreferenzen exportiere die Datei mit einer konstanten reellen Referenz. Die mitgelieferten Beispiele sind synthetisch.</p>
+      <p><a href="https://ibis.org/touchstone_ver2.1/touchstone_ver2_1.pdf" target="_blank" rel="noopener noreferrer">IBIS · Touchstone 2.1</a></p>
+    </section>
+    <section>
+      <h3>Portabschlüsse und Mixed Mode</h3>
+      <p>Die Lasten wirken an den physischen Ports gegen die gemeinsame Referenz. Aus der Lastimpedanz folgt <code>Γ = (ZL − Z₀)/(ZL + Z₀)</code>. Das reduzierte Netzwerk ergibt sich aus <code>Saa + Sat Γ (I − Stt Γ)⁻¹ Sta</code>. Die Anpassung Z₀ verwendet die jeweilige Referenz aus der Datei.</p>
+      <p>Danach folgen die Renormierung der aktiven Ports und die Wellentransformation mit <code>(a+ − a−)/√2</code> für DM und <code>(a+ + a−)/√2</code> für CM. Bei ungleichen Referenzen innerhalb eines Paares wird auf ihr geometrisches Mittel renormiert. Aus der gemeinsamen SE-Referenz R ergeben sich <code>Z₀,DM = 2R</code> und <code>Z₀,CM = R/2</code>.</p>
+    </section>
+    <section>
+      <h3>Port-Profil, Vorlagen und Dateivergleich</h3>
+      <p>„In Datei speichern“ schreibt Paare, Abschlüsse, Bezugsimpedanzen, Ansicht und Kurvenauswahl als Kommentarblock <code>! [SPA-Port-Profile] 1 … ! [End SPA-Port-Profile]</code> in die Touchstone-Datei. Bei Touchstone 1.x steht der Block am Dateianfang, bei 2.x innerhalb von <code>[Begin Information]</code>/<code>[End Information]</code>. Die Messdaten bleiben unverändert; andere Programme überlesen Kommentare. Das standardisierte Port-Mapping von Touchstone 3.0 ist noch ein Entwurf und wird deshalb nicht geschrieben.</p>
+      <p>Eine gelernte Vorlage speichert einen Fingerabdruck: |Sdd|, |Scc| und die Modenkonversion aller Paare auf einem festen logarithmischen Frequenzraster (4 Punkte je Dekade). Für eine neue Datei mit gleicher Portzahl werden alle Zuordnungen der Ports zu den Rollen der Vorlage durchgerechnet (höchstens 3000). Die Zuordnung mit der kleinsten mittleren Abweichung in dB gewinnt und wird bis 5 dB automatisch übernommen. Die Polarität folgt aus dem Vorzeichen von Sdd im Durchlassbereich.</p>
+      <p>Im Vergleich werden die Kurven der anderen Dateien linear auf das Frequenzraster der geöffneten Datei ⟨A⟩ interpoliert. Dateien mit eigenem Profil verwenden dieses, alle anderen die Portkonfiguration von ⟨A⟩.</p>
+    </section>
+    <section>
+      <h3>Sitzung, Bibliothek und Speicher</h3>
+      <p>Jede importierte Datei, jeder Ordner und jedes ZIP wird beim Import in den Speicher dieses Browsers geschrieben (privates Dateisystem OPFS, ersatzweise IndexedDB), zurückgelesen und mit dem Original verglichen. Erst danach erscheint die Datei als gespeichert. Die Sitzung ist die Liste der geladenen Dateien samt geöffneter Datei, Ansicht, Ports, Markern und Achsen; sie ist nach Neuladen und Neustart wieder da. Die Bibliothek ist deine eigene, dauerhaft geordnete Sammlung mit Ordnern und Unterordnern. Gleiche Inhalte liegen nur einmal im Speicher; gelöscht wird ein Inhalt erst, wenn ihn weder Sitzung noch Bibliothek verwenden.</p>
+      <p>Ein unterbrochener Import hinterlässt nichts Halbes: Er wird beim nächsten Start gemeldet und bereinigt. Browserspeicher ist nicht unzerstörbar – „Speicher &amp; Sicherung“ zeigt den Zustand und exportiert alles als ZIP.</p>
+    </section>
+    <section>
+      <h3>Impedanz und Ersatzgrößen</h3>
+      <p>Die Reflexionsimpedanz ist <code>Zin = Z₀(1 + Sii)/(1 − Sii)</code> bei angepassten übrigen aktiven Ports. Die Z-Matrix beschreibt Leerlaufparameter und Z₂₁ ist die Transferimpedanz. Für eine reine Serien-Fixture gilt <code>Zserie = 2Z₀(1/S21 − 1)</code>, für eine reine Shunt-Fixture <code>Zshunt = (Z₀/2) S21/(1 − S21)</code>. Der ausgewählte Zweitorblock wird bei unterschiedlichen Referenzen auf deren geometrisches Mittel renormiert.</p>
+      <p>Für den Serienersatz gilt <code>Ls = X/ω</code> bei <code>X = Im Z &gt; 0</code> und <code>Cs = −1/(ωX)</code> bei X &lt; 0. Für den Parallelersatz gilt <code>Lp = −1/(ωB)</code> bei <code>B = Im(1/Z) &lt; 0</code> und <code>Cp = B/ω</code> bei B &gt; 0. Die Ersatzwerte werden mit Vorzeichen gezeichnet: Oberhalb einer Eigenresonanz wird eine Induktivität negativ, weil das Bauteil dort kapazitiv wirkt. So bleiben Resonanzen und Vorzeichenwechsel sichtbar. Die Achse „±Log“ ist um null linear und darüber logarithmisch, sie zeigt beide Vorzeichen samt Resonanzspitzen. Die lineare Achse zeigt bei solchen Größen den Hauptteil der Kurve (2. bis 98. Perzentil); Mausrad und Ziehen auf der Y-Skala ändern den Ausschnitt. Die Güte ist <code>Q = |X|/R</code>. Die Gruppenlaufzeit verwendet die lokal entfaltete Phase und die tatsächlichen Frequenzabstände.</p>
+    </section>
+    <section>
+      <h3>CISPR 17:2011 · Abschnitt 6.3.1</h3>
+      <p>§ 6.3.1.2 verwendet die Reflexionsimpedanz. In § 6.3.1.3 und § 6.3.1.4 werden für jeden ausgewählten Zweitorblock <code>R = (S11 + S22)/2</code> und <code>T = (S21 + S12)/2</code> gebildet. Serienauswertung <code>Z₀((1 + R)² − T²)/(2T)</code>, Shunt-Auswertung <code>Z₀(2T)/((1 − R)² − T²)</code>. Im Vierportfall gilt die Serienformel getrennt für CM und DM.</p>
+      <p>Die Auswertung setzt eine passende kalibrierte Fixture, DUT-Referenzebenen und bei den gemittelten Formeln einen hinreichend symmetrischen DUT voraus. Die Abweichungen am Marker zeigen die Differenzen der komplexen S-Werte. Beim Zweitor sollte die angezeigte Bedingungszahl <code>|(1−T)²−R²|/|2T|</code> deutlich kleiner als 1 sein.</p>
+      <p><a href="https://webstore.iec.ch/en/publication/65" target="_blank" rel="noopener noreferrer">IEC · CISPR 17:2011</a></p>
+    </section>
+    <section>
+      <h3>Übertrager und Einzelbauteile (ESB)</h3>
+      <p>Automatische Erkennung: Ein CMC verbindet den Gleichtakt bei tiefer Frequenz galvanisch (|Scc₂₁| → 1), ein Übertrager trennt ihn (|Scc₂₁| → 0). Aus den DD-Blöcken zweier Paare folgt die Z-Matrix. <code>OCL = Im Z₁₁/ω</code>, <code>k = M/√(L₁₁L₂₂)</code>, <code>n = √(L₂₂/L₁₁)</code>. Die Streuinduktivität entspricht der Datenblattmessung mit kurzgeschlossener Sekundärseite: <code>Lσ = Im(Z₁₁ − Z₁₂Z₂₁/Z₂₂)/ω</code>. Aus dem CC-Block folgt <code>Cww = −Im Y₁₂/ω</code>. Unterhalb der Eigenresonanz gilt <code>ω/X = 1/L − ω²C</code>; die lineare Regression liefert OCL₀ ohne Resonanzüberhöhung und die Wicklungskapazität. Die Eigenresonanz ist das Maximum von |Z₁₁| mit Parabelinterpolation.</p>
+      <p>Bei 1- und 2-Port-Dateien wählt die Physik-Erkennung das Modell (induktiv oder kapazitiv) und die Fixture: <code>S₁₁ ≈ 1 − S₂₁</code> ist ein Serienelement, <code>S₁₁ ≈ S₂₁ − 1</code> ein Querelement, ein einzelner Port eine Reflexionsmessung. Das Ergebnis ist als sicher, wahrscheinlich oder nicht eindeutig gekennzeichnet; Modell und Fixture lassen sich jederzeit selbst wählen.</p>
+      <p>Einzelbauteile werden über die Serien- bzw. Shunt-Fixture ausgewertet: Serie mit L (LC-Fit), R<sub>DC</sub>, SRF (Maximum von |Z|) und C<sub>p</sub>; Shunt mit C, SRF (Im Z = 0), ESL und ESR. Plateaus werden als längstes Fenster mit kleiner Streuung um den Median gesucht (nach Touchstone Studio).</p>
+    </section>
+    <section>
+      <h3>CMC-Ersatzmodell</h3>
+      <p>Beide Portpaare müssen dieselbe Wicklungspolarität abbilden. Aus der Vierport-Y-Matrix in der Reihenfolge IN+, IN−, OUT+, OUT− werden die vier natürlichen Moden C, V, H und D mit den normierten Vorzeichenvektoren <code>[++++]</code>, <code>[+−+−]</code>, <code>[++−−]</code> und <code>[+−−+]</code> projiziert.</p>
+      <p><code>Cw = Im(YV − YC)/(2ω)</code> ist die Kapazität zwischen den Wicklungen je Paarseite. <code>Cg = Im(YC)/ω</code> ist die Kapazität gegen Masse je Anschluss. Beide Werte werden als Median im Fit-Band ausgegeben. Aus <code>Im(YH,D) ≈ Aω − 2/(ωL)</code> werden <code>L+M</code> und <code>L−M</code> je Wicklung sowie zwei Schätzungen für <code>Ct</code> gewonnen. Das Modell setzt zwei möglichst gleiche Wicklungen voraus. Der Fit-Fehler und die verbleibende Kopplung der natürlichen Moden helfen bei der Wahl des Frequenzbands.</p>
+      <p><a href="https://doi.org/10.3390/electronics9030381" target="_blank" rel="noopener noreferrer">Electronics 9 (2020) · Modalanalyse einer CMC</a></p>
+    </section>
+  </div>
+    <div class="lang-en" data-no-i18n>
+    <section class="about">
+      <div class="about-row"><svg class="about-logo" viewBox="0 0 512 512" aria-hidden="true">
+  <rect width="512" height="512" rx="112" fill="#1f1e1d"/>
+  <g fill="none" stroke="#f0eee6" stroke-linecap="round">
+    <g stroke-width="7" opacity=".38">
+      <circle cx="331" cy="256" r="75"/>
+      <circle cx="381" cy="256" r="25"/>
+      <path d="M106 256H406"/>
+      <path d="M406 256A150 150 0 0 1 256 106"/>
+      <path d="M406 256A150 150 0 0 0 256 406"/>
+    </g>
+    <circle cx="256" cy="256" r="150" stroke-width="13"/>
+  </g>
+  <path d="M118 338C196 338 196 168 258 168S322 330 394 214" fill="none" stroke="#d97757" stroke-width="24" stroke-linecap="round"/>
+  <circle cx="394" cy="214" r="21" fill="#d97757" stroke="#1f1e1d" stroke-width="9"/>
+</svg>
+        <div><h3>S-Parameter Analyzer</h3><p>Developed by <strong>Simon Mark</strong> · <a href="mailto:info.simonlation@gmail.com">info.simonlation@gmail.com</a></p>
+        <p>All calculations run locally in the browser. Measurement files never leave the device.</p>
+        <p>© 2026 Simon Mark · All rights reserved · Proprietary software, not open source. <button type="button" class="link-button" data-action="license">Show license terms</button></p></div>
+      </div>
+    </section>
+    <section>
+      <h3>Touchstone and port references</h3>
+      <p>Import for 1 to 32 ports in RI, MA and DB. Touchstone 1.0, 1.1, 2.0 and 2.1 with S, Y and Z, plus H and G for two ports. Full, Upper, Lower, [Reference] and [Mixed-Mode Order] are supported. Two-port noise data is detected separately; the display uses the network data.</p>
+      <p>Up to 150,000 frequency points, 4 million complex matrix entries and 100 MiB per file.</p>
+      <p>Wave references must be positive, real and frequency-independent. For proprietary, deviating wave references export the file with a constant real reference. The bundled examples are synthetic.</p>
+      <p><a href="https://ibis.org/touchstone_ver2.1/touchstone_ver2_1.pdf" target="_blank" rel="noopener noreferrer">IBIS · Touchstone 2.1</a></p>
+    </section>
+    <section>
+      <h3>Port terminations and mixed mode</h3>
+      <p>Loads act at the physical ports against the common reference. The load impedance gives <code>Γ = (ZL − Z₀)/(ZL + Z₀)</code>; the reduced network follows from <code>Saa + Sat Γ (I − Stt Γ)⁻¹ Sta</code>, with Z₀ taken from the file for each port.</p>
+      <p>Then the active ports are renormalized and transformed with <code>(a+ − a−)/√2</code> for DM and <code>(a+ + a−)/√2</code> for CM. Unequal references within a pair are renormalized to their geometric mean. A common SE reference R gives <code>Z₀,DM = 2R</code> and <code>Z₀,CM = R/2</code>. Each pair can use its own mode impedances Z_D and Z_C (e.g. 0.1 Ω / 100 Ω for CISPR 17 line-filter tests); the mixed-mode matrix is then renormalized per mode. Touchstone export always writes the standard references.</p>
+    </section>
+    <section>
+      <h3>Port profile, templates and file comparison</h3>
+      <p>"Save to file" writes pairs, terminations, reference impedances, view and curve selection as a comment block <code>! [SPA-Port-Profile] 1 … ! [End SPA-Port-Profile]</code> into the Touchstone file. In Touchstone 1.x the block sits at the top of the file, in 2.x inside <code>[Begin Information]</code>/<code>[End Information]</code>. The measurement data stays unchanged; other programs skip comments. The standardized port mapping of Touchstone 3.0 is still a draft and is therefore not written.</p>
+      <p>A learned template stores a fingerprint: |Sdd|, |Scc| and the mode conversion of all pairs on a fixed logarithmic frequency grid (4 points per decade). For a new file with the same port count every assignment of ports to the roles of the template is evaluated (3000 at most). The assignment with the smallest mean deviation in dB wins and is applied automatically up to 5 dB. Polarity follows from the sign of Sdd in the passband.</p>
+      <p>In a comparison the curves of the other files are interpolated linearly onto the frequency grid of the open file ⟨A⟩. Files with their own profile use it, all others use the port configuration of ⟨A⟩.</p>
+    </section>
+    <section>
+      <h3>Session, library and storage</h3>
+      <p>Every imported file, folder and ZIP is written to the storage of this browser during the import (private file system OPFS, IndexedDB as fallback), read back and compared with the original. Only then is the file shown as saved. The session is the list of loaded files with the open file, view, ports, markers and axes; it is back after a reload and a restart. The library is your own permanently organised collection with folders and sub folders. Identical content is stored once; content is removed only when neither the session nor a library uses it.</p>
+      <p>An interrupted import leaves nothing half-done: it is reported at the next start and cleaned up. Browser storage is not indestructible – "Storage &amp; backup" shows its state and exports everything as a ZIP.</p>
+    </section>
+    <section>
+      <h3>Impedance and equivalent quantities</h3>
+      <p>The reflection impedance is <code>Zin = Z₀(1 + Sii)/(1 − Sii)</code> with the other active ports matched. The Z matrix gives open-circuit parameters, Z₂₁ is the transfer impedance. A pure series fixture gives <code>Zseries = 2Z₀(1/S21 − 1)</code>, a pure shunt fixture <code>Zshunt = (Z₀/2) S21/(1 − S21)</code>. A selected two-port block with different references is renormalized to their geometric mean.</p>
+      <p>Series equivalent: <code>Ls = X/ω</code> for <code>X = Im Z &gt; 0</code> and <code>Cs = −1/(ωX)</code> for X &lt; 0. Parallel equivalent: <code>Lp = −1/(ωB)</code> for <code>B = Im(1/Z) &lt; 0</code> and <code>Cp = B/ω</code> for B &gt; 0. Equivalent values are drawn with their sign: above a self-resonance an inductance turns negative because the part acts capacitively there, so resonances and sign changes stay visible. The "±Log" axis is linear around zero and logarithmic beyond; it shows both signs including resonance peaks. For such quantities the linear axis shows the bulk of the curve (2nd to 98th percentile); wheel and drag on the Y scale change the window. The quality factor is <code>Q = |X|/R</code>. Group delay uses the locally unwrapped phase and the actual frequency steps.</p>
+    </section>
+    <section>
+      <h3>CISPR 17:2011 · clause 6.3.1</h3>
+      <p>§ 6.3.1.2 uses the reflection impedance. In § 6.3.1.3 and § 6.3.1.4 each selected two-port block gives <code>R = (S11 + S22)/2</code> and <code>T = (S21 + S12)/2</code>. Series evaluation <code>Z₀((1 + R)² − T²)/(2T)</code>, shunt evaluation <code>Z₀(2T)/((1 − R)² − T²)</code>. In the four-port case the series formula applies separately to CM and DM.</p>
+      <p>The evaluation assumes a suitable calibrated fixture, DUT reference planes and, for the averaged formulas, a sufficiently symmetric DUT. The deviations at the marker show the differences of the complex S values. For the two-port the condition number <code>|(1−T)²−R²|/|2T|</code> should be well below 1.</p>
+      <p><a href="https://webstore.iec.ch/en/publication/65" target="_blank" rel="noopener noreferrer">IEC · CISPR 17:2011</a></p>
+    </section>
+    <section>
+      <h3>Transformers and single components (equivalent circuit)</h3>
+      <p>Automatic detection: a CMC connects common mode galvanically at low frequency (|Scc₂₁| → 1), a transformer isolates it (|Scc₂₁| → 0). The DD blocks of two pairs give the Z matrix: <code>OCL = Im Z₁₁/ω</code>, <code>k = M/√(L₁₁L₂₂)</code>, <code>n = √(L₂₂/L₁₁)</code>. Leakage follows the datasheet method with the secondary shorted: <code>Lσ = Im(Z₁₁ − Z₁₂Z₂₁/Z₂₂)/ω</code>. The CC block gives <code>Cww = −Im Y₁₂/ω</code>. Below self-resonance <code>ω/X = 1/L − ω²C</code>; the linear regression yields OCL₀ without resonance rise and the winding capacitance. Self-resonance is the maximum of |Z₁₁| with parabolic interpolation.</p>
+      <p>For 1- and 2-port files the physics detection picks the model (inductive or capacitive) and the fixture: <code>S₁₁ ≈ 1 − S₂₁</code> is a series element, <code>S₁₁ ≈ S₂₁ − 1</code> a shunt element, a single port a reflection measurement. The result is marked as confident, probable or not conclusive; model and fixture can always be chosen by hand.</p>
+      <p>Single components use the series or shunt fixture: series with L (LC fit), R<sub>DC</sub>, SRF (maximum of |Z|) and C<sub>p</sub>; shunt with C, SRF (Im Z = 0), ESL and ESR. Plateaus are found as the longest window with small spread around the median (after Touchstone Studio).</p>
+    </section>
+    <section>
+      <h3>CMC equivalent model</h3>
+      <p>Both port pairs must represent the same winding polarity. The four-port Y matrix in the order IN+, IN−, OUT+, OUT− is projected onto the four natural modes C, V, H and D with the normalized sign vectors <code>[++++]</code>, <code>[+−+−]</code>, <code>[++−−]</code> and <code>[+−−+]</code>.</p>
+      <p><code>Cw = Im(YV − YC)/(2ω)</code> is the capacitance between the windings per side, <code>Cg = Im(YC)/ω</code> the capacitance to ground per terminal; both are reported as the median in the fit band. From <code>Im(YH,D) ≈ Aω − 2/(ωL)</code> follow <code>L+M</code> and <code>L−M</code> per winding and two estimates of <code>Ct</code>. The model assumes two nearly equal windings. The fit error and the remaining coupling of the natural modes help to choose the frequency band.</p>
+      <p><a href="https://doi.org/10.3390/electronics9030381" target="_blank" rel="noopener noreferrer">Electronics 9 (2020) · modal analysis of a CMC</a></p>
+    </section>
+    </div>
+  </div>
+</dialog>
+
