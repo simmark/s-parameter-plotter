@@ -1,7 +1,7 @@
 // oberflaeche/start – Start der App: Demo, geteilte Dateien, letzte Sitzung wiederherstellen.
 import { initDataset } from '../analyse/netzwerk.js';
 import { $, mobile } from '../basis/dom.js';
-import { registerActions } from '../basis/erweiterung.js';
+import { hasView, registerActions } from '../basis/erweiterung.js';
 import { state } from '../basis/zustand.js';
 import { renderShelf } from '../dateien/bibliothek.js';
 import { flushSettings } from '../dateien/einstellungen.js';
@@ -11,7 +11,6 @@ import { ZIP_NAME, addItems, blankProfile, configKey, entrySource, handleDesc, i
 import { renderSession, renderStorageNotice } from '../dateien/sitzungsliste.js';
 import { expandModels } from '../dateien/spice.js';
 import { setTab } from './rahmen.js';
-
 
 function loadDemo(n) {
   state.importJob++;
@@ -99,8 +98,10 @@ async function boot() {
   if (!state.dataset) loadDemo(4);
 }
 
+// A link to …/#<view> (e.g. #source) opens that view once the last session is back; #quelltext is the German alias.
 boot().then(() => {
-  if ((location.hash === '#quelltext' || document.documentElement.dataset.startView === 'source') && state.dataset) setTab('source');
+  const wanted = { quelltext: 'source' }[location.hash.slice(1)] || location.hash.slice(1);
+  if (wanted && hasView(wanted) && state.dataset) setTab(wanted);
 });
 
 registerActions({

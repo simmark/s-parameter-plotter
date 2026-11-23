@@ -115,8 +115,8 @@ section('Vorlagen (Port-Maps)');
   const json = JSON.stringify(Connector.exportMap(usb, m, { name: 'Test' })), back = Connector.importMap(json);
   check('Export/Import einer Zuordnung verlustfrei', same(back.mapping.ports, m.ports) && back.profile.id === usb.id && back.name === 'Test');
   const evil = JSON.parse(json); evil.map[0] = '../../etc'; evil.map[1] = 'Z99@1';
-  const cleaned = Connector.importMap(evil);
-  check('Unbekannte Knoten aus einer Vorlage werden verworfen, nicht übernommen', cleaned.mapping.ports[0] === null && cleaned.mapping.ports[1] === null && cleaned.mapping.ports[2] === m.ports[2]);
+  let rejected = ''; try { Connector.importMap(evil); } catch (e) { rejected = e.message; }
+  check('Eine Vorlage mit unbekannten Knoten wird ganz abgelehnt, nichts wird teilweise übernommen', /unbekannten Knoten/.test(rejected), rejected);
   let threw = ''; try { Connector.importMap({ schema: 'x' }); } catch (e) { threw = e.message; }
   check('Fremdes JSON wird abgelehnt', /SIMONLATION/.test(threw), threw);
   let threw2 = ''; try { Connector.importMap({ ...JSON.parse(json), profile: { id: 'hdmi-x' } }); } catch (e) { threw2 = e.message; }

@@ -1,4 +1,4 @@
-
+// module/quelltext/profil – Ansicht „Portzuordnung“: Port-Profil (Lasten, Paare) entwerfen, prüfen und als Kommentarblock in den Text schreiben.
 import { esc } from '../../basis/dom.js';
 import { hz } from '../../basis/format.js';
 import { EDITABLE_LOADS, LOADS, state } from '../../basis/zustand.js';

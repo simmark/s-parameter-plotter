@@ -65,19 +65,26 @@ const rjPairs = ['LEFT', 'RIGHT'].flatMap((side, s) => [[1, 2, 'P1'], [3, 6, 'P2
   check('… Belegung aus der Datei, Quelle „file“, keine Messdaten-Annahme', mapping.ports[0] === '1·1' && mapping.ports[15] === '2·8' && mapping.source.every(x => x === 'file'));
   Connector.register(p);
   const ch = Connector.checkChannels(p, mapping, rj);
-  check('Kanalprüfung: 4 Kanäle, alle mit Durchgang und richtig gepolt', ch.length === 4 && ch.every(x => x.polarity === 'ok' && x.maxDb > -1), ch.map(x => x.channel + ':' + x.polarity).join(' '));
+  check('Kanalprüfung: 4 Kanäle mit Durchgang; ohne Phasenbezug bleibt die Polarität offen', ch.length === 4 && ch.every(x => x.polarity === 'open' && x.maxDb > -1), ch.map(x => x.channel + ':' + x.polarity).join(' '));
+  // A polarity reference bounds the delay, so the phase at a low frequency proves the sign (lumped test circuit: well below 1 ns).
+  const REF = { source: 'Synthetische Testschaltung, konzentriert', maxDelaySeconds: 1e-9, maxFrequencyHz: 3e9, response: 'noninverting-baseband' };
+  const withRef = Connector.fromSidecar(sidecar(rjPorts, rjPairs, { model: 'test-ref', polarityReference: REF }), 16);
+  const chr = Connector.checkChannels(withRef.profile, withRef.mapping, rj);
+  check('Mit Phasenbezug: alle 4 Kanäle richtig gepolt, Bezug wird genannt', chr.length === 4 && chr.every(x => x.polarity === 'ok' && x.reference === REF.source), chr.map(x => x.channel + ':' + x.polarity).join(' '));
+  let e0 = ''; try { Connector.fromSidecar(sidecar(rjPorts, rjPairs, { model: 'test-ref-bad', polarityReference: { ...REF, response: 'irgendwas' } }), 16); } catch (e) { e0 = e.message; }
+  check('Unvollständiger Phasenbezug wird abgelehnt', /Polaritätsreferenz/.test(e0), e0);
   // swap + and − of P2 on the right side → that channel must be reported inverted
   const bad = rjPairs.map(x => x.side === 'RIGHT' && x.pair === 'P2' ? { ...x, positive_port: x.negative_port, negative_port: x.positive_port } : x);
-  const r2 = Connector.fromSidecar({ ...sidecar(rjPorts, bad), model: 'test-bad' }, 16);
+  const r2 = Connector.fromSidecar({ ...sidecar(rjPorts, bad), model: 'test-bad', polarityReference: REF }, 16);
   const ch2 = Connector.checkChannels(r2.profile, r2.mapping, rj);
-  check('Vertauschtes + / − an einem Ende wird als „vertauscht“ erkannt', ch2.find(x => x.channel === 'P2').polarity === 'inverted' && ch2.filter(x => x.polarity === 'ok').length === 3);
+  check('Mit Phasenbezug: vertauschtes + / − an einem Ende wird als „vertauscht“ erkannt', ch2.find(x => x.channel === 'P2').polarity === 'inverted' && ch2.filter(x => x.polarity === 'ok').length === 3);
   // a pair mapped to the wrong contacts on one side → no transmission
   const wrong = rjPairs.map(x => x.side === 'RIGHT' && x.pair === 'P4' ? { ...x, positive_port: 9, negative_port: 10 } : x.side === 'RIGHT' && x.pair === 'P1' ? { ...x, positive_port: 15, negative_port: 16 } : x);
   const r3 = Connector.fromSidecar({ ...sidecar(rjPorts, wrong), model: 'test-wrong' }, 16), ch3 = Connector.checkChannels(r3.profile, r3.mapping, rj);
   check('Paar auf falschen Kontakten: kein Durchgang', ch3.find(x => x.channel === 'P4').polarity === 'none' && ch3.find(x => x.channel === 'P1').polarity === 'none');
   // fan-out / transformer style: pairs with different names are linked by the measurement
   const linked = rjPairs.map(x => x.side === 'RIGHT' ? { ...x, pair: x.pair + '_OUT' } : x);
-  const r4 = Connector.fromSidecar({ ...sidecar(rjPorts, linked), model: 'test-link' }, 16), ch4 = Connector.checkChannels(r4.profile, r4.mapping, rj);
+  const r4 = Connector.fromSidecar({ ...sidecar(rjPorts, linked), model: 'test-link', polarityReference: REF }, 16), ch4 = Connector.checkChannels(r4.profile, r4.mapping, rj);
   check('Paare ohne gemeinsamen Namen werden über die Messung verknüpft (P1 → P1_OUT …)', ch4.length === 4 && ch4.every(x => x.fromData && x.channel === x.from.split('·')[0] + ' → ' + x.from.split('·')[0] + '_OUT' && x.polarity === 'ok'), ch4.map(x => x.channel).join(', '));
   let e1 = ''; try { Connector.fromSidecar(sidecar(rjPorts, rjPairs), 12); } catch (e) { e1 = e.message; }
   check('Port-Map mit falscher Portzahl wird abgelehnt', /gilt für 16 Ports/.test(e1));

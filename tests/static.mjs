@@ -20,7 +20,15 @@ check('Kurzhinweis im Interface sichtbar', html.includes('<p class="legal-line">
 check('Urheberhinweis im Quelltextkopf', /<!--[\s\S]{0,200}© 2026 Simon Mark[\s\S]{0,400}LICENSE\.txt[\s\S]*?-->/.test(html.slice(0, 1200)));
 check('README verweist auf LICENSE.txt (deutsch und englisch)', (readme.match(/LICENSE\.txt/g) || []).length >= 2 && /Alle Rechte vorbehalten/.test(readme) && /All rights reserved/.test(readme));
 check('Lizenz in „Methodik / Info“ aufrufbar (deutsch und englisch)', (html.match(/data-action="license"/g) || []).length >= 3);
-check('Keine eingebundenen Drittkomponenten (keine fremden Skripte, Schriften, Stylesheets)', !/<script[^>]+src=|<link[^>]+rel="stylesheet"|@font-face|@import/.test(html));
+check('Nichts wird von außen nachgeladen (keine fremden Skriptdateien, Schriften, Stylesheets)', !/<script[^>]+src=|<link[^>]+rel="stylesheet"|@font-face|@import/.test(html));
+// Third-party code only in its own blocks <script id="fremd-…">, each opening with its license texts; nowhere else.
+{
+  const blocks = [...html.matchAll(/<script id="(fremd-[^"]+)">\n([\s\S]*?)<\/script>/g)];
+  const bad = blocks.filter(([, id, code]) => !/^\/\*! Drittkomponenten[\s\S]*?MIT[\s\S]*?\*\//.test(code)).map(([, id]) => id);
+  check('Drittkomponenten nur in eigenen Blöcken mit vollem Lizenztext am Anfang', blocks.length >= 1 && !bad.length, blocks.map(b => b[1]).join(', ') + (bad.length ? ' · ohne Lizenzkopf: ' + bad.join(', ') : ''));
+  const rest = html.replace(/<script id="fremd-[^"]+">[\s\S]*?<\/script>/g, '');
+  check('Außerhalb dieser Blöcke kein fremder Lizenzkopf (kein eingeschmuggelter Fremdcode)', !/MIT License|@license|Permission is hereby granted/.test(rest.replace(/<pre id="license-text"[\s\S]*?<\/pre>/, '')));
+}
 
 let syntax = 0;
 for (const [, body] of html.matchAll(/<script(?: id="[^"]*")?>\n([\s\S]*?)<\/script>/g)) { try { new vm.Script(body); } catch (error) { syntax++; console.log('    ' + error.message); } }

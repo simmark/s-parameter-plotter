@@ -11,7 +11,7 @@ const app = tempDir('spa-ext-app-'), profile = tempDir('spa-ext-'), work = tempD
 for (const item of ['src', 'tools', 'icons', 'index.html', 'sw.js', 'manifest.webmanifest', 'LICENSE.txt']) fs.cpSync(path.join(ROOT, item), path.join(app, item), { recursive: true });
 fs.writeFileSync(path.join(app, 'src/app/module/probe.js'), `// module/probe – nur für den Test: ein neues Fachmodul ohne Änderung an anderen Dateien.
 import { $ } from '../basis/dom.js';
-import { registerActions, registerChanges, registerFileState, registerView } from '../basis/erweiterung.js';
+import { registerActions, registerChanges, registerFileState, registerSlot, registerView } from '../basis/erweiterung.js';
 import { state } from '../basis/zustand.js';
 import { persistSettings } from '../dateien/einstellungen.js';
 
@@ -21,7 +21,8 @@ function renderProbe() {
     '<select id="probe-select" data-change="probe-mode"><option value="a">a</option><option value="b"' + (state.probe.mode === 'b' ? ' selected' : '') + '>b</option></select>';
 }
 
-registerView({ id: 'probe', title: 'Probeansicht', short: 'Probe', icon: 'wave', panel: 'probe-panel', render: renderProbe, context: 'Nur für den Test' });
+registerView({ id: 'probe', title: 'Probeansicht', short: 'Probe', after: 'ports', iconPath: 'M4 4h16v16H4z', panel: 'probe-panel', render: renderProbe, context: 'Nur für den Test' });
+registerSlot('marker-tools', () => '<button type="button" id="probe-slot" class="button">Probe</button>');
 registerActions({ 'probe-add': () => { state.probe.count++; persistSettings(); renderProbe(); } });
 registerChanges({ 'probe-mode': value => { state.probe.mode = value; } });
 registerFileState('probe', {
@@ -42,9 +43,14 @@ try {
   await page.waitForSelector('#session-files', { state: 'attached' });
   report.check('Tab-Knopf der neuen Ansicht ist angelegt', await page.isVisible('#tab-probe'));
   report.check('Panel der neuen Ansicht ist angelegt und verborgen', await page.$eval('#probe-panel', el => el.hidden));
+  const tabs = await page.$$eval('[role=tab]', n => n.map(t => t.id));
+  report.equal('Tab steht an der gewünschten Stelle (after: ports)', tabs[tabs.indexOf('tab-ports') + 1], 'tab-probe');
+  report.check('Eigenes Symbol ist in der Symbolsammlung und im Tab', await page.$eval('#tab-probe use', u => u.getAttribute('href')) === '#i-probe' && await page.locator('svg.symbol-bank symbol#i-probe').count() === 1);
   await page.setInputFiles('#file-input', [path.join(work, 'eins.s2p'), path.join(work, 'zwei.s2p')]);
   await waitIdle(page);
   await page.waitForFunction(() => document.getElementById('session-files').dataset.count === '2');
+  await page.waitForSelector('#probe-slot');
+  report.check('Beitrag zur Markerleiste (registerSlot) erscheint', await page.isVisible('#probe-slot'));
   await page.click('#tab-probe');
   await page.waitForSelector('#probe-count');
   report.equal('Neue Datei beginnt mit dem Grundwert', await text('probe-count'), '0');

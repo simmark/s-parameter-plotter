@@ -150,6 +150,13 @@ Alle Berechnungen laufen lokal auf dem Gerät. Messdateien werden nicht hochgela
 - Behoben: Einstellungen einer Datei gingen verloren, wenn innerhalb von 0,3 s zu einer anderen Datei gewechselt wurde.
 - Methode, Prüfungen und Grenzen: `docs/multiport-zeitbereich.md`.
 
+## Version 12: Tab „Quelltext“
+
+- Neuer Tab **Quelltext**: Touchstone-Datei als Text, Messwerttabelle, Matrix je Frequenzpunkt und Portzuordnung. Jede Änderung wird sofort mit dem Import-Parser geprüft, mit Zeile und Spalte. Der Entwurf wird lokal gesichert, der Formatwechsel RI/MA/DB ändert keine Werte. „Als Analyse öffnen“ importiert eine Kopie, das Original bleibt. Der Knopf „Quelltext“ an den Markern springt in den Frequenzblock (`docs/quelltext.md`).
+- Erste Drittkomponente: **CodeMirror 6 (MIT)** für den Editor. Sie wird aus festgelegten Versionen gebaut, die Lizenztexte stehen im Block und im Lizenzdialog (`docs/drittkomponenten.md`).
+- Connector: Signalwege (`paths`) für Übersprechen und Kanalprüfung, Ansicht der Steckseite (Stecker/Buchse) für RJ45, HDMI und MagJack. **Polarität nur noch mit Phasenbezug** (`polarityReference` in der Port-Map), sonst „unbestimmt“. Port-Maps und Vorlagen mit Widersprüchen werden ganz abgelehnt.
+- Erweiterungspunkte: `registerSlot`, Tab-Platz (`after`) und eigenes Symbol (`iconPath`), Link `…/#<ansicht>`.
+
 ## Version 11: Modularer Aufbau
 
 - Der Quelltext liegt in `src/`, die App in `src/app/` als ES-Module mit eigenem Gültigkeitsbereich, in Schichten: `basis/`, `dateien/`, `analyse/`, `module/` (Fachmodule), `oberflaeche/`. `python3 tools/build.py` bündelt sie zu einer einzigen `index.html`, ohne fremde Werkzeuge.
@@ -170,6 +177,7 @@ SPA_PACK=/pfad node tests/pack.mjs   # synthetisches Testpaket (21 Dateien, nich
 node tests/e2e/run.mjs           # alles: dazu Browser-Abläufe A–D, ZIP, Speicher, Achsen, ESB, Englisch (braucht Playwright und Chrome)
 node tests/e2e/run.mjs --fast    # nur die Gruppen ohne Browser
 node tests/e2e/erweiterung.mjs   # ein Probemodul klinkt sich nur über die Erweiterungspunkte ein
+node tests/e2e/quelltext.mjs     # Tab Quelltext: Prüfung, Bearbeiten, Entwurf, Umrechnung, Übernahme, Englisch
 node tests/e2e/perf.mjs          # Zeitmessung mit 100 und 1000 Dateien
 SPA_PRIVATE_DATA=/pfad node tests/real.data.mjs   # echte Herstellerdaten gegen das Datenblatt (Dateien nicht im Repository)
 ```

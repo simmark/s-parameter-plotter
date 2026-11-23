@@ -1,4 +1,4 @@
-
+// module/quelltext/matrixansicht – Ansicht „Matrix“: die ganze Matrix eines Frequenzpunkts in Re/Im, dB/° oder Betrag/°.
 import { esc } from '../../basis/dom.js';
 import { hz, parseHz } from '../../basis/format.js';
 import { explanation, selectedData } from './datenansicht.js';

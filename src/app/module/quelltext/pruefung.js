@@ -1,4 +1,4 @@
-
+// module/quelltext/pruefung – Prüft den Entwurf mit dem Touchstone-Parser des RF-Kerns in einem eigenen Worker, mit Rückfall auf die Seite.
 import { $ } from '../../basis/dom.js';
 
 // A dedicated worker keeps validation independent from ESB fitting and connector jobs.
@@ -19,4 +19,4 @@ function inspectSource(text, name, receive) {
   } catch { cancelInspection(); direct(); }
 }
 
-export { inspectSource, cancelInspection };
+export { cancelInspection, inspectSource };

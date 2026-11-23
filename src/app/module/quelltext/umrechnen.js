@@ -1,4 +1,6 @@
+// module/quelltext/umrechnen – Formatwechsel RI/MA/DB nur für die Messwert-Token; Kommentare, Frequenzen und Zeilenaufbau bleiben.
 // Convert only network-data tokens. Comments, noise, information, frequency tokens and layout survive.
+
 function convertSource(text, index, target) {
   if (!index?.freq || !['RI','MA','DB'].includes(target) || target===index.format) throw new Error('Wähle ein anderes Zielformat.');
   const lines=text.split('\n'), width=1+2*index.positions.length;

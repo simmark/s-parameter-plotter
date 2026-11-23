@@ -9,7 +9,9 @@ Phasen 2, 3, 5 und 6 des SIMONLATION-Auftrags. Phase 4 (Filter & EMV Studio) ist
 - Das Profil wird in den Einstellungen der Datei gespeichert und beim Öffnen geprüft (`validateProfile`), bevor es registriert wird.
 - Nichts in der Datei gilt als gemessen. Die **Kanalprüfung** vergleicht sie mit der S-Matrix:
   - Je Kanal (gleicher Paarname an verschiedenen Seiten) wird SDD21 zwischen den Enden gebildet.
-  - Bewertet wird die Phase bei der tiefsten Frequenz, an der |SDD21| 90 % des Maximums erreicht: bis ±60° richtig gepolt, ab ±120° vertauscht, dazwischen offen. Liegt |SDD21| nirgends über 0,1, gilt der Kanal als „kein Durchgang“.
+  - Liegt |SDD21| nirgends über 0,1, gilt der Kanal als „kein Durchgang“.
+  - **Polarität (seit Version 12):** Eine Phase beweist das Vorzeichen nur, wenn die Laufzeit begrenzt ist; sonst kann 0° auch 360° sein. Ohne Phasenbezug bleibt die Polarität deshalb **„unbestimmt“**. Die Port-Map kann einen Bezug angeben: `polarityReference: { source, maxDelaySeconds, maxFrequencyHz, response: "noninverting-baseband" }`. Bewertet wird dann ein Punkt mit |SDD21| ≥ 90 % des Maximums, an dem die größte mögliche Laufzeit höchstens 30° Phase ergibt: bis ±60° richtig gepolt, ab ±120° vertauscht, dazwischen offen. Die Quelle des Bezugs steht in der Tabelle. Ein unvollständiger Bezug wird abgelehnt.
+  - Weitere Felder seit Version 12: `paths` (Signalwege von Paar zu Paar, für Übersprechen und Kanalprüfung), `connectorGender` je Seite (`plug` oder `receptacle`, für die Ansicht der Steckseite). Eine Port-Map, deren Profil unter derselben Kennung schon mit anderem Inhalt geladen ist, wird abgelehnt („Konflikt“). Eine Vorlage mit unbekannten Knoten wird ganz abgelehnt statt teilweise übernommen.
   - Paare ohne Partner gleichen Namens (Fan-out, Übertrager PRI/SEC) werden mit dem Paar eines früheren Endes verknüpft, zu dem |SDD21| über −10 dB liegt. Solche Verknüpfungen sind als „aus der Messung“ markiert.
 
 ## Automatische Zuordnung: zwei Korrekturen

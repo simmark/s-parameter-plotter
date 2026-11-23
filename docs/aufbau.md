@@ -1,6 +1,6 @@
 # Aufbau des Quelltexts
 
-Die App wird als **eine** Datei ausgeliefert: `index.html`. Sie läuft offline, braucht keinen Server und keine fremden Bibliotheken. Geschrieben wird sie aber in `src/`, aufgeteilt in Module. `python3 tools/build.py` setzt alles zu `index.html` zusammen. `index.html` bleibt im Repository, weil GitHub Pages sie unverändert ausliefert. **Bearbeitet wird `src/`, nie `index.html`.**
+Die App wird als **eine** Datei ausgeliefert: `index.html`. Sie läuft offline, braucht keinen Server und lädt nichts nach. Einzige Drittkomponente ist CodeMirror 6 für den Quelltext-Editor (`docs/drittkomponenten.md`). Geschrieben wird sie aber in `src/`, aufgeteilt in Module. `python3 tools/build.py` setzt alles zu `index.html` zusammen. `index.html` bleibt im Repository, weil GitHub Pages sie unverändert ausliefert. **Bearbeitet wird `src/`, nie `index.html`.**
 
 ## Ablauf beim Ändern
 
@@ -24,6 +24,7 @@ node tests/e2e/run.mjs         # alle Tests (oder --fast ohne Browser)
 | `src/html/` | Kopfleiste, Arbeitsbereich, Dialoge, Methodik, Lizenz, Installationshinweis |
 | `src/js/kerne/` | Rechenkerne ohne Oberfläche: `rf-core` (Netzwerk, Mixed Mode, Touchstone), `spice-core`, `magnetic-core` (Bauteilerkennung), `td-core` (Zeitbereich, Auge), `connector-core` (Steckverbinder), `store-core` (IndexedDB). Sie stehen als eigene `<script>`-Blöcke in der Seite. Tests laden sie direkt, und der Rechen-Worker baut sich aus drei davon. |
 | `src/js/` | `theme.js` (Hell/Dunkel), `i18n.js` (Deutsch/Englisch), `plot.js` (Diagramm), `pwa.js` (Installation, Updates) |
+| `src/js/fremd/` | Drittkomponenten, erzeugt, nicht von Hand geändert: `codemirror.js` (CodeMirror 6, MIT, gebaut mit `tools/fremd/codemirror.mjs`). Siehe `docs/drittkomponenten.md`. |
 | `src/app/` | Die Anwendung als ES-Module, in Schichten (nächster Abschnitt) |
 
 ## Schichten in `src/app/`
@@ -64,6 +65,7 @@ Die Kernschichten untereinander (`analyse`, `dateien`, `oberflaeche`) dürfen si
 | `module/zeitbereich.js` | Tab „Zeitbereich“ |
 | `module/esb/` | Tab „ESB-Modell“: Modelle, Schaltbilder, Modell-Editor, SPICE-Export |
 | `module/vorlagen/` | Packs und Stapelverarbeitung |
+| `module/quelltext/` | Tab „Quelltext“: Datei als Text, Messwerttabelle, Matrix, Portzuordnung (`docs/quelltext.md`) |
 | `oberflaeche/rahmen.js` | Tabs, Seitentitel, Status, Ansichtsmodus, zentraler Neuaufbau (`renderMain`) |
 | `oberflaeche/ereignisse.js`, `aktionen.js` | Allgemeine Ereignisse (Klick-, Formular- und Auswahl-Verteiler, Tastatur, Ablegen); Menü, Sprache, Design |
 | `oberflaeche/seitenleiste.js`, `export.js`, `start.js` | Seitenleiste und Schublade; Export; Start der App (läuft als letztes Modul) |
@@ -95,10 +97,11 @@ Ein Fachmodul meldet sich in `basis/erweiterung.js` an, statt in zentrale Tabell
 
 | Funktion | Wofür |
 |---|---|
-| `registerView({ id, title, … })` | Eine Ansicht mit Tab. Mit `panel` und `render` zeichnet sie ein eigenes Panel, ohne `panel` gehört sie zum Diagrammbereich und liefert `plot()` und `controls()`. Weitere Felder: `context` (Zeile unter dem Titel), `basis()` (Umschalter SE/MM zeigen), `button` (Tab einer anderen Ansicht mitbenutzen), `enter()` (beim Öffnen auf eine andere Ansicht umleiten). Fehlen Tab-Knopf oder Panel im HTML, werden sie angelegt. |
+| `registerView({ id, title, … })` | Eine Ansicht mit Tab. Mit `panel` und `render` zeichnet sie ein eigenes Panel, ohne `panel` gehört sie zum Diagrammbereich und liefert `plot()` und `controls()`. Weitere Felder: `context` (Zeile unter dem Titel), `basis()` (Umschalter SE/MM zeigen), `button` (Tab einer anderen Ansicht mitbenutzen), `enter()` (beim Öffnen auf eine andere Ansicht umleiten), `after` (Platz des Tabs hinter einer anderen Ansicht), `iconPath` (eigenes Symbol, SVG-Pfad in 24 × 24). Ein Link `…/#<id>` öffnet die Ansicht nach dem Start. Fehlen Tab-Knopf oder Panel im HTML, werden sie angelegt. |
 | `registerActions({ name: (value, button) => … })` | Knöpfe mit `data-action="name"` |
 | `registerForms({ 'form-id': form => … })` | Formulare (submit) |
 | `registerChanges({ name: (value, select) => … })` | Auswahllisten mit `data-change="name"`. Danach baut der Rahmen neu auf, außer bei `{ rerender: false }`. |
+| `registerSlot(name, () => html)` | Beitrag zu einer benannten Stelle der Oberfläche. Heute gibt es `marker-tools`, die Knöpfe neben der Markersuche. Der Kern zeigt dort, was die Module liefern. |
 | `registerFileState(key, { blank, save, load })` | Zustand, der zu einer Datei gehört: `state[key]` bekommt beim Öffnen `blank()`, `save` liefert den gespeicherten Teil, `load(saved, dataset)` prüft und stellt ihn wieder her. Wie alle Einstellungen geht er auch auf eine Datei gleicher Struktur über, die noch keine eigenen hat. |
 
 Ein doppelt angemeldeter Name bricht beim Laden mit einer klaren Meldung ab.

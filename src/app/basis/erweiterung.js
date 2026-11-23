@@ -4,10 +4,11 @@
 //   registerForms       Formulare mit id (submit)
 //   registerChanges     Auswahllisten mit data-change="name"
 //   registerFileState   Zustand, der zu einer Datei gehört: Grundwert, Speichern und Wiederherstellen
+//   registerSlot        Beitrag zu einer benannten Stelle der Oberfläche, z. B. ein Knopf in der Markerleiste ('marker-tools')
 // Ein Name darf nur einmal angemeldet werden; ein doppelter Name bricht beim Laden mit einer klaren Meldung ab.
 import { state } from './zustand.js';
 
-const actions = new Map(), forms = new Map(), changes = new Map(), views = new Map(), fileStates = new Map();
+const actions = new Map(), forms = new Map(), changes = new Map(), views = new Map(), fileStates = new Map(), slots = new Map();
 
 function add(map, kind, table, extra = {}) {
   for (const [name, handler] of Object.entries(table)) {
@@ -35,7 +36,9 @@ const changeHandler = key => changes.get(key);
 //   render?  zeichnet das eigene Panel,
 //   basis?   () => true, wenn der Umschalter Single Ended / Mixed Mode gezeigt wird,
 //   button?  id einer anderen Ansicht, deren Tab-Knopf diese Ansicht mit vertritt (CISPR 17 liegt unter „Impedanz“),
-//   enter?   () => andere Ansicht oder nichts; läuft beim Wechsel auf diese Ansicht }
+//   enter?   () => andere Ansicht oder nichts; läuft beim Wechsel auf diese Ansicht,
+//   after?   id der Ansicht, hinter deren Tab der neue Tab steht (sonst am Ende),
+//   iconPath? Pfad (viewBox 0 0 24 24) für ein eigenes Symbol, statt icon aus der Symbolsammlung }
 // Fehlen Tab-Knopf oder Panel im HTML, werden sie angelegt; neue Ansichten brauchen also keine Änderung am HTML.
 function registerView(view) {
   if (!view?.id || !view.title) throw new Error('Ansicht braucht id und title');
@@ -62,9 +65,20 @@ function ensureTab(view) {
   button.dataset.value = view.id;
   if (view.hint) button.title = view.hint;
   const esc = text => String(text).replace(/[&<>"']/g, c => '&#' + c.charCodeAt(0) + ';');
-  button.innerHTML = '<svg class="icon" aria-hidden="true"><use href="#i-' + esc(view.icon || 'wave') + '"/></svg>' +
+  let icon = view.icon || 'wave';
+  if (view.iconPath) {
+    // The module brings its own symbol; it joins the page's symbol bank like the built-in ones.
+    icon = view.id;
+    const symbol = document.createElementNS('http://www.w3.org/2000/svg', 'symbol');
+    symbol.id = 'i-' + icon;
+    symbol.setAttribute('viewBox', '0 0 24 24');
+    symbol.innerHTML = '<path d="' + esc(view.iconPath) + '"/>';
+    document.querySelector('svg.symbol-bank').append(symbol);
+  }
+  button.innerHTML = '<svg class="icon" aria-hidden="true"><use href="#i-' + esc(icon) + '"/></svg>' +
     '<span class="tab-long">' + esc(view.title) + '</span><span class="tab-short">' + esc(view.short || view.title) + '</span>';
-  list.append(button);
+  const anchor = view.after && document.getElementById('tab-' + view.after);
+  if (anchor) anchor.after(button); else list.append(button);
 }
 
 function ensurePanel(view) {
@@ -74,6 +88,14 @@ function ensurePanel(view) {
   panel.hidden = true;
   document.getElementById('analysis-panel').before(panel);
 }
+
+// ---- Stellen der Oberfläche, an denen Module etwas beitragen: render() → HTML (leer = nichts) ----
+function registerSlot(name, render) {
+  if (typeof render !== 'function') throw new Error('Beitrag zu ' + name + ': render fehlt');
+  if (!slots.has(name)) slots.set(name, []);
+  slots.get(name).push(render);
+}
+const slot = name => (slots.get(name) || []).map(render => render() || '').join('');
 
 // ---- Zustand pro Datei ----
 // registerFileState(key, { blank, save?, load? }): state[key] bekommt beim Öffnen einer Datei blank(). save(value) liefert
@@ -101,4 +123,4 @@ function loadFileStates(saved, dataset) {
 }
 
 export { registerActions, action, registerForms, formHandler, registerChanges, changeHandler, registerView, view,
-  hasView, allViews, tabOf, registerFileState, resetFileStates, saveFileStates, loadFileStates };
+  hasView, allViews, tabOf, registerSlot, slot, registerFileState, resetFileStates, saveFileStates, loadFileStates };

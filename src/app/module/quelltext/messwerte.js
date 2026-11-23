@@ -1,4 +1,6 @@
+// module/quelltext/messwerte – Messwerte eines Frequenzpunkts aus den Token lesen: Matrixzellen, Beschriftung und Mixed-Mode-Terme.
 // Addresses are from the parser, so tab width and continuation lines never determine matrix order.
+
 function tokenRange(index, lines, start, count) {
   const rows = index.rows, end = start + count, out = [];
   let left = 0, right = rows.length;
@@ -88,5 +90,5 @@ function nativeMode(index, type, pair) {
   return {port:reversed, sign:type === 'D' ? -1 : 1};
 }
 
-export { tokenNumber, compactValue, sourceNetwork, tokenRange, pointData, matrixCell, matrixLabel, mixedTerms,
+export { tokenRange, tokenNumber, compactValue, pointData, matrixCell, matrixLabel, sourceNetwork, mixedTerms,
   nativeMode };

@@ -4,7 +4,12 @@
   "description": "Nur für Entwicklung und Tests. Die App selbst braucht keine Pakete.",
   "license": "SEE LICENSE IN LICENSE.txt",
   "devDependencies": {
+    "@codemirror/commands": "6.11.1",
+    "@codemirror/search": "6.7.2",
+    "@codemirror/state": "6.7.6",
+    "@codemirror/view": "6.43.15",
     "acorn": "8.18.0",
+    "esbuild": "0.28.2",
     "eslint-scope": "8.4.0",
     "playwright": "1.63.0"
   }

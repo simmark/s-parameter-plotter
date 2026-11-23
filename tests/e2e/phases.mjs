@@ -42,12 +42,19 @@ try {
   report.check('Port-Map geladen: eigenes Profil „Port-Map · rj45-test“ ausgewählt', /Port-Map · rj45-test/.test(await page.textContent('#cn-profile option:checked')));
   report.equal('Pinansicht: 16 Anschlüsse, 16 durch die Kanalprüfung bestätigt', [await page.locator('.cn-pin').count(), await page.locator('.cn-pin.is-ok').count()], [16, 16]);
   const checkRows = await page.$$eval('#connector-panel table', tables => { const t = tables.find(x => /Polarität/.test(x.textContent)); return t ? [...t.querySelectorAll('tbody tr')].map(r => r.textContent) : []; });
-  report.check('Kanalprüfung: 4 Kanäle „richtig gepolt“', checkRows.length === 4 && checkRows.every(r => /richtig gepolt/.test(r)), checkRows.length + ' Zeilen');
+  report.check('Kanalprüfung ohne Phasenbezug: 4 Kanäle mit Durchgang, Polarität „unbestimmt“', checkRows.length === 4 && checkRows.every(r => /Polarität unbestimmt/.test(r)), checkRows.join(' | ').slice(0, 300));
+  // With a polarity reference in the port map the sign is decided (lumped test circuit, delay far below 1 ns).
+  const REF = { source: 'Synthetische Testschaltung', maxDelaySeconds: 1e-9, maxFrequencyHz: 3e9, response: 'noninverting-baseband' };
+  const refMap = { ...JSON.parse(portMap), model: 'rj45-ref', polarityReference: REF };
+  await page.setInputFiles('#cn-file', { name: 'ref.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(refMap)) });
+  await page.waitForFunction(() => document.getElementById('cn-profile').value === 'file:rj45-ref');
+  const refRows = await page.$$eval('#connector-panel table', tables => { const t = tables.find(x => /Polarität/.test(x.textContent)); return t ? [...t.querySelectorAll('tbody tr')].map(r => r.textContent) : []; });
+  report.check('Mit Phasenbezug: 4 Kanäle „richtig gepolt“, Bezug genannt', refRows.length === 4 && refRows.every(r => /richtig gepolt/.test(r) && /Synthetische Testschaltung/.test(r)), refRows.join(' | ').slice(0, 300));
   // wrong polarity in the file → reported as swapped, pins marked
-  const badMap = JSON.parse(portMap); badMap.model = 'rj45-bad'; const p2 = badMap.differential_pairs.find(x => x.side === 'CABLE' && x.pair === 'P2'); [p2.positive_port, p2.negative_port] = [p2.negative_port, p2.positive_port];
+  const badMap = JSON.parse(portMap); badMap.model = 'rj45-bad'; badMap.polarityReference = REF; const p2 = badMap.differential_pairs.find(x => x.side === 'CABLE' && x.pair === 'P2'); [p2.positive_port, p2.negative_port] = [p2.negative_port, p2.positive_port];
   await page.setInputFiles('#cn-file', { name: 'bad.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(badMap)) });
   await page.waitForFunction(() => document.getElementById('cn-profile').value === 'file:rj45-bad');
-  report.check('Vertauschte Polarität in der Datei: „+ und − an einem Ende vertauscht“, 4 Pins mit „!“', /an einem Ende vertauscht/.test(await page.textContent('#connector-panel')) && await page.locator('.cn-pin.is-conflict').count() === 4);
+  report.check('Mit Phasenbezug: vertauschte Polarität in der Datei wird „+ und − an einem Ende vertauscht“, 4 Pins mit „!“', /an einem Ende vertauscht/.test(await page.textContent('#connector-panel')) && await page.locator('.cn-pin.is-conflict').count() === 4);
   await page.setInputFiles('#cn-file', { name: 'rj45.portmap.json', mimeType: 'application/json', buffer: Buffer.from(portMap) });
   await page.waitForFunction(() => document.getElementById('cn-profile').value === 'file:rj45-test');
   await page.click('#cn-apply-form button[type=submit]'); await ready(); await page.waitForSelector('.mini-chart');

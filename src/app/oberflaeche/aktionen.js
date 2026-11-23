@@ -13,10 +13,17 @@ function toggleMenu(force) {
   if (open) menu.querySelector('.menu-item:not([hidden])')?.focus({ preventScroll: true });
 }
 
+// Third-party blocks (<script id="fremd-…">) carry their license texts in a leading /*! … */ comment; the dialog shows them as they are.
+function openLicense() {
+  const notices = [...document.querySelectorAll('script[id^="fremd-"]')].map(block => block.textContent.match(/\/\*!([\s\S]*?)\*\//)?.[1].trim()).filter(Boolean);
+  $('third-party-text').textContent = notices.join('\n\n') || '—';
+  openDialog('license-dialog');
+}
+
 registerActions({
   'close-dialog': (_, button) => button.closest('dialog').close(),
   lang: () => window.I18N.set(window.I18N.lang === 'de' ? 'en' : 'de'),
-  license: () => openDialog('license-dialog'),
+  license: openLicense,
   theme: () => { Theme.toggle(); render(); },
   'menu-toggle': () => toggleMenu(),
   'menu-go': value => {
@@ -25,7 +32,7 @@ registerActions({
     else if (value === 'lang') action('lang')();
     else if (value === 'packs') action('packs')();
     else if (value === 'storage') action('storage')();
-    else if (value === 'license') openDialog('license-dialog');
+    else if (value === 'license') openLicense();
     else if (value === 'method') $('method-button').click();
     else if (value === 'export') $('export-button').click();
     else if (value === 'install') $('pwa-install').click();

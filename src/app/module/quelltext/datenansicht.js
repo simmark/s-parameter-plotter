@@ -1,4 +1,4 @@
-
+// module/quelltext/datenansicht – Ansicht „Messwerttabelle“: Werte je Frequenzpunkt blättern, auswählen, ersetzen und als Kurve auswerten.
 import { esc } from '../../basis/dom.js';
 import { complexText, hz, parseHz } from '../../basis/format.js';
 import { sourceLocation } from './dokument.js';
@@ -219,4 +219,4 @@ function valueView(host, doc, callbacks) {
   };
 }
 
-export { valueView, explanation, selectedData };
+export { selectedData, explanation, valueView };

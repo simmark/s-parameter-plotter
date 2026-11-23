@@ -1,4 +1,6 @@
+// module/quelltext/dokument – Dateibytes, Zeilenenden und Zeichensatz der bearbeiteten Datei; Beispieldateien; Token und Fundstellen im Text.
 // File bytes and CodeMirror's LF-normalized editing buffer are kept separately.
+
 const sampleText = [
   '! SIMONLATION | Nichtreziprokes Zweitor',
   '! Vorwaerts S21, rueckwaerts S12. Alle Winkel in Grad.',

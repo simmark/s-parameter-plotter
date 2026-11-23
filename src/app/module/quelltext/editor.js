@@ -1,9 +1,11 @@
+// module/quelltext/editor – Tab „Quelltext“: Touchstone-Datei als Text, Messwerttabelle, Matrix und Portzuordnung; Entwurf, Prüfung und Übernahme als neue Analyse.
 // The editor always works on original file bytes. Apply goes through normal session import as a separate file.
 import { $, esc, toast } from '../../basis/dom.js';
-import { registerActions, registerView } from '../../basis/erweiterung.js';
+import { registerActions, registerSlot, registerView } from '../../basis/erweiterung.js';
 import { hz, parseHz } from '../../basis/format.js';
 import { state } from '../../basis/zustand.js';
 import { importFile, session, sessionItem } from '../../dateien/sitzung.js';
+import { createSourceEditor } from './codeeditor.js';
 import { valueView } from './datenansicht.js';
 import { editEndings, lanSample, readSource, sampleText, sourceBlob, sourceChanges, sourceLines, sourceLocation,
   sourceRaw, sourceTokens } from './dokument.js';
@@ -50,7 +52,8 @@ function shell() {
   el('undo').onclick=()=>editor?.undo(); el('redo').onclick=()=>editor?.redo();
   el('download').onclick=()=>download(false); el('utf8').onclick=()=>download(true);
   el('apply').onclick=apply;
-  el('jump').onclick=jump; el('go').onkeydown=e=>{if(e.key==='Enter') jump();};
+  el('jump').onclick=jump; // preventDefault: jump() focuses the editor, and the Enter key would otherwise break the line at the target.
+  el('go').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();jump();}};
   el('outline').onchange=e=>{if(e.target.value) editor?.jump(Number(e.target.value));};
   el('more').ontoggle=()=>{if(doc && el('more').open) el('diff').textContent=sourceChanges(doc);};
   showSourceView(sourceView);
@@ -109,7 +112,7 @@ async function openSource(file, bound) {
       point:0,column:0,curveText:'',selected:null,termColumns:false,colors:new Map(),matrixBasis:'se' };
     el('origin').textContent=(bound?'Aktive Analysedatei':'Separate Arbeitskopie')+' · '+doc.encoding+' · '+(doc.newline==='\r\n'?'CRLF':doc.newline==='\r'?'CR':'LF');
     draftStatus(saved?'Lokalen Entwurf wiederhergestellt':'Originalstand');
-    editor=window.SourceEditor.create(el('code'),doc.text,{
+    editor=createSourceEditor(el('code'),doc.text,{
       tokens:(n,line)=>{
         const tokens=sourceTokens(doc?.index,n,line), problem=doc?.index?.diagnostic;
         tokens.forEach(token=>{
@@ -368,4 +371,11 @@ registerActions({
     if(el('view-raw'))showSourceView('raw');
   }
 });
-registerView({id:'source',title:'Quelltext',short:'Text',icon:'wave',panel:'source-panel',render:renderSource});
+registerView({
+  id: 'source', title: 'Quelltext', short: 'Text', after: 's', panel: 'source-panel', render: renderSource,
+  iconPath: 'M8.5 7 3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15', hint: 'Touchstone-Datei als Text, Messwerttabelle und Matrix',
+  context: 'Touchstone-Datei als Text · bearbeiten, prüfen, als neue Analyse öffnen',
+});
+// "Quelltext" next to the marker search: jumps to the frequency block of the active marker.
+registerSlot('marker-tools', () => !state.dataset.demo && !state.dataset.spice
+  ? '<button id="source-at-marker" data-action="source-at-marker" type="button" class="button" title="Frequenzblock des aktiven Markers im Quelltext">Quelltext</button>' : '');

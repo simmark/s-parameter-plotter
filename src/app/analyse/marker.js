@@ -1,7 +1,7 @@
 // analyse/marker – Marker setzen, verschieben und Spitzen suchen.
 import { renderDetails, renderTraces, updatePlot } from './darstellung.js';
 import { $, actionButton, esc, pressed, toast } from '../basis/dom.js';
-import { registerActions } from '../basis/erweiterung.js';
+import { registerActions, slot } from '../basis/erweiterung.js';
 import { complexAt, complexText, freqInput, hz, parseHz, traceValue, valueWith } from '../basis/format.js';
 import { axis, state } from '../basis/zustand.js';
 import { persistSettings } from '../dateien/einstellungen.js';
@@ -27,7 +27,7 @@ function renderMarker(rebuild = false) {
       '</div><span class="peak-buttons" role="group" aria-label="Markersuche">' +
       actionButton('Min', 'peak', 'min', 'button', '', ' title="Aktiven Marker auf das Minimum der ersten sichtbaren Kurve im Ausschnitt setzen"') +
       actionButton('Max', 'peak', 'max', 'button', '', ' title="Aktiven Marker auf das Maximum der ersten sichtbaren Kurve im Ausschnitt setzen"') +
-      (!state.dataset.demo && !state.dataset.spice ? '<button id="source-at-marker" data-action="source-at-marker" type="button" class="button" title="Frequenzblock des aktiven Markers im Quelltext">Quelltext</button>' : '') +
+      slot('marker-tools') +
       '</span></div><div id="marker-data"></div>';
   }
   for (const i of used) {
