@@ -87,6 +87,33 @@ td.num { font-family: var(--mono); white-space: nowrap; }
 details { margin-top: 10px; }
 details summary { cursor: pointer; font-weight: 600; }
 details pre { font: 12.5px/1.5 var(--mono); background: var(--tint); border: 1px solid var(--line); border-radius: 6px; padding: 10px; overflow: auto; margin: 8px 0 0; }
+
+.sch-wrap { max-width: 1500px; margin: 16px auto 0; padding: 0 20px; }
+@media (max-width: 900px) { .sch-wrap { padding: 0 12px; } }
+.sch-bar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 10px; }
+.sch-bar .sep { flex: 1 1 20px; }
+.sch-body { display: grid; grid-template-columns: minmax(0, 1fr) 270px; gap: 12px; }
+@media (max-width: 900px) { .sch-body { grid-template-columns: minmax(0, 1fr); } }
+.sch-view { overflow: auto; max-height: 620px; border: 1px solid var(--line); border-radius: 6px; background-color: #fff; background-image: radial-gradient(circle, #e0ddd0 1px, transparent 1px); background-size: 20px 20px; }
+#sch { display: block; touch-action: none; user-select: none; }
+.sch-block { cursor: grab; }
+.sch-block.selected rect { stroke-width: 3; filter: drop-shadow(0 0 3px rgba(201, 100, 66, .5)); }
+.sch-name { font: 600 12px var(--ui); }
+.sch-val { font: 12px var(--mono); fill: #1f1e1d; }
+.sch-pin-label { font: 10.5px var(--ui); fill: var(--muted); }
+.sch-pin { cursor: crosshair; }
+.sch-wire { fill: none; stroke: #3b3a36; stroke-width: 1.6; stroke-linejoin: round; }
+.sch-wire.hot { stroke: var(--accent); stroke-width: 2.6; }
+.sch-net { font: 11px var(--mono); fill: var(--accent-dark); }
+.sch-rubber { stroke: var(--accent); stroke-width: 2; stroke-dasharray: 5 4; pointer-events: none; }
+.sch-props { border: 1px solid var(--line); border-radius: 6px; padding: 10px; background: var(--tint); max-height: 620px; overflow: auto; }
+.sch-props h3 { margin: 0 0 8px; font: 600 14px var(--ui); }
+.sch-props h4 { margin: 12px 0 6px; font: 600 12.5px var(--ui); color: var(--muted); }
+.sch-field { display: block; margin-bottom: 8px; }
+.sch-field > span { display: block; font-size: 12.5px; font-weight: 600; margin-bottom: 2px; }
+.sch-field input, .sch-field select { width: 100%; padding: 6px 7px; border: 1px solid var(--line-dark); border-radius: 6px; background: #fff; font: 13px var(--mono); }
+.sch-field select { font-family: var(--ui); }
+.sch-hint { font-size: 12px; color: var(--muted); margin-top: 2px; }
 footer { padding: 0 20px 24px; color: var(--muted); font-size: 12.5px; max-width: 1500px; margin: 0 auto; }
 </style>
 </head>
@@ -96,6 +123,29 @@ footer { padding: 0 20px 24px; color: var(--muted); font-size: 12.5px; max-width
   <p>Kleine lineare Schaltungen im Frequenzbereich lösen und gegen Single-Pair-Ethernet-Grenzwerte prüfen. Alles rechnet lokal im Browser.</p>
   <nav><a href="./index.html">← S-Parameter Analyzer</a></nav>
 </header>
+
+<div class="sch-wrap"><div class="card">
+  <h2>Schaltbild</h2>
+  <div class="sch-bar" id="palette">
+    <button class="btn" type="button" data-add="P">+ Port</button>
+    <button class="btn" type="button" data-add="S">+ Touchstone-Block</button>
+    <button class="btn" type="button" data-add="T">+ Übertrager</button>
+    <button class="btn" type="button" data-add="L">+ Spule</button>
+    <button class="btn" type="button" data-add="K">+ Kopplung</button>
+    <button class="btn" type="button" data-add="C">+ Kondensator</button>
+    <button class="btn" type="button" data-add="R">+ Widerstand</button>
+    <span class="sep"></span>
+    <button class="btn" type="button" id="zoom-out" aria-label="Verkleinern">−</button>
+    <button class="btn" type="button" id="zoom-in" aria-label="Vergrößern">+</button>
+    <button class="btn" type="button" id="relayout">Neu anordnen</button>
+  </div>
+  <div class="sch-body">
+    <div class="sch-view"><svg id="sch" role="img" aria-label="Schaltbild"></svg></div>
+    <div class="sch-props" id="sch-props"></div>
+  </div>
+  <p class="hint" style="margin:8px 0 0">Anschluss (Kreis) auf einen anderen ziehen verbindet beide. Doppelklick auf einen Anschluss setzt ihn auf Masse, Rechtsklick trennt ihn. Bausteine mit der Maus verschieben, Entf löscht. Das Schaltbild und die Netzliste links sind dieselbe Schaltung.</p>
+  <datalist id="sch-nets"></datalist>
+</div></div>
 
 <main>
   <section aria-label="Eingabe">
@@ -170,6 +220,7 @@ Kommentare beginnen mit * oder ;</pre>
 <script src="./sim/sim-core.js"></script>
 <script src="./sim/limits.js"></script>
 <script src="./sim/templates.js"></script>
+<script src="./sim/schematic.js"></script>
 <script>
 'use strict';
 (() => {
@@ -196,16 +247,47 @@ Kommentare beginnen mit * oder ;</pre>
   } else area.value = SIM_TEMPLATES[0].text;
   select.addEventListener('change', () => {
     const t = SIM_TEMPLATES.find(item => item.id === select.value);
-    if (t) { area.value = t.text; run(); }
+    if (t) { area.value = t.text; syncSchematic(); run(); }
   });
+  let syncTimer = 0;
   area.addEventListener('input', () => {
     const match = SIM_TEMPLATES.find(t => t.text === area.value);
     select.value = match ? match.id : '';
+    clearTimeout(syncTimer);
+    syncTimer = setTimeout(syncSchematic, 500);
   });
   area.addEventListener('keydown', event => {
     if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) { event.preventDefault(); run(); }
   });
-  $('run').addEventListener('click', run);
+  $('run').addEventListener('click', () => { syncSchematic(); run(); });
+
+  // ---------- Schaltbild ----------
+  // Die Netzliste ist die einzige Quelle. Eingaben im Schaltbild schreiben sie neu,
+  // Eingaben im Textfeld lesen das Schaltbild neu ein.
+  function syncSchematic() {
+    clearTimeout(syncTimer);
+    try { SCH.load(area.value); } catch { /* ungültige Zeile: das meldet run() */ }
+  }
+  let schTimer = 0;
+  SCH.mount({
+    svg: $('sch'), props: $('sch-props'), netList: $('sch-nets'),
+    api: {
+      fileNames: () => [...new Set([...[...state.files.values()].map(d => d.name), ...SIM_LIBRARY])],
+      fileInfo: name => state.files.get(name.toLowerCase()) || null,
+      ensureFile: name => loadLibraryFile(name),
+      onChange: text => {
+        area.value = text;
+        const match = SIM_TEMPLATES.find(t => t.text === text);
+        select.value = match ? match.id : '';
+        clearTimeout(schTimer);
+        schTimer = setTimeout(run, 200);
+      }
+    }
+  });
+  document.querySelectorAll('[data-add]').forEach(button => button.addEventListener('click', () => SCH.add(button.dataset.add)));
+  $('zoom-in').addEventListener('click', () => SCH.setZoom(0.15));
+  $('zoom-out').addEventListener('click', () => SCH.setZoom(-0.15));
+  $('relayout').addEventListener('click', () => SCH.relayout());
 
   // ---------- Dateien ----------
   function listFiles() {
@@ -234,7 +316,7 @@ Kommentare beginnen mit * oder ;</pre>
         state.files.set(file.name.toLowerCase(), data);
       } catch (error) { problems.push(file.name + ': ' + error.message); }
     }
-    listFiles();
+    listFiles(); SCH.refreshProps();
     if (problems.length) showError(problems.join(' · ')); else if (fileList.length) run();
   }
   const drop = $('drop');
@@ -261,25 +343,31 @@ Kommentare beginnen mit * oder ;</pre>
     return css({ DD: '--mode-d', CC: '--mode-c', CD: '--mode-cd', DC: '--mode-dc' }[kind] || '--mode-p');
   }
 
-  // Lädt Messdateien der mitgelieferten Bibliothek (sim/data/) nach, wenn die Netzliste sie nennt.
+  // Lädt eine Messdatei der mitgelieferten Bibliothek (sim/data/) nach.
+  async function loadLibraryFile(key) {
+    key = key.toLowerCase();
+    if (state.files.has(key)) return state.files.get(key);
+    if (!SIM_LIBRARY.includes(key)) throw new Error('„' + key + '“ ist nicht in der Bibliothek.');
+    $('stats').textContent = 'Lade ' + key + ' …';
+    let text;
+    try {
+      const response = await fetch('./sim/data/' + key);
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      text = new TextDecoder('windows-1252').decode(await response.arrayBuffer());
+    } catch {
+      throw new Error('„' + key + '“ konnte nicht aus sim/data/ geladen werden. Wenn die Seite lokal per Doppelklick geöffnet ist, die Datei bitte links in das Dateifeld ziehen.');
+    }
+    const data = RF.parseTouchstone(text, key);
+    data.library = true;
+    state.files.set(key, data);
+    listFiles();
+    return data;
+  }
   async function ensureLibrary(net) {
     for (const el of net.elements) {
       if (el.kind !== 'S') continue;
       const key = el.file.toLowerCase();
-      if (state.files.has(key) || !SIM_LIBRARY.includes(key)) continue;
-      $('stats').textContent = 'Lade ' + key + ' …';
-      let text;
-      try {
-        const response = await fetch('./sim/data/' + key);
-        if (!response.ok) throw new Error('HTTP ' + response.status);
-        text = new TextDecoder('windows-1252').decode(await response.arrayBuffer());
-      } catch {
-        throw new Error('„' + key + '“ konnte nicht aus sim/data/ geladen werden. Wenn die Seite lokal per Doppelklick geöffnet ist, die Datei bitte links in das Dateifeld ziehen.');
-      }
-      const data = RF.parseTouchstone(text, key);
-      data.library = true;
-      state.files.set(key, data);
-      listFiles();
+      if (!state.files.has(key) && SIM_LIBRARY.includes(key)) await loadLibraryFile(key);
     }
   }
 
@@ -600,6 +688,7 @@ Kommentare beginnen mit * oder ;</pre>
   });
 
   listFiles();
+  syncSchematic();
   run();
 })();
 </script>

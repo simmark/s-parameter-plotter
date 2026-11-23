@@ -59,7 +59,9 @@ Windows: Installationssymbol in der Adressleiste von Chrome oder Edge. iPhone: S
 
 ## Simulator (in Arbeit)
 
-`simulator.html` ist eine zweite Seite im selben Repo: kleine lineare Schaltungen im Frequenzbereich lösen und gegen Single-Pair-Ethernet-Grenzwerte prüfen. Stand: Rechenkern mit Textnetzliste, 10BASE-T1L als erster Standard. Der grafische Editor folgt später.
+`simulator.html` ist eine zweite Seite im selben Repo: kleine lineare Schaltungen im Frequenzbereich lösen und gegen Single-Pair-Ethernet-Grenzwerte prüfen. Stand: Rechenkern mit Textnetzliste, grafischer Schaltplan-Editor, 10BASE-T1L als erster Standard.
+
+Das Schaltbild und die Netzliste sind dieselbe Schaltung: Eingaben im Schaltbild schreiben die Netzliste neu, Eingaben im Textfeld lesen das Schaltbild neu ein. Bausteine über die Leiste einfügen, Anschlüsse (Kreise) per Ziehen verbinden, Doppelklick = Masse, Rechtsklick = trennen. Touchstone-Blöcke wählen ihre Datei im Eigenschaftenfeld, die Zahl der Pins folgt der Datei.
 
 **Öffnen:** https://simmark.github.io/s-parameter-plotter/simulator.html
 
@@ -67,6 +69,7 @@ Windows: Installationssymbol in der Adressleiste von Chrome oder Edge. iPhone: S
 |---|---|
 | `sim/rf-core.js` | Rechenkern des Analyzers, erzeugt aus `index.html` mit `python tools/extract_core.py` |
 | `sim/sim-core.js` | Netzliste, modifizierte Knotenanalyse, Touchstone-Blöcke, Mixed Mode |
+| `sim/schematic.js` | Schaltplan-Editor (SVG): liest und schreibt die Netzliste, Anordnung wird im Browser gemerkt |
 | `sim/limits.js` | Grenzkurven als Daten, jede mit Quelle und Prüfstatus |
 | `sim/templates.js` | Vorlagen (10BASE-T1L MDI, Lagevergleich der Gleichtaktdrossel, Speisung, Touchstone-Block) |
 | `sim/data/` | Öffentliche Messdaten von Würth Elektronik: `74930000.s7p` (WE-STST), `744235251.s4p` (WE-CNSW). Der Simulator lädt sie bei Bedarf nach |
