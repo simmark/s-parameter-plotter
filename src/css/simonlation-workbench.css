@@ -85,7 +85,7 @@ html[data-theme="dark"] .workbench-tool-icon--dark { display: block; }
   color: var(--sl-muted);
 }
 .workbench-by em { font: italic 400 11px/1 var(--sl-font-sans); }
-.workbench-wordmark { display: block; width: auto; height: 20px; }
+.workbench-wordmark { display: block; width: auto; height: 18px; }
 .workbench-wordmark--dark,
 html[data-theme="dark"] .workbench-wordmark--light { display: none; }
 html[data-theme="dark"] .workbench-wordmark--dark { display: block; }
@@ -135,5 +135,5 @@ html[data-theme] :is(.chart-card, .config-card, .detail-card, .empty-panel) {
 @media (max-width: 640px) {
   .workbench-tool-icon { width: 32px; height: 32px; }
   .workbench-tool { font-size: 15px; }
-  .workbench-wordmark { height: 17px; }
+  .workbench-wordmark { height: 15px; }
 }
