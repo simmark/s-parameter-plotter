@@ -58,7 +58,7 @@ html[data-theme] .app-bar {
 
 .workbench-wordmark {
   display: block;
-  height: 22px;
+  height: 38px;
   width: auto;
 }
 
@@ -72,11 +72,22 @@ html[data-theme="dark"] .workbench-wordmark--dark {
 }
 
 .workbench-tool {
+  /* unter den Buchstaben, ab dem I: 38 px Logohöhe * 162/150 */
+  margin: -8px 0 0 41px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
   color: var(--sl-muted);
   font: 400 10.5px/1.2 var(--sl-font-mono);
   letter-spacing: .055em;
   text-transform: uppercase;
 }
+
+/* Werkzeug-Symbol vor dem Namen, hell/dunkel wie die Wortmarke */
+.workbench-tool-icon { width: 15px; height: 15px; flex: none; }
+.workbench-tool-icon--dark,
+html[data-theme="dark"] .workbench-tool-icon--light { display: none; }
+html[data-theme="dark"] .workbench-tool-icon--dark { display: block; }
 
 html[data-theme] .app-bar .bar-button {
   color: var(--sl-text);

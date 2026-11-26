@@ -1,7 +1,7 @@
 'use strict';
 
 // CACHE_VERSION is replaced by build.py with a hash of the app files.
-const CACHE_VERSION = '6c9fab2649d733eb';
+const CACHE_VERSION = '53cb4aaf25fca83b';
 const CACHE_PREFIX = 's-parameter-analyzer:' + self.registration.scope + ':';
 const CACHE = CACHE_PREFIX + CACHE_VERSION;
 const SHARED = 's-parameter-analyzer:shared';
